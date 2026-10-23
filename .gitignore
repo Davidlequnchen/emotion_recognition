@@ -25,9 +25,10 @@ models/*/*
 *.onnx
 *.bin
 
-# Data: the full CREMA-D dataset (606 MB) is not committed; download it with
-# scripts/download_data.py --subset full. The six small test clips in data/samples/ are committed.
-data/crema_d
+# Data: datasets are never committed (size, and several licences forbid sharing copies).
+# Download them with scripts/download_data.py. Only the six small CREMA-D test clips in data/samples/ are committed.
+data/*
+!data/samples/
 
 # Outputs
 outputs/

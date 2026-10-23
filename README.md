@@ -34,7 +34,8 @@ emotion_recognition/
 ├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, audio path, viewer settings
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
-│   └── crema_d/                # the full CREMA-D dataset (optional download, not in git)
+│   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
+│   └── mcae_spps/ thai_ser/ nemo/ mess/   # more datasets like CREMA-D (optional downloads, not in git)
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   └── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
@@ -221,6 +222,29 @@ License: CREMA-D is available under the [Open Database License](http://opendatac
 its individual contents are licensed under the [Database Contents License](http://opendatacommons.org/licenses/dbcl/1.0/).
 Citation: H. Cao, D. G. Cooper, M. K. Keutmann, R. C. Gur, A. Nenkova and R. Verma, "CREMA-D: Crowd-sourced
 Emotional Multimodal Actors Dataset", *IEEE Transactions on Affective Computing*, 5(4), 377–390, 2014.
+
+### 3.4 More datasets like CREMA-D
+
+The same script downloads four more datasets that also record the same sentences in different emotions.
+They were chosen from the survey in [docs/datasets_survey.md](docs/datasets_survey.md), which has links, sizes and
+caveats for many more.
+
+```bash
+python scripts/download_data.py --dataset mcae_spps   # or thai_ser, nemo, mess; --dataset all downloads everything
+```
+
+| `--dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
+|---|---|---|---|---|---|---|
+| `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC-ND 4.0 |
+| `thai_ser` | Thai | 27,854 (200 actors) | 12.7 GB | Parquet with the audio inside (up to 4 microphones per clip) | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
+| `nemo` | Polish | 4,481 (9 speakers, 90 sentences) | 0.53 GB | Parquet with the audio inside | 6 emotions (acted, checked by listeners) | CC BY-NC-SA 4.0 |
+| `mess` | English | 1,800 (6 speakers) | 0.19 GB | WAV 24.4 kHz in `audio/`; emotion in the file name (`A`ngry, `C`alm, `H`appy, `S`ad) | 4 emotions (acted); listener ratings only on request | CC BY 4.0 |
+
+Every file is checked against the checksum its host publishes (OSF SHA-256, Zenodo MD5, Hugging Face SHA-256).
+Zip files are unpacked into `audio/` and kept. The Parquet files of THAI-SER and nEMO hold the audio and the labels
+together; you can listen to examples on their Hugging Face pages, and reading them in Python needs `pyarrow`, which
+will be added when these datasets get an evaluation script. Several licences forbid commercial use or sharing copies,
+so use the data for research only; `data/` is git-ignored except the CREMA-D test clips.
 
 ## 4. Choose the hardware mode
 
