@@ -1,0 +1,4 @@
+# PyTorch for Apple Silicon Macs (M1-M4): CPU + Apple GPU through Metal (MPS), from PyPI.
+# Same version as the CUDA 12.1 build, so both machines run identical code.
+torch==2.5.1
+torchaudio==2.5.1

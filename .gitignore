@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Environments and secrets
+.venv/
+.env
+.env.*
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Models: never commit model files (model.pt alone is ~1.9 GB).
+# Download them with scripts/download_model.py; git keeps only the empty folder placeholders.
+models/*/*
+!models/*/.gitkeep
+# Model weights anywhere else in the repository
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.bin
+
+# Data: never commit audio or datasets (size and licences).
+# Download them with scripts/download_data.py (test clips by default, --subset full for all of CREMA-D).
+data/
+
+# Outputs
+outputs/

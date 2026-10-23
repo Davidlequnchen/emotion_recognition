@@ -1,0 +1,7 @@
+# PyTorch for Linux + NVIDIA GPU, built for CUDA 12.1 (2.5.1 is the newest release with CUDA 12.1 wheels).
+# The wheels bundle the CUDA runtime and cuDNN, so the server only needs an NVIDIA driver that
+# supports CUDA 12.1 (Linux driver >= 530; `nvidia-smi` shows the supported CUDA version).
+# Only the official PyTorch index is used for this file.
+--index-url https://download.pytorch.org/whl/cu121
+torch==2.5.1+cu121
+torchaudio==2.5.1+cu121
