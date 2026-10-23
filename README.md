@@ -17,8 +17,9 @@ conda activate emotion_recognition
 pip install -r requirements-mac.txt        # NVIDIA server: pip install -r requirements-cuda121.txt
 pip install -r requirements.txt
 python scripts/download_model.py           # model files -> models/emotion2vec_plus_large/
-python scripts/download_data.py            # test clips  -> data/samples/ (--subset full: all of CREMA-D)
 python scripts/inference.py                # NVIDIA server: python scripts/inference.py --mode cuda
+# optional: the whole CREMA-D dataset (606 MB) -> data/crema_d/
+python scripts/download_data.py --subset full
 ```
 
 Each step is explained below.
@@ -28,9 +29,9 @@ Each step is explained below.
 ```
 emotion_recognition/
 ├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, audio path
-├── data/                       # downloaded with scripts/download_data.py, not in git
-│   ├── samples/                # six CREMA-D test clips (default)
-│   └── crema_d/                # the full CREMA-D dataset (optional: --subset full)
+├── data/
+│   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
+│   └── crema_d/                # the full CREMA-D dataset (optional download, not in git)
 ├── models/
 │   ├── README.md               # what each model file is, how to add models
 │   └── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
@@ -43,8 +44,8 @@ emotion_recognition/
 └── requirements-cuda121.txt    # PyTorch for NVIDIA GPUs, CUDA 12.1
 ```
 
-Git tracks only code, configuration and documentation. Model files, audio and datasets are in `.gitignore`
-(`model.pt` alone is 1.9 GB). On every new machine, re-create them with the two download scripts.
+Git tracks the code, configuration, documentation and the six small test clips. Model files and the full dataset
+are in `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the two download scripts.
 
 ## 1. Set up the environment
 
@@ -141,7 +142,8 @@ emotion recognition research: 7,442 clips from 91 actors (48 male, 43 female, ag
 `data/samples/` gets six clips: actor 1001 saying "Don't forget a jacket" (`DFA`) with each emotion, so only the
 emotion changes between files. `scripts/inference.py` uses them by default. Names follow
 `<actor>_<sentence>_<emotion>_<level>.wav`, where `XX` means the intensity level was not specified. Each file is
-16 kHz mono WAV, about 2 s and 70 kB.
+16 kHz mono WAV, about 2 s and 70 kB. The six clips are committed to the repository, so they are already there
+after `git clone`; the command above restores any that are missing and checks their SHA-256.
 
 | File | Acted emotion |
 |---|---|
@@ -168,8 +170,10 @@ data/crema_d/
 └── LICENSE.txt
 ```
 
-The download takes about DOWNLOAD_TIME. If it is interrupted, run the same command again: files that are
-already correct are skipped. To run the model on every clip: `python scripts/inference.py --audio data/crema_d/AudioWAV`.
+The first download took about 9 minutes on the MacBook (8 files in parallel; set this with `--workers`). Most of
+that time is GitHub's response time for each file. If the download is interrupted, run the same command again:
+files that are already correct are skipped, and checking all 7,442 files takes about 10 seconds. The clips last
+1.3 to 5.0 s (5.3 hours in total). To run the model on every clip: `python scripts/inference.py --audio data/crema_d/AudioWAV`.
 
 ### 3.3 How the download works
 
