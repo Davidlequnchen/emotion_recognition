@@ -1,0 +1,173 @@
+"""
+Minimal speech emotion recognition with emotion2vec+ (PyTorch, via FunASR).
+
+Every step prints what it does, so you can check that Python, PyTorch, the
+device (Apple GPU / NVIDIA GPU / CPU) and the model are all in order.
+
+Usage:
+    python scripts/inference.py                    # settings from config/config.yaml
+    python scripts/inference.py --mode cuda        # override the hardware mode (mac | cuda)
+    python scripts/inference.py --device cpu       # override the device (mps | cpu | cuda:0 ...)
+    python scripts/inference.py --audio clip.wav   # an audio file or a folder
+"""
+import argparse
+import logging
+import platform
+import sys
+import time
+from pathlib import Path
+
+import soundfile as sf
+import torch
+import yaml
+
+ROOT = Path(__file__).resolve().parents[1]  # repository root; paths in the config are relative to it
+AUDIO_EXTS = {".wav", ".flac", ".mp3", ".ogg"}
+MODEL_FILES = ["model.pt", "config.yaml", "configuration.json", "tokens.txt"]
+
+
+def step(title):
+    print(f"\n{'=' * 64}\n{title}\n{'=' * 64}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--config", default=ROOT / "config" / "config.yaml", help="project config file")
+    parser.add_argument("--mode", choices=["mac", "cuda"], help="override `mode` from the config")
+    parser.add_argument("--device", help="override the device, e.g. mps, cpu, cuda:1")
+    parser.add_argument("--audio", help="audio file or folder (overrides `audio` from the config)")
+    args = parser.parse_args()
+    sys.stdout.reconfigure(line_buffering=True)  # keep prints in order with warnings, also when redirected to a log
+
+    # ------------------------------------------------------------------
+    # Step 1: Read the project configuration (config/config.yaml)
+    # ------------------------------------------------------------------
+    step("Step 1/6 | Load configuration")
+    cfg = yaml.safe_load(Path(args.config).read_text())
+    mode = args.mode or cfg["mode"]
+    device_name = args.device or cfg["devices"][mode]
+    model_name = cfg["model"]
+    model_dir = ROOT / cfg["models"][model_name]["dir"]
+    audio_path = Path(args.audio) if args.audio else ROOT / cfg["audio"]
+    print(f"  config      : {args.config}")
+    print(f"  mode        : {mode}")
+    print(f"  device      : {device_name}")
+    print(f"  model       : {model_name} ({model_dir})")
+    print(f"  audio       : {audio_path}")
+
+    # ------------------------------------------------------------------
+    # Step 2: Check the software stack and which accelerators PyTorch can see
+    # ------------------------------------------------------------------
+    step("Step 2/6 | Check environment")
+    import torchaudio
+    import funasr  # imported here rather than at the top because it takes a few seconds
+
+    logging.getLogger().setLevel(logging.ERROR)  # importing FunASR turns on INFO logs; keep the output readable
+    print(f"  Python      : {platform.python_version()} ({platform.system()} {platform.machine()})")
+    print(f"  PyTorch     : {torch.__version__}")
+    print(f"  torchaudio  : {torchaudio.__version__}")
+    print(f"  FunASR      : {funasr.__version__}")
+    print(f"  CUDA        : available={torch.cuda.is_available()} (PyTorch built with CUDA {torch.version.cuda})")
+    print(f"  MPS (Apple) : available={torch.backends.mps.is_available()} (built={torch.backends.mps.is_built()})")
+
+    # ------------------------------------------------------------------
+    # Step 3: Activate the requested device and check that it really works
+    # ------------------------------------------------------------------
+    step("Step 3/6 | Activate device")
+    device = torch.device(device_name)
+    if device.type == "cuda":
+        if not torch.cuda.is_available():
+            sys.exit("ERROR: CUDA was requested but is not available.\n"
+                     "       Check the driver with `nvidia-smi` and install requirements-cuda121.txt.")
+        device = torch.device("cuda", device.index or 0)  # "cuda" -> "cuda:0"
+        torch.cuda.set_device(device)
+        gpu = torch.cuda.get_device_properties(device)
+        print(f"  GPUs found  : {torch.cuda.device_count()}")
+        print(f"  using       : {device} = {gpu.name} ({gpu.total_memory / 1024**3:.1f} GB, "
+              f"compute capability {gpu.major}.{gpu.minor})")
+        print(f"  cuDNN       : {torch.backends.cudnn.version()}")
+    elif device.type == "mps":
+        if not torch.backends.mps.is_available():
+            sys.exit("ERROR: MPS was requested but is not available.\n"
+                     "       Use an arm64 (not Rosetta) Python on Apple Silicon, or set the device to cpu.")
+        print("  using       : Apple GPU via Metal (MPS)")
+    else:
+        print(f"  using       : CPU ({torch.get_num_threads()} threads)")
+    x = torch.randn(512, 512, device=device)
+    (x @ x).sum().item()  # .item() waits until the device has finished
+    print(f"  sanity check: 512x512 matrix multiplication on {device} ... OK")
+
+    # ------------------------------------------------------------------
+    # Step 4: Load the model (config.yaml + model.pt) onto the device
+    # ------------------------------------------------------------------
+    step("Step 4/6 | Load model")
+    for name in MODEL_FILES:
+        f = model_dir / name
+        if not f.exists():
+            sys.exit(f"ERROR: {f} not found. Download the model first: python scripts/download_model.py")
+        print(f"  {name:<19}: {f.stat().st_size / 1e6:,.2f} MB")
+
+    from funasr import AutoModel
+
+    t0 = time.perf_counter()
+    # FunASR reads configuration.json, which names the other files: it builds the network from
+    # config.yaml, loads the weights from model.pt, reads the class labels from tokens.txt and
+    # moves the network to `device`.
+    model = AutoModel(
+        model=str(model_dir),
+        device=str(device),
+        ncpu=torch.get_num_threads(),  # keep PyTorch's CPU thread count (FunASR would lower it to 4)
+        # The pre-training decoder is not in model.pt and is never used for inference:
+        # skip it instead of printing a "miss key" warning for each of its weights.
+        excludes="modality_encoders.AUDIO.decoder.",
+        disable_update=True,           # no online version check
+        disable_pbar=True,
+    )
+    net = model.model  # the underlying torch.nn.Module
+    print(f"  loaded in   : {time.perf_counter() - t0:.1f} s")
+    print(f"  parameters  : {sum(p.numel() for p in net.parameters()) / 1e6:.1f} M, on {next(net.parameters()).device}")
+    if device.type == "cuda":
+        print(f"  GPU memory  : {torch.cuda.memory_allocated(device) / 1024**3:.2f} GB allocated")
+    elif device.type == "mps":
+        print(f"  GPU memory  : {torch.mps.current_allocated_memory() / 1024**3:.2f} GB allocated")
+    labels = (model_dir / "tokens.txt").read_text(encoding="utf-8").split()
+    print(f"  classes     : {len(labels)} -> {', '.join(lab.split('/')[-1] for lab in labels)}")
+
+    # ------------------------------------------------------------------
+    # Step 5: Collect the audio files
+    # ------------------------------------------------------------------
+    step("Step 5/6 | Collect audio")
+    if audio_path.is_dir():
+        files = sorted(p for p in audio_path.iterdir() if p.suffix.lower() in AUDIO_EXTS)
+    else:
+        files = [audio_path] if audio_path.is_file() else []
+    if not files:
+        sys.exit(f"ERROR: no audio files found at {audio_path}. Download the test clips: python scripts/download_data.py")
+    for f in files:
+        info = sf.info(f)
+        print(f"  {f.name:<24} {info.samplerate} Hz, {info.channels} ch, {info.duration:.2f} s")
+    print("  (the model works on 16 kHz mono audio; other formats are converted automatically)")
+
+    # ------------------------------------------------------------------
+    # Step 6: Inference - one forward pass per file, softmax over the emotion classes
+    # ------------------------------------------------------------------
+    step("Step 6/6 | Run inference")
+    model.generate(str(files[0]), granularity="utterance", extract_embedding=False)
+    print("  warm-up done (the first forward pass initialises the device kernels)\n")
+
+    times = []
+    for i, f in enumerate(files, 1):
+        t0 = time.perf_counter()
+        res = model.generate(str(f), granularity="utterance", extract_embedding=False)[0]
+        times.append(time.perf_counter() - t0)
+        # Labels look like "生气/angry": keep the English part, sort by probability.
+        ranked = sorted(((lab.split("/")[-1], p) for lab, p in zip(res["labels"], res["scores"])),
+                        key=lambda x: x[1], reverse=True)
+        print(f"  [{i}/{len(files)}] {f.name:<24} -> {ranked[0][0]} ({ranked[0][1]:.2f})   {times[-1] * 1000:.0f} ms")
+        print(f"        top-3: {' | '.join(f'{lab} {p:.2f}' for lab, p in ranked[:3])}")
+
+    print(f"\nDone: {len(files)} file(s) on {device}, average {sum(times) / len(times) * 1000:.0f} ms per file.")
+
+
+if __name__ == "__main__":
+    main()

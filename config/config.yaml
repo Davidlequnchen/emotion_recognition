@@ -1,0 +1,32 @@
+# =====================================================================
+# Project configuration
+# Switch hardware by changing `mode` below (or pass --mode on the CLI).
+# =====================================================================
+
+# Hardware mode
+#   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
+#   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
+mode: mac
+
+# Device used by each mode. Set it to "cpu" to force CPU inference.
+devices:
+  mac: mps        # mps | cpu
+  cuda: cuda:0    # cuda:<gpu index> | cpu
+
+# Active model: one of the keys under `models`.
+model: emotion2vec_plus_large
+
+# Model registry: one entry here and one sub-folder in models/ per model.
+models:
+  emotion2vec_plus_large:
+    dir: models/emotion2vec_plus_large
+    hf_repo: emotion2vec/emotion2vec_plus_large   # HuggingFace
+    ms_repo: iic/emotion2vec_plus_large           # ModelScope
+  # Placeholder: register more models the same way, e.g.
+  # emotion2vec_plus_base:
+  #   dir: models/emotion2vec_plus_base
+  #   hf_repo: emotion2vec/emotion2vec_plus_base
+  #   ms_repo: iic/emotion2vec_plus_base
+
+# Audio to run inference on: a folder (all audio files inside) or a single file.
+audio: data/samples
