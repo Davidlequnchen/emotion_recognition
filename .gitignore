@@ -25,8 +25,8 @@ models/*/*
 *.onnx
 *.bin
 
-# Data: never commit audio or datasets (size and licences).
-# Download them with scripts/download_data.py (test clips by default, --subset full for all of CREMA-D).
+# Data: the full CREMA-D dataset (606 MB) is not committed; download it with
+# scripts/download_data.py --subset full. The six small test clips in data/samples/ are committed.
 data/crema_d
 
 # Outputs
