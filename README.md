@@ -18,8 +18,11 @@ pip install -r requirements-mac.txt        # NVIDIA server: pip install -r requi
 pip install -r requirements.txt
 python scripts/download_model.py           # model files -> models/emotion2vec_plus_large/
 python scripts/inference.py                # NVIDIA server: python scripts/inference.py --mode cuda
-# optional: the whole CREMA-D dataset (606 MB) -> data/crema_d/
+# optional: the whole CREMA-D dataset (606 MB) -> data/crema_d/, the model's accuracy on it -> reports/,
+# and a web page with random right and wrong examples -> outputs/viewer.html
 python scripts/download_data.py --subset full
+python scripts/evaluate_crema_d.py
+python scripts/make_viewer.py
 ```
 
 Each step is explained below.
@@ -28,16 +31,25 @@ Each step is explained below.
 
 ```
 emotion_recognition/
-├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, audio path
+├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, audio path, viewer settings
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
 │   └── crema_d/                # the full CREMA-D dataset (optional download, not in git)
+├── docs/
+│   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
+│   └── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
 ├── models/
 │   ├── README.md               # what each model file is, how to add models
 │   └── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
+├── outputs/                    # per-clip predictions and the example viewer page (not in git)
+├── reports/                    # evaluation reports, e.g. crema_d_emotion2vec_plus_large.md
+│   └── figures/                # figures used in the reports
 ├── scripts/
 │   ├── download_model.py       # downloads a model from HuggingFace or ModelScope
 │   ├── download_data.py        # downloads CREMA-D (test clips or full dataset), checks every SHA-256
+│   ├── evaluate_crema_d.py     # runs the model on all of CREMA-D, writes the accuracy report
+│   ├── make_viewer.py          # builds a web page with random right and wrong examples
+│   ├── templates/viewer.html   # the page template used by make_viewer.py
 │   └── inference.py            # step-by-step inference
 ├── requirements.txt            # common packages (both machines)
 ├── requirements-mac.txt        # PyTorch for Apple Silicon (MPS + CPU)
@@ -136,6 +148,8 @@ Both commands download from **CREMA-D** (Crowd-sourced Emotional Multimodal Acto
 emotion recognition research: 7,442 clips from 91 actors (48 male, 43 female, aged 20 to 74), each saying one of
 12 sentences with one of six emotions (anger, disgust, fear, happy, neutral, sad). Crowd-sourced listeners
 (2,443 raters in total) also rated every clip from the audio alone, the video alone and both together.
+[docs/crema_d.md](docs/crema_d.md) explains, in Chinese, the file names, the two kinds of labels (acted and
+perceived) and every column of the label files such as `summaryTable.csv`.
 
 ### 3.1 Test clips (default)
 
@@ -321,6 +335,64 @@ What to expect:
 - The `parameters: 164.0 M` line counts the network built from `config.yaml`: 162 M weights loaded from `model.pt`,
   plus a 2 M pre-training decoder that inference never uses. The model card says "~300M"; the released checkpoint
   holds 162 M weights.
+
+## 6. Evaluate on the whole CREMA-D dataset
+
+```bash
+python scripts/download_data.py --subset full    # once: all 7,442 clips (606 MB)
+python scripts/evaluate_crema_d.py               # device from config/config.yaml (MPS on the Mac)
+python scripts/evaluate_crema_d.py --limit 300   # quick test on the first 300 clips
+```
+
+The script runs the model on every clip and compares each prediction with the ground truth: the acted emotion in
+the file name, which every clip has. It writes:
+
+- [`reports/crema_d_emotion2vec_plus_large.md`](reports/crema_d_emotion2vec_plus_large.md): both accuracies (see
+  below), results per emotion, two confusion matrices (as figures in `reports/figures/` and as tables), comparison
+  with human listeners, and caveats.
+- `outputs/crema_d_emotion2vec_plus_large_predictions.csv`: one row per clip (not in git) with the audio path, the
+  acted emotion, the listeners' vote, the model's prediction, whether it is correct under each of the two ways of
+  counting, and all class probabilities. The JSON file next to it describes the columns;
+  [docs/crema_d.md](docs/crema_d.md) explains them in Chinese.
+
+A prediction is counted as correct in two ways, and both are reported:
+
+| Correct when the prediction matches | Accuracy |
+|---|---|
+| the acted emotion (the usual CREMA-D evaluation) | **86.5%** |
+| the acted emotion or the listeners' vote (any emotion of a tied vote) | **89.6%** |
+
+For reference, the majority vote of CREMA-D's listeners, judging from the voice alone, matches the acted emotion
+for 45.6% of the clips. CREMA-D was probably part of the model's training data, so treat these numbers as
+optimistic; the report explains why.
+
+On the M4 Max the full run takes about 2 to 3 minutes with MPS (about 20 ms per clip). The time per clip falls as the
+run goes on: MPS compiles kernels the first time it sees an input length and reuses them afterwards, so a short
+`--limit 300` run takes about 90 ms per clip.
+
+## 7. Listen to examples in the browser
+
+```bash
+python scripts/make_viewer.py                          # settings from config/config.yaml (10 right + 10 wrong)
+python scripts/make_viewer.py --correct 5 --wrong 15   # choose how many clips of each kind
+python scripts/make_viewer.py --seed 42                # the same seed always picks the same clips
+```
+
+The script picks random clips the model got right and wrong and writes one self-contained page,
+`outputs/viewer.html` (audio embedded, about 2 MB for 20 clips; open it in any browser). The page is a table with one
+row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
+prediction and confidence; a ✓ marks the labels the prediction matches, and each row expands to show every class
+probability. You can switch between the two ways of counting a prediction as correct, and filter by result (all,
+correct, wrong) and by ground-truth emotion. Clips are picked using the first way (acted emotion). The default counts and
+the seed live in the `viewer` section of `config/config.yaml`; the script prints the seed it used, so you can rebuild
+the same page later. `--link-audio` links to the audio files instead of embedding them (a much smaller page that
+only works inside this repository).
+
+The page is built from the predictions files, so it grows with the project. Every `outputs/*_predictions.csv` (with
+its JSON file) becomes one dataset-and-model run that you can switch between in the page. A new evaluation script
+only has to write the same kind of files: a CSV with `audio_path`, `prediction`, `correct`, a ground-truth column and
+optional `p_<class>` probabilities, plus a JSON file with `dataset`, `model` and the name of the ground-truth column.
+The docstring of `scripts/make_viewer.py` lists the exact format.
 
 ## Model: emotion2vec+ large
 

@@ -1,0 +1,274 @@
+<!doctype html>
+<!-- Template for scripts/make_viewer.py, which fills the JSON block near the end with the selected clips. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emotion Recognition Examples</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+    --line: rgba(11, 11, 11, 0.09); --hover: rgba(11, 11, 11, 0.03); --chip: #f0efec; --track: #ecebe7;
+    --accent: #2a78d6; --accent-bg: rgba(42, 120, 214, 0.10);
+    --good: #006300; --good-bg: rgba(12, 163, 12, 0.12); --bad: #b52f2f; --bad-bg: rgba(208, 59, 59, 0.11);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+      --line: rgba(255, 255, 255, 0.09); --hover: rgba(255, 255, 255, 0.03); --chip: #2c2c2a; --track: #2c2c2a;
+      --accent: #3987e5; --accent-bg: rgba(57, 135, 229, 0.18);
+      --good: #3cc43c; --good-bg: rgba(12, 163, 12, 0.18); --bad: #f08080; --bad-bg: rgba(208, 59, 59, 0.22);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1160px; margin: 0 auto; padding: 36px 16px 56px; }
+  h1 { font-size: 24px; line-height: 1.2; margin: 0; }
+  .sub { color: var(--ink-2); margin: 6px 0 24px; max-width: 72ch; }
+
+  /* Summary tiles */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .tile.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .tile .label { color: var(--ink-2); font-size: 12px; }
+  .tile .value { font-size: 24px; font-weight: 600; margin-top: 2px; }
+  .tile .note { color: var(--muted); font-size: 12px; }
+
+  /* Controls */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin-bottom: 12px; }
+  .control { display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
+  select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+  .seg { display: inline-flex; background: var(--chip); border-radius: 9px; padding: 3px; gap: 2px; }
+  .seg button { font: inherit; color: var(--ink-2); background: none; border: 0; border-radius: 7px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
+  .hint { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
+  .hint .ok-hint { color: var(--good); }
+
+  /* Table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+  table { width: 100%; min-width: 880px; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; font-weight: 600; color: var(--ink-2); padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th small { display: block; font-weight: 400; color: var(--muted); }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr.clip:hover { background: var(--hover); }
+  tr.detail td { background: var(--page); padding: 14px 20px 18px 74px; }
+  tr:last-child td { border-bottom: 0; }
+
+  .badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge.good { color: var(--good); background: var(--good-bg); }
+  .badge.bad { color: var(--bad); background: var(--bad-bg); }
+
+  .clip-cell { display: flex; align-items: center; gap: 12px; min-width: 220px; }
+  .play { flex: none; width: 32px; height: 32px; border-radius: 50%; border: 0; background: var(--ink); color: var(--surface); display: grid; place-items: center; cursor: pointer; }
+  .play svg { width: 14px; height: 14px; fill: currentColor; }
+  .file { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .meta { color: var(--muted); font-size: 12px; }
+  .progress { height: 2px; border-radius: 1px; margin-top: 4px; overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); }
+
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--chip); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.pred { background: var(--accent-bg); font-weight: 600; }
+  .chip .ok { color: var(--good); font-weight: 700; }
+  .conf { display: flex; align-items: center; gap: 8px; }
+  .conf .bar { width: 72px; height: 6px; background: var(--track); border-radius: 0 3px 3px 0; }
+  .conf .bar i { display: block; height: 100%; background: var(--accent); border-radius: 0 3px 3px 0; }
+  .num { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 12.5px; min-width: 3.4em; text-align: right; }
+  .more { font: inherit; background: none; border: 1px solid var(--line); border-radius: 8px; color: var(--ink-2); width: 30px; height: 30px; cursor: pointer; }
+  .more { display: grid; place-items: center; }
+  .more svg { width: 14px; height: 14px; fill: currentColor; transition: transform 0.15s; }
+  .more[aria-expanded="true"] { background: var(--chip); color: var(--ink); }
+  .more[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+  /* Probability details */
+  .probs { display: grid; grid-template-columns: max-content minmax(160px, 360px) 3.6em; gap: 5px 12px; align-items: center; font-size: 12.5px; color: var(--ink-2); }
+  .probs .track { height: 8px; background: var(--track); border-radius: 0 4px 4px 0; }
+  .probs .fill { height: 100%; background: #c3c2b7; border-radius: 0 4px 4px 0; }
+  .probs .fill.pred { background: var(--accent); }
+  .probs .rest, .detail .extra { grid-column: 1 / -1; color: var(--muted); font-size: 12px; }
+  .detail .extra { margin-top: 10px; }
+
+  .empty { color: var(--ink-2); padding: 28px; text-align: center; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
+  code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Emotion recognition examples</h1>
+  <p class="sub" id="sub"></p>
+  <div class="tiles" id="tiles"></div>
+  <div class="toolbar">
+    <label class="control" id="run-control">Dataset and model <select id="run"></select></label>
+    <div class="control" id="criterion-control">Correct when the prediction matches <div class="seg" id="criterion" role="group"></div></div>
+    <div class="control">Show <div class="seg" id="status" role="group"></div></div>
+    <label class="control"><span id="truth-label">Ground truth</span> <select id="emotion"></select></label>
+  </div>
+  <p class="hint">Press play to listen. <b class="ok-hint">✓</b> marks the labels the prediction matches. The arrow at the end of a row shows all of the model's probabilities.</p>
+  <div class="table-wrap"><table>
+    <thead><tr id="head"></tr></thead>
+    <tbody id="rows"></tbody>
+  </table></div>
+  <footer id="footer"></footer>
+</main>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+  const DATA = JSON.parse(document.getElementById("data").textContent);
+  const state = { run: 0, criterion: null, status: "all", emotion: "all" };
+  const $ = (id) => document.getElementById(id);
+  const pretty = (key) => key.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+  const percent = (p) => `${(100 * p).toFixed(p >= 0.995 || p < 0.005 ? 0 : 1)}%`;
+  const matches = (value, prediction) => value.split(" or ").includes(prediction);  // "a or b" is a tie
+  const ICONS = { play: "M5 3.2v9.6L12.8 8z", pause: "M4 3h3v10H4zM9 3h3v10H9z", chevron: "M3.5 6l4.5 4.5L12.5 6l-1-1-3.5 3.5L4.5 5z" };
+
+  // Create an element with properties and children; data is always inserted as text, never as HTML
+  function el(tag, props = {}, ...children) {
+    const node = Object.assign(document.createElement(tag), props);
+    node.append(...children.filter((c) => c !== null && c !== undefined && c !== false));
+    return node;
+  }
+  function icon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 16 16");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", ICONS[name]);
+    svg.append(path);
+    return svg;
+  }
+
+  // One shared audio player; each row's button plays its clip
+  const player = new Audio();
+  let current = null;  // { button, bar } of the clip that is loaded
+  function play(src, button, bar) {
+    if (current?.button === button) { player.paused ? player.play() : player.pause(); return; }
+    if (current) { current.button.replaceChildren(icon("play")); current.bar.style.width = "0"; }
+    current = { button, bar };
+    player.src = src;
+    player.play();
+  }
+  player.addEventListener("play", () => current?.button.replaceChildren(icon("pause")));
+  player.addEventListener("pause", () => current?.button.replaceChildren(icon("play")));
+  player.addEventListener("timeupdate", () => { if (current && player.duration) current.bar.style.width = `${100 * player.currentTime / player.duration}%`; });
+
+  function segmented(container, options, active, onPick) {
+    container.replaceChildren(...options.map(([value, text]) => {
+      const b = el("button", { type: "button", textContent: text, onclick: () => onPick(value) });
+      b.setAttribute("aria-pressed", String(value === active));
+      return b;
+    }));
+  }
+
+  function probabilities(ex, run) {
+    const truth = ex.labels[run.ground_truth];
+    const sorted = Object.entries(ex.probs).sort((a, b) => b[1] - a[1]);
+    const keep = sorted.filter(([name, p]) => p >= 0.01 || name === truth || name === ex.labels.prediction);
+    const grid = el("div", { className: "probs" });
+    for (const [name, p] of keep) {
+      grid.append(
+        el("span", { textContent: name === truth ? `${name} (ground truth)` : name }),
+        el("div", { className: "track" }, el("div", { className: `fill${name === ex.labels.prediction ? " pred" : ""}`, style: `width: ${100 * p}%` })),
+        el("span", { className: "num", textContent: percent(p) }));
+    }
+    if (sorted.length > keep.length) grid.append(el("span", { className: "rest", textContent: `${sorted.length - keep.length} other classes below 1%` }));
+    return grid;
+  }
+
+  function rows(ex, run, labelKeys) {
+    const ok = ex.correct[state.criterion];
+    const button = el("button", { className: "play", type: "button", title: "Play or pause" }, icon("play"));
+    const bar = el("i");
+    button.addEventListener("click", () => play(ex.audio, button, bar));
+    const prediction = ex.labels.prediction;
+    const p = ex.probs[prediction];
+    const toggle = el("button", { className: "more", type: "button", title: "Show all probabilities" }, icon("chevron"));
+    toggle.setAttribute("aria-expanded", "false");
+
+    const tr = el("tr", { className: "clip" },
+      el("td", {}, el("span", { className: `badge ${ok ? "good" : "bad"}`, textContent: ok ? "✓ Correct" : "✗ Wrong" })),
+      el("td", {}, el("div", { className: "clip-cell" }, button,
+        el("div", {}, el("div", { className: "file", textContent: ex.file }),
+          el("div", { className: "meta", textContent: ex.duration ? `${ex.duration.toFixed(1)} s` : "" }),
+          el("div", { className: "progress" }, bar)))),
+      ...labelKeys.map((key) => el("td", {}, ex.labels[key]
+        ? el("span", { className: "chip" }, ex.labels[key], matches(ex.labels[key], prediction) ? el("span", { className: "ok", textContent: "✓", title: "the prediction matches this label" }) : null)
+        : el("span", { className: "meta", textContent: "–" }))),
+      el("td", {}, el("span", { className: "chip pred", textContent: prediction })),
+      el("td", {}, p === undefined ? null : el("div", { className: "conf" },
+        el("div", { className: "bar" }, el("i", { style: `width: ${100 * p}%` })), el("span", { className: "num", textContent: percent(p) }))),
+      el("td", {}, Object.keys(ex.probs).length ? toggle : null));
+
+    // Hidden detail row with every probability (and any secondary prediction that differs)
+    const others = Object.entries(ex.labels).filter(([k, v]) => k !== "prediction" && k.startsWith("prediction") && v && v !== prediction);
+    const detail = el("tr", { className: "detail", hidden: true },
+      el("td", { colSpan: labelKeys.length + 5 }, probabilities(ex, run),
+        ...others.map(([k, v]) => el("div", { className: "extra", textContent: `${pretty(k)}: ${v}` }))));
+    toggle.addEventListener("click", () => {
+      detail.hidden = !detail.hidden;
+      toggle.setAttribute("aria-expanded", String(!detail.hidden));
+    });
+    return [tr, detail];
+  }
+
+  function render() {
+    player.pause();
+    current = null;
+    const run = DATA.runs[state.run];
+    const examples = run.examples;
+    const isRight = (ex) => ex.correct[state.criterion];
+    const shownRight = examples.filter(isRight).length;
+
+    $("sub").textContent = `Random clips that ${run.model} got right and wrong on ${run.dataset}. Listen to each clip and compare its labels with the model's prediction.`;
+    $("tiles").replaceChildren(
+      ...run.criteria.map((c) => el("div", { className: `tile${c.column === state.criterion ? " active" : ""}` },
+        el("div", { className: "label", textContent: `Accuracy: matches the ${c.name}` }),
+        el("div", { className: "value", textContent: `${(100 * c.accuracy).toFixed(1)}%` }),
+        el("div", { className: "note", textContent: `on all ${run.total.toLocaleString()} clips` }))),
+      el("div", { className: "tile" },
+        el("div", { className: "label", textContent: "Clips on this page" }),
+        el("div", { className: "value", textContent: String(examples.length) }),
+        el("div", { className: "note", textContent: `${shownRight} correct, ${examples.length - shownRight} wrong` })));
+
+    const criteriaShown = run.criteria.length > 1;
+    $("criterion-control").hidden = !criteriaShown;
+    if (criteriaShown) segmented($("criterion"), run.criteria.map((c) => [c.column, pretty(c.name)]), state.criterion,
+      (v) => { state.criterion = v; render(); });
+    segmented($("status"), [["all", `All ${examples.length}`], ["correct", `✓ Correct ${shownRight}`], ["wrong", `✗ Wrong ${examples.length - shownRight}`]],
+      state.status, (v) => { state.status = v; render(); });
+
+    // Columns: result, clip, the ground truth and other labels, prediction, confidence, details
+    const labelKeys = [run.ground_truth, ...Object.keys(examples[0]?.labels ?? {}).filter((k) => k !== run.ground_truth && !k.startsWith("prediction"))];
+    const describe = (key) => run.columns?.[key] ?? "";
+    $("head").replaceChildren(
+      el("th", { textContent: "Result" }), el("th", { textContent: "Clip" }),
+      ...labelKeys.map((key) => el("th", { title: describe(key) }, pretty(key), key === run.ground_truth ? el("small", { textContent: "ground truth" }) : null)),
+      el("th", { title: describe("prediction"), textContent: "Prediction" }),
+      el("th", { textContent: "Confidence" }), el("th", {}));
+
+    const shown = examples.filter((ex) =>
+      (state.status === "all" || (state.status === "correct") === isRight(ex)) &&
+      (state.emotion === "all" || ex.labels[run.ground_truth] === state.emotion));
+    $("rows").replaceChildren(...(shown.length ? shown.flatMap((ex) => rows(ex, run, labelKeys))
+      : [el("tr", {}, el("td", { className: "empty", colSpan: labelKeys.length + 5, textContent: "No clips match these filters." }))]));
+  }
+
+  function selectRun(index) {
+    const run = DATA.runs[index];
+    Object.assign(state, { run: index, criterion: run.criteria[0].column, status: "all", emotion: "all" });
+    $("truth-label").textContent = pretty(run.ground_truth);
+    const emotions = [...new Set(run.examples.map((ex) => ex.labels[run.ground_truth]))].sort();
+    $("emotion").replaceChildren(el("option", { value: "all", textContent: "all" }), ...emotions.map((e) => el("option", { value: e, textContent: e })));
+    render();
+  }
+
+  $("run").replaceChildren(...DATA.runs.map((r, i) => el("option", { value: i, textContent: `${r.dataset} / ${r.model}` })));
+  $("run-control").hidden = DATA.runs.length < 2;
+  $("run").addEventListener("change", (e) => selectRun(Number(e.target.value)));
+  $("emotion").addEventListener("change", (e) => { state.emotion = e.target.value; render(); });
+  $("footer").append("Generated by ", el("code", { textContent: "scripts/make_viewer.py" }),
+    ". The same clips again: ", el("code", { textContent: `python scripts/make_viewer.py --seed ${DATA.seed}` }));
+  selectRun(0);
+</script>
+</body>
+</html>
