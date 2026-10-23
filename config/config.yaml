@@ -30,3 +30,9 @@ models:
 
 # Audio to run inference on: a folder (all audio files inside) or a single file.
 audio: data/samples
+
+# Example viewer (scripts/make_viewer.py): random clips the model got right and wrong.
+viewer:
+  correct: 10     # how many correctly predicted clips to show (per dataset and model)
+  wrong: 10       # how many wrongly predicted clips to show
+  seed: null      # a number gives the same selection every time; null picks new clips on each run
