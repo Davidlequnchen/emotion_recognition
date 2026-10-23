@@ -27,7 +27,7 @@ models/*/*
 
 # Data: never commit audio or datasets (size and licences).
 # Download them with scripts/download_data.py (test clips by default, --subset full for all of CREMA-D).
-data/
+data/crema_d
 
 # Outputs
 outputs/
