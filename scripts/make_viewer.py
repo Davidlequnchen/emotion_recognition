@@ -5,7 +5,7 @@ The page lets you play each clip and compare its labels (e.g. the acted emotion 
 vote) with the model's prediction and probabilities. It is a single self-contained file
 (outputs/viewer.html, audio embedded) that opens in any browser.
 
-Input: the per-clip predictions written by an evaluation script, e.g. scripts/evaluate_crema_d.py.
+Input: the per-clip predictions written by an evaluation script, scripts/evaluate.py.
 Every predictions CSV becomes one "run" (one dataset + one model) that you can switch between in
 the page, so new datasets and models appear automatically. A predictions CSV needs:
     audio_path       audio file, relative to the repository root
@@ -93,9 +93,10 @@ def main():
     n_wrong = args.wrong if args.wrong is not None else cfg.get("wrong", 10)
     seed = args.seed if args.seed is not None else cfg.get("seed")
     seed = seed if seed is not None else random.randrange(1_000_000)  # printed, so the page can be rebuilt
-    files = args.predictions or sorted((ROOT / "outputs").glob("*_predictions.csv"))
+    files = args.predictions or sorted(f for f in (ROOT / "outputs").glob("*_predictions.csv")
+                                       if "_first" not in f.stem)  # skip quick tests made with --limit
     if not files:
-        sys.exit("ERROR: no predictions found. Run an evaluation first: python scripts/evaluate_crema_d.py")
+        sys.exit("ERROR: no predictions found. Run an evaluation first: python scripts/evaluate.py")
 
     print("Building the example viewer")
     print(f"  seed        : {seed} (rebuild the same page with --seed {seed})")

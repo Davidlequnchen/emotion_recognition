@@ -18,10 +18,10 @@ pip install -r requirements-mac.txt        # NVIDIA server: pip install -r requi
 pip install -r requirements.txt
 python scripts/download_model.py           # model files -> models/emotion2vec_plus_large/
 python scripts/inference.py                # NVIDIA server: python scripts/inference.py --mode cuda
-# optional: the whole CREMA-D dataset (606 MB) -> data/crema_d/, the model's accuracy on it -> reports/,
+# optional: download the evaluation datasets -> data/, the model's accuracy on each -> reports/,
 # and a web page with random right and wrong examples -> outputs/viewer.html
-python scripts/download_data.py --subset full
-python scripts/evaluate_crema_d.py
+python scripts/download_data.py --dataset all
+python scripts/evaluate.py
 python scripts/make_viewer.py
 ```
 
@@ -48,7 +48,8 @@ emotion_recognition/
 ├── scripts/
 │   ├── download_model.py       # downloads a model from HuggingFace or ModelScope
 │   ├── download_data.py        # downloads CREMA-D (test clips or full dataset), checks every SHA-256
-│   ├── evaluate_crema_d.py     # runs the model on all of CREMA-D, writes the accuracy report
+│   ├── eval_datasets.py        # one loader per evaluation dataset (labels -> emotion2vec+ classes)
+│   ├── evaluate.py             # runs the model on each dataset, writes the reports and a summary
 │   ├── make_viewer.py          # builds a web page with random right and wrong examples
 │   ├── templates/viewer.html   # the page template used by make_viewer.py
 │   └── inference.py            # step-by-step inference
@@ -360,39 +361,47 @@ What to expect:
   plus a 2 M pre-training decoder that inference never uses. The model card says "~300M"; the released checkpoint
   holds 162 M weights.
 
-## 6. Evaluate on the whole CREMA-D dataset
+## 6. Evaluate on the datasets
 
 ```bash
-python scripts/download_data.py --subset full    # once: all 7,442 clips (606 MB)
-python scripts/evaluate_crema_d.py               # device from config/config.yaml (MPS on the Mac)
-python scripts/evaluate_crema_d.py --limit 300   # quick test on the first 300 clips
+python scripts/evaluate.py                                 # every downloaded dataset
+python scripts/evaluate.py --dataset thai_ser nemo         # one or more of: crema_d mcae_spps thai_ser nemo mess
+python scripts/evaluate.py --dataset nemo --limit 200      # quick test on the first 200 clips
+python scripts/evaluate.py --device cpu                    # on the Mac the CPU is faster here (see below)
 ```
 
-The script runs the model on every clip and compares each prediction with the ground truth: the acted emotion in
-the file name, which every clip has. It writes:
+Each dataset has a loader in `scripts/eval_datasets.py` that reads its labels and maps them to emotion2vec+ classes;
+to evaluate on a new dataset, add a loader there. For each dataset the script writes:
 
-- [`reports/crema_d_emotion2vec_plus_large.md`](reports/crema_d_emotion2vec_plus_large.md): both accuracies (see
-  below), results per emotion, two confusion matrices (as figures in `reports/figures/` and as tables), comparison
-  with human listeners, and caveats.
-- `outputs/crema_d_emotion2vec_plus_large_predictions.csv`: one row per clip (not in git) with the audio path, the
-  acted emotion, the listeners' vote, the model's prediction, whether it is correct under each of the two ways of
-  counting, and all class probabilities. The JSON file next to it describes the columns;
-  [docs/crema_d.md](docs/crema_d.md) explains them in Chinese.
+- `reports/<dataset>_emotion2vec_plus_large.md`: accuracy, results per emotion, confusion matrices (figures in
+  `reports/figures/` and tables), comparison with human listeners where the dataset has their labels, and caveats.
+- `outputs/<dataset>_emotion2vec_plus_large_predictions.csv`: one row per clip (not in git) with the audio path, the
+  labels, the model's prediction, whether it is correct, and all class probabilities. The JSON file next to it
+  describes the columns and holds the metrics; [docs/crema_d.md](docs/crema_d.md) explains the CREMA-D columns in Chinese.
+- [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side.
 
-A prediction is counted as correct in two ways, and both are reported:
+Results:
 
-| Correct when the prediction matches | Accuracy |
-|---|---|
-| the acted emotion (the usual CREMA-D evaluation) | **86.5%** |
-| the acted emotion or the listeners' vote (any emotion of a tied vote) | **89.6%** |
+| Dataset | Language | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote | In EmoBox |
+|---|---|---|---|---|---|---|
+| [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | 7,442 | 6 (16.7%) | **86.5%** | 89.6% | yes |
+| [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | 6,675 | 7 (14.3%) | **61.3%** | 61.3% | no |
+| [THAI-SER](reports/thai_ser_emotion2vec_plus_large.md) | Thai | 22,584 | 4 (25.0%) | **63.2%** | 68.5% | no |
+| [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 4,481 | 6 (16.7%) | **52.0%** | – | no |
+| [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | 4 (25.0%) | **40.8%** | – | no |
 
-For reference, the majority vote of CREMA-D's listeners, judging from the voice alone, matches the acted emotion
-for 45.6% of the clips. CREMA-D was probably part of the model's training data, so treat these numbers as
-optimistic; the report explains why.
+The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many it
+has. *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that publish
+listeners' labels (for MCAE-SPPS the two agree by construction, because only clips that listeners recognised were
+kept). CREMA-D is in EmoBox, which emotion2vec+ was trained from, so its result is optimistic; the other four are a
+more realistic picture. Each report lists its label mapping and exclusions: THAI-SER leaves out its 5,270
+*frustrated* clips (emotion2vec+ has no such class), and MESS scores *calm* as *neutral*.
 
-On the M4 Max the full run takes about 2 to 3 minutes with MPS (about 20 ms per clip). The time per clip falls as the
-run goes on: MPS compiles kernels the first time it sees an input length and reuses them afterwards, so a short
-`--limit 300` run takes about 90 ms per clip.
+Speed on the M4 Max: for these evaluations the CPU is faster than MPS, because nearly every clip has a different
+length and MPS compiles new kernels for every new length (THAI-SER: about 140 ms per clip on the CPU, about 235 ms
+on MPS). MPS is fast only for lengths it has seen before (CREMA-D, run many times: 18 ms per clip). MPS also cannot
+process clips longer than about 20 s; the scripts run those on the CPU automatically. On the CPU the full THAI-SER
+run takes about 50 minutes, nEMO 5 minutes and MESS 12 minutes (its 24,414 Hz audio is slow to resample).
 
 ## 7. Listen to examples in the browser
 
@@ -403,7 +412,7 @@ python scripts/make_viewer.py --seed 42                # the same seed always pi
 ```
 
 The script picks random clips the model got right and wrong and writes one self-contained page,
-`outputs/viewer.html` (audio embedded, about 2 MB for 20 clips; open it in any browser). The page is a table with one
+`outputs/viewer.html` (audio embedded: about 18 MB with 20 clips from each of the five datasets; open it in any browser). The page is a table with one
 row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
 prediction and confidence; a ✓ marks the labels the prediction matches, and each row expands to show every class
 probability. You can switch between the two ways of counting a prediction as correct, and filter by result (all,

@@ -113,9 +113,9 @@ def main():
     # FunASR reads configuration.json, which names the other files: it builds the network from
     # config.yaml, loads the weights from model.pt, reads the class labels from tokens.txt and
     # moves the network to `device`.
-    model = AutoModel(
+    load = lambda dev: AutoModel(
         model=str(model_dir),
-        device=str(device),
+        device=str(dev),
         ncpu=torch.get_num_threads(),  # keep PyTorch's CPU thread count (FunASR would lower it to 4)
         # The pre-training decoder is not in model.pt and is never used for inference:
         # skip it instead of printing a "miss key" warning for each of its weights.
@@ -123,6 +123,7 @@ def main():
         disable_update=True,           # no online version check
         disable_pbar=True,
     )
+    model = load(device)
     net = model.model  # the underlying torch.nn.Module
     print(f"  loaded in   : {time.perf_counter() - t0:.1f} s")
     print(f"  parameters  : {sum(p.numel() for p in net.parameters()) / 1e6:.1f} M, on {next(net.parameters()).device}")
@@ -152,13 +153,26 @@ def main():
     # Step 6: Inference - one forward pass per file, softmax over the emotion classes
     # ------------------------------------------------------------------
     step("Step 6/6 | Run inference")
-    model.generate(str(files[0]), granularity="utterance", extract_embedding=False)
+    cpu_model = None
+
+    def predict(path):
+        """MPS cannot run the model's first convolution on clips longer than about 20 s: run those on the CPU."""
+        nonlocal cpu_model
+        try:
+            return model.generate(str(path), granularity="utterance", extract_embedding=False)[0]
+        except NotImplementedError:
+            print(f"  ({path.name} is longer than MPS supports: running it on the CPU)")
+            if cpu_model is None:
+                cpu_model = load("cpu")
+            return cpu_model.generate(str(path), granularity="utterance", extract_embedding=False)[0]
+
+    predict(files[0])
     print("  warm-up done (the first forward pass initialises the device kernels)\n")
 
     times = []
     for i, f in enumerate(files, 1):
         t0 = time.perf_counter()
-        res = model.generate(str(f), granularity="utterance", extract_embedding=False)[0]
+        res = predict(f)
         times.append(time.perf_counter() - t0)
         # Labels look like "生气/angry": keep the English part, sort by probability.
         ranked = sorted(((lab.split("/")[-1], p) for lab, p in zip(res["labels"], res["scores"])),

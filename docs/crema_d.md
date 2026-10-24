@@ -155,7 +155,7 @@ CREMA-D 的每个片段都有两类标签：
 
 ## 7. 我们生成的文件
 
-运行 `python scripts/evaluate_crema_d.py` 后会生成：
+运行 `python scripts/evaluate.py --dataset crema_d` 后会生成：
 
 | 文件 | 内容 |
 |---|---|
