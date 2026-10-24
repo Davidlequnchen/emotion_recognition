@@ -23,6 +23,7 @@
     }
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
   main { max-width: 1160px; margin: 0 auto; padding: 36px 16px 56px; }
   h1 { font-size: 24px; line-height: 1.2; margin: 0; }
@@ -181,6 +182,8 @@
     const bar = el("i");
     button.addEventListener("click", () => play(ex.audio, button, bar));
     const prediction = ex.labels.prediction;
+    // The prediction is the most probable of the dataset's emotions; the model's overall top class may differ
+    const top9 = Object.entries(ex.labels).find(([k]) => k !== "prediction" && k.startsWith("prediction"))?.[1];
     const p = ex.probs[prediction];
     const toggle = el("button", { className: "more", type: "button", title: "Show all probabilities" }, icon("chevron"));
     toggle.setAttribute("aria-expanded", "false");
@@ -196,7 +199,8 @@
         : el("span", { className: "meta", textContent: "–" }))),
       el("td", {}, el("span", { className: "chip pred", textContent: prediction })),
       el("td", {}, p === undefined ? null : el("div", { className: "conf" },
-        el("div", { className: "bar" }, el("i", { style: `width: ${100 * p}%` })), el("span", { className: "num", textContent: percent(p) }))),
+        el("div", { className: "bar" }, el("i", { style: `width: ${100 * p}%` })), el("span", { className: "num", textContent: percent(p) })),
+        top9 && top9 !== prediction ? el("div", { className: "meta", textContent: `top of all classes: ${top9}` }) : null),
       el("td", {}, Object.keys(ex.probs).length ? toggle : null));
 
     // Hidden detail row with every probability (and any secondary prediction that differs)
