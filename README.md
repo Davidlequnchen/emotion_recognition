@@ -436,6 +436,24 @@ four are a more realistic picture. ESD was evaluated on a sample (`evaluation.li
 clips, taken at even intervals, which gives 35 clips for every speaker and emotion. Set `limit: null` to evaluate
 every clip.
 
+The datasets have different emotions, and some emotions are much harder than others. On the four emotions that every
+dataset has (angry, happy, neutral and sad; chance 25%), counting only clips of these emotions and taking the most
+probable of the four as the prediction (also in the [summary](reports/emotion2vec_plus_large_summary.md)):
+
+| Dataset | Language | Clips | Accuracy, 4 shared emotions | In EmoBox |
+|---|---|---|---|---|
+| [ESD](reports/esd_emotion2vec_plus_large_sample3500.md) | English, Mandarin | 2,800 (sample) | **97.9%** | yes |
+| [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | 4,900 | **93.2%** | yes |
+| [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | 4,297 | **87.8%** | no |
+| [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 3,076 | **67.8%** | no |
+| [THAI-SER](reports/thai_ser_emotion2vec_plus_large.md) | Thai | 22,584 | **63.2%** | no |
+| [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | **40.8%** | no |
+
+The two EmoBox datasets still come first, but MCAE-SPPS, which is not in EmoBox, is close behind: its lower overall
+result comes from its three other emotions (recall: fearful 8.5%, disgusted 8.5%, surprised 28.6%). nEMO, THAI-SER
+and MESS differ from the EmoBox datasets in more than training data: language (Polish, Thai), recording conditions
+(at home, over Zoom) and, for MESS, *calm* scored as *neutral*.
+
 Speed on the M4 Max: for these evaluations the CPU is faster than MPS, because nearly every clip has a different
 length and MPS compiles new kernels for every new length (THAI-SER: about 140 ms per clip on the CPU, about 235 ms
 on MPS). MPS is fast only for lengths it has seen before (CREMA-D, run many times: 18 ms per clip). MPS also cannot
