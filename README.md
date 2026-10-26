@@ -393,6 +393,31 @@ to evaluate on a new dataset, add a loader there. For each dataset the script wr
   describes the columns and holds the metrics; [docs/crema_d.md](docs/crema_d.md) explains the CREMA-D columns in Chinese.
 - [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side.
 
+The datasets name their emotions differently, and emotion2vec+ has nine output classes: angry, disgusted, fearful,
+happy, neutral, other, sad, surprised and `<unk>`. Each loader maps its dataset's labels to these classes:
+
+| Dataset | Emotions in the dataset (where the label is) | Mapped to emotion2vec+ | Model classes not used |
+|---|---|---|---|
+| CREMA-D | 6, code in the file name: `ANG` `DIS` `FEA` `HAP` `NEU` `SAD` | ANG → angry, DIS → disgusted, FEA → fearful, HAP → happy, NEU → neutral, SAD → sad | surprised, other, `<unk>` |
+| MCAE-SPPS | 7, second digit of the file name: 1 Neutral, 2 Happiness, 3 Anger, 4 Fear, 5 Sadness, 6 Disgust, 7 Surprise | Neutral → neutral, Happiness → happy, Anger → angry, Fear → fearful, Sadness → sad, Disgust → disgusted, Surprise → surprised | other, `<unk>` |
+| THAI-SER | 5, column `assigned_emo`: Neutral, Angry, Happy, Sad, Frustrated | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad; **Frustrated has no match, so its 5,270 clips are left out** | disgusted, fearful, surprised, other, `<unk>` |
+| nEMO | 6, column `emotion`: neutral, anger, fear, happiness, sadness, surprised | neutral → neutral, anger → angry, fear → fearful, happiness → happy, sadness → sad, surprised → surprised | disgusted, other, `<unk>` |
+| MESS | 4, first letter of the file name: `A`ngry, `C`alm, `H`appy, `S`ad | A → angry, **C (calm) → neutral, the closest class**, H → happy, S → sad | disgusted, fearful, surprised, other, `<unk>` |
+| ESD | 5, folder name: Neutral, Angry, Happy, Sad, Surprise (the Mandarin transcripts say 中立, 生气, 快乐, 伤心, 惊喜) | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad, Surprise → surprised | disgusted, fearful, other, `<unk>` |
+
+How the nine probabilities become a prediction:
+
+- **Main result** (*accuracy: acted emotion*): the prediction is the most probable of the dataset's own emotions; the
+  other classes, including `other` and `<unk>`, are ignored. On THAI-SER, for example, only angry, happy, neutral
+  and sad compete, so chance level is 25%.
+- **All 9 classes** (in each report): the prediction is the most probable of all nine classes, so choosing a class
+  that the dataset does not have (for example surprised on CREMA-D) counts as wrong.
+- **Listeners' votes** (CREMA-D, MCAE-SPPS, THAI-SER) use the same mapping; for a tied vote, any of the tied emotions
+  counts.
+- Three labels do not match exactly: MESS's *calm* is scored as *neutral*; THAI-SER's *frustrated* clips are left
+  out, and a listeners' vote of *frustrated* can never match; ESD's Mandarin label for Surprise, 惊喜, means a
+  pleasant surprise, while the model's class is called 吃惊 (surprised).
+
 Results:
 
 | Dataset | Language | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote | In EmoBox |
@@ -403,12 +428,10 @@ Results:
 | [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 4,481 | 6 (16.7%) | **52.0%** | – | no |
 | [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | 4 (25.0%) | **40.8%** | – | no |
 
-The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many it
-has. *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that publish
+*Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that publish
 listeners' labels (for MCAE-SPPS the two agree by construction, because only clips that listeners recognised were
 kept). CREMA-D is in EmoBox, which emotion2vec+ was trained from, so its result is optimistic; the other four are a
-more realistic picture. Each report lists its label mapping and exclusions: THAI-SER leaves out its 5,270
-*frustrated* clips (emotion2vec+ has no such class), and MESS scores *calm* as *neutral*.
+more realistic picture.
 
 Speed on the M4 Max: for these evaluations the CPU is faster than MPS, because nearly every clip has a different
 length and MPS compiles new kernels for every new length (THAI-SER: about 140 ms per clip on the CPU, about 235 ms
