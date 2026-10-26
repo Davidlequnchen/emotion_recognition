@@ -121,16 +121,26 @@ def plot_confusion(cm, names, title, subtitle, ylabel, path):
     plt.close(fig)
 
 
-def stitch(paths, path, columns=3):
-    """Put figures side by side in a grid, row by row; each sits in the centre of a cell as large as the largest."""
-    from PIL import Image
-    images = [Image.open(p).convert("RGBA") for p in paths]
+def stitch(paths, path, columns=3, gap=32, pad=24, border=6):
+    """Put figures in a grid, row by row, each in a frame with a thick border. The empty margin of each figure is cut
+    off first, so `gap` (between frames) and `pad` (inside a frame) set the spacing. All frames have the same size;
+    each figure is centred across its frame and aligned to its top, so the titles of a row line up."""
+    from PIL import Image, ImageChops, ImageDraw
+    images = []
+    for p in paths:
+        im = Image.open(p).convert("RGB")
+        images.append(im.crop(ImageChops.difference(im, Image.new("RGB", im.size, SURFACE)).getbbox()))
     columns = min(columns, len(images))
-    w, h = max(im.width for im in images), max(im.height for im in images)
-    grid = Image.new("RGBA", (columns * w, -(-len(images) // columns) * h), SURFACE)
+    rows = -(-len(images) // columns)
+    w = max(im.width for im in images) + 2 * (pad + border)
+    h = max(im.height for im in images) + 2 * (pad + border)
+    grid = Image.new("RGB", (columns * w + (columns + 1) * gap, rows * h + (rows + 1) * gap), SURFACE)
+    draw = ImageDraw.Draw(grid)
     for k, im in enumerate(images):
-        grid.paste(im, ((k % columns) * w + (w - im.width) // 2, (k // columns) * h + (h - im.height) // 2), im)
-    grid.convert("RGB").save(path, optimize=True)
+        x, y = gap + (k % columns) * (w + gap), gap + (k // columns) * (h + gap)
+        draw.rounded_rectangle((x, y, x + w - 1, y + h - 1), radius=18, outline=INK_2, width=border)
+        grid.paste(im, (x + (w - im.width) // 2, y + border + pad))
+    grid.save(path, optimize=True)
 
 
 class Predictor:
@@ -406,10 +416,11 @@ def shared_scores(run, shared):
     return len(rows), hit.mean(), np.mean([hit[truth == e].mean() for e in shared if (truth == e).any()])
 
 
-def write_summary(model_name, acted_or_listener=()):
+def write_summary(model_name, figure_order=(), acted_or_listener=()):
     """reports/<model>_summary.md: one row per evaluated dataset, read from the JSON files in outputs/. A dataset with
-    a full run and a sample (evaluation.limit) is shown with the run that has the most clips. The datasets in
-    acted_or_listener show their "acted emotion or listeners' vote" confusion matrix in the summary figure."""
+    a full run and a sample (evaluation.limit) is shown with the run that has the most clips. The summary figure shows
+    the datasets in figure_order first (the others follow in table order); those in acted_or_listener show their
+    "acted emotion or listeners' vote" confusion matrix."""
     order = list(LOADERS)
     out = ROOT / "outputs"
     best = {}
@@ -448,9 +459,11 @@ def write_summary(model_name, acted_or_listener=()):
     ]
     # Every dataset's confusion matrix (the figures of the reports) stitched into one figure
     figures = ROOT / "reports" / "figures"
-    lenient = [r for r in runs if r["key"] in acted_or_listener
+    rank = {key: k for k, key in enumerate(figure_order)}
+    shown = sorted(runs, key=lambda r: rank.get(r["key"], len(rank)))
+    lenient = [r for r in shown if r["key"] in acted_or_listener
                and (figures / f"{r['stem']}_confusion_acted_or_listener.png").exists()]
-    panels = [figures / f"{r['stem']}_confusion{'_acted_or_listener' if r in lenient else ''}.png" for r in runs]
+    panels = [figures / f"{r['stem']}_confusion{'_acted_or_listener' if r in lenient else ''}.png" for r in shown]
     panels = [p for p in panels if p.exists()]
     if panels:
         grid = figures / f"{model_name}_summary_confusion.png"
@@ -460,11 +473,12 @@ def write_summary(model_name, acted_or_listener=()):
             "",
             f"![Confusion matrices of {model_name} on every dataset]({grid.relative_to(ROOT / 'reports').as_posix()})",
             "",
-            "One matrix per dataset, in the order of the table above, from each dataset's report. Rows: acted emotion; "
-            "columns: predicted emotion; each row adds up to 100%."
+            f"One matrix per dataset, from each dataset's report: {', '.join(r['dataset'] for r in shown)} (order: "
+            "`evaluation.summary_figure` in config/config.yaml). Rows: acted emotion; columns: predicted emotion; each "
+            "row adds up to 100%."
             + (f" {', '.join(r['dataset'] for r in lenient)}: the matrix where a prediction also counts as correct when "
-               "it matches the listeners' vote, so a clip whose prediction matched that vote sits in the row of that vote "
-               "(`evaluation.summary_acted_or_listener` in config/config.yaml)." if lenient else ""),
+               "it matches the listeners' vote, so a clip whose prediction matched that vote sits in the row of that "
+               "vote." if lenient else ""),
             "",
         ]
     # The same comparison on the emotions that every dataset has, so that the choice of emotions does not matter
@@ -564,7 +578,8 @@ def main():
     # Steps 4-6 for every dataset, then a summary of all evaluated datasets
     for key in keys:
         evaluate(LOADERS[key](), predict, labels, model_name, device, limit, {"funasr": funasr.__version__})
-    write_summary(model_name, settings["summary_acted_or_listener"])
+    figure = settings["summary_figure"]
+    write_summary(model_name, figure["order"], figure["acted_or_listener"])
 
 
 if __name__ == "__main__":
