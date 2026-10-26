@@ -15,6 +15,9 @@ DATA = ROOT / "data"
 NOT_IN_EMOBOX = ("**Not in EmoBox**, so emotion2vec+ seed was not fine-tuned on it. emotion2vec+ large was later "
                  "trained on 40k hours of pseudo-labelled data whose sources are not published, so earlier exposure "
                  "cannot be ruled out completely.")
+IN_EMOBOX = ("**In EmoBox.** EmoBox data fine-tuned emotion2vec+ seed, the first model in the chain that led to "
+             "emotion2vec+ large, so the model has probably seen these clips or labels derived from them. "
+             "Treat these numbers as optimistic.")
 
 
 @dataclass
@@ -62,9 +65,7 @@ def crema_d():
                      "`NEU`, `SAD`)",
         listener="the majority vote of crowd-sourced listeners who heard the voice only (`summaryTable.csv`, "
                  "`VoiceVote`); a tie counts every tied emotion",
-        caveats=["**In EmoBox.** EmoBox data fine-tuned emotion2vec+ seed, the first model in the chain that led to "
-                 "emotion2vec+ large, so the model has probably seen these clips or labels derived from them. "
-                 "Treat these numbers as optimistic.",
+        caveats=[IN_EMOBOX,
                  "One clip, `1076_MTI_SAD_XX.wav`, contains no audio (a known CREMA-D issue); it is kept."],
         in_emobox=True)
 
@@ -171,4 +172,21 @@ def mess():
                  "from the author on request. Audio is sampled at 24,414 Hz, resampled to 16 kHz."])
 
 
-LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess}
+def esd():
+    root = DATA / "esd" / "audio" / "Emotion Speech Dataset"  # <speaker>/<Emotion>/<speaker>_<number>.wav
+    folders = {"Neutral": "neutral", "Angry": "angry", "Happy": "happy", "Sad": "sad", "Surprise": "surprised"}
+    clips = [{"audio": f, "acted": folders[f.parent.name], "listener": ""} for f in sorted(root.glob("*/*/*.wav"))]
+    return EvalSet(
+        "esd", "ESD", "English, Mandarin", list(folders.values()), clips,
+        ground_truth="the emotion each speaker was asked to portray, from the folder name (`Neutral`, `Angry`, "
+                     "`Happy`, `Sad`, `Surprise`; the transcripts give the same labels)",
+        notes=["Label mapping: Neutral = neutral, Angry = angry, Happy = happy, Sad = sad, Surprise = surprised.",
+               "Speakers 0001–0010 speak Mandarin and 0011–0020 English. Each says the same 350 sentences in all five "
+               "emotions (for about 3.5% of them the wording differs slightly between emotions)."],
+        caveats=[IN_EMOBOX,
+                 "No listeners' labels are published, so there is one way of counting a prediction as correct.",
+                 "Audio: 16 kHz WAV, the model's own sampling rate."],
+        in_emobox=True)
+
+
+LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd}
