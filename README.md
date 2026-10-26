@@ -39,7 +39,8 @@ emotion_recognition/
 │   └── mcae_spps/ thai_ser/ nemo/ mess/ esd/   # more datasets like CREMA-D (optional downloads, not in git)
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
-│   └── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
+│   ├── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
+│   └── datasets_survey_en.md   # the same survey in English
 ├── models/
 │   ├── README.md               # what each model file is, how to add models
 │   └── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
@@ -228,8 +229,8 @@ Emotional Multimodal Actors Dataset", *IEEE Transactions on Affective Computing*
 ### 3.4 More datasets like CREMA-D
 
 The same script downloads five more datasets that also record the same sentences in different emotions.
-They were chosen from the survey in [docs/datasets_survey.md](docs/datasets_survey.md), which has links, sizes and
-caveats for many more.
+They were chosen from the survey in [docs/datasets_survey_en.md](docs/datasets_survey_en.md) (Chinese:
+[docs/datasets_survey.md](docs/datasets_survey.md)), which has links, sizes and caveats for many more.
 
 ```bash
 python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd; all = everything)
@@ -381,6 +382,8 @@ evaluation:
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here (see below)
     cuda: cuda:0
+  summary_acted_or_listener: [crema_d]  # in the summary figure, these datasets show the confusion matrix where the
+                                        # listeners' vote also counts as correct; the others show the acted emotion
 ```
 
 Each dataset has a loader in `scripts/eval_datasets.py` that reads its labels and maps them to emotion2vec+ classes;
@@ -391,7 +394,9 @@ to evaluate on a new dataset, add a loader there. For each dataset the script wr
 - `outputs/<dataset>_emotion2vec_plus_large_predictions.csv`: one row per clip (not in git) with the audio path, the
   labels, the model's prediction, whether it is correct, and all class probabilities. The JSON file next to it
   describes the columns and holds the metrics; [docs/crema_d.md](docs/crema_d.md) explains the CREMA-D columns in Chinese.
-- [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side.
+- [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side,
+  every dataset's confusion matrix in one figure (`reports/figures/emotion2vec_plus_large_summary_confusion.png`), and
+  a comparison on the emotions that every dataset has.
 
 The datasets name their emotions differently, and emotion2vec+ has nine output classes: angry, disgusted, fearful,
 happy, neutral, other, sad, surprised and `<unk>`. Each loader maps its dataset's labels to these classes:
