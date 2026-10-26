@@ -50,7 +50,7 @@ inference:
 evaluation:
   datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
                     # (crema_d | mcae_spps | thai_ser | nemo | mess | esd)
-  limit: null       # quick test: only the first N clips of each dataset; null = every clip
+  limit: null       # only N clips of each dataset, taken at even intervals (quick test or sample); null = every clip
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here: MPS compiles new kernels for every new clip length
     cuda: cuda:0
