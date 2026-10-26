@@ -1,29 +1,24 @@
-"""Download a model from the registry in config/config.yaml into models/<name>/.
+"""Download the active model of config/config.yaml into models/<name>/.
 
 Usage:
-    python scripts/download_model.py              # active model, from HuggingFace
-    python scripts/download_model.py --hub ms     # from ModelScope (faster in mainland China)
+    python scripts/download_model.py
+Settings are in config/config.yaml: `model` names the model to download, `download.hub` where to get it
+(hf = HuggingFace, ms = ModelScope, faster in mainland China).
 """
-import argparse
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / "config" / "config.yaml"
 
-parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("--config", default=ROOT / "config" / "config.yaml")
-parser.add_argument("--model", help="model key in the config (default: the active `model`)")
-parser.add_argument("--hub", choices=["hf", "ms"], default="hf", help="hf = HuggingFace, ms = ModelScope")
-args = parser.parse_args()
-
-cfg = yaml.safe_load(Path(args.config).read_text())
-name = args.model or cfg["model"]
+cfg = yaml.safe_load(CONFIG.read_text())
+name, hub = cfg["model"], cfg["download"]["hub"]
 entry = cfg["models"][name]
 target = ROOT / entry["dir"]
-print(f"Downloading '{name}' from {'HuggingFace' if args.hub == 'hf' else 'ModelScope'} -> {target}")
+print(f"Downloading '{name}' from {'HuggingFace' if hub == 'hf' else 'ModelScope'} -> {target}")
 
-if args.hub == "hf":
+if hub == "hf":
     from huggingface_hub import snapshot_download
     snapshot_download(repo_id=entry["hf_repo"], local_dir=target)
 else:

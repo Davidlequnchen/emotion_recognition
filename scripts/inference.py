@@ -5,12 +5,10 @@ Every step prints what it does, so you can check that Python, PyTorch, the
 device (Apple GPU / NVIDIA GPU / CPU) and the model are all in order.
 
 Usage:
-    python scripts/inference.py                    # settings from config/config.yaml
-    python scripts/inference.py --mode cuda        # override the hardware mode (mac | cuda)
-    python scripts/inference.py --device cpu       # override the device (mps | cpu | cuda:0 ...)
-    python scripts/inference.py --audio clip.wav   # an audio file or a folder
+    python scripts/inference.py
+Settings are in config/config.yaml: `mode` and `devices` choose the hardware, `inference.audio` the
+audio file or folder.
 """
-import argparse
 import logging
 import platform
 import sys
@@ -22,6 +20,7 @@ import torch
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]  # repository root; paths in the config are relative to it
+CONFIG = ROOT / "config" / "config.yaml"
 AUDIO_EXTS = {".wav", ".flac", ".mp3", ".ogg"}
 MODEL_FILES = ["model.pt", "config.yaml", "configuration.json", "tokens.txt"]
 
@@ -31,25 +30,19 @@ def step(title):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--config", default=ROOT / "config" / "config.yaml", help="project config file")
-    parser.add_argument("--mode", choices=["mac", "cuda"], help="override `mode` from the config")
-    parser.add_argument("--device", help="override the device, e.g. mps, cpu, cuda:1")
-    parser.add_argument("--audio", help="audio file or folder (overrides `audio` from the config)")
-    args = parser.parse_args()
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order with warnings, also when redirected to a log
 
     # ------------------------------------------------------------------
     # Step 1: Read the project configuration (config/config.yaml)
     # ------------------------------------------------------------------
     step("Step 1/6 | Load configuration")
-    cfg = yaml.safe_load(Path(args.config).read_text())
-    mode = args.mode or cfg["mode"]
-    device_name = args.device or cfg["devices"][mode]
+    cfg = yaml.safe_load(CONFIG.read_text())
+    mode = cfg["mode"]
+    device_name = cfg["devices"][mode]
     model_name = cfg["model"]
     model_dir = ROOT / cfg["models"][model_name]["dir"]
-    audio_path = Path(args.audio) if args.audio else ROOT / cfg["audio"]
-    print(f"  config      : {args.config}")
+    audio_path = ROOT / cfg["inference"]["audio"]  # an absolute path in the config is kept as it is
+    print(f"  config      : {CONFIG}")
     print(f"  mode        : {mode}")
     print(f"  device      : {device_name}")
     print(f"  model       : {model_name} ({model_dir})")
