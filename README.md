@@ -382,8 +382,10 @@ evaluation:
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here (see below)
     cuda: cuda:0
-  summary_acted_or_listener: [crema_d]  # in the summary figure, these datasets show the confusion matrix where the
-                                        # listeners' vote also counts as correct; the others show the acted emotion
+  summary_figure:   # every dataset's confusion matrix in one figure, in the summary report
+    order: [crema_d, esd, thai_ser, mcae_spps, nemo, mess]  # panels row by row; datasets not listed come last
+    acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
+                                  # the others show the acted emotion
 ```
 
 Each dataset has a loader in `scripts/eval_datasets.py` that reads its labels and maps them to emotion2vec+ classes;

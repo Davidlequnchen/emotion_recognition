@@ -54,8 +54,10 @@ evaluation:
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here: MPS compiles new kernels for every new clip length
     cuda: cuda:0
-  summary_acted_or_listener: [crema_d]  # in the summary figure, these datasets show the confusion matrix where the
-                                        # listeners' vote also counts as correct; the others show the acted emotion
+  summary_figure:   # every dataset's confusion matrix in one figure, in the summary report
+    order: [crema_d, esd, thai_ser, mcae_spps, nemo, mess]  # panels row by row; datasets not listed come last
+    acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
+                                  # the others show the acted emotion
 
 # ---------------------------------------------------------------------
 # scripts/make_viewer.py: a web page with random clips the model got right and wrong
