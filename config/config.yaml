@@ -1,6 +1,7 @@
 # =====================================================================
-# Project configuration
-# Switch hardware by changing `mode` below (or pass --mode on the CLI).
+# Project configuration. Every script reads its settings from this file
+# (there are no command-line options): edit a value, then run
+# `python scripts/<name>.py`.
 # =====================================================================
 
 # Hardware mode
@@ -8,7 +9,7 @@
 #   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
 mode: mac
 
-# Device used by each mode. Set it to "cpu" to force CPU inference.
+# Device used by each mode to run the model. Set it to "cpu" to force the CPU.
 devices:
   mac: mps        # mps | cpu
   cuda: cuda:0    # cuda:<gpu index> | cpu
@@ -28,11 +29,39 @@ models:
   #   hf_repo: emotion2vec/emotion2vec_plus_base
   #   ms_repo: iic/emotion2vec_plus_base
 
-# Audio to run inference on: a folder (all audio files inside) or a single file.
-audio: data/samples
+# ---------------------------------------------------------------------
+# scripts/download_model.py and scripts/download_data.py
+# ---------------------------------------------------------------------
+download:
+  hub: hf           # where download_model.py gets the active model: hf (Hugging Face) | ms (ModelScope, faster in mainland China)
+  dataset: crema_d  # what download_data.py gets: crema_d | mcae_spps | thai_ser | nemo | mess | esd | all
+  crema_d: samples  # CREMA-D only: samples (the 6 test clips) | full (all 7,442 clips and label files)
+  workers: 8        # parallel downloads
 
-# Example viewer (scripts/make_viewer.py): random clips the model got right and wrong.
+# ---------------------------------------------------------------------
+# scripts/inference.py
+# ---------------------------------------------------------------------
+inference:
+  audio: data/samples   # a folder (every audio file in it) or a single file
+
+# ---------------------------------------------------------------------
+# scripts/evaluate.py
+# ---------------------------------------------------------------------
+evaluation:
+  datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
+                    # (crema_d | mcae_spps | thai_ser | nemo | mess)
+  limit: null       # quick test: only the first N clips of each dataset; null = every clip
+  devices:          # device per mode for evaluation
+    mac: cpu        # on the Mac the CPU is faster than MPS here: MPS compiles new kernels for every new clip length
+    cuda: cuda:0
+
+# ---------------------------------------------------------------------
+# scripts/make_viewer.py: a web page with random clips the model got right and wrong
+# ---------------------------------------------------------------------
 viewer:
-  correct: 10     # how many correctly predicted clips to show (per dataset and model)
-  wrong: 10       # how many wrongly predicted clips to show
-  seed: null      # a number gives the same selection every time; null picks new clips on each run
+  predictions: all  # all = every outputs/*_predictions.csv, or a list of such files
+  correct: 10       # how many correctly predicted clips to show (per dataset and model)
+  wrong: 10         # how many wrongly predicted clips to show
+  seed: null        # a number gives the same selection every time; null picks new clips on each run
+  link_audio: false # true = link to the audio files instead of embedding them (smaller page, works only in this repo)
+  out: outputs/viewer.html

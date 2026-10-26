@@ -10,12 +10,9 @@ Runs the model on every clip of a dataset, compares each prediction with the dat
 The datasets are defined in scripts/eval_datasets.py; download them first with scripts/download_data.py.
 
 Usage:
-    python scripts/evaluate.py                             # every downloaded dataset
-    python scripts/evaluate.py --dataset crema_d           # one dataset: crema_d, mcae_spps, thai_ser, nemo, mess
-    python scripts/evaluate.py --dataset nemo --limit 200  # quick test on the first 200 clips
-    python scripts/evaluate.py --device cpu                # override the device from config/config.yaml
+    python scripts/evaluate.py
+Settings (which datasets, quick-test limit, device) are in the `evaluation` section of config/config.yaml.
 """
-import argparse
 import collections
 import csv
 import json
@@ -34,6 +31,7 @@ import yaml
 from eval_datasets import LOADERS
 
 ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / "config" / "config.yaml"
 # Figure colours: a one-hue blue ramp (light = small share, dark = large share) and neutral inks
 BLUES = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
 SURFACE, INK, INK_2 = "#fcfcfb", "#0b0b0b", "#52514e"
@@ -405,34 +403,37 @@ def write_summary(model_name):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--dataset", nargs="+", choices=[*LOADERS, "all"], default=["all"],
-                        help="one or more datasets to evaluate (default: all downloaded datasets)")
-    parser.add_argument("--config", default=ROOT / "config" / "config.yaml", help="project config file")
-    parser.add_argument("--mode", choices=["mac", "cuda"], help="override `mode` from the config")
-    parser.add_argument("--device", help="override the device, e.g. mps, cpu, cuda:1")
-    parser.add_argument("--limit", type=int, help="evaluate only the first N clips of each dataset (quick test)")
-    args = parser.parse_args()
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the project configuration (config/config.yaml)
+    # Step 1: Read the project configuration (config/config.yaml, section `evaluation`)
     # ------------------------------------------------------------------
     step("Step 1/6 | Load configuration")
-    cfg = yaml.safe_load(Path(args.config).read_text())
-    mode = args.mode or cfg["mode"]
-    device = torch.device(args.device or cfg["devices"][mode])
+    cfg = yaml.safe_load(CONFIG.read_text())
+    settings = cfg["evaluation"]
+    mode = cfg["mode"]
+    device = torch.device(settings["devices"][mode])
+    limit = settings["limit"]
     model_name = cfg["model"]
     model_dir = ROOT / cfg["models"][model_name]["dir"]
-    keys = [k for k in LOADERS if (ROOT / "data" / k).is_dir()] if "all" in args.dataset else args.dataset
-    missing = [k for k in keys if not (ROOT / "data" / k).is_dir()]
+    wanted = settings["datasets"]
+    if wanted == "all":
+        keys = [k for k in LOADERS if (ROOT / "data" / k).is_dir()]
+    else:
+        keys = [wanted] if isinstance(wanted, str) else list(wanted)
+    unknown = [k for k in keys if k not in LOADERS]
+    missing = [k for k in keys if k in LOADERS and not (ROOT / "data" / k).is_dir()]
+    if unknown:
+        sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/config.yaml; use: {', '.join(LOADERS)} or all")
     if not keys or missing:
-        sys.exit(f"ERROR: not downloaded: {', '.join(missing) or 'any dataset'}. "
-                 "Run: python scripts/download_data.py --dataset <name>")
+        sys.exit(f"ERROR: not downloaded: {', '.join(missing) or 'any dataset'}. Download it with "
+                 "scripts/download_data.py (set `download.dataset` in config/config.yaml).")
+    print(f"  config      : {CONFIG}")
     print(f"  mode        : {mode}")
     print(f"  device      : {device}")
     print(f"  model       : {model_name} ({model_dir})")
     print(f"  datasets    : {', '.join(keys)}")
+    print(f"  limit       : {f'first {limit} clips of each dataset (quick test)' if limit else 'every clip'}")
 
     # ------------------------------------------------------------------
     # Step 2: Check the software stack and the device
@@ -471,8 +472,8 @@ def main():
 
     # Steps 4-6 for every dataset, then a summary of all evaluated datasets
     for key in keys:
-        evaluate(LOADERS[key](), predict, labels, model_name, device, args.limit, {"funasr": funasr.__version__})
-    if not args.limit:
+        evaluate(LOADERS[key](), predict, labels, model_name, device, limit, {"funasr": funasr.__version__})
+    if not limit:
         write_summary(model_name)
 
 

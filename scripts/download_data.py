@@ -1,10 +1,12 @@
 """Download the speech emotion datasets of this project into data/.
 
 Usage:
-    python scripts/download_data.py                     # CREMA-D, the 6 test clips -> data/samples/ (default)
-    python scripts/download_data.py --subset full       # CREMA-D, all 7,442 clips + label files -> data/crema_d/
-    python scripts/download_data.py --dataset nemo      # another dataset -> data/nemo/ (list below)
-    python scripts/download_data.py --dataset all       # all datasets (CREMA-D in full)
+    python scripts/download_data.py
+Settings are in the `download` section of config/config.yaml:
+    dataset: crema_d   with  crema_d: samples   -> the 6 CREMA-D test clips in data/samples/ (default)
+    dataset: crema_d   with  crema_d: full      -> all 7,442 CREMA-D clips and label files in data/crema_d/
+    dataset: nemo                               -> another dataset in data/nemo/ (list below)
+    dataset: all                                -> every dataset (CREMA-D in full)
 
 Datasets: like CREMA-D, each records the same sentences in different emotions (see docs/datasets_survey.md).
     name        language   clips    download   format              licence            host
@@ -13,6 +15,9 @@ Datasets: like CREMA-D, each records the same sentences in different emotions (s
     thai_ser    Thai       27,854   12.7 GB    Parquet (audio in)  CC BY-SA 4.0       Hugging Face airesearch/thai-ser
     nemo        Polish     4,481    0.53 GB    Parquet (audio in)  CC BY-NC-SA 4.0    Hugging Face amu-cai/nEMO
     mess        English    1,800    0.19 GB    zip -> WAV          CC BY 4.0          Zenodo 3813437
+    esd         Eng + Man  35,000   2.45 GB    zip -> WAV          research only (*)  Google Drive (HLTSingapore)
+(*) ESD: before using it, complete its licence form and email it to the authors; see
+    https://github.com/HLTSingapore/Emotional-Speech-Data
 Zips are unpacked into data/<name>/audio/ and kept, so these datasets take about twice their download size.
 Several licences forbid commercial use or sharing modified copies: use the data for research only and
 never commit it (data/ is git-ignored, except the CREMA-D test clips).
@@ -20,7 +25,6 @@ never commit it (data/ is git-ignored, except the CREMA-D test clips).
 Every file is checked against the checksum its host publishes, and files that are already correct are
 skipped, so an interrupted download can simply be re-run.
 """
-import argparse
 import hashlib
 import http.client
 import io
@@ -33,7 +37,10 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / "config" / "config.yaml"
 DATA = ROOT / "data"
 
 # CREMA-D: hosted on GitHub with its audio in Git LFS (served from media.githubusercontent.com)
@@ -52,13 +59,17 @@ SAMPLES = {  # test clips: actor 1001 saying "Don't forget a jacket" with each e
 METADATA = ["README.md", "LICENSE.txt", "VideoDemographics.csv", "SentenceFilenames.csv",
             "processedResults/summaryTable.csv", "processedResults/tabulatedVotes.csv"]
 
-# The other datasets: name -> (host, identifier there, files to skip)
+# The other datasets: where each one is hosted and its identifier there
 DATASETS = {
     # MCAE-SPPS keeps every emotion both as a folder of single files and as a zip; download only the zips
-    "mcae_spps": ("osf", "9jyzc", r"^(Anger|Disgust|Fear|Happiness|Neutral|Sadness|Surprise)/"),
-    "thai_ser": ("huggingface", "airesearch/thai-ser", None),
-    "nemo": ("huggingface", "amu-cai/nEMO", None),
-    "mess": ("zenodo", "3813437", None),
+    "mcae_spps": {"host": "osf", "id": "9jyzc", "skip": r"^(Anger|Disgust|Fear|Happiness|Neutral|Sadness|Surprise)/"},
+    "thai_ser": {"host": "huggingface", "id": "airesearch/thai-ser"},
+    "nemo": {"host": "huggingface", "id": "amu-cai/nEMO"},
+    "mess": {"host": "zenodo", "id": "3813437"},
+    # ESD is one public Google Drive file. Google Drive publishes no checksum: the zip's own CRCs are checked,
+    # and its SHA-256 (taken at the first download, 2026-10-26) catches any later change of the file.
+    "esd": {"host": "gdrive", "id": "1scuFwqh8s7KIYAfZW1Eu6088ZAK2SI-v", "file": "Emotional Speech Dataset (ESD).zip",
+            "sha256": "36e076368d132b46cd97a040430c34f597a3ce65db7d8d4b9b695bcb62cf5122"},
 }
 
 
@@ -106,10 +117,10 @@ def download_all(jobs, workers):
 
 
 def unzip(path, out):
-    """Extract a zip into out/, skipping macOS metadata (__MACOSX, ._*) and files that are already there."""
+    """Extract a zip into out/, skipping macOS metadata (__MACOSX, ._*, .DS_Store) and files that are already there."""
     with zipfile.ZipFile(path) as archive:
         members = [m for m in archive.infolist() if not m.is_dir() and "__MACOSX" not in m.filename
-                   and not Path(m.filename).name.startswith("._")]
+                   and not Path(m.filename).name.startswith(".")]
         for m in members:
             if not ((out / m.filename).exists() and (out / m.filename).stat().st_size == m.file_size):
                 archive.extract(m, out)
@@ -181,14 +192,45 @@ def download_crema_d(subset, workers):
     print(f"Done: {len(jobs)} files, {sum(job[1].stat().st_size for job in jobs) / 1e6:.1f} MB in {out}")
 
 
+def download_gdrive(file_id, dest, checksum):
+    """Download one public Google Drive file (streamed to disk), unless it is already there and correct."""
+    if dest.exists() and (checksum is None or digest(dest, "sha256") == checksum):
+        print(f"  already present: {dest.name}")
+        return
+    url = f"https://drive.usercontent.google.com/download?id={file_id}&export=download&confirm=t"
+    part = dest.with_name(dest.name + ".part")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    with urllib.request.urlopen(url, timeout=300) as response, open(part, "wb") as fh:
+        total, done, shown = int(response.headers.get("Content-Length", 0)), 0, 0
+        while chunk := response.read(1 << 20):
+            fh.write(chunk)
+            done += len(chunk)
+            if total and done / total >= shown + 0.1:  # progress every 10%
+                shown = round(done / total, 1)
+                print(f"  downloaded {done / 1e9:.2f} of {total / 1e9:.2f} GB")
+    with zipfile.ZipFile(part) as archive:  # every member's CRC must match
+        if archive.testzip() is not None:
+            sys.exit(f"ERROR: {dest.name} is damaged. Run the same command again.")
+    sha = digest(part, "sha256")
+    if checksum is not None and sha != checksum:
+        sys.exit(f"ERROR: {dest.name} differs from the file pinned in this script (SHA-256 {sha}).")
+    part.replace(dest)
+    print(f"  verified the zip's CRCs; SHA-256 {sha}")
+
+
 def download_dataset(name, workers):
-    host, ident, skip = DATASETS[name]
+    entry = DATASETS[name]
+    host, ident = entry["host"], entry["id"]
     out = DATA / name
     print(f"Downloading {name} from {host} ({ident}) -> {out}")
     if host == "huggingface":
         download_huggingface(ident, out)
+    elif host == "gdrive":
+        download_gdrive(ident, out / entry["file"], entry["sha256"])
+        unzip(out / entry["file"], out / "audio")
     else:
         files = osf_files(ident) if host == "osf" else zenodo_files(ident)
+        skip = entry.get("skip")
         download_all([(url, out / path, checksum, algo) for path, checksum, algo, url in files
                       if not (skip and re.match(skip, path))], workers)
         for archive in sorted(out.rglob("*.zip")):  # zips are only packaging: unpack the audio into out/audio/
@@ -198,20 +240,18 @@ def download_dataset(name, workers):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--dataset", choices=["crema_d", *DATASETS, "all"], default="crema_d",
-                        help="which dataset to download (default: crema_d)")
-    parser.add_argument("--subset", choices=["samples", "full"], default="samples",
-                        help="CREMA-D only: samples = the 6 test clips (default), full = all 7,442 clips")
-    parser.add_argument("--workers", type=int, default=8, help="parallel downloads (default: 8)")
-    args = parser.parse_args()
     sys.stdout.reconfigure(line_buffering=True)  # show progress immediately, also when redirected to a log
+    settings = yaml.safe_load(CONFIG.read_text())["download"]
+    dataset, workers = settings["dataset"], settings["workers"]
+    if dataset not in ["crema_d", *DATASETS, "all"]:
+        sys.exit(f"ERROR: unknown download.dataset '{dataset}' in config/config.yaml; "
+                 f"use one of: crema_d, {', '.join(DATASETS)}, all")
 
-    for name in (["crema_d", *DATASETS] if args.dataset == "all" else [args.dataset]):
+    for name in (["crema_d", *DATASETS] if dataset == "all" else [dataset]):
         if name == "crema_d":
-            download_crema_d("full" if args.dataset == "all" else args.subset, args.workers)
+            download_crema_d("full" if dataset == "all" else settings["crema_d"], workers)
         else:
-            download_dataset(name, args.workers)
+            download_dataset(name, workers)
 
 
 if __name__ == "__main__":

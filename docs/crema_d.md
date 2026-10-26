@@ -122,7 +122,7 @@ CREMA-D 的每个片段都有两类标签：
 
 ## 5. 其他标签文件
 
-`python scripts/download_data.py --subset full` 会把以下文件和音频一起下载到 `data/crema_d/`：
+把 `config/config.yaml` 里的 `download.crema_d` 设为 `full`，再运行 `python scripts/download_data.py`，会把以下文件和音频一起下载到 `data/crema_d/`：
 
 **`processedResults/tabulatedVotes.csv`**：逐片段、逐呈现方式的投票明细，共 22,326 行（7,442 × 3）。
 第一列（无列名）是编号，首位数字表示呈现方式：`1` 只听声音、`2` 只看脸、`3` 音视频；后面几位是片段序号。
@@ -155,7 +155,7 @@ CREMA-D 的每个片段都有两类标签：
 
 ## 7. 我们生成的文件
 
-运行 `python scripts/evaluate.py --dataset crema_d` 后会生成：
+运行 `python scripts/evaluate.py`（`config/config.yaml` 里的 `evaluation.datasets` 包含 `crema_d`）后会生成：
 
 | 文件 | 内容 |
 |---|---|

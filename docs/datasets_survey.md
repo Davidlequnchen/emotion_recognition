@@ -5,7 +5,7 @@
 
 方法：检索论文、官方项目页、GitHub、HuggingFace、Zenodo、OSF 等，汇总数据集信息。
 大小以十进制 GB 计，来自各平台 API 的文件列表或 HTTP 请求；标"约"的是推算值，标"未公开"的是平台没有给出大小。
-标"未核实"的数字没能从一手资料确认。✅ 表示已下载到本地（见第 5 节）；这四个数据集的条数、时长和采样率是我下载后实测的。
+标"未核实"的数字没能从一手资料确认。✅ 表示已下载到本地（见第 6 节）；这些数据集的条数、时长和采样率是我下载后实测的。
 
 ## 0. 要点
 
@@ -17,11 +17,11 @@
   - emotion2vec 的预训练用了 IEMOCAP、MELD、CMU-MOSEI、MEAD 和 MSP-Podcast。
 - **最好的"干净"候选（都不在 EmoBox 中）**：MCAE-SPPS（普通话，2025/26）、THAI-SER（泰语，规模最大）、MSP-IMPROV 的 target sentences（英语）、nEMO（波兰语，2024）。
 - **英语**：没有找到同时满足"规模大、平行文本、有感知验证、不在 EmoBox"的数据集，只能把 MSP-IMPROV、MESS、Expresso 组合起来用。
-- **支持这个思路的证据**：LISTEN（2025）用 CREMA-D、ESD、TESS、SAVEE、RAVDESS 里文本中性的句子测试音频大模型。
-  只给音频时，准确率只有 16.5–34.9%（Qwen2.5-Omni 34.0%，Gemini 2.5 Pro 34.9%）；只给文本时则有 85–97%。
+- **支持这个思路的证据**：[LISTEN](https://arxiv.org/abs/2510.10444)（2025）用 CREMA-D、ESD、TESS、SAVEE、RAVDESS 里文本中性的句子测试音频大模型。
+  只给音频时，准确率只有 16.5–34.9%（[Qwen2.5-Omni](https://arxiv.org/abs/2503.20215) 34.0%，[Gemini 2.5 Pro](https://arxiv.org/abs/2507.06261) 34.9%）；只给文本时则有 85–97%。
   说明这些模型主要靠"转写成文字"，而不是真正在听声音。
 
-## 1. 排名短名单（都不在 EmoBox 中）
+## 1. 高质量数据集（不在 EmoBox 中）
 
 | # | 数据集（年份，语言） | 说话人 / 条数 / 时长 / **大小** | 情绪类别；强度 | 平行文本设计 | 标签质量 | 音频；模态 | 许可；获取 | 链接 |
 |---|---|---|---|---|---|---|---|---|
@@ -42,9 +42,9 @@
    引用：Li M, Zhou A, Yan H, Li Q, Ma C, Wu C. *Scientific Data*, 2026, doi:10.1038/s41597-026-06976-z；数据 doi:10.17605/OSF.IO/9JYZC。
 2. **THAI-SER**：说话人最多，有众包感知标签和一致率，有两级强度，许可最宽松。
    缺点：脚本部分只有 3 个句子；"沮丧"在 emotion2vec+ 里没有对应类别，建议只用中性、愤怒、开心、悲伤四类。
-   VoxEmo（2026）已经用它对 Qwen2-Audio 和 AF3 做过零样本评测（只评测，没有训练）。引用：arXiv:2507.09618。
+   [VoxEmo](https://arxiv.org/abs/2603.08936)（2026）已经用它对 [Qwen2-Audio](https://arxiv.org/abs/2407.10759) 和 [AF3](https://arxiv.org/abs/2507.08128) 做过零样本评测（只评测，没有训练）。引用：arXiv:2507.09618。
 3. **MSP-IMPROV**：英语中最成熟的"受控文本 + 众包感知标签 + 不在 EmoBox"的数据。
-   缺点：受控文本部分只有约 1.3k 条，需要签协议，而且 OSUM 把它当作测试集用过。引用：Busso et al., IEEE TAC 8(1):119–130, 2017。
+   缺点：受控文本部分只有约 1.3k 条，需要签协议，而且 [OSUM](https://arxiv.org/abs/2501.13306) 把它当作测试集用过。引用：Busso et al., IEEE TAC 8(1):119–130, 2017。
 4. **nEMO**：2024 年的新数据，完全平行，可以直接下载；情绪类别与 CREMA-D 接近（少了厌恶，多了惊讶）。
    缺点：规模小，在家录制；VoxEmo 已用它评测过。引用：Christop, LREC-COLING 2024, pp. 12111–12116。
 5. **HCUDB**：34 名专业演员，11,220 条，同一句话录了多种情绪；HCUDB1 有维度评分，可以做强度分析。
@@ -55,31 +55,33 @@
    引用：Morgan, JSLHR 62(11), 2019。
 8. **MASC**：普通话中唯一"多说话人 + 大规模 + 平行"的数据，可以测试对说话人的泛化。缺点：8 kHz，没有听辨验证，需要付费。
 
-## 2. 次要候选
+## 2. 高质量数据集（在 EmoBox 中）
 
-### (a) 在 EmoBox 中（不能作为 emotion2vec+ 的干净测试集，但可以用于测试音频大模型，或作参照）
+这些数据集在 EmoBox 中，不能作为 emotion2vec+ 的干净测试集，但可以用于测试音频大模型，或作参照。
 
 | 数据集（年份，语言） | 规模 / **大小** | 情绪；强度 | 平行设计 | 标签 | 音频；许可 | 已知被哪些音频大模型用过 | 链接 |
 |---|---|---|---|---|---|---|---|
-| ESD（2021，英语 + 中文） | 20 人 / 35,000 条 / 29.1 h / **2.45 GB**（zip） | 5 类；无强度 | 每人 350 句 × 5 种情绪 | 只有表演标签；论文只用自动情绪识别模型检验（中文 92%，英文 89%），没有人工听辨 | 室内录制，信噪比 > 20 dB，16 kHz；仅限研究，需填表并发邮件申请 | Kimi-Audio SFT（29 h）；OSUM 训练和测试；LISTEN；VoxEmo | [GitHub（许可表 + Google Drive 链接）](https://github.com/HLTSingapore/Emotional-Speech-Data) |
-| MEAD（2020，英语） | 60 人（公开的 Part0 只有 48 人，已确认）/ 31,729 条 / 37.3 h / **音频 3.07 GB**（48 人的 audio.tar）；视频约 0.4 TB | 8 类；3 级强度 | 每种情绪 30 句（3 句通用 + 7 句与该情绪相关 + 20 句一般句），不同情绪用不同的句表；同一情绪的不同强度用相同句子 | 100 人参与的视频评估 | 48 kHz，音视频；按使用条款 | emotion2vec 预训练；VoxEmo | [Google Drive Part0](https://drive.google.com/drive/folders/1GwXP-KpWOxOenOxITTsURJZQ_1pkd4-j)；[百度网盘（提取码 th8e）](https://pan.baidu.com/s/1zYKz19kmQH6vnO2nogPk4Q)；[GitHub](https://github.com/uniBruce/Mead)（官方项目页现已 404） |
-| RAVDESS（2018，英语） | 24 人 / 1,440 条 / 1.5 h / **语音音频 0.208 GB**；全部（含歌唱和视频）25.6 GB | 8 类；2 级强度 | 2 个句子 | 每个文件评 10 次（共 247 人） | 48 kHz，音视频；CC BY-NC-SA | Kimi-Audio SFT；AF1/AF2 零样本评测 | [Zenodo 1188976](https://zenodo.org/records/1188976) |
-| Emozionalmente（意大利语） | 431 人 / 6,902 条 / 6.3 h / **0.559 GB**（v1.1） | 7 类 | 18 个句子 | 829 名听者，每条 5 次评价，人类 UAR 66% | 16 kHz，非专业设备；CC BY 4.0 | VoxEmo | [Zenodo 12616095（v1.1）](https://zenodo.org/records/12616095)；[OpenSLR 161](https://openslr.org/161/) |
-| SUBESCO（2021，孟加拉语） | 20 人 / 7,000 条 / 7.8 h / **1.665 GB** | 7 类 | 10 句 × 5 遍 | 50 名评分者，准确率 71% | CC BY 4.0 | VoxEmo | [Zenodo 4526477](https://zenodo.org/records/4526477) |
-| CaFE（2018，加拿大法语） | 12 人 / 936 条 / **0.187 GB**（48 kHz 版；192 kHz 版 2.03 GB） | 7 类；2 级强度 | 6 个句子 | 未核实 | 192 kHz 和 48 kHz；CC BY-NC-SA | VoxEmo | [Zenodo 1478765](https://zenodo.org/records/1478765) |
+| ESD ✅（2021，英语 + 中文） | 20 人 / 35,000 条 / 29.1 h / **2.45 GB**（zip） | 5 类；无强度 | 每人 350 句 × 5 种情绪 | 只有表演标签；论文只用自动情绪识别模型检验（中文 92%，英文 89%），没有人工听辨 | 室内录制，信噪比 > 20 dB，16 kHz；仅限研究，需填表并发邮件申请 | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT（29 h）；[OSUM](https://arxiv.org/abs/2501.13306) 训练和测试；[LISTEN](https://arxiv.org/abs/2510.10444)；[VoxEmo](https://arxiv.org/abs/2603.08936) | [GitHub（许可表 + Google Drive 链接）](https://github.com/HLTSingapore/Emotional-Speech-Data) |
+| MEAD（2020，英语） | 60 人（公开的 Part0 只有 48 人，已确认）/ 31,729 条 / 37.3 h / **音频 3.07 GB**（48 人的 audio.tar）；视频约 0.4 TB | 8 类；3 级强度 | 每种情绪 30 句（3 句通用 + 7 句与该情绪相关 + 20 句一般句），不同情绪用不同的句表；同一情绪的不同强度用相同句子 | 100 人参与的视频评估 | 48 kHz，音视频；按使用条款 | [emotion2vec](https://arxiv.org/abs/2312.15185) 预训练；[VoxEmo](https://arxiv.org/abs/2603.08936) | [Google Drive Part0](https://drive.google.com/drive/folders/1GwXP-KpWOxOenOxITTsURJZQ_1pkd4-j)；[百度网盘（提取码 th8e）](https://pan.baidu.com/s/1zYKz19kmQH6vnO2nogPk4Q)；[GitHub](https://github.com/uniBruce/Mead)（官方项目页现已 404） |
+| RAVDESS（2018，英语） | 24 人 / 1,440 条 / 1.5 h / **语音音频 0.208 GB**；全部（含歌唱和视频）25.6 GB | 8 类；2 级强度 | 2 个句子 | 每个文件评 10 次（共 247 人） | 48 kHz，音视频；CC BY-NC-SA | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT；[AF1](https://arxiv.org/abs/2402.01831)/[AF2](https://arxiv.org/abs/2503.03983) 零样本评测 | [Zenodo 1188976](https://zenodo.org/records/1188976) |
+| Emozionalmente（意大利语） | 431 人 / 6,902 条 / 6.3 h / **0.559 GB**（v1.1） | 7 类 | 18 个句子 | 829 名听者，每条 5 次评价，人类 UAR 66% | 16 kHz，非专业设备；CC BY 4.0 | [VoxEmo](https://arxiv.org/abs/2603.08936) | [Zenodo 12616095（v1.1）](https://zenodo.org/records/12616095)；[OpenSLR 161](https://openslr.org/161/) |
+| SUBESCO（2021，孟加拉语） | 20 人 / 7,000 条 / 7.8 h / **1.665 GB** | 7 类 | 10 句 × 5 遍 | 50 名评分者，准确率 71% | CC BY 4.0 | [VoxEmo](https://arxiv.org/abs/2603.08936) | [Zenodo 4526477](https://zenodo.org/records/4526477) |
+| CaFE（2018，加拿大法语） | 12 人 / 936 条 / **0.187 GB**（48 kHz 版；192 kHz 版 2.03 GB） | 7 类；2 级强度 | 6 个句子 | 未核实 | 192 kHz 和 48 kHz；CC BY-NC-SA | [VoxEmo](https://arxiv.org/abs/2603.08936) | [Zenodo 1478765](https://zenodo.org/records/1478765) |
 | EmoDB / **EmoDB 2.0**（2025，德语） | 10 人 / 535 条，2.0 版新增 281 条"模糊"样本（共 817 条）/ **0.041 GB**（原版）；2.0 版约 0.11 GB | 7 类 | 10 个句子 | 20 名评审的一致率和自然度评分 | 消声室录制；audb 2.0 版为 CC0-1.0 | 新增的 281 条不在 EmoBox 中，可以用来测试模糊样本 | [原版 emodb.bilderbar.info](http://emodb.bilderbar.info/)；[audb emodb 2.0.0](https://github.com/audeering/emodb)（[说明页](https://audeering.github.io/datasets/datasets/emodb.html)） |
-| EMOVO（意大利语） | 6 人 / 588 条 / **0.253 GB**（Kaggle 非官方镜像） | 7 类 | 14 个句子 | 两组各 24 名听者，总体 80% | — | VoxEmo | 官方站 voice.fub.it 当天无法访问；[Kaggle 镜像](https://www.kaggle.com/datasets/sourabhy/emovo-italian-ser-dataset)；[DagsHub 镜像](https://dagshub.com/DagsHub/audio-datasets/src/main/EMOVO) |
-| TESS（英语） | 2 人 / 2,800 条 / **0.281 GB** | 7 类 | 200 个词 × "Say the word ___" 句式 | 未核实 | CC BY-NC 4.0 | AF1 训练 | [Borealis Dataverse](https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/E8H2MF) |
-| SAVEE（英式英语） | 4 人 / 480 条 / 官方版**未公开**；Kaggle 纯音频镜像 0.113 GB（非官方） | 7 类 | 每种情绪 15 句，只有 3 句跨情绪共用 | 10 名评估者（官网证书报错，当天没能复核） | 音视频 | Kimi-Audio SFT | [下载页（需注册后登录）](http://kahlan.eps.surrey.ac.uk/savee/Download.html)；[注册](http://www.ee.surrey.ac.uk/Personal/P.Jackson/SAVEE/Register.html)；[Kaggle 镜像](https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee) |
-| CASIA（中文） | 4 人 / 1,200 条 / 官方版**未公开**；Kaggle 镜像 0.059 GB（非官方，许可不明） | 6 类 | 平行（未核实） | 只有表演标签 | 许可不清楚 | VoxEmo | 官方渠道未核实；[Kaggle 镜像](https://www.kaggle.com/datasets/rocklagoon/casia-emotion-recognition) |
-| JL-Corpus（新西兰英语） | 4 人 / 2,400 条 / **0.948 GB** | 5 种主要情绪 + 5 种次要情绪 | 未核实 | 120 人测试：主要情绪约 70%，次要情绪约 40% | CC0 | AF1 训练 | [Kaggle（作者本人上传）](https://www.kaggle.com/datasets/tli725/jl-corpus)；[GitHub](https://github.com/tli725/JL-Corpus) |
-| EmoV-DB（英语） | 4 人 / 6,887 条 / 9.5 h / **约 1.41 GB**（18 个 tar.gz） | 中性、愉快、愤怒、厌恶、困倦 | 用 CMU Arctic 的句子，跨情绪平行 | 只有表演标签；句子前后常有笑声或哈欠 | 非商用 | AF1 训练；Qwen-Audio 论文的 SFT 示例里出现了 EmoV-DB 的音频文件 | [OpenSLR 115](https://openslr.org/115/)；[GitHub](https://github.com/numediart/EmoV-DB) |
+| EMOVO（意大利语） | 6 人 / 588 条 / **0.253 GB**（Kaggle 非官方镜像） | 7 类 | 14 个句子 | 两组各 24 名听者，总体 80% | — | [VoxEmo](https://arxiv.org/abs/2603.08936) | 官方站 voice.fub.it 当天无法访问；[Kaggle 镜像](https://www.kaggle.com/datasets/sourabhy/emovo-italian-ser-dataset)；[DagsHub 镜像](https://dagshub.com/DagsHub/audio-datasets/src/main/EMOVO) |
+| TESS（英语） | 2 人 / 2,800 条 / **0.281 GB** | 7 类 | 200 个词 × "Say the word ___" 句式 | 未核实 | CC BY-NC 4.0 | [AF1](https://arxiv.org/abs/2402.01831) 训练 | [Borealis Dataverse](https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/E8H2MF) |
+| SAVEE（英式英语） | 4 人 / 480 条 / 官方版**未公开**；Kaggle 纯音频镜像 0.113 GB（非官方） | 7 类 | 每种情绪 15 句，只有 3 句跨情绪共用 | 10 名评估者（官网证书报错，当天没能复核） | 音视频 | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT | [下载页（需注册后登录）](http://kahlan.eps.surrey.ac.uk/savee/Download.html)；[注册](http://www.ee.surrey.ac.uk/Personal/P.Jackson/SAVEE/Register.html)；[Kaggle 镜像](https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee) |
+| CASIA（中文） | 4 人 / 1,200 条 / 官方版**未公开**；Kaggle 镜像 0.059 GB（非官方，许可不明） | 6 类 | 平行（未核实） | 只有表演标签 | 许可不清楚 | [VoxEmo](https://arxiv.org/abs/2603.08936) | 官方渠道未核实；[Kaggle 镜像](https://www.kaggle.com/datasets/rocklagoon/casia-emotion-recognition) |
+| JL-Corpus（新西兰英语） | 4 人 / 2,400 条 / **0.948 GB** | 5 种主要情绪 + 5 种次要情绪 | 未核实 | 120 人测试：主要情绪约 70%，次要情绪约 40% | CC0 | [AF1](https://arxiv.org/abs/2402.01831) 训练 | [Kaggle（作者本人上传）](https://www.kaggle.com/datasets/tli725/jl-corpus)；[GitHub](https://github.com/tli725/JL-Corpus) |
+| EmoV-DB（英语） | 4 人 / 6,887 条 / 9.5 h / **约 1.41 GB**（18 个 tar.gz） | 中性、愉快、愤怒、厌恶、困倦 | 用 CMU Arctic 的句子，跨情绪平行 | 只有表演标签；句子前后常有笑声或哈欠 | 非商用 | [AF1](https://arxiv.org/abs/2402.01831) 训练；[Qwen-Audio](https://arxiv.org/abs/2311.07919) 论文的 SFT 示例里出现了 EmoV-DB 的音频文件 | [OpenSLR 115](https://openslr.org/115/)；[GitHub](https://github.com/numediart/EmoV-DB) |
 
-### (b) 不在 EmoBox 中，但规模小、不平行，或者标签、音频有缺陷
+注：AF1、AF2 是 NVIDIA 的 Audio Flamingo 1 和 2；emotion2vec 是 emotion2vec+ 的预训练模型，不是音频大模型；LISTEN 和 VoxEmo 不是模型，而是用这些数据集评测音频大模型的论文（评测了哪些模型见第 4 节）。
+
+## 3. 不在 EmoBox 中，但规模小、不平行，或者标签、音频有缺陷
 
 | 数据集（年份，语言） | 规模 / **大小** | 关键设计 | 标签 | 许可 / 获取 | 主要问题 | 链接 |
 |---|---|---|---|---|---|---|
-| **Expresso**（2023，英语） | 4 人；朗读 11,615 条 / 11.5 h，即兴 34.4 h / **38.44 GB**（expresso.tar，含即兴对话）；HF 社区镜像只有朗读部分，5.76 GB | 7 种朗读风格（default、happy、sad、confused、enunciated、laughing、whisper）读同一套文本 | 没有感知验证 | CC BY-NC 4.0，开放下载 | 情绪类别少；音质最好（专业录音棚，48 kHz / 24-bit）；Meta 的 SpiRit-LM 用它训练过风格 tokenizer | [官方下载说明](https://github.com/facebookresearch/textlesslib/tree/main/examples/expresso/dataset)；[expresso.tar 直链](https://dl.fbaipublicfiles.com/textless_nlp/expresso/data/expresso.tar)；[HF 社区镜像](https://huggingface.co/datasets/ylacombe/expresso) |
+| **Expresso**（2023，英语） | 4 人；朗读 11,615 条 / 11.5 h，即兴 34.4 h / **38.44 GB**（expresso.tar，含即兴对话）；HF 社区镜像只有朗读部分，5.76 GB | 7 种朗读风格（default、happy、sad、confused、enunciated、laughing、whisper）读同一套文本 | 没有感知验证 | CC BY-NC 4.0，开放下载 | 情绪类别少；音质最好（专业录音棚，48 kHz / 24-bit）；Meta 的 [SpiRit-LM](https://arxiv.org/abs/2402.05755) 用它训练过风格 tokenizer | [官方下载说明](https://github.com/facebookresearch/textlesslib/tree/main/examples/expresso/dataset)；[expresso.tar 直链](https://dl.fbaipublicfiles.com/textless_nlp/expresso/data/expresso.tar)；[HF 社区镜像](https://huggingface.co/datasets/ylacombe/expresso) |
 | KESDy18（2018，韩语） | 30 名配音演员 / 2,880 条 / **未公开** | 20 句 × 4 种情绪 | 6 名标注者，7 类 + 唤醒度/效价（1–5） | ETRI 许可协议（站点当天无法访问） | — | [ETRI nanum](https://nanum.etri.re.kr/share/kjnoh2/KESDy18?lang=En_us) |
 | IITKGP-SEHSC（印地语） | 10 人 / 12,000 条 / 约 9 h / **未公开**（约 1 GB，按 16 kHz / 16-bit 推算） | 15 句 × 8 种情绪 × 10 个 session | 未核实 | 向 IIT Kharagpur 申请 | 16 kHz | [作者资源页](https://cse.iitkgp.ac.in/~ksrao/res.html)；[申请声明 PDF](https://cse.iitkgp.ac.in/~ksrao/pdf/declaration.pdf) |
 | CAVES（2024，粤语） | 10 人 / 3,475 条 / **未公开**（含 1080p / 50 fps 视频） | 50 个语义中性的句子 × 7 种情绪 | 15 名听者 | 仅限研究，需填表申请 | 规模小（48 kHz 隔音间录制，音视频） | [申请表](https://forms.office.com/r/3VfeWQnAVa) |
@@ -95,7 +97,7 @@
 | EmoNet-Voice Bench（2025） | 12,600 条 / **1.08 GB**（3 个 parquet） | 40 类 | 专家标注，Cronbach α 0.14 | CC BY 4.0 | 用 GPT-4o 合成的语音，不平行；数据仓库在匿名账号下，由 LAION 官方合集链接 | [HF emonet-voice-bench](https://huggingface.co/datasets/t1a5anu-anon/emonet-voice-bench)；[LAION EmoNet 合集](https://huggingface.co/collections/laion/emonet-6855238709fb1b2a7295d4ed) |
 | mExpresso（2023） | — / **0.0033 GB**（只有文本） | 把 Expresso 的 7 种风格翻译成包括中文在内的 5 种语言 | — | 只公开了文本，音频没有发布 | 目前不可用 | [官方说明](https://github.com/facebookresearch/seamless_communication/blob/main/docs/expressive/README.md)；[文本 tar](https://dl.fbaipublicfiles.com/seamless/datasets/mexpresso_text/mexpresso_text.tar) |
 
-## 3. 注意事项
+## 4. 注意事项
 
 - **非商用或限制性许可**：MCAE-SPPS（NC-ND：可以用来评测，但不能发布修改后的音频）、nEMO（NC-SA）、Expresso 和 EARS（NC）、RAVDESS 和 CaFE（NC-SA）、
   TESS（NC）、ESD（仅限研究）、EmoV-DB（非商用）、HCUDB 和 OGVC（仅限研究）、MSP-IMPROV（学术许可）、MASC（LDC 付费）。
@@ -112,18 +114,18 @@
   - MSP-IMPROV：target 句是在即兴对话里说出的，感知标签可能与预期情绪不一致。
   - ESD：没有人工听辨验证；16 kHz。MEAD：只有部分句子跨情绪平行。MASC：8 kHz，原始文件是有损的 WMA。HCUDB2：没有评分。
 - **音频大模型用过哪些数据（只列有出处的）**：
-  - Kimi-Audio 的 SFT 用了 IEMOCAP、MELD、RAVDESS、SAVEE、ESD。
-  - OSUM 训练用了 ESD、IEMOCAP、MSP-Podcast、MER2023、MELD、BIIC-Podcast；测试用了 IEMOCAP、MER2023、M3ED、**MSP-IMPROV**、ESD。
-  - Audio Flamingo 训练用了 MSP-Podcast、EmoV-DB、JL-Corpus、TESS、MELD、OMGEmotion；CREMA-D 和 RAVDESS 明确从训练中排除，只用于零样本评测。
-    AF2 也在 CREMA-D 和 RAVDESS 上做零样本评测，AF3 在 IEMOCAP 上评测。
-  - SALMONN：用 IEMOCAP 第 1–4 session 训练，第 5 session 测试。
-  - Qwen-Audio：情绪识别训练数据不到 1k 小时且没有列出名称；SFT 示例里出现了 EmoV-DB 的文件；在 MELD 上评测。
-  - Qwen2-Audio 和 Qwen2.5-Omni：只报告了 MELD 上的评测，训练数据未公开。
-  - Gemini：没有公开训练数据；第三方的 LISTEN 用 CREMA-D、ESD、TESS、SAVEE、RAVDESS 评测过 Gemini 2.5。
-  - VoxEmo（2026）对 Qwen2-Audio-7B-Instruct 和 AF3 做了零样本评测，用到 THAI-SER、nEMO、ESD、MEAD、CREMA-D 等 35 个语料。
+  - [Kimi-Audio](https://arxiv.org/abs/2504.18425) 的 SFT 用了 IEMOCAP、MELD、RAVDESS、SAVEE、ESD。
+  - [OSUM](https://arxiv.org/abs/2501.13306) 训练用了 ESD、IEMOCAP、MSP-Podcast、MER2023、MELD、BIIC-Podcast；测试用了 IEMOCAP、MER2023、M3ED、**MSP-IMPROV**、ESD。
+  - [Audio Flamingo](https://arxiv.org/abs/2402.01831) 训练用了 MSP-Podcast、EmoV-DB、JL-Corpus、TESS、MELD、OMGEmotion；CREMA-D 和 RAVDESS 明确从训练中排除，只用于零样本评测。
+    [AF2](https://arxiv.org/abs/2503.03983) 也在 CREMA-D 和 RAVDESS 上做零样本评测，[AF3](https://arxiv.org/abs/2507.08128) 在 IEMOCAP 上评测。
+  - [SALMONN](https://arxiv.org/abs/2310.13289)：用 IEMOCAP 第 1–4 session 训练，第 5 session 测试。
+  - [Qwen-Audio](https://arxiv.org/abs/2311.07919)：情绪识别训练数据不到 1k 小时且没有列出名称；SFT 示例里出现了 EmoV-DB 的文件；在 MELD 上评测。
+  - [Qwen2-Audio](https://arxiv.org/abs/2407.10759) 和 [Qwen2.5-Omni](https://arxiv.org/abs/2503.20215)：只报告了 MELD 上的评测，训练数据未公开。
+  - Gemini：没有公开训练数据；第三方的 [LISTEN](https://arxiv.org/abs/2510.10444) 用 CREMA-D、ESD、TESS、SAVEE、RAVDESS 评测过 [Gemini 2.5](https://arxiv.org/abs/2507.06261)。
+  - [VoxEmo](https://arxiv.org/abs/2603.08936)（2026）对 Qwen2-Audio-7B-Instruct 和 AF3 做了零样本评测，用到 THAI-SER、nEMO、ESD、MEAD、CREMA-D 等 35 个语料。
   - **MCAE（SPPS 和伪句子）、HCUDB、MESS、MASC 没有找到任何音频大模型用于训练或评测的记录。**
 
-## 4. 主要来源
+## 5. 主要来源
 
 - EmoBox：https://github.com/emo-box/EmoBox ；emotion2vec+：https://github.com/ddlBoJack/emotion2vec 、https://huggingface.co/emotion2vec/emotion2vec_plus_large ；emotion2vec 论文：https://arxiv.org/abs/2312.15185
 - MCAE-SPPS：https://pmc.ncbi.nlm.nih.gov/articles/PMC13079751/ 、https://doi.org/10.17605/OSF.IO/9JYZC 、https://ieee-dataport.org/documents/mandarin-chinese-auditory-emotions-stimulus-database-validated-set-subject-personal
@@ -135,19 +137,21 @@
 - ESD：https://github.com/HLTSingapore/Emotional-Speech-Data 、https://arxiv.org/abs/2105.14762 ；MEAD：https://github.com/uniBruce/Mead 、https://www.ecva.net/papers/eccv_2020/papers_ECCV/papers/123660698.pdf ；RAVDESS：https://zenodo.org/records/1188976
 - Emozionalmente：https://zenodo.org/records/12616095 ；SUBESCO：https://zenodo.org/records/4526477 ；CaFE：https://zenodo.org/records/1478765 ；EmoDB 2.0：https://www.isca-archive.org/interspeech_2025/burkhardt25_interspeech.pdf ；TESS：https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/E8H2MF ；EmoV-DB：https://github.com/numediart/EmoV-DB
 - Expresso：https://speechbot.github.io/expresso/ 、https://arxiv.org/abs/2308.05725 ；EARS：https://github.com/facebookresearch/ears_dataset 、https://arxiv.org/abs/2406.06185 ；CSEMOTIONS：https://huggingface.co/datasets/ATH-MaaS/CSEMOTIONS ；BERSt：https://arxiv.org/abs/2505.00059 ；EmoTale：https://arxiv.org/abs/2508.14548 ；CAVES：https://pmc.ncbi.nlm.nih.gov/articles/PMC11289252/ ；KESDy18：https://nanum.etri.re.kr/share/kjnoh2/KESDy18?lang=En_us ；KazEmoTTS：https://arxiv.org/abs/2404.01033 ；EmoNet-Voice：https://arxiv.org/abs/2506.09827 ；mExpresso：https://github.com/facebookresearch/seamless_communication/blob/main/docs/expressive/README.md ；GEMEP：https://www.unige.ch/cisa/gemep ；Thorsten：https://openslr.org/110/
-- 音频大模型相关：LISTEN https://arxiv.org/abs/2510.10444 ；VoxEmo https://arxiv.org/abs/2603.08936 ；Kimi-Audio https://arxiv.org/abs/2504.18425 ；OSUM https://arxiv.org/abs/2501.13306 ；Qwen-Audio https://arxiv.org/abs/2311.07919 ；Qwen2-Audio https://arxiv.org/abs/2407.10759 ；Qwen2.5-Omni https://arxiv.org/abs/2503.20215 ；SALMONN https://arxiv.org/abs/2310.13289 ；Audio Flamingo https://arxiv.org/abs/2402.01831 ；AF2 https://arxiv.org/abs/2503.03983 ；AF3 https://arxiv.org/abs/2507.08128 ；SpiRit-LM https://arxiv.org/abs/2402.05755
+- 音频大模型相关：LISTEN https://arxiv.org/abs/2510.10444 ；VoxEmo https://arxiv.org/abs/2603.08936 ；Kimi-Audio https://arxiv.org/abs/2504.18425 ；OSUM https://arxiv.org/abs/2501.13306 ；Qwen-Audio https://arxiv.org/abs/2311.07919 ；Qwen2-Audio https://arxiv.org/abs/2407.10759 ；Qwen2.5-Omni https://arxiv.org/abs/2503.20215 ；SALMONN https://arxiv.org/abs/2310.13289 ；Audio Flamingo https://arxiv.org/abs/2402.01831 ；AF2 https://arxiv.org/abs/2503.03983 ；AF3 https://arxiv.org/abs/2507.08128 ；SpiRit-LM https://arxiv.org/abs/2402.05755 ；Gemini 2.5 https://arxiv.org/abs/2507.06261
 
-## 5. 已下载到本地（2026-10-23）
+## 6. 已下载到本地（2026-10-23；ESD 为 2026-10-26）
 
-用 `python scripts/download_data.py --dataset <名称>` 下载（`--dataset all` 下载全部）。每个文件都按托管平台公布的校验值核对过，
-中断后重新运行同一条命令即可续传。数据都在 `data/` 下，不进 git（多个许可禁止分发）。
+在 `config/config.yaml` 里把 `download.dataset` 设为数据集名称（`all` 表示全部），然后运行 `python scripts/download_data.py`。每个文件都按托管平台公布的校验值核对过（ESD 例外，见表格最后一列），
+中断后重新运行同一条命令即可续传（ESD 是 Google Drive 上的单个 zip，中断后会从头下载）。数据都在 `data/` 下，不进 git（多个许可禁止分发）。
 
-| 数据集 | `--dataset` | 本地位置 | 内容（实测） | 校验 |
+| 数据集 | `download.dataset` | 本地位置 | 内容（实测） | 校验 |
 |---|---|---|---|---|
 | MCAE-SPPS | `mcae_spps` | `data/mcae_spps/` | 6,675 个 WAV（48 kHz 单声道，0.4–4.0 秒，共 2.3 h），解压在 `audio/<情绪>/`；文件名为"演员 + 情绪 + 句子编号"，如 `13171.wav` = 1 号演员（男）、愤怒、第 171 句；标签、40 人的识别率和强度在 `Corpus information.xlsx`，评分者信息在 `Rater information.xlsx`，原始评分和分析代码在 `Codes and Raw Data/` | 7 个 zip 和 16 个元数据文件按 OSF 的 SHA-256 核对 |
 | THAI-SER | `thai_ser` | `data/thai_ser/` | 29 个 parquet（12.71 GB），共 27,854 行；音频和标签在同一个文件里：最多 4 路麦克风的音频（`mic_clip`、`mic_con`、`mic_middle`、`mic_zoom`），以及指定情绪、多数票情绪、一致率、演员信息等列 | 按 HuggingFace 上的 SHA-256 核对 |
 | nEMO | `nemo` | `data/nemo/` | 2 个 parquet（0.53 GB），共 4,481 行：音频、情绪、原始文本和规范化文本、说话人、性别、年龄 | 按 HuggingFace 上的 SHA-256 核对 |
 | MESS | `mess` | `data/mess/` | 1,800 个 WAV（24,414 Hz 单声道，1.7–3.7 秒，共 1.3 h），解压在 `audio/`。官方没有附命名规则，以下是根据文件名统计推断的：首字母是情绪（`A` 愤怒、`C` 平静、`H` 开心、`S` 悲伤，各 450 条），第 2 个字母是性别（`M` / `F`），随后的数字是说话人编号（每种性别 1–3），再后面是句子编号（`V`、`T`、`M` 加两位数字）；例如 `HM1V10_SCR.wav` | 按 Zenodo 的 MD5 核对 |
+| ESD | `esd` | `data/esd/` | 35,000 个 WAV（16 kHz 单声道，1.1–8.1 秒，共 29.1 h：中文 15.7 h，英语 13.4 h），解压在 `audio/Emotion Speech Dataset/`；20 位说话人，`0001`–`0010` 说中文，`0011`–`0020` 说英语；每人把同一套 350 句话用 5 种情绪各说一遍，按 `<说话人>/<情绪>/<说话人>_<编号>.wav` 存放，情绪文件夹为 `Neutral`、`Angry`、`Happy`、`Sad`、`Surprise`；每位说话人的文本和情绪标签在 `<说话人>/<说话人>.txt`（制表符分隔：编号、文本、情绪；中文说话人的标签是中文，如"中立""生气"） | Google Drive 不公布校验值：先用 zip 自带的 CRC 自检，再核对脚本里固定的 SHA-256 |
 
-本地共占用约 14.4 GB（THAI-SER 12 GB；zip 解压后连同原 zip 一起保留，所以 MCAE-SPPS 和 MESS 约占下载大小的两倍）。
-THAI-SER 和 nEMO 是 parquet 格式，读取需要 `pyarrow`；等给这些数据集写评估脚本时再加入依赖。在那之前，可以在它们的 HuggingFace 页面上在线试听。
+这五个数据集在本地共占用约 26.1 GB（THAI-SER 17.3 GB，ESD 5.8 GB）。zip 解压后连同原 zip 一起保留，所以 MCAE-SPPS、MESS 和 ESD 约占下载大小的两倍；
+THAI-SER 和 nEMO 是 parquet 格式（读取需要 `pyarrow`），`scripts/evaluate.py` 第一次运行时会把评估要用的音频解压到各自的 `audio/` 文件夹（THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音）。
+ESD 仅限研究使用：使用前要按它的 [GitHub 页面](https://github.com/HLTSingapore/Emotional-Speech-Data)的说明填写许可表，并发邮件给作者。

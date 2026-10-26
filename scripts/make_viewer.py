@@ -20,11 +20,10 @@ gives "dataset", "model", "ground_truth" and, optionally, "correct_columns" (a d
 each correct... column) and "columns" (a description of each column).
 
 Usage:
-    python scripts/make_viewer.py                      # counts and seed from config/config.yaml
-    python scripts/make_viewer.py --correct 5 --wrong 15 --seed 42
-    python scripts/make_viewer.py --predictions outputs/crema_d_emotion2vec_plus_large_predictions.csv
+    python scripts/make_viewer.py
+Settings (which predictions, how many clips, seed, linked or embedded audio, output file) are in the
+`viewer` section of config/config.yaml.
 """
-import argparse
 import base64
 import csv
 import json
@@ -37,6 +36,7 @@ import soundfile as sf
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / "config" / "config.yaml"
 TEMPLATE = ROOT / "scripts" / "templates" / "viewer.html"
 AUDIO_TYPES = {".wav": "audio/wav", ".flac": "audio/flac", ".mp3": "audio/mpeg", ".ogg": "audio/ogg"}
 
@@ -75,36 +75,25 @@ def load_run(csv_path, n_correct, n_wrong, rng, out, link_audio):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--config", default=ROOT / "config" / "config.yaml", help="project config file")
-    parser.add_argument("--predictions", nargs="+", type=Path,
-                        help="predictions CSV file(s) (default: every outputs/*_predictions.csv)")
-    parser.add_argument("--correct", type=int, help="correct clips to show per run (overrides the config)")
-    parser.add_argument("--wrong", type=int, help="wrong clips to show per run (overrides the config)")
-    parser.add_argument("--seed", type=int, help="random seed; the same seed gives the same clips (overrides the config)")
-    parser.add_argument("--link-audio", action="store_true",
-                        help="link to the audio files instead of embedding them (smaller page, works only in this repository)")
-    parser.add_argument("--out", type=Path, default=ROOT / "outputs" / "viewer.html", help="output HTML file")
-    args = parser.parse_args()
-
-    # Settings: command line first, then the `viewer` section of the config, then defaults
-    cfg = yaml.safe_load(Path(args.config).read_text()).get("viewer", {})
-    n_correct = args.correct if args.correct is not None else cfg.get("correct", 10)
-    n_wrong = args.wrong if args.wrong is not None else cfg.get("wrong", 10)
-    seed = args.seed if args.seed is not None else cfg.get("seed")
-    seed = seed if seed is not None else random.randrange(1_000_000)  # printed, so the page can be rebuilt
-    files = args.predictions or sorted(f for f in (ROOT / "outputs").glob("*_predictions.csv")
-                                       if "_first" not in f.stem)  # skip quick tests made with --limit
+    # Settings: the `viewer` section of config/config.yaml
+    settings = yaml.safe_load(CONFIG.read_text())["viewer"]
+    n_correct, n_wrong, link_audio = settings["correct"], settings["wrong"], settings["link_audio"]
+    seed = settings["seed"] if settings["seed"] is not None else random.randrange(1_000_000)  # printed, to rebuild the page
+    out = (ROOT / settings["out"]).resolve()
+    if settings["predictions"] == "all":
+        files = sorted(f for f in (ROOT / "outputs").glob("*_predictions.csv")
+                       if "_first" not in f.stem)  # skip quick tests (evaluation.limit)
+    else:
+        files = [ROOT / f for f in settings["predictions"]]
     if not files:
         sys.exit("ERROR: no predictions found. Run an evaluation first: python scripts/evaluate.py")
 
     print("Building the example viewer")
-    print(f"  seed        : {seed} (rebuild the same page with --seed {seed})")
+    print(f"  seed        : {seed} (to get the same clips again, set `viewer.seed: {seed}` in config/config.yaml)")
     rng = random.Random(seed)
-    args.out = args.out.resolve()
     runs = []
     for f in files:
-        run = load_run(f.resolve(), n_correct, n_wrong, rng, args.out, args.link_audio)
+        run = load_run(f.resolve(), n_correct, n_wrong, rng, out, link_audio)
         first = run["criteria"][0]["column"]
         shown = sum(ex["correct"][first] for ex in run["examples"])
         accuracies = ", ".join(f"{100 * c['accuracy']:.1f}% ({c['name']})" for c in run["criteria"])
@@ -114,10 +103,10 @@ def main():
 
     # Put the data into the page template; "<\/" keeps the JSON from closing its <script> tag early
     data = json.dumps({"seed": seed, "runs": runs}).replace("</", "<\\/")
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(TEMPLATE.read_text(encoding="utf-8").replace("__DATA__", data), encoding="utf-8")
-    print(f"Done: {args.out.relative_to(ROOT) if args.out.is_relative_to(ROOT) else args.out} "
-          f"({args.out.stat().st_size / 1e6:.1f} MB). Open it in a browser.")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(TEMPLATE.read_text(encoding="utf-8").replace("__DATA__", data), encoding="utf-8")
+    print(f"Done: {out.relative_to(ROOT) if out.is_relative_to(ROOT) else out} "
+          f"({out.stat().st_size / 1e6:.1f} MB). Open it in a browser.")
 
 
 if __name__ == "__main__":

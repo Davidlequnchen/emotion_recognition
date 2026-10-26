@@ -17,15 +17,16 @@ conda activate emotion_recognition
 pip install -r requirements-mac.txt        # NVIDIA server: pip install -r requirements-cuda121.txt
 pip install -r requirements.txt
 python scripts/download_model.py           # model files -> models/emotion2vec_plus_large/
-python scripts/inference.py                # NVIDIA server: python scripts/inference.py --mode cuda
-# optional: download the evaluation datasets -> data/, the model's accuracy on each -> reports/,
-# and a web page with random right and wrong examples -> outputs/viewer.html
-python scripts/download_data.py --dataset all
+python scripts/inference.py                # NVIDIA server: first set `mode: cuda` in config/config.yaml
+# optional (first set `download.dataset: all` in config/config.yaml): the evaluation datasets -> data/,
+# the model's accuracy on each -> reports/, and a web page with right and wrong examples -> outputs/viewer.html
+python scripts/download_data.py
 python scripts/evaluate.py
 python scripts/make_viewer.py
 ```
 
-Each step is explained below.
+The scripts have no command-line options: every setting is in [`config/config.yaml`](config/config.yaml), one
+section per script. Each step is explained below.
 
 ## Repository layout
 
@@ -35,7 +36,7 @@ emotion_recognition/
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
 │   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
-│   └── mcae_spps/ thai_ser/ nemo/ mess/   # more datasets like CREMA-D (optional downloads, not in git)
+│   └── mcae_spps/ thai_ser/ nemo/ mess/ esd/   # more datasets like CREMA-D (optional downloads, not in git)
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   └── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
@@ -131,8 +132,7 @@ Expected output: on the Mac, `2.5.1 | CUDA: False | MPS: True`. On the server, `
 ## 2. Download the model
 
 ```bash
-python scripts/download_model.py              # from HuggingFace (default)
-python scripts/download_model.py --hub ms     # from ModelScope instead (faster in mainland China)
+python scripts/download_model.py   # from HuggingFace; set `download.hub: ms` for ModelScope (faster in mainland China)
 ```
 
 This fills `models/emotion2vec_plus_large/` with `model.pt` (1.9 GB of weights), `config.yaml`,
@@ -142,11 +142,12 @@ The "unauthenticated requests" warning from HuggingFace is harmless: the model i
 ## 3. Download the data (CREMA-D)
 
 ```bash
-python scripts/download_data.py                 # the 6 test clips  -> data/samples/  (0.4 MB, default)
-python scripts/download_data.py --subset full   # the whole dataset -> data/crema_d/  (606 MB)
+python scripts/download_data.py
 ```
 
-Both commands download from **CREMA-D** (Crowd-sourced Emotional Multimodal Actors Dataset), an open dataset for
+The `download` section of `config/config.yaml` chooses what to get. With `dataset: crema_d` (the default),
+`crema_d: samples` gets the 6 test clips into `data/samples/` (0.4 MB) and `crema_d: full` the whole dataset into
+`data/crema_d/` (606 MB). Both come from **CREMA-D** (Crowd-sourced Emotional Multimodal Actors Dataset), an open dataset for
 emotion recognition research: 7,442 clips from 91 actors (48 male, 43 female, aged 20 to 74), each saying one of
 12 sentences with one of six emotions (anger, disgust, fear, happy, neutral, sad). Crowd-sourced listeners
 (2,443 raters in total) also rated every clip from the audio alone, the video alone and both together.
@@ -170,7 +171,7 @@ after `git clone`; the command above restores any that are missing and checks th
 | `1001_DFA_NEU_XX.wav` | neutral |
 | `1001_DFA_SAD_XX.wav` | sad |
 
-### 3.2 Full dataset (`--subset full`)
+### 3.2 Full dataset (`crema_d: full`)
 
 `data/crema_d/` gets all 7,442 WAV files plus the label and metadata files, at the same paths as in the
 CREMA-D repository:
@@ -186,10 +187,10 @@ data/crema_d/
 └── LICENSE.txt
 ```
 
-The first download took about 9 minutes on the MacBook (8 files in parallel; set this with `--workers`). Most of
+The first download took about 9 minutes on the MacBook (8 files in parallel; set this with `download.workers`). Most of
 that time is GitHub's response time for each file. If the download is interrupted, run the same command again:
 files that are already correct are skipped, and checking all 7,442 files takes about 10 seconds. The clips last
-1.3 to 5.0 s (5.3 hours in total). To run the model on every clip: `python scripts/inference.py --audio data/crema_d/AudioWAV`.
+1.3 to 5.0 s (5.3 hours in total). To evaluate the model on every clip, see section 6.
 
 ### 3.3 How the download works
 
@@ -226,26 +227,30 @@ Emotional Multimodal Actors Dataset", *IEEE Transactions on Affective Computing*
 
 ### 3.4 More datasets like CREMA-D
 
-The same script downloads four more datasets that also record the same sentences in different emotions.
+The same script downloads five more datasets that also record the same sentences in different emotions.
 They were chosen from the survey in [docs/datasets_survey.md](docs/datasets_survey.md), which has links, sizes and
 caveats for many more.
 
 ```bash
-python scripts/download_data.py --dataset mcae_spps   # or thai_ser, nemo, mess; --dataset all downloads everything
+python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd; all = everything)
 ```
 
-| `--dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
+| `download.dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
 |---|---|---|---|---|---|---|
 | `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC-ND 4.0 |
 | `thai_ser` | Thai | 27,854 (200 actors) | 12.7 GB | Parquet with the audio inside (up to 4 microphones per clip) | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
 | `nemo` | Polish | 4,481 (9 speakers, 90 sentences) | 0.53 GB | Parquet with the audio inside | 6 emotions (acted, checked by listeners) | CC BY-NC-SA 4.0 |
 | `mess` | English | 1,800 (6 speakers) | 0.19 GB | WAV 24.4 kHz in `audio/`; emotion in the file name (`A`ngry, `C`alm, `H`appy, `S`ad) | 4 emotions (acted); listener ratings only on request | CC BY 4.0 |
+| `esd` | English, Mandarin | 35,000 (20 speakers, 350 sentences) | 2.45 GB | WAV 16 kHz in `audio/Emotion Speech Dataset/<speaker>/<emotion>/`; text and emotion per clip in `<speaker>/<speaker>.txt` | 5 emotions (acted; no listener test) | research only, licence form (see below) |
 
 Every file is checked against the checksum its host publishes (OSF SHA-256, Zenodo MD5, Hugging Face SHA-256).
+Google Drive publishes none, so the ESD zip is checked with its own CRCs and a SHA-256 written in the script.
 Zip files are unpacked into `audio/` and kept. The Parquet files of THAI-SER and nEMO hold the audio and the labels
-together; you can listen to examples on their Hugging Face pages, and reading them in Python needs `pyarrow`, which
-will be added when these datasets get an evaluation script. Several licences forbid commercial use or sharing copies,
-so use the data for research only; `data/` is git-ignored except the CREMA-D test clips.
+together (reading them needs `pyarrow`); `scripts/evaluate.py` extracts the audio it needs into `audio/` on its first run.
+ESD is for research only: before using it, complete the licence form on its
+[GitHub page](https://github.com/HLTSingapore/Emotional-Speech-Data) and email it to the authors.
+Several licences forbid commercial use or sharing copies, so use the data for research only; `data/` is git-ignored
+except the CREMA-D test clips.
 
 ## 4. Choose the hardware mode
 
@@ -259,16 +264,16 @@ devices:
   cuda: cuda:0     # cuda:<gpu index> | cpu
 ```
 
-Or override it on the command line without editing the file: `--mode cuda`, `--device cpu`.
+Every script reads `mode` from this file; scripts that run the model use the device of that mode.
 
 ## 5. Run inference
 
 ```bash
-python scripts/inference.py                         # settings from config/config.yaml
-python scripts/inference.py --mode cuda             # on the NVIDIA server
-python scripts/inference.py --device cpu            # force the CPU
-python scripts/inference.py --audio path/to/clip.wav   # your own audio file or folder (wav, flac, mp3, ogg)
+python scripts/inference.py
 ```
+
+Settings in `config/config.yaml`: `mode` and `devices` choose the hardware (set `devices.mac: cpu` to force the CPU),
+and `inference.audio` the audio file or folder to run on (wav, flac, mp3, ogg; default `data/samples`).
 
 The script runs six steps and prints each one: (1) read the configuration, (2) check Python, PyTorch, CUDA and MPS,
 (3) activate the device and run a small test computation on it, (4) load the model onto the device,
@@ -364,10 +369,18 @@ What to expect:
 ## 6. Evaluate on the datasets
 
 ```bash
-python scripts/evaluate.py                                 # every downloaded dataset
-python scripts/evaluate.py --dataset thai_ser nemo         # one or more of: crema_d mcae_spps thai_ser nemo mess
-python scripts/evaluate.py --dataset nemo --limit 200      # quick test on the first 200 clips
-python scripts/evaluate.py --device cpu                    # on the Mac the CPU is faster here (see below)
+python scripts/evaluate.py
+```
+
+Settings, in the `evaluation` section of `config/config.yaml`:
+
+```yaml
+evaluation:
+  datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
+  limit: null       # quick test: only the first N clips of each dataset; null = every clip
+  devices:          # device per mode for evaluation
+    mac: cpu        # on the Mac the CPU is faster than MPS here (see below)
+    cuda: cuda:0
 ```
 
 Each dataset has a loader in `scripts/eval_datasets.py` that reads its labels and maps them to emotion2vec+ classes;
@@ -406,20 +419,21 @@ run takes about 50 minutes, nEMO 5 minutes and MESS 12 minutes (its 24,414 Hz au
 ## 7. Listen to examples in the browser
 
 ```bash
-python scripts/make_viewer.py                          # settings from config/config.yaml (10 right + 10 wrong)
-python scripts/make_viewer.py --correct 5 --wrong 15   # choose how many clips of each kind
-python scripts/make_viewer.py --seed 42                # the same seed always picks the same clips
+python scripts/make_viewer.py
 ```
+
+Settings, in the `viewer` section of `config/config.yaml`: `correct` and `wrong` (how many clips of each kind,
+default 10 and 10), `seed` (the same seed always picks the same clips), `predictions` (`all`, or a list of
+predictions files), `link_audio` and `out` (the output file).
 
 The script picks random clips the model got right and wrong and writes one self-contained page,
 `outputs/viewer.html` (audio embedded: about 18 MB with 20 clips from each of the five datasets; open it in any browser). The page is a table with one
 row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
 prediction and confidence; a ✓ marks the labels the prediction matches, and each row expands to show every class
 probability. You can switch between the two ways of counting a prediction as correct, and filter by result (all,
-correct, wrong) and by ground-truth emotion. Clips are picked using the first way (acted emotion). The default counts and
-the seed live in the `viewer` section of `config/config.yaml`; the script prints the seed it used, so you can rebuild
-the same page later. `--link-audio` links to the audio files instead of embedding them (a much smaller page that
-only works inside this repository).
+correct, wrong) and by ground-truth emotion. Clips are picked using the first way (acted emotion). The script prints the seed it
+used, so you can rebuild the same page later. `link_audio: true` links to the audio files instead of embedding them
+(a much smaller page that only works inside this repository).
 
 The page is built from the predictions files, so it grows with the project. Every `outputs/*_predictions.csv` (with
 its JSON file) becomes one dataset-and-model run that you can switch between in the page. A new evaluation script
@@ -446,5 +460,5 @@ The docstring of `scripts/make_viewer.py` lists the exact format.
 | `ERROR: .../model.pt not found` | Run `python scripts/download_model.py`. |
 | `ERROR: no audio files found` | Run `python scripts/download_data.py`. |
 | `ERROR: ... file(s) failed` from `download_data.py` | A network error, or GitHub sent an error page instead of the audio (for example a temporary LFS bandwidth limit). Run the same command again: correct files are skipped. |
-| Download from HuggingFace is slow or blocked | Use `python scripts/download_model.py --hub ms`. |
+| Download from HuggingFace is slow or blocked | Set `download.hub: ms` in `config/config.yaml` and run `python scripts/download_model.py` again. |
 | `Notice: ffmpeg is not installed ...` | Printed by FunASR on machines without ffmpeg. Harmless: wav, flac, mp3 and ogg are read without it. To silence it: `conda install -c conda-forge ffmpeg`. |
