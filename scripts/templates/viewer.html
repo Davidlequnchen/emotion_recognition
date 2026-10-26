@@ -228,7 +228,9 @@
       ...run.criteria.map((c) => el("div", { className: `tile${c.column === state.criterion ? " active" : ""}` },
         el("div", { className: "label", textContent: `Accuracy: matches the ${c.name}` }),
         el("div", { className: "value", textContent: `${(100 * c.accuracy).toFixed(1)}%` }),
-        el("div", { className: "note", textContent: `on all ${run.total.toLocaleString()} clips` }))),
+        el("div", { className: "note", textContent: run.total_clips > run.total
+          ? `on a sample of ${run.total.toLocaleString()} of its ${run.total_clips.toLocaleString()} clips`
+          : `on all ${run.total.toLocaleString()} clips` }))),
       el("div", { className: "tile" },
         el("div", { className: "label", textContent: "Clips on this page" }),
         el("div", { className: "value", textContent: String(examples.length) }),

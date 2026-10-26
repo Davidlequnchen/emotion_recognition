@@ -48,7 +48,7 @@ emotion_recognition/
 │   └── figures/                # figures used in the reports
 ├── scripts/
 │   ├── download_model.py       # downloads a model from HuggingFace or ModelScope
-│   ├── download_data.py        # downloads CREMA-D (test clips or full dataset), checks every SHA-256
+│   ├── download_data.py        # downloads CREMA-D (test clips or full) and five more datasets, checks every file
 │   ├── eval_datasets.py        # one loader per evaluation dataset (labels -> emotion2vec+ classes)
 │   ├── evaluate.py             # runs the model on each dataset, writes the reports and a summary
 │   ├── make_viewer.py          # builds a web page with random right and wrong examples
@@ -377,7 +377,7 @@ Settings, in the `evaluation` section of `config/config.yaml`:
 ```yaml
 evaluation:
   datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
-  limit: null       # quick test: only the first N clips of each dataset; null = every clip
+  limit: null       # only N clips of each dataset, taken at even intervals (quick test or sample); null = every clip
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here (see below)
     cuda: cuda:0
@@ -427,17 +427,21 @@ Results:
 | [THAI-SER](reports/thai_ser_emotion2vec_plus_large.md) | Thai | 22,584 | 4 (25.0%) | **63.2%** | 68.5% | no |
 | [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 4,481 | 6 (16.7%) | **52.0%** | – | no |
 | [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | 4 (25.0%) | **40.8%** | – | no |
+| [ESD](reports/esd_emotion2vec_plus_large_sample3500.md) | English, Mandarin | 3,500 of 35,000 (sample) | 5 (20.0%) | **97.0%** | – | yes |
 
 *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that publish
 listeners' labels (for MCAE-SPPS the two agree by construction, because only clips that listeners recognised were
-kept). CREMA-D is in EmoBox, which emotion2vec+ was trained from, so its result is optimistic; the other four are a
-more realistic picture.
+kept). CREMA-D and ESD are in EmoBox, which emotion2vec+ was trained from, so their results are optimistic; the other
+four are a more realistic picture. ESD was evaluated on a sample (`evaluation.limit: 3500`): 3,500 of its 35,000
+clips, taken at even intervals, which gives 35 clips for every speaker and emotion. Set `limit: null` to evaluate
+every clip.
 
 Speed on the M4 Max: for these evaluations the CPU is faster than MPS, because nearly every clip has a different
 length and MPS compiles new kernels for every new length (THAI-SER: about 140 ms per clip on the CPU, about 235 ms
 on MPS). MPS is fast only for lengths it has seen before (CREMA-D, run many times: 18 ms per clip). MPS also cannot
 process clips longer than about 20 s; the scripts run those on the CPU automatically. On the CPU the full THAI-SER
-run takes about 50 minutes, nEMO 5 minutes and MESS 12 minutes (its 24,414 Hz audio is slow to resample).
+run takes about 50 minutes, nEMO 5 minutes, MESS 12 minutes (its 24,414 Hz audio is slow to resample) and the
+3,500-clip ESD sample 6 minutes (all 35,000 ESD clips: about an hour).
 
 ## 7. Listen to examples in the browser
 
@@ -450,7 +454,7 @@ default 10 and 10), `seed` (the same seed always picks the same clips), `predict
 predictions files), `link_audio` and `out` (the output file).
 
 The script picks random clips the model got right and wrong and writes one self-contained page,
-`outputs/viewer.html` (audio embedded: about 18 MB with 20 clips from each of the five datasets; open it in any browser). The page is a table with one
+`outputs/viewer.html` (audio embedded: about 21 MB with 20 clips from each of the six datasets; open it in any browser). The page is a table with one
 row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
 prediction and confidence; a ✓ marks the labels the prediction matches, and each row expands to show every class
 probability. You can switch between the two ways of counting a prediction as correct, and filter by result (all,

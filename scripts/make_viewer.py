@@ -7,7 +7,8 @@ vote) with the model's prediction and probabilities. It is a single self-contain
 
 Input: the per-clip predictions written by an evaluation script, scripts/evaluate.py.
 Every predictions CSV becomes one "run" (one dataset + one model) that you can switch between in
-the page, so new datasets and models appear automatically. A predictions CSV needs:
+the page, so new datasets and models appear automatically. If a dataset and model have a full run and a sample
+(evaluation.limit), the page uses the one with the most clips. A predictions CSV needs:
     audio_path       audio file, relative to the repository root
     prediction       the model's answer
     correct...       one or more True/False columns whose names start with "correct", e.g. correct and
@@ -81,8 +82,13 @@ def main():
     seed = settings["seed"] if settings["seed"] is not None else random.randrange(1_000_000)  # printed, to rebuild the page
     out = (ROOT / settings["out"]).resolve()
     if settings["predictions"] == "all":
-        files = sorted(f for f in (ROOT / "outputs").glob("*_predictions.csv")
-                       if "_first" not in f.stem)  # skip quick tests (evaluation.limit)
+        best = {}  # one run per dataset and model: the one with the most clips (a full run rather than a sample)
+        for f in (ROOT / "outputs").glob("*_predictions.csv"):
+            meta = json.loads(f.with_suffix(".json").read_text(encoding="utf-8"))
+            run, clips = (meta["dataset"], meta["model"]), meta.get("clips", 0)
+            if run not in best or clips > best[run][0]:
+                best[run] = (clips, f)
+        files = sorted(f for _, f in best.values())
     else:
         files = [ROOT / f for f in settings["predictions"]]
     if not files:
