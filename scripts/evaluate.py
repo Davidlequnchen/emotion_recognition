@@ -374,6 +374,23 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
     print(f"\nDone: report -> {out.relative_to(ROOT)}, predictions -> {predictions.relative_to(ROOT)}")
 
 
+def shared_scores(run, shared):
+    """Clips, accuracy and unweighted accuracy of one run on the emotions every dataset has: clips of other emotions
+    are left out, and the prediction is the most probable of the shared emotions."""
+    with open(ROOT / "outputs" / f"{run['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
+        rows = [r for r in csv.DictReader(fh) if r["acted_emotion"] in shared]
+    pred = []
+    for r in rows:
+        if r["prediction"] in shared:  # most probable of the dataset's emotions, so also of the shared ones
+            pred.append(r["prediction"])
+        else:  # use the probabilities in the file; they have 4 decimals, so a tie counts as wrong
+            p = [float(r[f"p_{e}"]) for e in shared]
+            pred.append(shared[p.index(max(p))] if p.count(max(p)) == 1 else None)
+    truth = np.array([r["acted_emotion"] for r in rows])
+    hit = np.array(pred) == truth
+    return len(rows), hit.mean(), np.mean([hit[truth == e].mean() for e in shared if (truth == e).any()])
+
+
 def write_summary(model_name):
     """reports/<model>_summary.md: one row per evaluated dataset, read from the JSON files in outputs/. A dataset with
     a full run and a sample (evaluation.limit) is shown with the run that has the most clips."""
@@ -413,6 +430,27 @@ def write_summary(model_name):
           if sampled else []),
         "",
     ]
+    # The same comparison on the emotions that every dataset has, so that the choice of emotions does not matter
+    shared = sorted(set.intersection(*(set(r["classes"]) for r in runs))) if len(runs) > 1 else []
+    if shared:
+        scored = sorted(((r, *shared_scores(r, shared)) for r in runs), key=lambda s: -s[2])
+        summary += [
+            f"## Only the emotions every dataset has: {', '.join(shared)}",
+            "",
+            "The datasets have different emotions, and some emotions are much harder than others, so the table above "
+            f"also reflects which emotions each dataset has. Here every dataset is scored on the same {len(shared)} "
+            f"emotions (chance {pct(1 / len(shared))}): clips of other emotions are left out, and the prediction is "
+            f"the most probable of these {len(shared)}.",
+            "",
+            "| Dataset | Language | Clips | Accuracy | Unweighted accuracy | In EmoBox |",
+            "|---|---|---|---|---|---|",
+            *[f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {n:,}{' (sample)' if r in sampled else ''} | "
+              f"**{pct(acc)}** | {pct(ua)} | {'yes' if r['in_emobox'] else 'no'} |" for r, n, acc, ua in scored],
+            "",
+            "Computed from the predictions files in `outputs/`. Their probabilities have 4 decimals, so a clip whose "
+            "shared emotions are tied counts as wrong.",
+            "",
+        ]
     path = ROOT / "reports" / f"{model_name}_summary.md"
     path.write_text("\n".join(summary), encoding="utf-8")
     print(f"Summary of {len(runs)} dataset(s) -> {path.relative_to(ROOT)}")
