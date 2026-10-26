@@ -94,6 +94,8 @@ def plot_confusion(cm, names, title, subtitle, ylabel, path):
     fig, ax = plt.subplots(figsize=(6.4, 5.6), dpi=200, facecolor=SURFACE)
     # A 2-px gap in the surface colour separates the cells (no borders)
     mesh = ax.pcolormesh(share, cmap=cmap, vmin=0, vmax=100, edgecolors=SURFACE, linewidth=2)
+    # A thick frame around the grid of cells (clip_on=False draws its full width at the edge of the axes)
+    ax.add_patch(plt.Rectangle((0, 0), len(names), len(names), fill=False, edgecolor=INK_2, linewidth=2.5, clip_on=False))
     for r in range(len(names)):
         for c in range(len(names)):
             ax.text(c + 0.5, r + 0.5, f"{share[r, c]:.1f}%", ha="center", va="center", fontsize=7.5,
@@ -121,25 +123,22 @@ def plot_confusion(cm, names, title, subtitle, ylabel, path):
     plt.close(fig)
 
 
-def stitch(paths, path, columns=3, gap=32, pad=24, border=6):
-    """Put figures in a grid, row by row, each in a frame with a thick border. The empty margin of each figure is cut
-    off first, so `gap` (between frames) and `pad` (inside a frame) set the spacing. All frames have the same size;
-    each figure is centred across its frame and aligned to its top, so the titles of a row line up."""
-    from PIL import Image, ImageChops, ImageDraw
+def stitch(paths, path, columns=3, col_gap=110, row_gap=80, margin=50):
+    """Put figures in a grid, row by row. The empty margin of each figure is cut off first, so the gaps set the
+    spacing; each figure is centred across its cell and aligned to its top, so the titles of a row line up."""
+    from PIL import Image, ImageChops
     images = []
     for p in paths:
         im = Image.open(p).convert("RGB")
         images.append(im.crop(ImageChops.difference(im, Image.new("RGB", im.size, SURFACE)).getbbox()))
     columns = min(columns, len(images))
     rows = -(-len(images) // columns)
-    w = max(im.width for im in images) + 2 * (pad + border)
-    h = max(im.height for im in images) + 2 * (pad + border)
-    grid = Image.new("RGB", (columns * w + (columns + 1) * gap, rows * h + (rows + 1) * gap), SURFACE)
-    draw = ImageDraw.Draw(grid)
+    w, h = max(im.width for im in images), max(im.height for im in images)
+    grid = Image.new("RGB", (2 * margin + columns * w + (columns - 1) * col_gap,
+                             2 * margin + rows * h + (rows - 1) * row_gap), SURFACE)
     for k, im in enumerate(images):
-        x, y = gap + (k % columns) * (w + gap), gap + (k // columns) * (h + gap)
-        draw.rounded_rectangle((x, y, x + w - 1, y + h - 1), radius=18, outline=INK_2, width=border)
-        grid.paste(im, (x + (w - im.width) // 2, y + border + pad))
+        grid.paste(im, (margin + (k % columns) * (w + col_gap) + (w - im.width) // 2,
+                        margin + (k // columns) * (h + row_gap)))
     grid.save(path, optimize=True)
 
 
