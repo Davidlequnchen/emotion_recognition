@@ -27,7 +27,7 @@
 
 | # | 数据集（年份，语言） | 说话人 / 条数 / 时长 / **大小** | 情绪类别；强度 | 平行文本设计 | 标签质量 | 音频；模态 | 许可；获取 | 链接 |
 |---|---|---|---|---|---|---|---|---|
-| 1 | **MCAE-SPPS** ✅（DataPort 2025-01，Sci Data 2026-03；普通话） | 6 名专业演员（3 男 3 女）/ 6,675 条（共录 8,400 条，评估了 8,379 条）/ 2.3 h / **0.65 GB**（7 个按情绪打包的 zip） | 中性、开心、悲伤、愤怒、恐惧、厌恶、惊讶，与 emotion2vec+ 的类别一一对应；有感知强度评分（1–9） | 200 句 × 7 种情绪 × 6 人 | 每条由 40 名母语听者做 7 选 1 并评强度（共 720 人）；保留条件：目标情绪得票 ≥43%，且任何其他情绪 <43%；各情绪识别率 60–82%（DataPort 版本的数字） | 专业隔音棚，48 kHz 单声道；只有音频 | CC BY-NC-ND 4.0；OSF 公开。注意：OSF 上按情绪打包的 zip 是完整的 6,675 条，按情绪分的散文件夹只有 6,460 条；IEEE DataPort 副本需要订阅 | [OSF 9jyzc](https://osf.io/9jyzc/)；[IEEE DataPort（需订阅）](https://ieee-dataport.org/documents/mandarin-chinese-auditory-emotions-stimulus-database-validated-set-subject-personal) |
+| 1 | **MCAE-SPPS** ✅（DataPort 2025-01，Sci Data 2026-03；普通话） | 6 名专业演员（3 男 3 女）/ 6,675 条（共录 8,400 条，评估了 8,379 条）/ 2.3 h / **0.65 GB**（7 个按情绪打包的 zip） | 中性、开心、悲伤、愤怒、恐惧、厌恶、惊讶，与 emotion2vec+ 的类别一一对应；有感知强度评分（1–9） | 200 句 × 7 种情绪 × 6 人 | 每条由 40 名母语听者做 7 选 1 并评强度（共 720 人）；保留条件：目标情绪得票 ≥43%，且任何其他情绪 <43%；各情绪识别率 60–82%（DataPort 版本的数字） | 专业隔音棚，48 kHz 单声道；只有音频 | CC BY-NC 4.0（OSF 上数据集的许可；论文本身是 CC BY-NC-ND 4.0）；OSF 公开。注意：OSF 上按情绪打包的 zip 是完整的 6,675 条，按情绪分的散文件夹只有 6,460 条；IEEE DataPort 副本需要订阅 | [OSF 9jyzc](https://osf.io/9jyzc/)；[IEEE DataPort（需订阅）](https://ieee-dataport.org/documents/mandarin-chinese-auditory-emotions-stimulus-database-validated-set-subject-personal) |
 | 2 | **THAI-SER** ✅（数据 2021，论文 2025；泰语） | 200 名专业演员 / 27,854 条（脚本 ≈17,711 + 即兴 ≈10,143）/ 41.6 h / **12.71 GB**（HF parquet；GitHub zip 版 12.61 GB） | 中性、愤怒、开心、悲伤、沮丧（frustrated）；脚本部分有 2 级表演强度 | 脚本部分：3 句 × 5 种情绪 × 2 种强度 × 2 遍；即兴部分不平行 | 众包，每条 3–8 人；同时给出指定标签和多数票标签，以及一致率；过滤后 Krippendorff α = 0.692，人类准确率 0.772；高一致子集（一致率 ≥0.71）14,182 条 | 80 个录音棚 session（其中一类房间不隔音）+ 20 个 Zoom session；44.1 / 48 kHz；每条最多 4 路麦克风；只有音频 | **CC BY-SA 4.0**（可商用）；直接下载 | [HF airesearch/thai-ser](https://huggingface.co/datasets/airesearch/thai-ser)；[GitHub release v1](https://github.com/vistec-AI/dataset-releases/releases/tag/v1) |
 | 3 | **MSP-IMPROV**（2017；美式英语） | 12 名演员（6 对）/ 共 8,438 轮，受控文本部分是 652 条 target 句 + 620 条朗读 / 时长未核实 / **未公开**（签协议后提供，含视频） | 愤怒、开心、悲伤、中性；无表演强度，但有效价（valence）和唤醒度（arousal）的维度评分 | 20 个 target 句 × 4 种情绪情境 × 12 人；target 句嵌在即兴对话里说出，另有朗读版 | MTurk 众包，每轮 ≥5 人评分 | 音视频；采样率未核实 | 学术许可，需要签协议；商业许可 8,000 美元 | [官方页（已迁到 lab-msp.com）](https://www.lab-msp.com/MSP/MSP-Improv.html)；[学术许可 PDF](https://www.lab-msp.com/MSP/publications/AcademicLicense-MSP-IMPROV.pdf) |
 | 4 | **nEMO** ✅（2024；波兰语） | 9 人（4 女 5 男，其中 3 人是职业配音演员）/ 4,481 条 / 3.07 h / **0.53 GB**（HF parquet） | 愤怒、恐惧、开心、悲伤、惊讶、中性；无强度 | 90 句（按音素覆盖设计）× 6 种情绪 × 9 人 | 经过人工评估，只保留表达准确的录音（按 4,860 条推算约保留 92%）；没有报告一致性数值 | 在家用电容麦克风录制，24 kHz / 16-bit；只有音频 | CC BY-NC-SA 4.0；直接下载 | [HF amu-cai/nEMO](https://huggingface.co/datasets/amu-cai/nEMO)；[GitHub](https://github.com/amu-cai/nEMO) |
@@ -40,7 +40,7 @@
 
 1. **MCAE-SPPS**：最接近"CREMA-D 加强版"。平行设计，每条有 40 人的感知标签和强度评分；200 个句子的词汇多样性远高于 CREMA-D 的 12 句；
    7 个类别正好对应 emotion2vec+ 的类别。2025 年以后才发布，没有找到它被任何音频大模型用于训练或评测的记录。
-   缺点：只有 6 位说话人，许可是 NC-ND。
+   缺点：只有 6 位说话人，许可是 NC（不能商用）。
    引用：Li M, Zhou A, Yan H, Li Q, Ma C, Wu C. *Scientific Data*, 2026, doi:10.1038/s41597-026-06976-z；数据 doi:10.17605/OSF.IO/9JYZC。
 2. **THAI-SER**：说话人最多，有众包感知标签和一致率，有两级强度，许可最宽松。
    缺点：脚本部分只有 3 个句子；"沮丧"在 emotion2vec+ 里没有对应类别，建议只用中性、愤怒、开心、悲伤四类。
@@ -101,7 +101,7 @@
 
 ## 4. 注意事项
 
-- **非商用或限制性许可**：MCAE-SPPS（NC-ND：可以用来评测，但不能发布修改后的音频）、nEMO（NC-SA）、Expresso 和 EARS（NC）、RAVDESS 和 CaFE（NC-SA）、
+- **非商用或限制性许可**：MCAE-SPPS（NC；论文本身是 NC-ND）、nEMO（NC-SA）、Expresso 和 EARS（NC）、RAVDESS 和 CaFE（NC-SA）、
   TESS（NC）、ESD（仅限研究）、EmoV-DB（非商用）、HCUDB 和 OGVC（仅限研究）、MSP-IMPROV（学术许可）、MASC（LDC 付费）。
   许可宽松的有：THAI-SER（BY-SA）、MESS、Emozionalmente 和 SUBESCO（BY）、CSEMOTIONS（Apache）、Thorsten（CC0）。
 - **需要注册或申请**：MSP-IMPROV（签协议）、ESD（填表 + 发邮件）、HCUDB 和 OGVC（NII-SRC，日文）、KESDy18（ETRI）、MASC（LDC）、IITKGP、GEMEP、

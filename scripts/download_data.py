@@ -11,7 +11,7 @@ Settings are in the `download` section of config/config.yaml:
 Datasets: like CREMA-D, each records the same sentences in different emotions (see docs/datasets_survey.md).
     name        language   clips    download   format              licence            host
     crema_d     English    7,442    0.61 GB    WAV                 ODbL               GitHub (Git LFS), pinned commit
-    mcae_spps   Mandarin   6,675    0.66 GB    zip -> WAV          CC BY-NC-ND 4.0    OSF 9jyzc
+    mcae_spps   Mandarin   6,675    0.66 GB    zip -> WAV          CC BY-NC 4.0       OSF 9jyzc
     thai_ser    Thai       27,854   12.7 GB    Parquet (audio in)  CC BY-SA 4.0       Hugging Face airesearch/thai-ser
     nemo        Polish     4,481    0.53 GB    Parquet (audio in)  CC BY-NC-SA 4.0    Hugging Face amu-cai/nEMO
     mess        English    1,800    0.19 GB    zip -> WAV          CC BY 4.0          Zenodo 3813437

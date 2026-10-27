@@ -241,7 +241,7 @@ python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_
 
 | `download.dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
 |---|---|---|---|---|---|---|
-| `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC-ND 4.0 |
+| `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC 4.0 |
 | `thai_ser` | Thai | 27,854 (200 actors) | 12.7 GB | Parquet with the audio inside (up to 4 microphones per clip) | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
 | `nemo` | Polish | 4,481 (9 speakers, 90 sentences) | 0.53 GB | Parquet with the audio inside | 6 emotions (acted, checked by listeners) | CC BY-NC-SA 4.0 |
 | `mess` | English | 1,800 (6 speakers) | 0.19 GB | WAV 24.4 kHz in `audio/`; emotion in the file name (`A`ngry, `C`alm, `H`appy, `S`ad) | 4 emotions (acted); listener ratings only on request | CC BY 4.0 |
