@@ -51,6 +51,8 @@ evaluation:
   datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
                     # (crema_d | mcae_spps | thai_ser | nemo | mess | esd)
   limit: null       # only N clips of each dataset, taken at even intervals (quick test or sample); null = every clip
+  overwrite: false  # false: skip a dataset whose results (same model and limit) are already in outputs/;
+                    # true: evaluate it again and replace them. The summary always shows every result there
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here: MPS compiles new kernels for every new clip length
     cuda: cuda:0
