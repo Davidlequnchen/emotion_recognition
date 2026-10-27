@@ -1,0 +1,63 @@
+-----------------------------Audio files coding rule-------------------
+The audio file name consists of five digits：
+[1st digit]The audios coding system includes actor coding (1–6): 1~3 are male actors, 4~6 are female actors;
+
+[2nd digits]Emotion type coding: 1: neutral, 2: happiness, 3: anger, 4: fear, 5: sadness, 6: disgust, 7: surprise;
+
+[3~5th digit] sentence coding: 001–200, the speech content, please refer to  [sentencecode] and [sentence content] column in Excel [sentence corpus information.xlsx]
+
+Examples: 
+13171.wav —actor1’s (male) anger voice， speech content is “他有个计划”(He has a plan).
+
+45021.wav —actor4’s (female) sadness voice， speech content is “我拿着杯子”(I hold the cup).
+
+
+--------------sentence corpus information.xlsx column name illustration-------------------
+
+"Filename" + ".wav" are audio file names, filename coding rule see "Audio files coding rule".
+
+"Emotioncode" is the emotion type of each audio after validation.
+
+"Intensity" is the mean value of 40 participants' emotional intensity assessment (range 1~9),1 means the selected emotion is very slight, 9 means the selected emotion is very strong.
+
+"Actress" is the speaker code, 1~3 are males, 4~6 are females.
+
+"Recognition rate" is the mean accuracy assessed by 40 participants, range 0~1.
+
+"Neutral" ~"Happiness" are the number of participants' response to the target emotion type ("Emotion code"). The sum of the "Neutral" ~"Happiness" is 40.
+
+"sentencecode" is the sentence content code of each audio, which is abstracted from the filename, ranging from 001~200.
+
+"sentence content" is the content of Chinese sentences of each audio; each “sentencecode” corresponds to one "sentence content". Sentence code 1~40 are sentences with subject "I", Sentence code 1~40 are sentences with subject "I", Sentence code 41~80 are sentences with subject "we", Sentence code 81~120 are sentences with subject "you", Sentence code 121~160 are sentences with subject "you"(plural), Sentence code 161~180 are sentences with subject "He/she", sentence code 181~200 are sentences with subject "They".
+
+"subjectname" is the Subject of each audio. "I" means the first person singular, "we" means the first person plural, "You" means the second person singular, "Yous" means the second person plural，“He” means the third person singular (In Chinese pronunciation, both she and he are pronounced as "ta"), "They" means the third person plural. 
+
+"Groupnumber" is the group information, range 1~18. As described in our article, each speaker's audios were randomly divided into three parts according to the "sentencecode", each portion has nearly equal numbers of audios with different types of emotion and subject names. There are a total of 18 groups of audios, and the participants were randomly divided into 18 groups; each group assessed about 465 audios. 
+
+Acoustic information:
+"Duration" ~ "spectralSpread" are acoustic information of each audio:
+
+"Duration" is the duration time of audio, the unit is second(s)
+"meanF0", "stdevF0", "maxf0", and "minF0" are the mean, standard deviation, maximum, and minimum of the Pitch F0, respectively. The units are (Hz).
+"hnr"is the harmonics-to-noise ratio, unit is (dB).
+"localJitter" and "localShimmer" are local jitter and local Shimmer, units are (%).
+"meanIntensity" is the mean intensity of voice, unit is (dB).
+"rmsEnergy" is the root mean square of the energy, unit is (amplitude)
+"spectralCOG" and "spectralSpread" are the center of gravity and the spread of the audio spectral, respectively. Units are (Hz). 
+
+--------------Rater information.xlsx column name illustration-----------
+This data is the 720 participants' basic informaiton and questionnaire results. 
+
+"QuestionnaireNo" is participants' questionnaire No.
+"username" is the user name in the emotion recognition website, range 20230001~20230720. A total of 720 users participated in the audio assessment.
+
+"gender" is the gender of participants.
+"age" is participants' age
+"groupnumber" is the group information, range 1~18, which has been described before (sentence corpus information.xlsx column name illustration)
+"GAD7-1"~"GAD7-7" are item score of GAD-7
+"PHQ9-1"~"PHQ9-9" are item score of PHQ-9
+"GAD9_total" is the total score of GAD-7
+"PHQ_total" is the total score of PHQ-9
+"actress" the actor whose speech was assessed by the participants
+"actresssex" is the the gender of that actor
+
