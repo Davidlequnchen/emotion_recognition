@@ -63,8 +63,9 @@ emotion_recognition/
 
 Git tracks the code, configuration, documentation and the six small test clips. Model files and the full dataset
 are in `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the two download scripts.
-For now there is one exception, for a machine that cannot reach Hugging Face: the nEMO Parquet files are committed
-in 90 MiB parts (GitHub refuses files over 100 MB); after `git pull`, `python scripts/join_parts.py` joins and checks them.
+For now there are two exceptions, for a machine that cannot reach Hugging Face or OSF: the unpacked MCAE-SPPS files
+(without its zips), and the nEMO Parquet files in 90 MiB parts (GitHub refuses files over 100 MB); after `git pull`,
+`python scripts/join_parts.py` joins and checks them.
 
 ## 1. Set up the environment
 
