@@ -50,6 +50,7 @@ emotion_recognition/
 ├── scripts/
 │   ├── download_model.py       # downloads a model from HuggingFace or ModelScope
 │   ├── download_data.py        # downloads CREMA-D (test clips or full) and five more datasets, checks every file
+│   ├── join_parts.py           # joins dataset files committed in 90 MiB parts, checks their SHA-256
 │   ├── eval_datasets.py        # one loader per evaluation dataset (labels -> emotion2vec+ classes)
 │   ├── evaluate.py             # runs the model on each dataset, writes the reports and a summary
 │   ├── make_viewer.py          # builds a web page with random right and wrong examples
@@ -62,6 +63,8 @@ emotion_recognition/
 
 Git tracks the code, configuration, documentation and the six small test clips. Model files and the full dataset
 are in `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the two download scripts.
+For now there is one exception, for a machine that cannot reach Hugging Face: the nEMO Parquet files are committed
+in 90 MiB parts (GitHub refuses files over 100 MB); after `git pull`, `python scripts/join_parts.py` joins and checks them.
 
 ## 1. Set up the environment
 
