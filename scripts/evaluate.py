@@ -13,6 +13,8 @@ The datasets are defined in scripts/eval_datasets.py; download them first with s
 Usage:
     python scripts/evaluate.py
 Settings (which datasets, an optional sample size, device) are in the `evaluation` section of config/config.yaml.
+A dataset whose results for the same model and sample size are already in outputs/ is skipped, unless
+`evaluation.overwrite` is true. The summary always covers every dataset with results in outputs/.
 """
 import collections
 import csv
@@ -275,7 +277,6 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
                                                            if has_listener else {}),
         "columns": {k: v for k, v in columns_doc.items() if has_listener or "listener" not in k},
     }
-    predictions.with_suffix(".json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     # Confusion-matrix figures and the Markdown report
     figures = ROOT / "reports" / "figures"
@@ -395,6 +396,8 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
     report.append("")
     out = ROOT / "reports" / f"{stem}.md"
     out.write_text("\n".join(report), encoding="utf-8")
+    # Written last, so that it exists only for a finished run (see finished_run)
+    predictions.with_suffix(".json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     print(f"\nDone: report -> {out.relative_to(ROOT)}, predictions -> {predictions.relative_to(ROOT)}")
 
 
@@ -506,6 +509,21 @@ def write_summary(model_name, figure_order=(), acted_or_listener=()):
     print(f"Summary of {len(runs)} dataset(s) -> {path.relative_to(ROOT)}")
 
 
+def finished_run(key, model_name, limit):
+    """The predictions JSON of an earlier finished run that a run with these settings would replace, or None.
+    With evaluation.limit smaller than the dataset, a run writes <key>_<model>_sample<limit>_*, otherwise
+    <key>_<model>_*. The JSON is written last, so it exists only for a finished run."""
+    out = ROOT / "outputs"
+    sample = out / f"{key}_{model_name}_sample{limit}_predictions.json"
+    full = out / f"{key}_{model_name}_predictions.json"
+    if limit and sample.exists():
+        return sample
+    # A full run also counts when the limit is at least the size of the dataset (then there is no sample)
+    if full.exists() and (not limit or json.loads(full.read_text(encoding="utf-8"))["clips"] <= limit):
+        return full
+    return None
+
+
 def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
@@ -517,7 +535,7 @@ def main():
     settings = cfg["evaluation"]
     mode = cfg["mode"]
     device = torch.device(settings["devices"][mode])
-    limit = settings["limit"]
+    limit, overwrite, figure = settings["limit"], settings["overwrite"], settings["summary_figure"]
     model_name = cfg["model"]
     model_dir = ROOT / cfg["models"][model_name]["dir"]
     wanted = settings["datasets"]
@@ -526,9 +544,12 @@ def main():
     else:
         keys = [wanted] if isinstance(wanted, str) else list(wanted)
     unknown = [k for k in keys if k not in LOADERS]
-    missing = [k for k in keys if k in LOADERS and not (ROOT / "data" / k).is_dir()]
     if unknown:
         sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/config.yaml; use: {', '.join(LOADERS)} or all")
+    # Datasets that already have results for this model and limit in outputs/ are skipped, unless overwrite is true
+    done = {} if overwrite else {k: run for k in keys if (run := finished_run(k, model_name, limit))}
+    todo = [k for k in keys if k not in done]
+    missing = [k for k in todo if not (ROOT / "data" / k).is_dir()]
     if not keys or missing:
         sys.exit(f"ERROR: not downloaded: {', '.join(missing) or 'any dataset'}. Download it with "
                  "scripts/download_data.py (set `download.dataset` in config/config.yaml).")
@@ -538,6 +559,15 @@ def main():
     print(f"  model       : {model_name} ({model_dir})")
     print(f"  datasets    : {', '.join(keys)}")
     print(f"  limit       : {f'{limit:,} clips of each dataset, taken at even intervals' if limit else 'every clip'}")
+    print(f"  overwrite   : {'yes, evaluate again' if overwrite else 'no, skip datasets that already have results'}")
+    for key, run in done.items():
+        print(f"  skipped     : {key} (results in {run.relative_to(ROOT)})")
+    if not todo:
+        print("\nEvery dataset already has results, so only the summary is written. To evaluate again, set "
+              "`evaluation.overwrite: true` in config/config.yaml.")
+        write_summary(model_name, figure["order"], figure["acted_or_listener"])
+        return
+    print(f"  to evaluate : {', '.join(todo)}")
 
     # ------------------------------------------------------------------
     # Step 2: Check the software stack and the device
@@ -574,10 +604,9 @@ def main():
     print(f"  loaded in   : {time.perf_counter() - t0:.1f} s")
     print(f"  classes     : {', '.join(labels)}")
 
-    # Steps 4-6 for every dataset, then a summary of all evaluated datasets
-    for key in keys:
+    # Steps 4-6 for every dataset to evaluate, then a summary of every dataset with results in outputs/
+    for key in todo:
         evaluate(LOADERS[key](), predict, labels, model_name, device, limit, {"funasr": funasr.__version__})
-    figure = settings["summary_figure"]
     write_summary(model_name, figure["order"], figure["acted_or_listener"])
 
 

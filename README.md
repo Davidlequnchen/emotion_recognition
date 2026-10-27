@@ -383,6 +383,7 @@ Settings, in the `evaluation` section of `config/config.yaml`:
 evaluation:
   datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
   limit: null       # only N clips of each dataset, taken at even intervals (quick test or sample); null = every clip
+  overwrite: false  # false: skip a dataset whose results (same model and limit) are already in outputs/
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here (see below)
     cuda: cuda:0
@@ -403,6 +404,11 @@ to evaluate on a new dataset, add a loader there. For each dataset the script wr
 - [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side,
   every dataset's confusion matrix in one figure (`reports/figures/emotion2vec_plus_large_summary_confusion.png`), and
   a comparison on the emotions that every dataset has.
+
+A dataset whose results for the same model and `limit` are already in `outputs/` is skipped, so after adding a
+dataset the script evaluates only the new one; set `overwrite: true` to evaluate again. The summary always covers
+every dataset with results in `outputs/`, also those not listed in `datasets`; for a dataset with a full run and a
+sample, it shows the run with more clips.
 
 The datasets name their emotions differently, and emotion2vec+ has nine output classes: angry, disgusted, fearful,
 happy, neutral, other, sad, surprised and `<unk>`. Each loader maps its dataset's labels to these classes:
