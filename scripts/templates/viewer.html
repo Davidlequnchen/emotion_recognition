@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- Template for scripts/make_viewer.py, which fills the JSON block near the end with the selected clips. -->
+<!-- Template for scripts/make_viewer.py, which fills the JSON block near the end with the results and the selected clips. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Emotion Recognition Examples</title>
+<title>Emotion Recognition Results</title>
 <style>
   :root {
     color-scheme: light;
@@ -91,13 +91,37 @@
   .detail .extra { margin-top: 10px; }
 
   .empty { color: var(--ink-2); padding: 28px; text-align: center; }
+
+  /* Results: summary tables, confusion-matrix figure, datasets */
+  h2 { font-size: 18px; line-height: 1.3; margin: 40px 0 4px; }
+  h3 { font-size: 15px; margin: 28px 0 8px; }
+  table.results { min-width: 760px; }
+  .results th, .results td { padding: 10px 14px; }
+  .results th { white-space: normal; vertical-align: bottom; }
+  .results .n { text-align: right; font-variant-numeric: tabular-nums; }
+  .results td.n { white-space: nowrap; }
+  .results td.name { font-weight: 600; white-space: nowrap; }
+  .results tr.linked { cursor: pointer; }
+  .results tr.linked:hover { background: var(--hover); }
+  .results tr.linked td.name::after { content: " ›"; color: var(--accent); }
+  .results a { color: var(--accent); }
+  .notes { color: var(--ink-2); font-size: 12.5px; margin: 10px 0 0; padding-left: 18px; max-width: 92ch; }
+  .notes li { margin: 3px 0; }
+  .figure { margin: 0; background: #fcfcfb; border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; }
+  .figure img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+  .figure.zoomed img { width: auto; max-width: none; cursor: zoom-out; }
+  .caption { color: var(--ink-2); font-size: 12.5px; margin: 8px 0 0; max-width: 92ch; }
   footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
   code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Emotion recognition examples</h1>
+  <h1>Emotion recognition: results and examples</h1>
+  <p class="sub" id="intro"></p>
+  <section id="summary"></section>
+  <section id="examples">
+  <h2>Examples</h2>
   <p class="sub" id="sub"></p>
   <div class="tiles" id="tiles"></div>
   <div class="toolbar">
@@ -111,6 +135,8 @@
     <thead><tr id="head"></tr></thead>
     <tbody id="rows"></tbody>
   </table></div>
+  </section>
+  <section id="datasets"></section>
   <footer id="footer"></footer>
 </main>
 
@@ -259,6 +285,76 @@
       : [el("tr", {}, el("td", { className: "empty", colSpan: labelKeys.length + 5, textContent: "No clips match these filters." }))]));
   }
 
+  // ---- Results: one summary per model (from reports/<model>_summary.json) and the datasets' sources ----
+  const pct = (x) => (x === null || x === undefined) ? "–" : `${(100 * x).toFixed(1)}%`;
+  const sampleOf = (d) => d.total_clips > d.clips ? ` of ${d.total_clips.toLocaleString()}` : "";
+  function resultsTable(columns, rows) {  // columns: [heading, numeric]; rows: <tr> elements
+    return el("div", { className: "table-wrap" }, el("table", { className: "results" },
+      el("thead", {}, el("tr", {}, ...columns.map(([text, numeric]) => el("th", { className: numeric ? "n" : "", textContent: text })))),
+      el("tbody", {}, ...rows)));
+  }
+  function datasetRow(key, model, cells) {  // a row that shows the dataset's examples when clicked, if the page has them
+    const index = DATA.runs.findIndex((r) => r.key === key && r.model === model);
+    const tr = el("tr", { className: index >= 0 ? "linked" : "", title: index >= 0 ? "Show example clips of this dataset" : "No example clips of this dataset on this page" }, ...cells);
+    if (index >= 0) tr.addEventListener("click", () => { $("run").value = String(index); selectRun(index); $("examples").scrollIntoView({ behavior: "smooth" }); });
+    return tr;
+  }
+  const td = (text, numeric) => el("td", { className: numeric ? "n" : "", textContent: text });
+
+  function renderSummary(s) {
+    const listeners = s.datasets.some((d) => d.metrics.accuracy_acted_or_listener !== undefined);
+    const main = resultsTable(
+      [["Dataset"], ["Language"], ["Clips", 1], ["Emotions", 1], ["Chance", 1], ["Accuracy: acted emotion", 1],
+       ...(listeners ? [["Accuracy: acted or listeners' vote", 1]] : []), ["Unweighted accuracy", 1], ["Macro F1", 1], ["In EmoBox"]],
+      s.datasets.map((d) => datasetRow(d.key, s.model, [
+        el("td", { className: "name", textContent: d.dataset }), td(d.language), td(d.clips.toLocaleString() + sampleOf(d), 1),
+        td(String(d.emotions), 1), td(pct(1 / d.emotions), 1), el("td", { className: "n" }, el("b", { textContent: pct(d.metrics.accuracy) })),
+        ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), 1)] : []), td(pct(d.metrics.unweighted_accuracy), 1),
+        td(pct(d.metrics.macro_f1), 1), td(d.in_emobox ? "yes" : "no")])));
+    const notes = el("ul", { className: "notes" },
+      el("li", { textContent: "Accuracy: acted emotion compares the prediction with the emotion the speaker was asked to portray. The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many emotions it has." }),
+      listeners ? el("li", { textContent: "Accuracy: acted or listeners' vote also accepts the listeners' majority vote; only datasets that publish listeners' labels have it." }) : null,
+      el("li", { textContent: "In EmoBox: the dataset was probably part of the model's training data, so its result is optimistic." }),
+      s.datasets.some((d) => d.total_clips > d.clips) ? el("li", { textContent: "Clips such as 3,500 of 35,000: evaluated on a sample taken at even intervals within each emotion, not on every clip." }) : null,
+      el("li", { textContent: "Click a dataset to listen to example clips (› marks the datasets with clips on this page)." }));
+    const parts = [el("h2", { textContent: `Results of ${s.model} on every dataset` }),
+      el("p", { className: "sub", textContent: `${s.datasets.length} datasets, summary of ${s.date}. One prediction per clip, the model as released (no fine-tuning).` }),
+      main, notes];
+    if (s.figure) {
+      const figure = el("figure", { className: "figure" }, el("img", { src: s.figure, alt: `Confusion matrices of ${s.model} on every dataset` }));
+      figure.addEventListener("click", () => figure.classList.toggle("zoomed"));
+      parts.push(el("h3", { textContent: "Confusion matrices" }), figure, el("p", { className: "caption", textContent:
+        `One matrix per dataset: ${s.figure_datasets.join(", ")}. Rows: acted emotion; columns: predicted emotion; each row adds up to 100%.`
+        + (s.acted_or_listener.length ? ` ${s.acted_or_listener.join(", ")}: a prediction also counts as correct when it matches the listeners' vote, and such a clip sits in the row of that vote.` : "")
+        + " Click the figure to enlarge it." }));
+    }
+    if (s.shared.length) {
+      const n = s.shared_emotions.length;
+      parts.push(el("h3", { textContent: `Only the emotions every dataset has: ${s.shared_emotions.join(", ")}` }),
+        el("p", { className: "caption", textContent: `The datasets have different emotions, and some are much harder than others. Here every dataset is scored on the same ${n} emotions (chance ${pct(1 / n)}): clips of other emotions are left out, and the prediction is the most probable of these ${n}.` }),
+        resultsTable([["Dataset"], ["Language"], ["Clips", 1], ["Accuracy", 1], ["Unweighted accuracy", 1], ["In EmoBox"]],
+          s.shared.map((d) => datasetRow(d.key, s.model, [el("td", { className: "name", textContent: d.dataset }), td(d.language),
+            td(d.clips.toLocaleString() + (d.sample ? " (sample)" : ""), 1), el("td", { className: "n" }, el("b", { textContent: pct(d.accuracy) })),
+            td(pct(d.unweighted_accuracy), 1), td(d.in_emobox ? "yes" : "no")]))));
+    }
+    return parts;
+  }
+
+  function renderDatasets() {
+    const names = Object.fromEntries([...DATA.summaries.flatMap((s) => s.datasets), ...DATA.runs].map((d) => [d.key, d.dataset]));
+    const keys = Object.keys(DATA.sources);
+    if (!keys.length) return [];
+    const link = (text, href) => href ? el("a", { href, textContent: text, target: "_blank", rel: "noopener" }) : text;
+    return [el("h2", { textContent: "Datasets and licences" }),
+      resultsTable([["Dataset"], ["Licence"], ["Credit"], ["Clips on this page"]], keys.map((key) => {
+        const src = DATA.sources[key];
+        const shown = DATA.runs.some((r) => r.key === key);
+        return el("tr", {}, el("td", { className: "name" }, link(names[key] ?? key, src.url)), el("td", {}, link(src.licence, src.licence_url)),
+          el("td", { textContent: src.credit }),
+          td(shown ? "yes" : (src.public_audio ? "no, results only" : "no: its licence does not allow sharing its audio; results only")));
+      }))];
+  }
+
   function selectRun(index) {
     const run = DATA.runs[index];
     Object.assign(state, { run: index, criterion: run.criteria[0].column, status: "all", emotion: "all" });
@@ -268,6 +364,10 @@
     render();
   }
 
+  const models = [...new Set([...DATA.summaries.map((s) => s.model), ...DATA.runs.map((r) => r.model)])];
+  $("intro").textContent = `Speech emotion recognition with ${models.join(", ")}: the results on every evaluated dataset, then random clips it got right and wrong.`;
+  $("summary").replaceChildren(...DATA.summaries.flatMap(renderSummary));
+  $("datasets").replaceChildren(...renderDatasets());
   $("run").replaceChildren(...DATA.runs.map((r, i) => el("option", { value: i, textContent: `${r.dataset} / ${r.model}` })));
   $("run-control").hidden = DATA.runs.length < 2;
   $("run").addEventListener("change", (e) => selectRun(Number(e.target.value)));
@@ -275,7 +375,8 @@
   $("footer").append("Generated by ", el("code", { textContent: "scripts/make_viewer.py" }),
     ". To get the same clips again, set ", el("code", { textContent: `viewer.seed: ${DATA.seed}` }), " in ",
     el("code", { textContent: "config/config.yaml" }), ".");
-  selectRun(0);
+  $("examples").hidden = !DATA.runs.length;
+  if (DATA.runs.length) selectRun(0);
 </script>
 </body>
 </html>

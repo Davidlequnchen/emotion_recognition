@@ -189,4 +189,115 @@ def esd():
         in_emobox=True)
 
 
-LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd}
+def ravdess():
+    root = DATA / "ravdess" / "audio"  # Actor_<nn>/03-01-<emotion>-<intensity>-<statement>-<repetition>-<actor>.wav
+    codes = {"01": "neutral", "03": "happy", "04": "sad", "05": "angry", "06": "fearful", "07": "disgusted",
+             "08": "surprised"}  # "02" is calm, which emotion2vec+ does not have
+    files = sorted(root.glob("Actor_*/*.wav"))
+    clips = [{"audio": f, "acted": codes[f.stem.split("-")[2]], "listener": ""} for f in files
+             if f.stem.split("-")[2] in codes]
+    return EvalSet(
+        "ravdess", "RAVDESS", "English", list(codes.values()), clips,
+        ground_truth="the emotion each actor was asked to portray, from the third number in the file name (01 neutral, "
+                     "02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised)",
+        notes=["Label mapping: neutral, happy, sad, angry, fearful and surprised keep their names; disgust = disgusted. "
+               f"Clips acted *calm* ({len(files) - len(clips):,} of {len(files):,}) are left out because emotion2vec+ has "
+               "no such class.",
+               "24 professional actors (12 female, 12 male) say two sentences, \"Kids are talking by the door\" and "
+               "\"Dogs are sitting by the door\", twice in each emotion, at two intensities (normal and strong) except "
+               "for neutral."],
+        caveats=[IN_EMOBOX,
+                 "Listeners rated every file 10 times (247 listeners). The paper publishes their ratings as recognition "
+                 "rates per file, not as a vote for an emotion, so this report has no listeners' labels.",
+                 "Audio: 48 kHz WAV, resampled to 16 kHz; 5 files are stereo, and FunASR averages their channels."],
+        in_emobox=True)
+
+
+def tess():
+    root = DATA / "tess"  # <speaker>_<word>_<emotion>.wav; speaker OAF (aged 64) or YAF (aged 26)
+    words = {"angry": "angry", "disgust": "disgusted", "fear": "fearful", "happy": "happy", "neutral": "neutral",
+             "ps": "surprised", "sad": "sad"}  # ps = pleasant surprise
+    clips = [{"audio": f, "acted": words[f.stem.rsplit("_", 1)[1].lower()], "listener": ""}
+             for f in sorted(root.glob("*.wav"))]
+    return EvalSet(
+        "tess", "TESS", "English", list(words.values()), clips,
+        ground_truth="the emotion each actress was asked to portray, from the last word of the file name (`angry`, "
+                     "`disgust`, `fear`, `happy`, `neutral`, `ps` for pleasant surprise, `sad`)",
+        notes=["Label mapping: angry, happy, neutral and sad keep their names; disgust = disgusted, fear = fearful, "
+               "**pleasant surprise = surprised**.",
+               "Two actresses, aged 26 and 64, say \"Say the word ...\" with the same 200 target words in each of the "
+               "seven emotions."],
+        caveats=[IN_EMOBOX,
+                 "Only two speakers, so the result says little about other voices; models often score close to 100% on "
+                 "TESS.",
+                 "No listeners' labels are published with the dataset. Audio: 24,414 Hz WAV (one file, "
+                 "`OAF_food_fear.wav`, is 96 kHz), resampled to 16 kHz."],
+        in_emobox=True)
+
+
+def jl_corpus():
+    # <speaker>_<emotion>_<sentence><session>_<repetition>.wav, e.g. female1_angry_10a_1.wav, with its transcript in .txt
+    root = DATA / "jl_corpus" / "audio" / "Raw JL corpus (unchecked and unannotated)" / "JL(wav+txt)"
+    keep = ["angry", "happy", "neutral", "sad"]  # excited and the five secondary emotions have no model class
+    files = sorted(root.glob("*.wav"))
+    clips = [{"audio": f, "acted": f.stem.split("_")[1], "listener": ""} for f in files if f.stem.split("_")[1] in keep]
+    return EvalSet(
+        "jl_corpus", "JL-Corpus", "English (New Zealand)", keep, clips,
+        ground_truth="the emotion each speaker was asked to portray, from the second part of the file name",
+        notes=["Only the four primary emotions that emotion2vec+ has: angry, happy, neutral and sad "
+               f"({len(clips):,} of {len(files):,} clips). The fifth primary emotion, *excited*, and the five secondary "
+               "emotions (anxious, apologetic, assertive, concerned, encouraging) have no model class and are left out.",
+               "Four trained voice actors of New Zealand English (two female, two male) say the same 15 sentences in "
+               "each primary emotion, in two sessions, twice each."],
+        caveats=[IN_EMOBOX,
+                 "This is the raw corpus (\"unchecked and unannotated\"). In the authors' perception test (120 listeners) "
+                 "about 70% of the primary-emotion clips were recognised; the results per clip are not published, so "
+                 "poorly acted clips are included.",
+                 "Audio: 44.1 kHz WAV, resampled to 16 kHz."],
+        in_emobox=True)
+
+
+LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd,
+           "ravdess": ravdess, "tess": tess, "jl_corpus": jl_corpus}
+
+# Source, licence and credit of each dataset, shown on the viewer page (scripts/make_viewer.py). public_audio: the
+# licence allows putting its clips on a public web page. A dataset that is not listed here counts as not allowed.
+CC = "https://creativecommons.org/licenses/"
+SOURCES = {
+    "crema_d": {"url": "https://github.com/CheyneyComputerScience/CREMA-D", "public_audio": True,
+                "licence": "ODbL 1.0", "licence_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+                "credit": "Cao, Cooper, Keutmann, Gur, Nenkova, Verma. CREMA-D: Crowd-sourced Emotional Multimodal "
+                          "Actors Dataset. IEEE Transactions on Affective Computing, 2014."},
+    "mcae_spps": {"url": "https://osf.io/9jyzc/", "public_audio": True,
+                  "licence": "CC BY-NC 4.0", "licence_url": CC + "by-nc/4.0/",
+                  "credit": "Li, Zhou, Yan, Li, Ma, Wu. A validated Mandarin Chinese Auditory Emotion Database of "
+                            "Subject-Personal-Pronoun Sentences (MCAE-SPPS). Scientific Data, 2026."},
+    "thai_ser": {"url": "https://huggingface.co/datasets/airesearch/thai-ser", "public_audio": True,
+                 "licence": "CC BY-SA 4.0", "licence_url": CC + "by-sa/4.0/",
+                 "credit": "Wongpithayadisai et al. Thai Speech Emotion Recognition (THAI-SER) Corpus. Language "
+                           "Resources and Evaluation, 2026."},
+    "nemo": {"url": "https://huggingface.co/datasets/amu-cai/nEMO", "public_audio": True,
+             "licence": "CC BY-NC-SA 4.0", "licence_url": CC + "by-nc-sa/4.0/",
+             "credit": "Christop. nEMO: Dataset of Emotional Speech in Polish. LREC-COLING 2024."},
+    "mess": {"url": "https://zenodo.org/records/3813437", "public_audio": True,
+             "licence": "CC BY 4.0", "licence_url": CC + "by/4.0/",
+             "credit": "Morgan. Categorical and Dimensional Ratings of Emotional Speech: Behavioral Findings From the "
+                       "Morgan Emotional Speech Set. Journal of Speech, Language, and Hearing Research, 2019."},
+    # ESD's licence forbids giving the data to anyone else, so its clips stay off public pages
+    "esd": {"url": "https://github.com/HLTSingapore/Emotional-Speech-Data", "public_audio": False,
+            "licence": "research only, under a signed licence", "licence_url": None,
+            "credit": "Zhou, Sisman, Liu, Li. Emotional voice conversion: theory, databases and ESD. Speech "
+                      "Communication, 2022. (Portions of) the research on this page used the ESD Database made "
+                      "available by the HLT lab, National University of Singapore, Singapore."},
+    "ravdess": {"url": "https://zenodo.org/records/1188976", "public_audio": True,
+                "licence": "CC BY-NC-SA 4.0", "licence_url": CC + "by-nc-sa/4.0/",
+                "credit": "Livingstone, Russo. The Ryerson Audio-Visual Database of Emotional Speech and Song "
+                          "(RAVDESS). PLOS ONE, 2018."},
+    "tess": {"url": "https://doi.org/10.5683/SP2/E8H2MF", "public_audio": True,
+             "licence": "CC BY-NC 4.0", "licence_url": CC + "by-nc/4.0/",
+             "credit": "Pichora-Fuller, Dupuis. Toronto emotional speech set (TESS). Borealis, 2020."},
+    "jl_corpus": {"url": "https://www.kaggle.com/datasets/tli725/jl-corpus", "public_audio": True,
+                  "licence": "CC0 1.0", "licence_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                  "credit": "James, Tian, Watson. An Open Source Emotional Speech Corpus for Human Robot Interaction "
+                            "Applications. Interspeech 2018."},
+}

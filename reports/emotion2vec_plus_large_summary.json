@@ -1,0 +1,130 @@
+{
+  "model": "emotion2vec_plus_large",
+  "date": "2026-10-27",
+  "datasets": [
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 7442,
+      "total_clips": 7442,
+      "emotions": 6,
+      "in_emobox": true,
+      "metrics": {
+        "accuracy": 0.864553,
+        "unweighted_accuracy": 0.865401,
+        "macro_f1": 0.865683,
+        "accuracy_9_classes": 0.864284,
+        "accuracy_acted_or_listener": 0.896399,
+        "listeners_vs_acted": 0.455869,
+        "model_vs_listeners": 0.448073
+      }
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 6675,
+      "total_clips": 6675,
+      "emotions": 7,
+      "in_emobox": false,
+      "metrics": {
+        "accuracy": 0.613483,
+        "unweighted_accuracy": 0.541993,
+        "macro_f1": 0.500753,
+        "accuracy_9_classes": 0.613483,
+        "accuracy_acted_or_listener": 0.613483,
+        "listeners_vs_acted": 1.0,
+        "model_vs_listeners": 0.613483
+      }
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 4481,
+      "total_clips": 4481,
+      "emotions": 6,
+      "in_emobox": false,
+      "metrics": {
+        "accuracy": 0.519527,
+        "unweighted_accuracy": 0.505879,
+        "macro_f1": 0.473726,
+        "accuracy_9_classes": 0.467306
+      }
+    },
+    {
+      "dataset": "MESS",
+      "key": "mess",
+      "language": "English",
+      "clips": 1800,
+      "total_clips": 1800,
+      "emotions": 4,
+      "in_emobox": false,
+      "metrics": {
+        "accuracy": 0.407778,
+        "unweighted_accuracy": 0.407778,
+        "macro_f1": 0.352239,
+        "accuracy_9_classes": 0.386667
+      }
+    }
+  ],
+  "figure": "figures/emotion2vec_plus_large_summary_confusion.png",
+  "figure_datasets": [
+    "CREMA-D",
+    "MCAE-SPPS",
+    "nEMO",
+    "MESS"
+  ],
+  "acted_or_listener": [
+    "CREMA-D"
+  ],
+  "shared_emotions": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "shared": [
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 4900,
+      "sample": false,
+      "accuracy": 0.932041,
+      "unweighted_accuracy": 0.931004,
+      "in_emobox": true
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 4297,
+      "sample": false,
+      "accuracy": 0.877822,
+      "unweighted_accuracy": 0.85327,
+      "in_emobox": false
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 3076,
+      "sample": false,
+      "accuracy": 0.678153,
+      "unweighted_accuracy": 0.673508,
+      "in_emobox": false
+    },
+    {
+      "dataset": "MESS",
+      "key": "mess",
+      "language": "English",
+      "clips": 1800,
+      "sample": false,
+      "accuracy": 0.407778,
+      "unweighted_accuracy": 0.407778,
+      "in_emobox": false
+    }
+  ]
+}
