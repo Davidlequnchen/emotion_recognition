@@ -19,7 +19,7 @@ pip install -r requirements.txt
 python scripts/download_model.py           # model files -> models/emotion2vec_plus_large/
 python scripts/inference.py                # NVIDIA server: first set `mode: cuda` in config/config.yaml
 # optional (first set `download.dataset: all` in config/config.yaml): the evaluation datasets -> data/,
-# the model's accuracy on each -> reports/, and a web page with right and wrong examples -> outputs/viewer.html
+# the model's accuracy on each -> reports/, and a web page with the results and examples -> outputs/viewer.html
 python scripts/download_data.py
 python scripts/evaluate.py
 python scripts/make_viewer.py
@@ -32,11 +32,13 @@ section per script. Each step is explained below.
 
 ```
 emotion_recognition/
+├── .github/workflows/pages.yml # publishes site/ with GitHub Pages
 ├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, audio path, viewer settings
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
 │   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
-│   └── mcae_spps/ thai_ser/ nemo/ mess/ esd/   # more datasets like CREMA-D (optional downloads, not in git)
+│   ├── mcae_spps/ thai_ser/ nemo/ mess/ esd/   # more datasets like CREMA-D (optional downloads, not in git)
+│   └── ravdess/ tess/ jl_corpus/               # three more English ones (optional downloads, not in git)
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   ├── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
@@ -49,13 +51,14 @@ emotion_recognition/
 │   └── figures/                # figures used in the reports
 ├── scripts/
 │   ├── download_model.py       # downloads a model from HuggingFace or ModelScope
-│   ├── download_data.py        # downloads CREMA-D (test clips or full) and five more datasets, checks every file
+│   ├── download_data.py        # downloads CREMA-D (test clips or full) and eight more datasets, checks every file
 │   ├── join_parts.py           # joins dataset files committed in 90 MiB parts, checks their SHA-256
 │   ├── eval_datasets.py        # one loader per evaluation dataset (labels -> emotion2vec+ classes)
 │   ├── evaluate.py             # runs the model on each dataset, writes the reports and a summary
-│   ├── make_viewer.py          # builds a web page with random right and wrong examples
+│   ├── make_viewer.py          # builds a web page with the results and random right and wrong examples
 │   ├── templates/viewer.html   # the page template used by make_viewer.py
 │   └── inference.py            # step-by-step inference
+├── site/index.html             # the public results page (built by make_viewer.py, published by GitHub Pages)
 ├── requirements.txt            # common packages (both machines)
 ├── requirements-mac.txt        # PyTorch for Apple Silicon (MPS + CPU)
 └── requirements-cuda121.txt    # PyTorch for NVIDIA GPUs, CUDA 12.1
@@ -63,9 +66,10 @@ emotion_recognition/
 
 Git tracks the code, configuration, documentation and the six small test clips. Model files and the full dataset
 are in `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the two download scripts.
-For now there are two exceptions, for a machine that cannot reach Hugging Face or OSF: the unpacked MCAE-SPPS files
-(without its zips), and the nEMO Parquet files in 90 MiB parts (GitHub refuses files over 100 MB); after `git pull`,
-`python scripts/join_parts.py` joins and checks them.
+For now there are exceptions, for a machine that cannot reach the hosts of these datasets: the unpacked MCAE-SPPS files
+(without its zips), the TESS files, the JL-Corpus recordings (`JL(wav+txt)/`; not the rest of its zip, see
+`data/jl_corpus/README.md`), and the nEMO Parquet files in 90 MiB parts (GitHub refuses files over 100 MB); after
+`git pull`, `python scripts/join_parts.py` joins and checks them.
 
 ## 1. Set up the environment
 
@@ -232,12 +236,13 @@ Emotional Multimodal Actors Dataset", *IEEE Transactions on Affective Computing*
 
 ### 3.4 More datasets like CREMA-D
 
-The same script downloads five more datasets that also record the same sentences in different emotions.
+The same script downloads eight more datasets that also record the same sentences in different emotions.
 They were chosen from the survey in [docs/datasets_survey_en.md](docs/datasets_survey_en.md) (Chinese:
 [docs/datasets_survey.md](docs/datasets_survey.md)), which has links, sizes and caveats for many more.
 
 ```bash
-python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd; all = everything)
+python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd, ravdess, tess,
+                                  # jl_corpus; all = everything)
 ```
 
 | `download.dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
@@ -247,9 +252,13 @@ python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_
 | `nemo` | Polish | 4,481 (9 speakers, 90 sentences) | 0.53 GB | Parquet with the audio inside | 6 emotions (acted, checked by listeners) | CC BY-NC-SA 4.0 |
 | `mess` | English | 1,800 (6 speakers) | 0.19 GB | WAV 24.4 kHz in `audio/`; emotion in the file name (`A`ngry, `C`alm, `H`appy, `S`ad) | 4 emotions (acted); listener ratings only on request | CC BY 4.0 |
 | `esd` | English, Mandarin | 35,000 (20 speakers, 350 sentences) | 2.45 GB | WAV 16 kHz in `audio/Emotion Speech Dataset/<speaker>/<emotion>/`; text and emotion per clip in `<speaker>/<speaker>.txt` | 5 emotions (acted; no listener test) | research only, licence form (see below) |
+| `ravdess` | English | 1,440 (24 actors, 2 sentences) | 0.21 GB | WAV 48 kHz in `audio/Actor_<nn>/`; emotion, intensity, sentence and actor in the file name | 8 emotions including calm, 2 intensities (acted; listener ratings per file in the paper) | CC BY-NC-SA 4.0 |
+| `tess` | English | 2,800 (2 actresses, 200 words) | 0.28 GB | WAV 24.4 kHz, named `<speaker>_<word>_<emotion>.wav` | 7 emotions (acted) | CC BY-NC 4.0 |
+| `jl_corpus` | English (New Zealand) | 2,400 (4 actors, 15 sentences) | 1.28 GB | WAV 44.1 kHz, each with its transcript, in `audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/`, named `<speaker>_<emotion>_<sentence><session>_<repetition>.wav` | 5 primary + 5 secondary emotions (acted; the perception test results are not published) | CC0 |
 
-Every file is checked against the checksum its host publishes (OSF SHA-256, Zenodo MD5, Hugging Face SHA-256).
-Google Drive publishes none, so the ESD zip is checked with its own CRCs and a SHA-256 written in the script.
+Every file is checked against the checksum its host publishes (OSF SHA-256, Zenodo MD5, Hugging Face SHA-256,
+Borealis MD5). Google Drive and Kaggle publish none, so the ESD and JL-Corpus zips are checked with their own CRCs and
+a SHA-256 written in the script. For RAVDESS only the speech audio is downloaded, not its song audio and videos.
 Zip files are unpacked into `audio/` and kept. The Parquet files of THAI-SER and nEMO hold the audio and the labels
 together (reading them needs `pyarrow`); `scripts/evaluate.py` extracts the audio it needs into `audio/` on its first run.
 ESD is for research only: before using it, complete the licence form on its
@@ -382,13 +391,15 @@ Settings, in the `evaluation` section of `config/config.yaml`:
 ```yaml
 evaluation:
   datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
-  limit: null       # only N clips of each dataset, taken at even intervals (quick test or sample); null = every clip
+  exclude: [esd, thai_ser]  # never evaluated, even with `all`, and left out of the summary
+  limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
+                    # sample); null = every clip
   overwrite: false  # false: skip a dataset whose results (same model and limit) are already in outputs/
   devices:          # device per mode for evaluation
     mac: cpu        # on the Mac the CPU is faster than MPS here (see below)
     cuda: cuda:0
   summary_figure:   # every dataset's confusion matrix in one figure, in the summary report
-    order: [crema_d, esd, thai_ser, mcae_spps, nemo, mess]  # panels row by row; datasets not listed come last
+    order: [crema_d, mcae_spps, nemo, mess]  # panels row by row; datasets not listed come last
     acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
                                   # the others show the acted emotion
 ```
@@ -417,23 +428,27 @@ happy, neutral, other, sad, surprised and `<unk>`. Each loader maps its dataset'
 |---|---|---|---|
 | CREMA-D | 6, code in the file name: `ANG` `DIS` `FEA` `HAP` `NEU` `SAD` | ANG → angry, DIS → disgusted, FEA → fearful, HAP → happy, NEU → neutral, SAD → sad | surprised, other, `<unk>` |
 | MCAE-SPPS | 7, second digit of the file name: 1 Neutral, 2 Happiness, 3 Anger, 4 Fear, 5 Sadness, 6 Disgust, 7 Surprise | Neutral → neutral, Happiness → happy, Anger → angry, Fear → fearful, Sadness → sad, Disgust → disgusted, Surprise → surprised | other, `<unk>` |
-| THAI-SER | 5, column `assigned_emo`: Neutral, Angry, Happy, Sad, Frustrated | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad; **Frustrated has no match, so its 5,270 clips are left out** | disgusted, fearful, surprised, other, `<unk>` |
+| THAI-SER (excluded for now) | 5, column `assigned_emo`: Neutral, Angry, Happy, Sad, Frustrated | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad; **Frustrated has no match, so its 5,270 clips are left out** | disgusted, fearful, surprised, other, `<unk>` |
 | nEMO | 6, column `emotion`: neutral, anger, fear, happiness, sadness, surprised | neutral → neutral, anger → angry, fear → fearful, happiness → happy, sadness → sad, surprised → surprised | disgusted, other, `<unk>` |
 | MESS | 4, first letter of the file name: `A`ngry, `C`alm, `H`appy, `S`ad | A → angry, **C (calm) → neutral, the closest class**, H → happy, S → sad | disgusted, fearful, surprised, other, `<unk>` |
-| ESD | 5, folder name: Neutral, Angry, Happy, Sad, Surprise (the Mandarin transcripts say 中立, 生气, 快乐, 伤心, 惊喜) | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad, Surprise → surprised | disgusted, fearful, other, `<unk>` |
+| ESD (excluded for now) | 5, folder name: Neutral, Angry, Happy, Sad, Surprise (the Mandarin transcripts say 中立, 生气, 快乐, 伤心, 惊喜) | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad, Surprise → surprised | disgusted, fearful, other, `<unk>` |
+| RAVDESS | 8, third number of the file name: 01 neutral, 02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised | neutral, happy, sad, angry, fearful and surprised keep their names, disgust → disgusted; **calm has no match, so its 192 clips are left out** | other, `<unk>` |
+| TESS | 7, last word of the file name: angry, disgust, fear, happy, neutral, ps, sad | angry, happy, neutral and sad keep their names, disgust → disgusted, fear → fearful, **ps (pleasant surprise) → surprised** | other, `<unk>` |
+| JL-Corpus | 10, second part of the file name: angry, excited, happy, neutral, sad (primary); anxious, apologetic, assertive, concerned, encouraging (secondary) | angry, happy, neutral and sad keep their names; **excited and the five secondary emotions have no match, so their 1,440 clips are left out** | disgusted, fearful, surprised, other, `<unk>` |
 
 How the nine probabilities become a prediction:
 
 - **Main result** (*accuracy: acted emotion*): the prediction is the most probable of the dataset's own emotions; the
-  other classes, including `other` and `<unk>`, are ignored. On THAI-SER, for example, only angry, happy, neutral
-  and sad compete, so chance level is 25%.
+  other classes, including `other` and `<unk>`, are ignored. On MESS, for example, only angry, happy, neutral and
+  sad compete, so chance level is 25%.
 - **All 9 classes** (in each report): the prediction is the most probable of all nine classes, so choosing a class
   that the dataset does not have (for example surprised on CREMA-D) counts as wrong.
 - **Listeners' votes** (CREMA-D, MCAE-SPPS, THAI-SER) use the same mapping; for a tied vote, any of the tied emotions
   counts.
-- Three labels do not match exactly: MESS's *calm* is scored as *neutral*; THAI-SER's *frustrated* clips are left
-  out, and a listeners' vote of *frustrated* can never match; ESD's Mandarin label for Surprise, 惊喜, means a
-  pleasant surprise, while the model's class is called 吃惊 (surprised).
+- Some labels do not match exactly. MESS's *calm* is scored as *neutral*. Clips of emotions that the model does not
+  have are left out: THAI-SER's *frustrated* (and a listeners' vote of *frustrated* can never match), RAVDESS's
+  *calm*, and JL-Corpus's *excited* and secondary emotions. TESS's *pleasant surprise* and ESD's Mandarin label for
+  Surprise, 惊喜, both mean a pleasant surprise, while the model's class is called 吃惊 (surprised).
 
 Results:
 
@@ -441,17 +456,22 @@ Results:
 |---|---|---|---|---|---|---|
 | [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | 7,442 | 6 (16.7%) | **86.5%** | 89.6% | yes |
 | [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | 6,675 | 7 (14.3%) | **61.3%** | 61.3% | no |
-| [THAI-SER](reports/thai_ser_emotion2vec_plus_large.md) | Thai | 22,584 | 4 (25.0%) | **63.2%** | 68.5% | no |
 | [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 4,481 | 6 (16.7%) | **52.0%** | – | no |
 | [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | 4 (25.0%) | **40.8%** | – | no |
-| [ESD](reports/esd_emotion2vec_plus_large_sample3500.md) | English, Mandarin | 3,500 of 35,000 (sample) | 5 (20.0%) | **97.0%** | – | yes |
 
 *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that publish
 listeners' labels (for MCAE-SPPS the two agree by construction, because only clips that listeners recognised were
-kept). CREMA-D and ESD are in EmoBox, which emotion2vec+ was trained from, so their results are optimistic; the other
-four are a more realistic picture. ESD was evaluated on a sample (`evaluation.limit: 3500`): 3,500 of its 35,000
-clips, taken at even intervals, which gives 35 clips for every speaker and emotion. Set `limit: null` to evaluate
-every clip.
+kept). CREMA-D is in EmoBox, which emotion2vec+ was trained from, so its result is optimistic; the other three are a
+more realistic picture.
+
+ESD and THAI-SER are left out of the evaluation for now (`exclude`): ESD's licence is research-only and forbids
+sharing it, it has no listener test, and it is in EmoBox; THAI-SER is in Thai, which matters less for this project.
+Their data stays in `data/`; their earlier reports are in [reports/archive/](reports/archive/) (ESD on a 3,500-clip
+sample: 97.0%; THAI-SER: 63.2%) and their predictions in `outputs/archive/`. Remove a dataset from `exclude` to
+evaluate it again.
+
+RAVDESS, TESS and JL-Corpus have loaders, checked on 20 clips each, but are not evaluated in full yet. To evaluate
+only them, set `datasets: [ravdess, tess, jl_corpus]`; they are in EmoBox, so expect optimistic results.
 
 The datasets have different emotions, and some emotions are much harder than others. On the four emotions that every
 dataset has (angry, happy, neutral and sad; chance 25%), counting only clips of these emotions and taking the most
@@ -459,26 +479,23 @@ probable of the four as the prediction (also in the [summary](reports/emotion2ve
 
 | Dataset | Language | Clips | Accuracy, 4 shared emotions | In EmoBox |
 |---|---|---|---|---|
-| [ESD](reports/esd_emotion2vec_plus_large_sample3500.md) | English, Mandarin | 2,800 (sample) | **97.9%** | yes |
 | [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | 4,900 | **93.2%** | yes |
 | [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | 4,297 | **87.8%** | no |
 | [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 3,076 | **67.8%** | no |
-| [THAI-SER](reports/thai_ser_emotion2vec_plus_large.md) | Thai | 22,584 | **63.2%** | no |
 | [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | **40.8%** | no |
 
-The two EmoBox datasets still come first, but MCAE-SPPS, which is not in EmoBox, is close behind: its lower overall
-result comes from its three other emotions (recall: fearful 8.5%, disgusted 8.5%, surprised 28.6%). nEMO, THAI-SER
-and MESS differ from the EmoBox datasets in more than training data: language (Polish, Thai), recording conditions
-(at home, over Zoom) and, for MESS, *calm* scored as *neutral*.
+CREMA-D, which is in EmoBox, still comes first, but MCAE-SPPS, which is not, is close behind: its lower overall result
+comes from its three other emotions (recall: fearful 8.5%, disgusted 8.5%, surprised 28.6%). nEMO and MESS differ
+from CREMA-D in more than training data: language (Polish), recording conditions (at home) and, for MESS, *calm*
+scored as *neutral*.
 
 Speed on the M4 Max: for these evaluations the CPU is faster than MPS, because nearly every clip has a different
-length and MPS compiles new kernels for every new length (THAI-SER: about 140 ms per clip on the CPU, about 235 ms
-on MPS). MPS is fast only for lengths it has seen before (CREMA-D, run many times: 18 ms per clip). MPS also cannot
-process clips longer than about 20 s; the scripts run those on the CPU automatically. On the CPU the full THAI-SER
-run takes about 50 minutes, nEMO 5 minutes, MESS 12 minutes (its 24,414 Hz audio is slow to resample) and the
-3,500-clip ESD sample 6 minutes (all 35,000 ESD clips: about an hour).
+length and MPS compiles new kernels for every new length (THAI-SER, now archived: about 140 ms per clip on the CPU,
+about 235 ms on MPS). MPS is fast only for lengths it has seen before (CREMA-D, run many times: 18 ms per clip). MPS also cannot
+process clips longer than about 20 s; the scripts run those on the CPU automatically. On the CPU nEMO takes about
+5 minutes and MESS 12 minutes (its 24,414 Hz audio is slow to resample; TESS has the same rate).
 
-## 7. Listen to examples in the browser
+## 7. Results and examples in the browser
 
 ```bash
 python scripts/make_viewer.py
@@ -486,11 +503,20 @@ python scripts/make_viewer.py
 
 Settings, in the `viewer` section of `config/config.yaml`: `correct` and `wrong` (how many clips of each kind,
 default 10 and 10), `seed` (the same seed always picks the same clips), `predictions` (`all`, or a list of
-predictions files), `link_audio` and `out` (the output file).
+predictions files), `exclude` (datasets whose clips are left out; default ESD and THAI-SER), `link_audio`, `out`
+(the page for this machine) and `site` (the public page, see 7.1).
 
-The script picks random clips the model got right and wrong and writes one self-contained page,
-`outputs/viewer.html` (audio embedded: about 21 MB with 20 clips from each of the six datasets; open it in any browser). The page is a table with one
-row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
+The script writes one self-contained page, `outputs/viewer.html` (audio embedded: about 13 MB with 20 clips from
+each of the four evaluated datasets; open it in any browser). It has three parts:
+
+- **Results**: the summary of every evaluated dataset, as in
+  [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md) (read from the JSON file
+  next to it): the results table, every dataset's confusion matrix (click the figure to enlarge it) and the comparison
+  on the emotions that every dataset has. Click a dataset to jump to its examples.
+- **Examples**: random clips the model got right and wrong (below).
+- **Datasets and licences**: the source, licence and credit of each dataset (`SOURCES` in `scripts/eval_datasets.py`).
+
+The examples are a table with one row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
 prediction and confidence; a ✓ marks the labels the prediction matches, and each row expands to show every class
 probability. You can switch between the two ways of counting a prediction as correct, and filter by result (all,
 correct, wrong) and by ground-truth emotion. Clips are picked using the first way (acted emotion). The script prints the seed it
@@ -502,6 +528,19 @@ its JSON file) becomes one dataset-and-model run that you can switch between in 
 only has to write the same kind of files: a CSV with `audio_path`, `prediction`, `correct`, a ground-truth column and
 optional `p_<class>` probabilities, plus a JSON file with `dataset`, `model` and the name of the ground-truth column.
 The docstring of `scripts/make_viewer.py` lists the exact format.
+
+### 7.1 Publish the page with GitHub Pages
+
+The same run writes `site/index.html`, the page for the public: the same results, with embedded audio, but only clips
+of datasets whose licence allows putting them on a public web page (`public_audio` in `SOURCES`). ESD's licence forbids
+giving the data to anyone, so its clips never go on the public page, even if it is evaluated again; a dataset that
+is not in `SOURCES` gets no clips either. The workflow `.github/workflows/pages.yml` publishes only the `site/` folder.
+
+To turn it on, once: in the repository's Settings > Pages, set Source to "GitHub Actions". After that, every push to
+`main` that changes `site/` publishes the page at https://davidlequnchen.github.io/emotion_recognition/ (the workflow
+can also be run by hand from the Actions tab). Everything in `site/` becomes public, so look at the page before
+pushing it. Each rebuild picks new clips and adds the whole page (about 20 MB) to the git history; set `viewer.seed`
+to keep the same clips.
 
 ## Model: emotion2vec+ large
 

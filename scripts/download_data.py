@@ -16,6 +16,9 @@ Datasets: like CREMA-D, each records the same sentences in different emotions (s
     nemo        Polish     4,481    0.53 GB    Parquet (audio in)  CC BY-NC-SA 4.0    Hugging Face amu-cai/nEMO
     mess        English    1,800    0.19 GB    zip -> WAV          CC BY 4.0          Zenodo 3813437
     esd         Eng + Man  35,000   2.45 GB    zip -> WAV          research only (*)  Google Drive (HLTSingapore)
+    ravdess     English    1,440    0.21 GB    zip -> WAV          CC BY-NC-SA 4.0    Zenodo 1188976 (speech audio only)
+    tess        English    2,800    0.28 GB    WAV                 CC BY-NC 4.0       Borealis Dataverse doi:10.5683/SP2/E8H2MF
+    jl_corpus   English    2,400    1.28 GB    zip -> WAV          CC0                Kaggle tli725/jl-corpus
 (*) ESD: before using it, complete its licence form and email it to the authors; see
     https://github.com/HLTSingapore/Emotional-Speech-Data
 Zips are unpacked into data/<name>/audio/ and kept, so these datasets take about twice their download size.
@@ -23,7 +26,8 @@ Several licences forbid commercial use or sharing modified copies: use the data 
 never commit it (data/ is git-ignored, except the CREMA-D test clips).
 
 Every file is checked against the checksum its host publishes, and files that are already correct are
-skipped, so an interrupted download can simply be re-run.
+skipped, so an interrupted download can simply be re-run. Google Drive and Kaggle publish no checksum: their
+single zip is checked with its own CRCs and a SHA-256 pinned in this script.
 """
 import hashlib
 import http.client
@@ -70,7 +74,16 @@ DATASETS = {
     # and its SHA-256 (taken at the first download, 2026-10-26) catches any later change of the file.
     "esd": {"host": "gdrive", "id": "1scuFwqh8s7KIYAfZW1Eu6088ZAK2SI-v", "file": "Emotional Speech Dataset (ESD).zip",
             "sha256": "36e076368d132b46cd97a040430c34f597a3ce65db7d8d4b9b695bcb62cf5122"},
+    # RAVDESS: only the speech audio; the record also holds the song audio and the videos (25 GB)
+    "ravdess": {"host": "zenodo", "id": "1188976", "keep": r"^Audio_Speech_Actors_01-24\.zip$"},
+    "tess": {"host": "dataverse", "id": "doi:10.5683/SP2/E8H2MF", "server": "https://borealisdata.ca"},
+    # JL-Corpus: one public Kaggle zip (no login needed); SHA-256 taken at the first download, 2026-10-27
+    "jl_corpus": {"host": "kaggle", "id": "tli725/jl-corpus", "file": "jl-corpus.zip",
+                  "sha256": "4f1feb9af5584a428a997da492be6fbc9185a18c2f7191d07196c2f559553292"},
 }
+# Download URLs of the hosts that serve a dataset as one zip
+ZIP_URLS = {"gdrive": "https://drive.usercontent.google.com/download?id={}&export=download&confirm=t",
+            "kaggle": "https://www.kaggle.com/api/v1/datasets/download/{}"}
 
 
 def digest(path, algo):
@@ -166,6 +179,15 @@ def zenodo_files(record):
         yield f["key"], checksum, algo, f["links"]["self"]
 
 
+def dataverse_files(server, doi):
+    """Every file of a Dataverse dataset (latest version) as (path, checksum, algorithm, download URL)."""
+    version = get_json(f"{server}/api/datasets/:persistentId/?persistentId={doi}")["data"]["latestVersion"]
+    for f in version["files"]:
+        d = f["dataFile"]
+        path = f"{f['directoryLabel']}/{d['filename']}" if f.get("directoryLabel") else d["filename"]
+        yield path, d["checksum"]["value"], d["checksum"]["type"].lower(), f"{server}/api/access/datafile/{d['id']}"
+
+
 def download_huggingface(repo, out):
     """Download a Hugging Face dataset repository, then check every large file against its SHA-256 on the Hub."""
     from huggingface_hub import HfApi, snapshot_download
@@ -192,12 +214,12 @@ def download_crema_d(subset, workers):
     print(f"Done: {len(jobs)} files, {sum(job[1].stat().st_size for job in jobs) / 1e6:.1f} MB in {out}")
 
 
-def download_gdrive(file_id, dest, checksum):
-    """Download one public Google Drive file (streamed to disk), unless it is already there and correct."""
+def download_zip(url, dest, checksum):
+    """Download one zip (streamed to disk) from a host that publishes no checksum, unless it is already there and
+    correct: check the CRCs of its members and, when this script pins one, its SHA-256."""
     if dest.exists() and (checksum is None or digest(dest, "sha256") == checksum):
         print(f"  already present: {dest.name}")
         return
-    url = f"https://drive.usercontent.google.com/download?id={file_id}&export=download&confirm=t"
     part = dest.with_name(dest.name + ".part")
     dest.parent.mkdir(parents=True, exist_ok=True)
     with urllib.request.urlopen(url, timeout=300) as response, open(part, "wb") as fh:
@@ -225,14 +247,15 @@ def download_dataset(name, workers):
     print(f"Downloading {name} from {host} ({ident}) -> {out}")
     if host == "huggingface":
         download_huggingface(ident, out)
-    elif host == "gdrive":
-        download_gdrive(ident, out / entry["file"], entry["sha256"])
+    elif host in ZIP_URLS:
+        download_zip(ZIP_URLS[host].format(ident), out / entry["file"], entry["sha256"])
         unzip(out / entry["file"], out / "audio")
     else:
-        files = osf_files(ident) if host == "osf" else zenodo_files(ident)
-        skip = entry.get("skip")
+        files = {"osf": lambda: osf_files(ident), "zenodo": lambda: zenodo_files(ident),
+                 "dataverse": lambda: dataverse_files(entry["server"], ident)}[host]()
+        skip, keep = entry.get("skip"), entry.get("keep")  # regular expressions on the file path
         download_all([(url, out / path, checksum, algo) for path, checksum, algo, url in files
-                      if not (skip and re.match(skip, path))], workers)
+                      if not (skip and re.match(skip, path)) and not (keep and not re.match(keep, path))], workers)
         for archive in sorted(out.rglob("*.zip")):  # zips are only packaging: unpack the audio into out/audio/
             unzip(archive, out / "audio")
     size = sum(f.stat().st_size for f in out.rglob("*") if f.is_file() and ".cache" not in f.parts)
