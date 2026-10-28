@@ -13,10 +13,12 @@ __pycache__/
 .idea/
 .vscode/
 
-# Models: never commit model files (model.pt alone is ~1.9 GB).
-# Download them with scripts/download_model.py; git keeps only the empty folder placeholders.
-models/*/*
-!models/*/.gitkeep
+# Models: never commit model files (model.pt alone is ~1.9 GB, xlsr_1b.ckpt 3.86 GB).
+# Download them with each project's download_model.py; git keeps only the empty folder placeholders.
+emotion_recognition/models/*/*
+!emotion_recognition/models/*/.gitkeep
+antideepfake/models/*
+!antideepfake/models/.gitkeep
 # Model weights anywhere else in the repository
 *.pt
 *.pth
@@ -26,9 +28,14 @@ models/*/*
 *.bin
 
 # Data: datasets are never committed (size, and several licences forbid sharing copies).
-# Download them with scripts/download_data.py. Only the six small CREMA-D test clips in data/samples/ are committed.
-data/*
-!data/samples/
+# Download them with emotion_recognition/scripts/common/download_data.py. Only the six small CREMA-D test clips in
+# emotion_recognition/data/samples/ are committed.
+emotion_recognition/data/*
+!emotion_recognition/data/samples/
+# Old locations, from before the split into emotion_recognition/ and antideepfake/: datasets and model files that
+# another machine still has there after `git pull` stay ignored until they are moved into the new folders.
+/data/
+/models/
 
-# Outputs
+# Outputs (any outputs/ folder, e.g. emotion_recognition/outputs/)
 outputs/
