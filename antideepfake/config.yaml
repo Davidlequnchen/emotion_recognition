@@ -1,0 +1,41 @@
+# =====================================================================
+# Deepfake (spoofed speech) detection with AntiDeepfake.
+# inference.py and download_model.py read their settings from this file (there are no command-line
+# options): edit a value, then run the script from the antideepfake/ folder. Paths in this file are
+# relative to that folder, or absolute.
+#
+# Model: XLS-R-1B-AntiDeepfake by NII Yamagishi Lab, https://github.com/nii-yamagishilab/AntiDeepfake
+# (paper: "Post-training for Deepfake Speech Detection", arXiv:2506.21090).
+# Licences: the checkpoint is CC BY-NC-SA 4.0 (non-commercial); the upstream code is BSD-3-Clause.
+# =====================================================================
+
+# Hardware mode
+#   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
+#   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
+mode: mac
+
+# Device used by each mode to run the model. Set it to "cpu" to force the CPU.
+devices:
+  mac: mps        # mps | cpu
+  cuda: cuda:0    # cuda:<gpu index> | cpu
+
+# The AntiDeepfake checkpoint: one file from Zenodo (never from Hugging Face). To download it, run
+# python download_model.py
+model:
+  dir: models                        # folder of the checkpoint (git keeps only its .gitkeep)
+  checkpoint: xlsr_1b.ckpt           # official file name: XLS-R 1B post-trained for deepfake detection, 3.86 GB
+  zenodo_record: 15580543            # https://zenodo.org/records/15580543 (version 1.0, 2025-06-24)
+
+# ---------------------------------------------------------------------
+# inference.py
+# ---------------------------------------------------------------------
+inference:
+  audio: ../emotion_recognition/data/samples   # default: the six CREMA-D test clips of the emotion project.
+                        # A folder (every audio file in it and its sub-folders), a single file, or a list of
+                        # files and folders, e.g. [../emotion_recognition/data/samples/1001_DFA_ANG_XX.wav,
+                        # /path/to/folder] (wav, flac, mp3, ogg; paths are relative to antideepfake/, or absolute)
+  threshold: 0.5        # a file counts as real (bona fide) when P(real) >= threshold; 0.5 is AntiDeepfake's default
+  max_seconds: null     # null: score each file in one pass, whatever its length, as AntiDeepfake does.
+                        # A number, e.g. 20: split longer files into equal segments of at most that many seconds
+                        # and average their logits (not part of AntiDeepfake; limits memory on long recordings).
+                        # On MPS, files longer than 20.48 s run on the CPU, unless max_seconds is 20 or less
