@@ -1,7 +1,12 @@
 # Common dependencies, identical on the MacBook and the NVIDIA server (Python 3.11).
 # PyTorch is installed separately: requirements-mac.txt or requirements-cuda121.txt.
 funasr==1.4.16            # emotion2vec+ runtime: builds the network from config.yaml, loads model.pt
-transformers==5.19.0      # FunASR dependency; last release that supports torch 2.5 (5.20+ needs torch >= 2.6)
+transformers==5.18.0      # runs MERaLiON-SER-v1, Melati and Vox-Profile; also a FunASR dependency. Newest release
+                          # that works with torch 2.5: 5.19.0 cannot import its models there (it calls
+                          # torch.accelerator, new in torch 2.6), and 5.20+ needs torch >= 2.6
+peft==0.21.2              # imported by MERaLiON-SER-v1's model code (its LoRA is already merged into the weights)
+accelerate==1.15.0        # peft dependency; pinned so that pip never upgrades torch for it
+omegaconf==2.3.1          # imported by MERaLiON-SER-v1's model code (also installed with FunASR)
 huggingface_hub==2.2.0    # model download from HuggingFace
 modelscope==1.40.2        # model download from ModelScope (alternative hub)
 numpy==2.4.6              # newest numpy for Python 3.11 (2.5+ needs Python >= 3.12)

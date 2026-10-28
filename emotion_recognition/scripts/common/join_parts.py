@@ -1,19 +1,21 @@
-"""Join dataset files that were cut into parts to pass through git, and check each against its SHA-256.
+"""Join files that were cut into parts to pass through git (model weights, dataset files), and check each against its
+SHA-256.
 
-Usage (from the emotion_recognition/ folder):
+Usage (from the emotion_recognition/ folder), after `git pull`:
     python scripts/common/join_parts.py
-GitHub refuses files over 100 MB, so large dataset files can be committed in 90 MiB parts, for a machine that
-cannot download them from their host:
-    data/nemo/data/train-00000-of-00002.parquet.part000, .part001, ...   the parts, in order
-    data/nemo/data/train-00000-of-00002.parquet.sha256                   SHA-256 of the whole file
-This script finds every such set under data/, writes the whole file next to its parts and checks it.
+GitHub refuses files over 100 MB, so large files are committed in 90 MiB parts for a machine that cannot download
+them from their host (e.g. a server without access to Hugging Face). scripts/common/split_parts.py cuts them:
+    models/meralion_ser_v1/model.safetensors.part000, .part001, ...   the parts, in order
+    models/meralion_ser_v1/model.safetensors.sha256                   SHA-256 of the whole file
+This script finds every such set under data/ and models/, writes the whole file next to its parts and checks it.
 Files that are already there with the right checksum are skipped, so it can simply be re-run.
 """
 import hashlib
 import sys
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parents[2] / "data"  # data/ of the project root (emotion_recognition/)
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
+FOLDERS = [ROOT / "data", ROOT / "models"]  # where split files are searched
 
 
 def sha256(path):
@@ -23,15 +25,16 @@ def sha256(path):
 
 def main():
     sys.stdout.reconfigure(line_buffering=True)  # show progress immediately
-    firsts = sorted(DATA.rglob("*.part000"))
+    firsts = sorted(p for folder in FOLDERS if folder.is_dir() for p in folder.rglob("*.part000"))
     if not firsts:
-        sys.exit(f"ERROR: no split files (*.part000) under {DATA}; run git pull first")
-    print(f"Found {len(firsts)} split file(s) under {DATA}")
+        sys.exit(f"ERROR: no split files (*.part000) under {' or '.join(f.name + '/' for f in FOLDERS)}; "
+                 "run git pull first")
+    print(f"Found {len(firsts)} split file(s) under {' and '.join(f.name + '/' for f in FOLDERS)}")
 
     failed = 0
     for first in firsts:
         target = first.with_suffix("")  # x.parquet.part000 -> x.parquet
-        name = target.relative_to(DATA.parent)
+        name = target.relative_to(ROOT)
         parts = sorted(target.parent.glob(target.name + ".part[0-9][0-9][0-9]"))
         expected = (target.parent / f"{target.name}.sha256").read_text().split()[0]
 

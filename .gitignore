@@ -13,8 +13,10 @@ __pycache__/
 .idea/
 .vscode/
 
-# Models: never commit model files (model.pt alone is ~1.9 GB, xlsr_1b.ckpt 3.86 GB).
-# Download them with each project's download_model.py; git keeps only the empty folder placeholders.
+# Models: model files are ignored (model.pt alone is ~1.9 GB, xlsr_1b.ckpt 3.86 GB); download them with
+# emotion_recognition/scripts/common/download_model.py or antideepfake/download_model.py. Exception, for a machine
+# without Hugging Face: the weights of some emotion recognition models are committed as 90 MiB parts with their small
+# files (force-added with `git add -f`, see emotion_recognition/models/README.md); the joined weights stay ignored.
 emotion_recognition/models/*/*
 !emotion_recognition/models/*/.gitkeep
 antideepfake/models/*
