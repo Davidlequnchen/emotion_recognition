@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Parts of large files (emotion_recognition/scripts/common/split_parts.py): always binary, stored byte for byte
+*.part[0-9][0-9][0-9] binary

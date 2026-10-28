@@ -97,7 +97,7 @@ def main():
     for name in MODEL_FILES:
         f = model_dir / name
         if not f.exists():
-            sys.exit(f"ERROR: {f} not found. Download the model first: python scripts/emotion2vec/download_model.py")
+            sys.exit(f"ERROR: {f} not found. Download the model first: python scripts/common/download_model.py")
         print(f"  {name:<19}: {f.stat().st_size / 1e6:,.2f} MB")
 
     from funasr import AutoModel
