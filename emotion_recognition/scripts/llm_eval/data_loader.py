@@ -2,7 +2,7 @@
 Data for the audio-LLM evaluation: one item per clip, with the prompts and the audio ready to send to the model.
 
 For the datasets chosen in the `llm` section of config/config.yaml, the loader takes the same clips and labels as the
-emotion2vec+ evaluation (scripts/common/eval_datasets.py: its loaders, `sample` for llm.limit and `accepted` for the
+model evaluation (scripts/common/eval_datasets.py: its loaders, `sample` for llm.limit and `accepted` for the
 classes that count as correct). items() yields one item per clip and prepares each clip only when it is asked for
 (a generator), so thousands of clips never sit in memory. Each item is a dict:
     dataset        dataset key, e.g. "crema_d"
@@ -45,7 +45,7 @@ import torchaudio
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
-# The clips (sample) and the classes that count as correct (accepted) come from the evaluation of emotion2vec+, so the
+# The clips (sample) and the classes that count as correct (accepted) come from the model evaluation, so the
 # LLMs are scored on the same clips with the same rules
 from eval_datasets import LOADERS, SOURCES, accepted, sample
 from prompts import load_prompts  # scripts/llm_eval/prompts.py

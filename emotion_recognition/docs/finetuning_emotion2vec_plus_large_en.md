@@ -151,7 +151,7 @@ Assumptions as in section 1 (50–100 TFLOPS sustained, then × 2 for overheads)
 7. **Regularisation and early stopping**: keep the configuration's dropout of 0.1; time masking and mixup can be added (the authors' last stage used both); few epochs (5–20); stop early on validation UA
    or macro-F1 (after 3–5 epochs without improvement) and keep the best checkpoint.
 8. **Forgetting**: classes missing from your data (such as other or surprised) and other languages may get worse. Mixing in some public labelled data (for example EmoBox datasets) helps; run this
-   project's evaluation before and after fine-tuning, especially on MCAE-SPPS, nEMO and MESS, which are not in EmoBox, to check that nothing regressed.
+   project's evaluation before and after fine-tuning, especially on MCAE-SPPS and MESS, which are not in EmoBox, to check that nothing regressed.
 9. **Hardware**: one GPU with 24 GB or more is enough; small experiments run on the M4 Max (MPS needs the workaround in section 3.2).
 
 ## 5. Official fine-tuning code

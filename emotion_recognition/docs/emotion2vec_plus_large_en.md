@@ -176,7 +176,7 @@ Inferred (unverified):
 
 ## 5. Practical notes from this project
 
-**Accuracy** ([summary report](../reports/emotion2vec_plus_large_summary.md), 2026-10-27, scored against the acted emotion):
+**Accuracy** ([summary report](../reports/emotion2vec_plus_large/summary.md), 2026-10-27, scored against the acted emotion):
 
 | Dataset | Language | In EmoBox | Accuracy | 4 shared emotions only |
 |---|---|---|---|---|
@@ -185,7 +185,6 @@ Inferred (unverified):
 | TESS | English | yes | 85.5% | 100.0% |
 | JL-Corpus | English (New Zealand) | yes | 92.5% | 94.7% |
 | MCAE-SPPS | Mandarin | no | 61.3% | 87.8% |
-| nEMO | Polish | no | 52.0% | 67.8% |
 | MESS | English | no | 40.8% | 40.8% |
 
 The model has probably seen the datasets that are in EmoBox, so their results are optimistic; the others are closer to real performance.
@@ -215,4 +214,4 @@ FunASR licence is the safe choice (not legal advice).
 - data2vec 2.0: https://arxiv.org/abs/2212.07525 ; fairseq configurations: https://github.com/facebookresearch/fairseq/tree/main/examples/data2vec/config/v2
 - fairseq code used to read the checkpoint configuration: https://github.com/facebookresearch/fairseq/blob/main/examples/data2vec/models/audio_classification.py , https://github.com/facebookresearch/fairseq/blob/main/fairseq/trainer.py , https://github.com/facebookresearch/fairseq/blob/main/fairseq/data/iterators.py
 - FunASR model licence: https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE
-- This project's evaluation: [../reports/emotion2vec_plus_large_summary.md](../reports/emotion2vec_plus_large_summary.md)
+- This project's evaluation: [../reports/emotion2vec_plus_large/summary.md](../reports/emotion2vec_plus_large/summary.md)

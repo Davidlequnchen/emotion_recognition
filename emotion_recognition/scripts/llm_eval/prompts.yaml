@@ -1,5 +1,5 @@
 # Prompts for the audio LLMs (GPT Realtime, Gemini), read by scripts/llm_eval/prompts.py.
-#   labels : the emotions the model chooses from, the same for every dataset (emotion2vec+'s seven emotions).
+#   labels : the emotions the model chooses from, the same for every dataset (the project's seven emotions).
 #            Each must be one lowercase word: the prompts ask for exactly one.
 #   system : the instructions for the whole session (GPT Realtime: the session `instructions`, which replace its
 #            default ones; Gemini: the system instruction)

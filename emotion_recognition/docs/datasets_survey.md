@@ -160,6 +160,6 @@
 | JL-Corpus | `jl_corpus` | `data/jl_corpus/` | Kaggle 整包 zip（17,143 个文件），解压在 `audio/`；评估用的是 `audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/`：2,400 个 WAV（44.1 kHz 单声道，1.2–3.8 秒，共 1.4 h），每个配一个转写文本 `.txt`；文件名为"说话人_情绪_句子编号+session_第几遍"，如 `female1_angry_10a_1.wav`：说话人 female1、female2、male1、male2，情绪为主要的 angry、excited、happy、neutral、sad 和次要的 anxious、apologetic、assertive、concerned、encouraging（与论文中次要情绪的名称不完全一样），每人每种 60 条。另有感知测试材料（录音的副本、问卷设计，没有逐条结果，还有一张含参与者个人信息的表）和图片素材（含第三方图库照片），这两部分不要转发 | Kaggle 不公布校验值：先用 zip 自带的 CRC 自检，再核对脚本里固定的 SHA-256 |
 
 这九个数据集在本地共占用约 30.5 GB（THAI-SER 17.3 GB，ESD 5.8 GB，JL-Corpus 2.2 GB）。zip 解压后连同原 zip 一起保留，所以 MCAE-SPPS、MESS、ESD、RAVDESS 和 JL-Corpus 约占下载大小的两倍；
-THAI-SER 和 nEMO 是 parquet 格式（读取需要 `pyarrow`），`scripts/emotion2vec/evaluate.py` 第一次运行时会把评估要用的音频解压到各自的 `audio/` 文件夹（THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音）。
+THAI-SER 和 nEMO 是 parquet 格式（读取需要 `pyarrow`），`scripts/evaluation/evaluate.py` 第一次运行时会把评估要用的音频解压到各自的 `audio/` 文件夹（THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音）。
 ESD 仅限研究使用：使用前要按它的 [GitHub 页面](https://github.com/HLTSingapore/Emotional-Speech-Data)的说明填写许可表，并发邮件给作者。
 ESD 和 THAI-SER 虽然都已下载，但目前被 `config/config.yaml` 的 `evaluation.exclude` 排除在评估之外，暂不参与评估；它们之前的评估报告在 `reports/archive/`。

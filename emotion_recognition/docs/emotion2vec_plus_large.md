@@ -150,7 +150,7 @@ FunASR 的 `inference()`（`model.py`）对每个文件做这几步：
 
 ## 5. 本项目的实用信息
 
-**准确率**（[汇总报告](../reports/emotion2vec_plus_large_summary.md)，2026-10-27，按表演情绪计分）：
+**准确率**（[汇总报告](../reports/emotion2vec_plus_large/summary.md)，2026-10-27，按表演情绪计分）：
 
 | 数据集 | 语言 | 在 EmoBox 中 | 准确率 | 只算 4 种共有情绪 |
 |---|---|---|---|---|
@@ -159,7 +159,6 @@ FunASR 的 `inference()`（`model.py`）对每个文件做这几步：
 | TESS | 英语 | 是 | 85.5% | 100.0% |
 | JL-Corpus | 英语（新西兰） | 是 | 92.5% | 94.7% |
 | MCAE-SPPS | 普通话 | 否 | 61.3% | 87.8% |
-| nEMO | 波兰语 | 否 | 52.0% | 67.8% |
 | MESS | 英语 | 否 | 40.8% | 40.8% |
 
 在 EmoBox 里的数据集，模型很可能训练时见过，结果偏高；不在 EmoBox 里的数据集更接近真实水平。
@@ -183,4 +182,4 @@ FunASR 的 `inference()`（`model.py`）对每个文件做这几步：
 - data2vec 2.0：https://arxiv.org/abs/2212.07525 ；fairseq 配置：https://github.com/facebookresearch/fairseq/tree/main/examples/data2vec/config/v2
 - 解读 checkpoint 配置用的 fairseq 代码：https://github.com/facebookresearch/fairseq/blob/main/examples/data2vec/models/audio_classification.py 、https://github.com/facebookresearch/fairseq/blob/main/fairseq/trainer.py 、https://github.com/facebookresearch/fairseq/blob/main/fairseq/data/iterators.py
 - FunASR 模型许可：https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE
-- 本项目的评估结果：[../reports/emotion2vec_plus_large_summary.md](../reports/emotion2vec_plus_large_summary.md)
+- 本项目的评估结果：[../reports/emotion2vec_plus_large/summary.md](../reports/emotion2vec_plus_large/summary.md)

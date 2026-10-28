@@ -1,29 +1,55 @@
 """
-Evaluate emotion2vec+ on the speech emotion datasets and write a Markdown report for each.
+Evaluate speech emotion recognition models on the speech emotion datasets and write a Markdown report for each.
 
-Runs the model on every clip of a dataset, compares each prediction with the dataset's labels and writes:
-    reports/<dataset>_<model>.md                      accuracy, per-emotion results, confusion matrices
-    reports/figures/<dataset>_<model>_confusion*.png  confusion-matrix figures used in the report
-    outputs/<dataset>_<model>_predictions.csv          one row per clip (read by scripts/viewer/make_viewer.py)
-    outputs/<dataset>_<model>_predictions.json         what the CSV contains, and the metrics
-    reports/<model>_summary.md                         every evaluated dataset side by side (.json: the same numbers)
-    reports/figures/<model>_summary_confusion.png      every dataset's confusion matrix in one figure
-The datasets are defined in scripts/common/eval_datasets.py; download them first with
-scripts/common/download_data.py.
+Runs every chosen model on every clip of every chosen dataset, compares each prediction with the dataset's labels
+and writes, per model (<model> is its key in the model registry, `models` in config/config.yaml):
+    outputs/<model>/<dataset>_predictions.csv          one row per clip (read by scripts/viewer/make_viewer.py)
+    outputs/<model>/<dataset>_predictions.json         what the CSV contains, the metrics and the runtime
+    reports/<model>/<dataset>.md                       accuracy, per-emotion results, confusion matrices
+    reports/<model>/figures/<dataset>_confusion*.png   confusion-matrix figures used in the report
+    reports/<model>/summary.md                         every evaluated dataset side by side (.json: the same numbers)
+    reports/<model>/figures/summary_confusion.png      every dataset's confusion matrix in one figure
+and for every model with results:
+    reports/summary.md                                 every model on every dataset (.json: the same numbers)
+A sample run (evaluation.limit) adds _sample<N> to the dataset's file names, e.g. reports/<model>/crema_d_sample14.md.
+
+Each model runs through its loader, scripts/models/<loader>.py: load(model_dir, device) returns a predictor that,
+called with an audio file, returns the probabilities of the model's classes; it also gives the classes (labels),
+library versions and notes for the report. A loader may also define TRAINING_NOTE, a sentence added to the
+training-data caveat of the model's reports.
+The datasets are defined in scripts/common/eval_datasets.py; download them first with scripts/common/download_data.py
+and the models with scripts/common/download_model.py. The evaluation never touches the network: every model loads
+from its folder in models/.
 
 Usage (from the emotion_recognition/ folder):
-    python scripts/emotion2vec/evaluate.py
-Settings (which datasets, an optional sample size, device) are in the `evaluation` section of config/config.yaml.
-A dataset whose results for the same model and sample size are already in outputs/ is skipped, unless
-`evaluation.overwrite` is true. The summary covers every dataset with results in outputs/. Datasets listed in
-`evaluation.exclude` are never evaluated and left out of the summary.
+    python scripts/evaluation/evaluate.py
+Settings (which models and datasets, an optional sample size, devices) are in the `evaluation` section of
+config/config.yaml. A model and dataset whose results for the same sample size are already in outputs/<model>/ are
+skipped, unless `evaluation.overwrite` is true; a model whose folder has no weights yet is skipped with a message.
+The summaries cover every result in outputs/; datasets listed in `evaluation.exclude` are never evaluated and left
+out of the summaries.
+
+reports/summary.json (fractions, rounded to 6 decimals):
+    date             the day it was written
+    models           [{model, name, training_source, training_data, summary}]: every model with results, in registry
+                     order; summary is the path of its summary report, relative to reports/
+    datasets         [{key, dataset, language, chance}]: every dataset with results, in eval_datasets.LOADERS order
+    shared_emotions  the emotions every dataset has ([] with a single dataset)
+    results          {model: {dataset key: {clips, total_clips, sample, in_training_data, accuracy,
+                     unweighted_accuracy, macro_f1, shared_clips, shared_accuracy, shared_unweighted_accuracy}}}:
+                     the run shown in the model's summary (the one with the most clips); the shared_* keys only when
+                     there are shared emotions
 """
 import collections
 import csv
+import functools
+import gc
+import importlib
 import json
-import logging
 import math
+import os
 import platform
+import re
 import subprocess
 import sys
 import time
@@ -34,11 +60,20 @@ import numpy as np
 import torch
 import yaml
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
-from eval_datasets import LOADERS, accepted, sample, truth_labels
+# The evaluation never touches the network: every model loads from its own folder in models/, as on a server without
+# Hugging Face. Set before a model loader imports transformers or FunASR (a value set in the shell is kept).
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "config.yaml"
+sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
+sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, imported by name (`loader` in the registry)
+from eval_datasets import LOADERS, accepted, sample, truth_labels
+
+SETTINGS = ["models", "datasets", "exclude", "limit", "overwrite", "devices", "summary_figure"]  # evaluation.*
+REGISTRY = ["name", "loader", "dir", "training_data", "training_source"]  # what the evaluation reads of each model
+WEIGHTS = {".pt", ".pth", ".bin", ".safetensors", ".ckpt"}  # a model folder with such a file has its weights
 # Figure colours: a one-hue blue ramp (light = small share, dark = large share) and neutral inks
 BLUES = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
 SURFACE, INK, INK_2 = "#fcfcfb", "#0b0b0b", "#52514e"
@@ -59,6 +94,61 @@ def hardware(device):
 def ratio(a, b):
     """Element-wise a / b, with 0 where b is 0."""
     return np.divide(a, b, out=np.zeros(len(a)), where=b > 0)
+
+
+def as_list(value):
+    """A setting that is one name or a list of names, as a list."""
+    return [value] if isinstance(value, str) else list(value or [])
+
+
+def unbracketed(text):
+    """Text to put in brackets, with its own brackets as commas: "EmoBox (through emotion2vec+ seed)" -> "EmoBox,
+    through emotion2vec+ seed"."""
+    return re.sub(r"\s*\(([^()]*)\)", r", \1", text)
+
+
+def training_caveat(key, entry, note):
+    """Whether the dataset is in the model's training data (training_data and training_source in the registry), as
+    the first caveat of a report; note: the loader's TRAINING_NOTE, if it has one."""
+    source = unbracketed(entry["training_source"])
+    if key in entry["training_data"]:
+        text = (f"**In {entry['name']}'s training data** ({source}), so the model has probably seen these clips; "
+                "treat the result as optimistic.")
+    else:
+        text = f"**Not in {entry['name']}'s training data** ({source})."
+    return f"{text} {note}" if note else text
+
+
+def loader_note(entry):
+    """The TRAINING_NOTE of a model's loader (a sentence on its training data for the reports), or ""."""
+    if not (ROOT / "scripts" / "models" / f"{entry['loader']}.py").exists():
+        return ""
+    try:
+        return getattr(importlib.import_module(entry["loader"]), "TRAINING_NOTE", "")
+    except ImportError as e:  # a library the loader needs is missing; the summary can be written without the note
+        print(f"  (scripts/models/{entry['loader']}.py could not be imported: {e})")
+        return ""
+
+
+def not_ready(entry):
+    """Why a model cannot run yet (no loader, or no weights in its folder), or None when it can."""
+    loader, folder = ROOT / "scripts" / "models" / f"{entry['loader']}.py", ROOT / entry["dir"]
+    if not loader.exists():
+        return f"its loader {loader.relative_to(ROOT)} does not exist yet"
+    files = [p for p in folder.rglob("*") if not any(part.startswith(".") for part in p.relative_to(folder).parts)
+             ] if folder.is_dir() else []  # hidden folders such as .cache/ do not count
+    if any(p.suffix in WEIGHTS for p in files):
+        return None
+    if any(p.suffix == ".part000" for p in files):
+        return f"its weights in {entry['dir']}/ are still in parts: run python scripts/common/join_parts.py"
+    return (f"no weights in {entry['dir']}/ yet: run python scripts/common/download_model.py (or "
+            "scripts/common/join_parts.py if the weights came as parts through git)")
+
+
+@functools.cache
+def dataset(key):
+    """The EvalSet of a dataset (scripts/common/eval_datasets.py), read once and reused for every model."""
+    return LOADERS[key]()
 
 
 def correct_cells(ds, rows):
@@ -173,30 +263,13 @@ def stitch(paths, path, columns=3, col_gap=110, row_gap=80, margin=50):
     grid.save(path, optimize=True)
 
 
-class Predictor:
-    """Runs the model on one clip and returns its class probabilities. MPS cannot run emotion2vec's first
-    convolution on clips longer than about 20 s (more than 65,536 output steps), so such clips run on a CPU
-    copy of the model instead."""
-
-    def __init__(self, load, device):
-        self.load, self.model, self.cpu_model, self.on_cpu = load, load(device), None, 0
-
-    def __call__(self, path):
-        try:
-            return self.model.generate(path, granularity="utterance", extract_embedding=False)[0]["scores"]
-        except NotImplementedError:
-            if self.cpu_model is None:
-                self.cpu_model = self.load(torch.device("cpu"))
-            self.on_cpu += 1
-            return self.cpu_model.generate(path, granularity="utterance", extract_embedding=False)[0]["scores"]
-
-
-def evaluate(ds, predict, labels, model_name, device, limit, versions):
-    """Steps 4-6 for one dataset: load it, run the model on every clip, write the outputs."""
+def evaluate(ds, predict, model, entry, note, device, limit):
+    """Steps 4-6 for one model and dataset: load the dataset, run the model on every clip, write the outputs."""
+    name, labels = entry["name"], list(predict.labels)
     # ------------------------------------------------------------------
     # Step 4: Load the dataset (scripts/common/eval_datasets.py) and its labels
     # ------------------------------------------------------------------
-    step(f"Step 4/6 | Load {ds.name}")
+    step(f"Step 4/8 | {name}: load {ds.name}")
     # evaluation.limit: clips taken at even intervals, emotion by emotion (in file order within each), so that
     # every emotion is sampled even when the file order repeats (TESS: the 7 emotions of each word in a row)
     clips = sample(ds, limit)
@@ -206,21 +279,28 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
     has_listener = any(listener)
     rows = truth_labels(ds)  # the ground-truth labels: the rows of the confusion matrices
     composite = [r for r in rows if r in ds.accept]  # labels that accept several classes, e.g. JL-Corpus's excited
+    absent = [n for n in ds.classes if n not in labels]  # emotions of the dataset that the model has no class for
     print(f"  clips       : {len(clips):,}" + (f" of {len(ds.clips):,}, taken at even intervals within each emotion"
                                        if sampled else "")
           + f" ({ds.language})")
-    for name in rows:
-        print(f"  {name:<11} : {acted.count(name):,} clips"
-              + (f" (correct: {' or '.join(ds.accept[name])})" if name in composite else ""))
+    for label in rows:
+        print(f"  {label:<11} : {acted.count(label):,} clip{'s' * (acted.count(label) != 1)}"
+              + (f" (correct: {' or '.join(ds.accept[label])})" if label in composite else ""))
     if composite:
         print(f"  predictions : {', '.join(ds.classes)}")
     print(f"  listeners   : {'yes' if has_listener else 'no labels in this dataset'}")
+    if absent:
+        print(f"  no class    : the model has no class for {', '.join(absent)}, so it never predicts "
+              f"{'it' if len(absent) == 1 else 'them'}")
 
     # ------------------------------------------------------------------
-    # Step 5: Run the model on every clip (one probability per class)
+    # Step 5: Run the model on every clip (one probability per model class)
     # ------------------------------------------------------------------
-    step(f"Step 5/6 | Run inference on {len(clips):,} {ds.name} clips")
-    predict(str(clips[0]["audio"]))  # warm-up
+    step(f"Step 5/8 | {name}: run inference on {len(clips):,} {ds.name} clips")
+    first = np.asarray(predict(str(clips[0]["audio"])))  # warm-up, and a check of what the loader returns
+    if first.shape != (len(labels),):
+        sys.exit(f"ERROR: scripts/models/{entry['loader']}.py returned probabilities of shape {first.shape} for "
+                 f"{len(labels)} labels; it must return one probability per label.")
     scores = np.zeros((len(clips), len(labels)))
     t0, on_cpu = time.perf_counter(), predict.on_cpu
     for i, clip in enumerate(clips, 1):
@@ -231,17 +311,18 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
                   f"about {elapsed / i * (len(clips) - i) / 60:.1f} min left")
     runtime, on_cpu = time.perf_counter() - t0, predict.on_cpu - on_cpu
     if on_cpu:
-        print(f"  {on_cpu:,} clips longer than about 20 s ran on the CPU (too long for MPS)")
+        print(f"  {on_cpu:,} clips ran on the CPU, because {device} could not run them")
 
     # ------------------------------------------------------------------
     # Step 6: Compare with the labels and write the outputs
     # ------------------------------------------------------------------
-    step(f"Step 6/6 | Compute accuracy and write the {ds.name} report")
-    names, n_cls = ds.classes, len(ds.classes)            # the classes a prediction is chosen from
-    columns = [labels.index(n) for n in names]            # where the dataset's emotions sit in the model output
+    step(f"Step 6/8 | {name}: compute accuracy and write the {ds.name} report")
+    names, n_cls, n_all = ds.classes, len(ds.classes), len(labels)  # the classes a prediction is chosen from
+    # The model's probability of each of the dataset's emotions (0 for an emotion it has no class for)
+    probs = np.column_stack([scores[:, labels.index(n)] if n in labels else np.zeros(len(clips)) for n in names])
     truth = np.array([rows.index(a) for a in acted])      # each clip's row: its acted emotion
-    pred = scores[:, columns].argmax(1)                   # most probable of the dataset's emotions
-    pred9 = scores.argmax(1)                              # most probable of all 9 model classes
+    pred = probs.argmax(1)                                # most probable of the dataset's emotions
+    pred_all = scores.argmax(1)                           # most probable of all the model's classes
     good = correct_cells(ds, rows)                        # rows x classes: True where the prediction counts as correct
     # Two ways to count a prediction as correct (the second only when the dataset has listeners' labels):
     #   strict  - it matches the acted emotion (for a composite label such as excited: one of the classes it accepts)
@@ -274,8 +355,8 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
     acc, acc_lenient = strict.mean(), lenient.mean()
     lenient_by_emotion = [lenient[truth == k].mean() if (truth == k).any() else 0.0 for k in range(len(rows))]
     rescued = collections.Counter((acted[i], names[pred[i]]) for i in np.flatnonzero(lenient & ~strict))
-    acc9 = np.mean([labels[p] in accepted(ds, a) for p, a in zip(pred9, acted)])
-    extra = {lab: int((pred9 == k).sum()) for k, lab in enumerate(labels) if lab not in names}
+    acc_all = np.mean([labels[p] in accepted(ds, a) for p, a in zip(pred_all, acted)])
+    extra = {lab: int((pred_all == k).sum()) for k, lab in enumerate(labels) if lab not in names}
     # Chance level: a random guess among the classes is right with probability (accepted classes) / (classes)
     chance = np.mean([len(accepted(ds, a) & set(names)) for a in acted]) / n_cls
     # Human reference: how often the listeners' single majority vote matches the acted emotion (ties left out)
@@ -288,27 +369,28 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
     print(f"  unweighted accuracy (UA)            : {recall.mean():.1%}")
     print(f"  macro F1                            : {macro_f1:.1%}"
           + (f" ({', '.join(unscored)} left out: never predicted, no clip has this label)" if unscored else ""))
-    print(f"  accuracy, all 9 classes             : {acc9:.1%}")
+    print(f"  {f'accuracy, all {n_all} model classes':<36}: {acc_all:.1%}")
     print(f"  chance level                        : {chance:.1%}")
     if human is not None:
         print(f"  listeners vs acted emotion          : {human:.1%}")
 
     # Per-clip predictions (CSV) and a description with the metrics (JSON, read by make_viewer.py)
     suffix = f"_sample{len(clips)}" if sampled else ""  # a sample never overwrites the results of a full run
-    stem = f"{ds.key}_{model_name}{suffix}"
-    predictions = ROOT / "outputs" / f"{stem}_predictions.csv"
-    predictions.parent.mkdir(exist_ok=True)
+    stem = f"{ds.key}{suffix}"
+    predictions = ROOT / "outputs" / model / f"{stem}_predictions.csv"
+    predictions.parent.mkdir(parents=True, exist_ok=True)
     prob_columns = [f"p_{lab.strip('<>')}" for lab in labels]  # "<unk>" -> "p_unk"
     with open(predictions, "w", newline="") as fh:
         writer = csv.writer(fh)
         writer.writerow(["audio_path", "acted_emotion"] + ["listener_vote"] * has_listener
-                        + ["prediction", "prediction_9_classes", "correct"]
+                        + ["prediction", "prediction_all_classes", "correct"]
                         + ["correct_acted_or_listener"] * has_listener + prob_columns)
         for i, clip in enumerate(clips):
             writer.writerow([clip["audio"].relative_to(ROOT).as_posix(), acted[i]] + [listener[i]] * has_listener
-                            + [names[pred[i]], labels[pred9[i]], bool(strict[i])] + [bool(lenient[i])] * has_listener
+                            + [names[pred[i]], labels[pred_all[i]], bool(strict[i])] + [bool(lenient[i])] * has_listener
                             + [f"{p:.4f}" for p in scores[i]])
-    metrics = {"accuracy": acc, "unweighted_accuracy": recall.mean(), "macro_f1": macro_f1, "accuracy_9_classes": acc9}
+    metrics = {"accuracy": acc, "unweighted_accuracy": recall.mean(), "macro_f1": macro_f1,
+               "accuracy_all_classes": acc_all}
     if has_listener:
         metrics |= {"accuracy_acted_or_listener": acc_lenient, "listeners_vs_acted": human, "model_vs_listeners": agree}
     rule = "; ".join(f"{r}: {' or '.join(ds.accept[r])}" for r in composite)  # e.g. "excited: happy or surprised"
@@ -317,40 +399,47 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
         "acted_emotion": f"ground truth: {ds.ground_truth}",
         "listener_vote": f"{ds.listener}; 'a or b' is a tie",
         "prediction": f"model prediction: the most probable of the {n_cls} emotions evaluated ({', '.join(names)})",
-        "prediction_9_classes": "model prediction: the most probable of all 9 model classes",
+        "prediction_all_classes": f"model prediction: the most probable of all {n_all} model classes",
         "correct": "whether prediction equals acted_emotion" + (f" or is accepted for it ({rule})" if composite else ""),
         "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)"
                                      + (" or is accepted for acted_emotion" if composite else ""),
-        "p_*": "model probability of each of its 9 classes (they add up to 1)",
+        "p_*": f"model probability of each of its {n_all} classes (they add up to 1)",
     }
+    in_training = ds.key in entry["training_data"]
     meta = {
-        "dataset": ds.name, "key": ds.key, "language": ds.language, "model": model_name, "date": str(date.today()),
-        "clips": len(clips), "total_clips": len(ds.clips), "classes": names,
+        "dataset": ds.name, "key": ds.key, "language": ds.language, "model": model, "model_name": name,
+        "date": str(date.today()), "clips": len(clips), "total_clips": len(ds.clips), "classes": names,
         "labels": rows,       # the ground-truth labels, in the order of the confusion-matrix rows
         "accept": ds.accept,  # composite labels: the classes that count as correct for them
-        "chance": round(float(chance), 6), "in_emobox": ds.in_emobox,
+        "chance": round(float(chance), 6),
+        "in_training_data": in_training, "training_source": entry["training_source"],  # from the model registry
+        "model_classes": labels,  # the model's classes, in the order of the p_ columns
         "metrics": {k: round(float(v), 6) for k, v in metrics.items() if v is not None},
         "ground_truth": "acted_emotion",
         # Correctness columns and what the prediction is compared with (the viewer can switch between them)
         "correct_columns": {"correct": "acted emotion"} | ({"correct_acted_or_listener": "acted emotion or listener vote"}
                                                            if has_listener else {}),
         "columns": {k: v for k, v in columns_doc.items() if has_listener or "listener" not in k},
+        "runtime": {"device": str(device), "hardware": hardware(device), "seconds": round(runtime, 1),
+                    "ms_per_clip": round(runtime / len(clips) * 1000, 1), "on_cpu": on_cpu},
     }
 
     # Confusion-matrix figures and the Markdown report
-    figures = ROOT / "reports" / "figures"
-    figure = figures / f"{stem}_confusion.png"
-    figure_lenient = figures / f"{stem}_confusion_acted_or_listener.png"
-    plot_confusion(cm, ds, rows, f"{model_name} on {ds.name}",
+    reports = ROOT / "reports" / model
+    figure = reports / "figures" / f"{stem}_confusion.png"
+    figure_lenient = reports / "figures" / f"{stem}_confusion_acted_or_listener.png"
+    plot_confusion(cm, ds, rows, f"{name} on {ds.name}",
                    (f"Bold = correct ({rule})." if composite else "Correct = matches the acted emotion.")
                    + f" {len(clips):,} clips, accuracy {100 * acc:.1f}%.",
                    "Acted emotion (clips)", figure)
     if has_listener:
-        plot_confusion(cm_lenient, ds, rows_lenient, f"{model_name} on {ds.name}",
+        plot_confusion(cm_lenient, ds, rows_lenient, f"{name} on {ds.name}",
                        f"Correct = matches the acted emotion or the listeners' vote. Accuracy {100 * acc_lenient:.1f}%.",
                        "Acted emotion, or listener vote if matched (clips)", figure_lenient)
     pct = lambda x: f"{100 * x:.1f}%"
-    image = lambda path, alt: f"![{alt}]({path.relative_to(ROOT / 'reports').as_posix()})"
+    image = lambda path, alt: f"![{alt}]({path.relative_to(reports).as_posix()})"
+    sentence = lambda text: text if text.endswith((".", "!", "?")) else text + "."
+    versions = ", ".join(f"{lib} {v}" for lib, v in predict.versions.items())
     # Results per emotion: one table; with composite labels, one per acted emotion (the recall that unweighted accuracy
     # averages) and one per predicted emotion (precision, recall and F1 against the resolved truth, for macro F1)
     lenient_column = (" Correct, acted or listeners' vote |", "---|") if has_listener else ("", "")
@@ -391,9 +480,9 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
                                                          if k in scored else "– | – | –") + " |" for k, n in enumerate(names)],
         ]
     report = [
-        f"# {model_name} on {ds.name}",
+        f"# {name} on {ds.name}",
         "",
-        f"Generated by `scripts/emotion2vec/evaluate.py` on {date.today()}."
+        f"Generated by `scripts/evaluation/evaluate.py` on {date.today()}."
         + (f" **Sample**: {len(clips):,} of the {len(ds.clips):,} clips, taken at even intervals within each emotion "
            "(`evaluation.limit` in config/config.yaml)." if sampled else ""),
         "",
@@ -407,36 +496,43 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
           if has_listener else []),
         f"| Unweighted accuracy (mean recall of the {len(rows)} acted emotions) | {pct(recall.mean())} |",
         f"| Macro F1 (acted emotion{f1_scope}) | {pct(macro_f1)} |",
-        f"| Accuracy, all 9 model classes (acted emotion) | {pct(acc9)} |",
+        f"| Accuracy, all {n_all} model classes (acted emotion) | {pct(acc_all)} |",
         f"| Chance level ({n_cls} emotions"
         + "".join(f"; {r} accepts {len(accepted(ds, r) & set(names))}" for r in composite) + f") | {pct(chance)} |",
         *([f"| Listeners' majority vote vs acted emotion | {pct(human)} |"] if human is not None else []),
         "",
         "## Setup",
         "",
-        f"- **Model**: `{model_name}` as released (no fine-tuning), FunASR {versions['funasr']}, one prediction per clip.",
+        " ".join([f"- **Model**: {name} (`{entry.get('hf_repo', model)}`) as released (no fine-tuning)"
+                  + (f", {versions}" if versions else "") + f", loaded by `scripts/models/{entry['loader']}.py`.",
+                  *(sentence(n) for n in predict.notes)]),
         f"- **Data**: {len(clips):,} clips of {ds.name} ({ds.language}) from `data/{ds.key}/`"
         + (f", a sample of its {len(ds.clips):,} clips taken at even intervals within each emotion." if sampled else "."),
         f"- **Ground truth (acted emotion)**: {ds.ground_truth}.",
         *([f"- **Listeners' vote**: {ds.listener}."] if has_listener else []),
-        *[f"- {note}" for note in ds.notes],
+        *[f"- {n}" for n in ds.notes],
         f"- **{n_cls} emotions**: the prediction is the most probable of the {n_cls} emotions in this dataset "
-        f"({', '.join(names)}); the model's other classes ({', '.join(f'`{lab}`' for lab in extra)}) are ignored. "
-        "**All 9 classes**: the prediction is the most probable of all nine classes, so choosing a class that the "
-        "dataset does not have counts as wrong.",
+        f"({', '.join(names)})"
+        + (f"; the model's other classes ({', '.join(f'`{lab}`' for lab in extra)}) are ignored." if extra
+           else "; the model has no other classes.")
+        + f" **All {n_all} model classes**: the prediction is the most probable of all {n_all} model classes, so "
+        "choosing a class that the dataset does not have counts as wrong.",
+        *([f"- **No model class for {' and '.join(absent)}**: the model cannot predict "
+           f"{'this emotion' if len(absent) == 1 else 'these emotions'}, so every clip acted "
+           f"{' or '.join(absent)} counts as wrong."] if absent else []),
         *([f"- **Composite label{'s' if len(composite) > 1 else ''}**: "
            + "; ".join(f"*{r}* has no model class, so a prediction of {' or '.join(ds.accept[r])} counts as correct for "
                        "it" for r in composite)
-           + " (also with all 9 classes). Each such label has its own row in the confusion matrices, whose bold cells "
-           "count as correct; its recall is the share of its clips predicted correctly, and chance level "
+           + f" (also with all {n_all} model classes). Each such label has its own row in the confusion matrices, whose "
+           "bold cells count as correct; its recall is the share of its clips predicted correctly, and chance level "
            f"({pct(chance)} instead of {pct(1 / n_cls)}) counts every class it accepts."] if composite else []),
         *(["- **Two ways to count a prediction as correct.** *Acted emotion*: it must match the acted emotion. *Acted "
            "emotion or listeners' vote*: it also counts when it matches the listeners' majority vote (for a tied vote, "
            "any of the tied emotions). Both are reported."] if has_listener else []),
         f"- **Hardware**: {hardware(device)}, device `{device}`, PyTorch {torch.__version__}. "
-        f"Inference took {runtime / 60:.1f} min ({runtime / len(clips) * 1000:.0f} ms per clip)."
-        + (f" {on_cpu:,} clips longer than about 20 s ran on the CPU, because MPS cannot process them."
-           if on_cpu else ""),
+        f"Inference took {f'{runtime:.0f} s' if runtime < 60 else f'{runtime / 60:.1f} min'} "
+        f"({runtime / len(clips) * 1000:.0f} ms per clip)."
+        + (f" {on_cpu:,} clips ran on the CPU, because `{device}` could not process them." if on_cpu else ""),
         f"- **Per-clip predictions**: `{predictions.relative_to(ROOT)}` (not in git; re-run the script to recreate it). "
         "The JSON file next to it describes the columns.",
         "",
@@ -446,7 +542,7 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
         "",
         "## Confusion matrix: acted emotion",
         "",
-        image(figure, f"Confusion matrix of {model_name} on {ds.name}, acted emotion"),
+        image(figure, f"Confusion matrix of {name} on {ds.name}, acted emotion"),
         "",
         "The same numbers as a table. Rows: acted emotion. Columns: predicted emotion. Each row adds up to 100%."
         + (" Bold: the cells that count as correct." if composite else ""),
@@ -460,7 +556,7 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
         report += [
             "## Confusion matrix: acted emotion or listeners' vote",
             "",
-            image(figure_lenient, f"Confusion matrix of {model_name} on {ds.name}, acted emotion or listeners' vote"),
+            image(figure_lenient, f"Confusion matrix of {name} on {ds.name}, acted emotion or listeners' vote"),
             "",
             "Here a prediction is correct when it matches the acted emotion or the listeners' vote. A clip goes into "
             "the row of the label its prediction matched, otherwise into the row of its acted emotion. "
@@ -475,14 +571,15 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
             f"Most frequent confusions: {top_confusions(cm_lenient, ds, rows_lenient)}.",
             "",
         ]
-    report += [
-        f"## Predictions outside the {n_cls} emotions",
-        "",
-        "With all nine classes, the model chose a class that this dataset does not have for "
-        f"{sum(extra.values()):,} clips ({pct(sum(extra.values()) / len(clips))}): "
-        + ", ".join(f"`{lab}` {n:,}" for lab, n in extra.items()) + ".",
-        "",
-    ]
+    if extra:
+        report += [
+            f"## Predictions outside the {n_cls} emotions",
+            "",
+            f"With all {n_all} model classes, the model chose a class that this dataset does not have for "
+            f"{sum(extra.values()):,} clips ({pct(sum(extra.values()) / len(clips))}): "
+            + ", ".join(f"`{lab}` {n:,}" for lab, n in extra.items()) + ".",
+            "",
+        ]
     if human is not None:
         report += [
             "## Comparison with human listeners",
@@ -491,93 +588,111 @@ def evaluate(ds, predict, labels, model_name, device, limit, versions):
             f"single (untied) vote. The model agrees with that vote for {pct(agree)} of the same clips.",
             "",
         ]
-    report += ["## Caveats", "", *[f"- {c}" for c in ds.caveats]]
+    report += ["## Caveats", "", f"- {training_caveat(ds.key, entry, note)}", *[f"- {c}" for c in ds.caveats]]
     if has_listener:
         report.append("- **Acted labels are not perceived emotions.** The ground truth is what the actor intended; "
                       "listeners sometimes heard something else, as the listeners' numbers above show.")
     report.append("")
-    out = ROOT / "reports" / f"{stem}.md"
+    out = reports / f"{stem}.md"
     out.write_text("\n".join(report), encoding="utf-8")
     # Written last, so that it exists only for a finished run (see finished_run)
     predictions.with_suffix(".json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     print(f"\nDone: report -> {out.relative_to(ROOT)}, predictions -> {predictions.relative_to(ROOT)}")
 
 
-def shared_scores(run, shared):
+def best_runs(model, exclude=()):
+    """Per dataset key, in eval_datasets.LOADERS order: the predictions JSON of the run in outputs/<model>/ with the
+    most clips (a full run rather than a sample), with its file stem added. Datasets in exclude (evaluation.exclude)
+    are left out."""
+    out, order = ROOT / "outputs" / model, list(LOADERS)
+    best = {}
+    for p in sorted(out.glob("*_predictions.json")):
+        run = json.loads(p.read_text(encoding="utf-8")) | {"stem": p.name.removesuffix("_predictions.json")}
+        if "metrics" in run and run["key"] not in exclude and run["clips"] > best.get(run["key"], {"clips": 0})["clips"]:
+            best[run["key"]] = run
+    # Ground-truth labels in the order of the confusion-matrix rows. Older predictions files have no "labels": their
+    # classes and composite labels stand in, those that clips in the CSV have (JL-Corpus has no clip acted surprised)
+    for r in best.values():
+        if "labels" not in r:
+            with open(out / f"{r['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
+                found = {row[r["ground_truth"]] for row in csv.DictReader(fh)}
+            r["labels"] = [x for x in [*r["classes"], *r.get("accept", {})] if x in found]
+    return dict(sorted(best.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else len(order)))
+
+
+def shared_scores(model, run, shared):
     """Clips, accuracy and unweighted accuracy of one run on the emotions every dataset has: clips of other emotions
     are left out, and the prediction is the most probable of the shared emotions."""
-    with open(ROOT / "outputs" / f"{run['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
+    with open(ROOT / "outputs" / model / f"{run['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
         rows = [r for r in csv.DictReader(fh) if r["acted_emotion"] in shared]
+    if not rows:  # a small sample can miss them
+        return 0, None, None
     pred = []
     for r in rows:
         if r["prediction"] in shared:  # most probable of the dataset's emotions, so also of the shared ones
             pred.append(r["prediction"])
         else:  # use the probabilities in the file; they have 4 decimals, so a tie counts as wrong
-            p = [float(r[f"p_{e}"]) for e in shared]
+            p = [float(r.get(f"p_{e}", 0)) for e in shared]  # 0 for an emotion the model has no class for
             pred.append(shared[p.index(max(p))] if p.count(max(p)) == 1 else None)
     truth = np.array([r["acted_emotion"] for r in rows])
     hit = np.array(pred) == truth
     return len(rows), hit.mean(), np.mean([hit[truth == e].mean() for e in shared if (truth == e).any()])
 
 
-def write_summary(model_name, figure_order=(), acted_or_listener=(), exclude=()):
-    """reports/<model>_summary.md: one row per evaluated dataset, read from the JSON files in outputs/. A dataset with
-    a full run and a sample (evaluation.limit) is shown with the run that has the most clips. The summary figure shows
-    the datasets in figure_order first (the others follow in table order); those in acted_or_listener show their
-    "acted emotion or listeners' vote" confusion matrix. Datasets in exclude (evaluation.exclude) are left out."""
-    order = list(LOADERS)
-    out = ROOT / "outputs"
-    best = {}
-    for p in [*out.glob(f"*_{model_name}_predictions.json"), *out.glob(f"*_{model_name}_sample*_predictions.json")]:
-        run = json.loads(p.read_text(encoding="utf-8")) | {"stem": p.name.removesuffix("_predictions.json")}
-        if "metrics" in run and run["key"] not in exclude and run["clips"] > best.get(run["key"], {"clips": 0})["clips"]:
-            best[run["key"]] = run
-    runs = sorted(best.values(), key=lambda r: order.index(r["key"]) if r["key"] in order else len(order))
+def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exclude=()):
+    """reports/<model>/summary.md: one row per evaluated dataset, read from the JSON files in outputs/<model>/. A
+    dataset with a full run and a sample (evaluation.limit) is shown with the run that has the most clips. The datasets
+    in the model's training data come first, then the others, each group sorted by accuracy. The summary figure shows
+    the datasets in figure_order first (the others follow in eval_datasets.LOADERS order); those in acted_or_listener
+    show their "acted emotion or listeners' vote" confusion matrix. Datasets in exclude (evaluation.exclude) are left
+    out."""
+    runs = list(best_runs(model, exclude).values())
+    if not runs:
+        print(f"  no results in outputs/{model}/ yet, so no summary")
+        return
+    name, trained = entry["name"], set(entry["training_data"])
+    reports = ROOT / "reports" / model
     sampled = [r for r in runs if r.get("total_clips", r["clips"]) > r["clips"]]
     pct = lambda x: f"{100 * x:.1f}%" if x is not None else "–"
     clips = lambda r: f"{r['clips']:,}" + (f" of {r['total_clips']:,} (sample)" if r in sampled else "")
     chance = lambda r: r.get("chance", 1 / len(r["classes"]))  # older predictions files have no "chance"
-    # Ground-truth labels in the order of the confusion-matrix rows. Older predictions files have no "labels": their
-    # classes and composite labels stand in, those that clips in the CSV have (JL-Corpus has no clip acted surprised)
-    for r in runs:
-        if "labels" not in r:
-            with open(out / f"{r['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
-                found = {row[r["ground_truth"]] for row in csv.DictReader(fh)}
-            r["labels"] = [x for x in [*r["classes"], *r.get("accept", {})] if x in found]
+    yes_no = lambda r: "yes" if r["key"] in trained else "no"
+    # The datasets in the model's training data first, then the others, each group by accuracy (best first)
+    ranked = sorted(runs, key=lambda r: (r["key"] not in trained, -r["metrics"]["accuracy"]))
 
     def labels(r):
         """The labels as text; a composite label names the classes it accepts, e.g. "excited (happy or surprised)".
         No-break spaces keep three labels together: GitHub squeezes a wide table to its narrowest, and the column then
         wraps between such groups instead of after every label."""
         names = [f"{x} ({' or '.join(r['accept'][x])})" if x in r.get("accept", {}) else x for x in r["labels"]]
-        return ", ".join(",\u00a0".join(names[k:k + 3]) for k in range(0, len(names), 3))
-    emobox = lambda r: "yes" if r["in_emobox"] else "no"
+        return ", ".join(", ".join(names[k:k + 3]) for k in range(0, len(names), 3))
     # Composite labels, e.g. "JL-Corpus's *excited* (happy or surprised)"
     composite = [f"{r['dataset']}'s *{label}* ({' or '.join(accept)})" for r in runs
                  for label, accept in r.get("accept", {}).items()]
-    rows = [f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {emobox(r)} | {clips(r)} | "
+    column = f"In {name}'s training data"
+    rows = [f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {yes_no(r)} | {clips(r)} | "
             f"{len(r['classes'])} | {pct(chance(r))} | **{pct(r['metrics']['accuracy'])}** | "
             f"{pct(r['metrics'].get('accuracy_acted_or_listener'))} | {pct(r['metrics']['unweighted_accuracy'])} | "
-            f"{pct(r['metrics']['macro_f1'])} |" for r in runs]
+            f"{pct(r['metrics']['macro_f1'])} |" for r in ranked]
     summary = [
-        f"# {model_name}: results on every dataset",
+        f"# {name}: results on every dataset",
         "",
-        f"Generated by `scripts/emotion2vec/evaluate.py` on {date.today()}. Each dataset links to its full report.",
+        f"Generated by `scripts/evaluation/evaluate.py` on {date.today()}. Each dataset links to its full report. The "
+        "datasets in the model's training data come first, then the others, each group sorted by accuracy.",
         "",
-        "| Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Emotions | Chance "
+        f"| Dataset | Language | Ground-truth labels | {column} | Clips | Emotions | Chance "
         "| Accuracy: acted emotion | Accuracy: acted or listeners' vote | Unweighted accuracy | Macro F1 |",
         "|---|---|---|---|---|---|---|---|---|---|---|",
         *rows,
         "",
-        "- **Ground-truth labels**: the emotions the speakers were asked to portray, as emotion2vec+ class names (each "
+        "- **Ground-truth labels**: the emotions the speakers were asked to portray, as the project's class names (each "
         "report gives the dataset's own names), in the order of the rows of the confusion matrices.",
         *([f"- **Composite labels** (no model class; a prediction of any class in brackets counts as correct): "
            f"{', '.join(composite)}. Chance level counts these classes, so it is higher than 1 in the number of "
            "emotions."] if composite else []),
-        "- **In emotion2vec+ training data (EmoBox)**: *yes* means that the dataset is in EmoBox, whose data fine-tuned "
-        "emotion2vec+ seed, the first model in the chain that led to emotion2vec+ large; the model has probably seen "
-        "these clips, so the result is optimistic. *no*: not in EmoBox, although earlier exposure cannot be ruled out "
-        "completely (see each report).",
+        f"- **{column}**: *yes* means that the dataset is part of the data the model was trained on "
+        f"({unbracketed(entry['training_source'])}), so the model has probably seen these clips and the result is "
+        "optimistic. *no*: it is not." + (f" {note}" if note else ""),
         "- **Accuracy: acted emotion** compares the prediction with the emotion the speaker was asked to portray. "
         "The prediction is the most probable of the emotions that the dataset has, so chance level depends on how "
         "many emotions it has.",
@@ -589,20 +704,20 @@ def write_summary(model_name, figure_order=(), acted_or_listener=(), exclude=())
         "",
     ]
     # Every dataset's confusion matrix (the figures of the reports) stitched into one figure
-    figures = ROOT / "reports" / "figures"
+    figures = reports / "figures"
     rank = {key: k for k, key in enumerate(figure_order)}
-    shown = sorted(runs, key=lambda r: rank.get(r["key"], len(rank)))
+    shown = [r for r in sorted(runs, key=lambda r: rank.get(r["key"], len(rank)))
+             if (figures / f"{r['stem']}_confusion.png").exists()]
     lenient = [r for r in shown if r["key"] in acted_or_listener
                and (figures / f"{r['stem']}_confusion_acted_or_listener.png").exists()]
     panels = [figures / f"{r['stem']}_confusion{'_acted_or_listener' if r in lenient else ''}.png" for r in shown]
-    panels = [p for p in panels if p.exists()]
-    grid = figures / f"{model_name}_summary_confusion.png" if panels else None
+    grid = figures / "summary_confusion.png" if panels else None
     if panels:
         stitch(panels, grid, columns=min(3, math.ceil(math.sqrt(len(panels)))))  # 4 panels: 2 x 2, 6: 3 x 2
         summary += [
             "## Confusion matrices",
             "",
-            f"![Confusion matrices of {model_name} on every dataset]({grid.relative_to(ROOT / 'reports').as_posix()})",
+            f"![Confusion matrices of {name} on every dataset]({grid.relative_to(reports).as_posix()})",
             "",
             f"One matrix per dataset, from each dataset's report: {', '.join(r['dataset'] for r in shown)} (order: "
             "`evaluation.summary_figure` in config/config.yaml). Rows: acted emotion; columns: predicted emotion; each "
@@ -615,7 +730,8 @@ def write_summary(model_name, figure_order=(), acted_or_listener=(), exclude=())
         ]
     # The same comparison on the emotions that every dataset has, so that the choice of emotions does not matter
     shared = sorted(set.intersection(*(set(r["classes"]) for r in runs))) if len(runs) > 1 else []
-    scored = sorted(((r, *shared_scores(r, shared)) for r in runs), key=lambda s: -s[2]) if shared else []
+    scored = sorted(((r, *shared_scores(model, r, shared)) for r in runs),
+                    key=lambda s: (s[0]["key"] not in trained, -(s[2] or 0))) if shared else []
     if shared:
         summary += [
             f"## Only the emotions every dataset has: {', '.join(shared)}",
@@ -625,45 +741,165 @@ def write_summary(model_name, figure_order=(), acted_or_listener=(), exclude=())
             f"emotions (chance {pct(1 / len(shared))}): clips of other emotions are left out, and the prediction is "
             f"the most probable of these {len(shared)}.",
             "",
-            "| Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Accuracy "
-            "| Unweighted accuracy |",
+            f"| Dataset | Language | Ground-truth labels | {column} | Clips | Accuracy | Unweighted accuracy |",
             "|---|---|---|---|---|---|---|",
-            *[f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {emobox(r)} | "
+            *[f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {yes_no(r)} | "
               f"{n:,}{' (sample)' if r in sampled else ''} | **{pct(acc)}** | {pct(ua)} |" for r, n, acc, ua in scored],
             "",
             "Computed from the predictions files in `outputs/`. Their probabilities have 4 decimals, so a clip whose "
             "shared emotions are tied counts as wrong.",
             "",
         ]
-    path = ROOT / "reports" / f"{model_name}_summary.md"
+    path = reports / "summary.md"
     path.write_text("\n".join(summary), encoding="utf-8")
     # The same numbers as JSON, for the viewer page (scripts/viewer/make_viewer.py)
+    rounded = lambda x: round(float(x), 6) if x is not None else None
     data = {
-        "model": model_name, "date": str(date.today()),
+        "model": model, "name": name, "date": str(date.today()), "training_source": entry["training_source"],
         "datasets": [{"dataset": r["dataset"], "key": r["key"], "language": r["language"], "clips": r["clips"],
                       "total_clips": r.get("total_clips", r["clips"]), "emotions": len(r["classes"]),
                       "labels": r["labels"],  # ground-truth labels, in the order of the confusion-matrix rows
                       "chance": round(float(chance(r)), 6), **({"accept": r["accept"]} if r.get("accept") else {}),
-                      "in_emobox": r["in_emobox"], "metrics": r["metrics"]} for r in runs],
-        "figure": grid.relative_to(ROOT / "reports").as_posix() if grid else None,
+                      "in_training_data": r["key"] in trained, "metrics": r["metrics"]} for r in ranked],
+        "figure": grid.relative_to(reports).as_posix() if grid else None,
         "figure_datasets": [r["dataset"] for r in shown] if grid else [],
         "acted_or_listener": [r["dataset"] for r in lenient] if grid else [],
         "shared_emotions": shared,
         "shared": [{"dataset": r["dataset"], "key": r["key"], "language": r["language"], "clips": n,
-                    "sample": r in sampled, "accuracy": round(float(acc), 6), "unweighted_accuracy": round(float(ua), 6),
-                    "in_emobox": r["in_emobox"]} for r, n, acc, ua in scored],
+                    "sample": r in sampled, "accuracy": rounded(acc), "unweighted_accuracy": rounded(ua),
+                    "in_training_data": r["key"] in trained} for r, n, acc, ua in scored],
     }
     path.with_suffix(".json").write_text(json.dumps(data, indent=2), encoding="utf-8")
-    print(f"Summary of {len(runs)} dataset(s) -> {path.relative_to(ROOT)} (and .json)")
+    print(f"  summary of {len(runs)} dataset(s) -> {path.relative_to(ROOT)} (and .json)")
 
 
-def finished_run(key, model_name, limit):
+def write_comparison(registry, exclude=()):
+    """reports/summary.md (and .json, see the docstring of this file): every registered model with results in
+    outputs/<model>/ on every dataset, with the same run per model and dataset as the model's summary (the one with
+    the most clips). Rows: datasets, in eval_datasets.LOADERS order; columns: models, in registry order."""
+    runs = {m: best_runs(m, exclude) for m in registry}
+    models = [m for m in registry if runs[m]]
+    if not models:
+        print("  no results in outputs/ yet, so no comparison")
+        return
+    keys = [k for k in LOADERS if any(k in runs[m] for m in models)]
+    facts = {k: max((runs[m][k] for m in models if k in runs[m]), key=lambda r: r["clips"]) for k in keys}  # name, ...
+    shared = sorted(set.intersection(*(set(facts[k]["classes"]) for k in keys))) if len(keys) > 1 else []
+    values = {}  # (model, dataset) -> metric -> value
+    for m in models:
+        for k, r in runs[m].items():
+            values[m, k] = dict(r["metrics"])
+            if shared:
+                values[m, k] |= dict(zip(("shared_clips", "shared_accuracy", "shared_unweighted_accuracy"),
+                                         shared_scores(m, r, shared)))
+    sampled = lambda r: r.get("total_clips", r["clips"]) > r["clips"]
+    trained = lambda m, k: k in registry[m]["training_data"]
+    chance = lambda r: r.get("chance", 1 / len(r["classes"]))  # older predictions files have no "chance"
+    pct = lambda x: f"{100 * x:.1f}%"
+    samples = any(sampled(r) for m in models for r in runs[m].values())
+
+    def table(metric, chance_of):
+        """Rows: datasets; columns: models. The best value of a row in bold, † where the dataset is in the model's
+        training data, and the number of clips of a sample."""
+        lines = ["| Dataset | Language | Chance | " + " | ".join(f"[{registry[m]['name']}]({m}/summary.md)"
+                                                          for m in models) + " |",
+                 "|---|---|---|" + "---|" * len(models)]
+        for k in keys:
+            got = {m: values[m, k][metric] for m in models if values.get((m, k), {}).get(metric) is not None}
+            best = max((round(100 * v, 1) for v in got.values()), default=None)  # compared as shown, to 0.1%
+            cells = []
+            for m in models:
+                if m not in got:
+                    cells.append("–")
+                    continue
+                cell = f"**{pct(got[m])}**" if len(got) > 1 and round(100 * got[m], 1) == best else pct(got[m])
+                cells.append(cell + "†" * trained(m, k)
+                             + (f" ({runs[m][k]['clips']:,} clips)" if sampled(runs[m][k]) else ""))
+            lines.append(f"| {facts[k]['dataset']} | {facts[k]['language']} | {pct(chance_of(k))} | "
+                         + " | ".join(cells) + " |")
+        return lines
+    dataset_chance = lambda k: chance(facts[k])
+    summary = [
+        "# Every model on every dataset",
+        "",
+        f"Generated by `scripts/evaluation/evaluate.py` on {date.today()}. Every model runs as released on the same "
+        "clips and is scored against the same labels. Each model's name links to its summary, which links to a report "
+        "per dataset.",
+        "",
+        "- **†**: the dataset is in the model's training data, so the model has probably seen these clips; treat the "
+        "result as optimistic.",
+        "- **Bold**: the best model on the dataset.",
+        *(["- **(N clips)**: a sample of the dataset (`evaluation.limit`), not every clip."] if samples else []),
+        "",
+        "## Accuracy: prediction matches the acted emotion",
+        "",
+        "The prediction is the most probable of the dataset's emotions, so chance level depends on how many emotions "
+        "the dataset has.",
+        "",
+        *table("accuracy", dataset_chance),
+        "",
+        "## Unweighted accuracy",
+        "",
+        "The mean recall of the acted emotions, so every emotion counts the same, however many clips it has.",
+        "",
+        *table("unweighted_accuracy", dataset_chance),
+        "",
+        "## Macro F1",
+        "",
+        "The mean F1 of the predicted emotions (each report explains how a composite label such as JL-Corpus's "
+        "*excited* counts).",
+        "",
+        *table("macro_f1", dataset_chance),
+        "",
+    ]
+    if shared:
+        summary += [
+            f"## Only the emotions every dataset has: {', '.join(shared)}",
+            "",
+            f"Accuracy with every dataset scored on the same {len(shared)} emotions: clips of other emotions are left "
+            f"out, and the prediction is the most probable of these {len(shared)}, so the choice of emotions does not "
+            "matter. Computed from the predictions files in `outputs/`.",
+            "",
+            *table("shared_accuracy", lambda k: 1 / len(shared)),
+            "",
+        ]
+    summary += [
+        "## Training data",
+        "",
+        *[f"- [{registry[m]['name']}]({m}/summary.md): {registry[m]['training_source']}. "
+          + (f"In its training data: {', '.join(facts[k]['dataset'] for k in keys if trained(m, k))}."
+             if any(trained(m, k) for k in keys) else "None of these datasets is in its training data.")
+          for m in models],
+        "",
+    ]
+    path = ROOT / "reports" / "summary.md"
+    path.write_text("\n".join(summary), encoding="utf-8")
+    rounded = lambda x: round(float(x), 6) if x is not None else None
+    data = {
+        "date": str(date.today()),
+        "models": [{"model": m, "name": registry[m]["name"], "training_source": registry[m]["training_source"],
+                    "training_data": registry[m]["training_data"], "summary": f"{m}/summary.md"} for m in models],
+        "datasets": [{"key": k, "dataset": facts[k]["dataset"], "language": facts[k]["language"],
+                      "chance": rounded(chance(facts[k]))} for k in keys],
+        "shared_emotions": shared,
+        "results": {m: {k: {"clips": r["clips"], "total_clips": r.get("total_clips", r["clips"]), "sample": sampled(r),
+                            "in_training_data": trained(m, k),
+                            **{x: (v if x == "shared_clips" else rounded(v)) for x, v in values[m, k].items()
+                               if x in ("accuracy", "unweighted_accuracy", "macro_f1", "shared_clips",
+                                        "shared_accuracy", "shared_unweighted_accuracy")}}
+                        for k, r in runs[m].items()} for m in models},
+    }
+    path.with_suffix(".json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+    print(f"  {len(models)} model(s) on {len(keys)} dataset(s) -> {path.relative_to(ROOT)} (and .json)")
+
+
+def finished_run(model, key, limit):
     """The predictions JSON of an earlier finished run that a run with these settings would replace, or None.
-    With evaluation.limit smaller than the dataset, a run writes <key>_<model>_sample<limit>_*, otherwise
-    <key>_<model>_*. The JSON is written last, so it exists only for a finished run."""
-    out = ROOT / "outputs"
-    sample = out / f"{key}_{model_name}_sample{limit}_predictions.json"
-    full = out / f"{key}_{model_name}_predictions.json"
+    With evaluation.limit smaller than the dataset, a run writes outputs/<model>/<key>_sample<limit>_*, otherwise
+    outputs/<model>/<key>_*. The JSON is written last, so it exists only for a finished run."""
+    out = ROOT / "outputs" / model
+    sample = out / f"{key}_sample{limit}_predictions.json"
+    full = out / f"{key}_predictions.json"
     if limit and sample.exists():
         return sample
     # A full run also counts when the limit is at least the size of the dataset (then there is no sample)
@@ -676,94 +912,149 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the project configuration (config/config.yaml, section `evaluation`)
+    # Step 1: Read the project configuration (config/config.yaml: the model registry and the `evaluation` section)
     # ------------------------------------------------------------------
-    step("Step 1/6 | Load configuration")
+    step("Step 1/8 | Load configuration")
     cfg = yaml.safe_load(CONFIG.read_text())
-    settings = cfg["evaluation"]
-    mode = cfg["mode"]
-    device = torch.device(settings["devices"][mode])
-    limit, overwrite, figure = settings["limit"], settings["overwrite"], settings["summary_figure"]
-    exclude = settings["exclude"] or []
-    model_name = cfg["model"]
-    model_dir = ROOT / cfg["models"][model_name]["dir"]
-    wanted = settings["datasets"]
-    if wanted == "all":
-        keys = [k for k in LOADERS if (ROOT / "data" / k).is_dir()]
-    else:
-        keys = [wanted] if isinstance(wanted, str) else list(wanted)
-    unknown = [k for k in [*keys, *exclude] if k not in LOADERS]
+    registry, settings, mode = cfg["models"], cfg["evaluation"], cfg["mode"]
+    missing = [k for k in SETTINGS if k not in settings]
+    if missing:
+        sys.exit(f"ERROR: `evaluation` in config/config.yaml lacks {', '.join(missing)}.")
+    if mode not in settings["devices"]:
+        sys.exit(f"ERROR: `mode: {mode}` has no device in `evaluation.devices` of config/config.yaml "
+                 f"(it has: {', '.join(settings['devices'])}).")
+    for m, entry in registry.items():
+        lacks = [k for k in REGISTRY if k not in entry]
+        if lacks:
+            sys.exit(f"ERROR: model {m} in `models` of config/config.yaml lacks {', '.join(lacks)}.")
+    models = list(registry) if settings["models"] == "all" else as_list(settings["models"])
+    unknown = [m for m in models if m not in registry]
+    if unknown or not models:
+        sys.exit(f"ERROR: unknown model(s) {unknown} in `evaluation.models` of config/config.yaml; use all or "
+                 f"registered models: {', '.join(registry)}")
+    wanted, exclude = settings["datasets"], as_list(settings["exclude"])
+    keys = [k for k in LOADERS if (ROOT / "data" / k).is_dir()] if wanted == "all" else as_list(wanted)
+    figure = settings["summary_figure"] or {}
+    order, acted_or_listener = as_list(figure.get("order")), as_list(figure.get("acted_or_listener"))
+    named = [*keys, *exclude, *order, *acted_or_listener,
+             *(k for m in models for k in registry[m]["training_data"])]
+    unknown = sorted({k for k in named if k not in LOADERS})
     if unknown:
-        sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/config.yaml; use: {', '.join(LOADERS)} or all")
+        sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/config.yaml (evaluation, or training_data in models); "
+                 f"use: {', '.join(LOADERS)} or all")
+    limit, overwrite = settings["limit"], settings["overwrite"]
+    if limit is not None and (not isinstance(limit, int) or limit < 1):
+        sys.exit(f"ERROR: `evaluation.limit` must be a positive number or null, not {limit!r}.")
     # Datasets in evaluation.exclude are never evaluated (their data can stay in data/)
     excluded = [k for k in keys if k in exclude]
     keys = [k for k in keys if k not in exclude]
     if excluded and not keys:
         sys.exit(f"ERROR: every dataset to evaluate is in `evaluation.exclude` ({', '.join(excluded)}).")
-    # Datasets that already have results for this model and limit in outputs/ are skipped, unless overwrite is true
-    done = {} if overwrite else {k: run for k in keys if (run := finished_run(k, model_name, limit))}
-    todo = [k for k in keys if k not in done]
-    missing = [k for k in todo if not (ROOT / "data" / k).is_dir()]
+    # Each model's device: evaluation.devices for the mode, or on the Mac the model's own mac_device
+    devices = {}
+    for m in models:
+        wish = settings["devices"][mode]
+        if mode == "mac" and registry[m].get("mac_device"):
+            wish = registry[m]["mac_device"]
+        try:
+            devices[m] = torch.device(wish)
+        except RuntimeError:
+            sys.exit(f"ERROR: unknown device {wish!r} for {m} in config/config.yaml; use cpu, mps or cuda:<index>.")
+    # Models and datasets that already have results for this limit in outputs/<model>/ are skipped, unless overwrite
+    # is true; so is a model that cannot run yet (no loader or no weights)
+    done = {m: {k: run for k in keys if not overwrite and (run := finished_run(m, k, limit))} for m in models}
+    todo = {m: [k for k in keys if k not in done[m]] for m in models}
+    waiting = {m: why for m in models if todo[m] and (why := not_ready(registry[m]))}
+    todo = {m: ks for m, ks in todo.items() if ks and m not in waiting}
+    missing = [k for k in keys if any(k in ks for ks in todo.values()) and not (ROOT / "data" / k).is_dir()]
     if not keys or missing:
         sys.exit(f"ERROR: not downloaded: {', '.join(missing) or 'any dataset'}. Download it with "
                  "scripts/common/download_data.py (set `download.dataset` in config/config.yaml).")
     print(f"  config      : {CONFIG}")
     print(f"  mode        : {mode}")
-    print(f"  device      : {device}")
-    print(f"  model       : {model_name} ({model_dir})")
+    for m in models:
+        print(f"  model       : {m} = {registry[m]['name']}, device {devices[m]} ({registry[m]['dir']})")
     print(f"  datasets    : {', '.join(keys)}")
     if excluded:
         print(f"  excluded    : {', '.join(excluded)} (evaluation.exclude)")
     print(f"  limit       : {f'{limit:,} clips of each dataset, taken at even intervals within each emotion' if limit else 'every clip'}")
-    print(f"  overwrite   : {'yes, evaluate again' if overwrite else 'no, skip datasets that already have results'}")
-    for key, run in done.items():
-        print(f"  skipped     : {key} (results in {run.relative_to(ROOT)})")
+    print(f"  overwrite   : {'yes, evaluate again' if overwrite else 'no, skip what already has results'}")
+    for m in models:
+        if done[m]:
+            print(f"  skipped     : {m} on {', '.join(done[m])} (results in outputs/{m}/)")
+    for m, why in waiting.items():
+        print(f"  not ready   : {m}: {why}")
+    for m, ks in todo.items():
+        print(f"  to evaluate : {m} on {', '.join(ks)}")
     if not todo:
-        print("\nEvery dataset already has results, so only the summary is written. To evaluate again, set "
+        print("\nNothing to evaluate, so only the summaries are written. To evaluate again, set "
               "`evaluation.overwrite: true` in config/config.yaml.")
-        write_summary(model_name, figure["order"], figure["acted_or_listener"], exclude)
-        return
-    print(f"  to evaluate : {', '.join(todo)}")
+    else:
+        # ------------------------------------------------------------------
+        # Step 2: Check the software stack and the devices
+        # ------------------------------------------------------------------
+        step("Step 2/8 | Check environment and devices")
+        print(f"  Python      : {platform.python_version()} ({platform.system()} {platform.machine()})")
+        print(f"  PyTorch     : {torch.__version__}")
+        print(f"  offline     : HF_HUB_OFFLINE={os.environ['HF_HUB_OFFLINE']}, "
+              f"TRANSFORMERS_OFFLINE={os.environ['TRANSFORMERS_OFFLINE']} (models load from models/ only)")
+        for dev in dict.fromkeys(devices[m] for m in todo):
+            if dev.type == "cuda" and not torch.cuda.is_available():
+                sys.exit("ERROR: CUDA was requested but is not available (see README, Troubleshooting).")
+            if dev.type == "mps" and not torch.backends.mps.is_available():
+                sys.exit("ERROR: MPS was requested but is not available (see README, Troubleshooting).")
+            users = ", ".join(m for m in todo if devices[m] == dev)
+            print(f"  device      : {dev} = {hardware(dev)}"
+                  + (f", {torch.get_num_threads()} threads" if dev.type == "cpu" else "") + f" (for {users})")
+
+    # Steps 3-7 for every model to evaluate: load it, run it on its datasets, write its summary, free its memory
+    for i, (m, ks) in enumerate(todo.items(), 1):
+        entry = registry[m]
+        # ------------------------------------------------------------------
+        # Step 3: Load the model through its loader (scripts/models/<loader>.py), from its folder only
+        # ------------------------------------------------------------------
+        step(f"Step 3/8 | Load {entry['name']} (model {i} of {len(todo)})")
+        loader = importlib.import_module(entry["loader"])
+        t0 = time.perf_counter()
+        predict = loader.load(ROOT / entry["dir"], devices[m])
+        labels = list(predict.labels)
+        if len(set(labels)) != len(labels):
+            sys.exit(f"ERROR: scripts/models/{entry['loader']}.py gives repeated labels: {labels}")
+        print(f"  loader      : scripts/models/{entry['loader']}.py")
+        print(f"  folder      : {entry['dir']}")
+        print(f"  device      : {devices[m]}")
+        print(f"  versions    : {', '.join(f'{lib} {v}' for lib, v in predict.versions.items())}")
+        print(f"  loaded in   : {time.perf_counter() - t0:.1f} s")
+        print(f"  classes     : {len(labels)} -> {', '.join(labels)}")
+        for n in predict.notes:
+            print(f"  note        : {n}")
+        note = getattr(loader, "TRAINING_NOTE", "")
+        # Steps 4-6 for every dataset to evaluate
+        for key in ks:
+            evaluate(dataset(key), predict, m, entry, note, devices[m], limit)
+        # ------------------------------------------------------------------
+        # Step 7: The model's summary: every dataset with results in outputs/<model>/
+        # ------------------------------------------------------------------
+        step(f"Step 7/8 | Summary of {entry['name']}")
+        write_summary(m, entry, note, order, acted_or_listener, exclude)
+        # Free the model's memory before the next one
+        del predict
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        if torch.backends.mps.is_available():
+            torch.mps.empty_cache()
+    # The summaries of the chosen models that had nothing to evaluate (their results may still have changed)
+    for m in models:
+        if m not in todo:
+            step(f"Step 7/8 | Summary of {registry[m]['name']}")
+            write_summary(m, registry[m], loader_note(registry[m]), order, acted_or_listener, exclude)
 
     # ------------------------------------------------------------------
-    # Step 2: Check the software stack and the device
+    # Step 8: Compare every model with results in outputs/ (also those not chosen this time)
     # ------------------------------------------------------------------
-    step("Step 2/6 | Check environment and device")
-    import funasr  # imported here because it takes a few seconds
-    from funasr import AutoModel
-
-    logging.getLogger().setLevel(logging.ERROR)  # importing FunASR turns on INFO logs; keep the output readable
-    if device.type == "cuda" and not torch.cuda.is_available():
-        sys.exit("ERROR: CUDA was requested but is not available (see README, Troubleshooting).")
-    if device.type == "mps" and not torch.backends.mps.is_available():
-        sys.exit("ERROR: MPS was requested but is not available (see README, Troubleshooting).")
-    print(f"  Python      : {platform.python_version()}")
-    print(f"  PyTorch     : {torch.__version__}")
-    print(f"  FunASR      : {funasr.__version__}")
-    print(f"  hardware    : {hardware(device)}")
-
-    # ------------------------------------------------------------------
-    # Step 3: Load the model onto the device (same settings as scripts/emotion2vec/inference.py)
-    # ------------------------------------------------------------------
-    step("Step 3/6 | Load model")
-    t0 = time.perf_counter()
-    load = lambda dev: AutoModel(
-        model=str(model_dir),
-        device=str(dev),
-        ncpu=torch.get_num_threads(),
-        excludes="modality_encoders.AUDIO.decoder.",  # pre-training decoder: not in model.pt, unused for inference
-        disable_update=True,
-        disable_pbar=True,
-    )
-    predict = Predictor(load, device)
-    labels = [t.split("/")[-1] for t in (model_dir / "tokens.txt").read_text(encoding="utf-8").split()]
-    print(f"  loaded in   : {time.perf_counter() - t0:.1f} s")
-    print(f"  classes     : {', '.join(labels)}")
-
-    # Steps 4-6 for every dataset to evaluate, then a summary of every dataset with results in outputs/
-    for key in todo:
-        evaluate(LOADERS[key](), predict, labels, model_name, device, limit, {"funasr": funasr.__version__})
-    write_summary(model_name, figure["order"], figure["acted_or_listener"], exclude)
+    step("Step 8/8 | Summary of every model")
+    write_comparison(registry, exclude)
 
 
 if __name__ == "__main__":

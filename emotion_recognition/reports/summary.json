@@ -1,0 +1,138 @@
+{
+  "date": "2026-10-28",
+  "models": [
+    {
+      "model": "emotion2vec_plus_large",
+      "name": "emotion2vec+ large",
+      "training_source": "EmoBox (through emotion2vec+ seed)",
+      "training_data": [
+        "crema_d",
+        "ravdess",
+        "tess",
+        "jl_corpus",
+        "esd"
+      ],
+      "summary": "emotion2vec_plus_large/summary.md"
+    }
+  ],
+  "datasets": [
+    {
+      "key": "crema_d",
+      "dataset": "CREMA-D",
+      "language": "English",
+      "chance": 0.166667
+    },
+    {
+      "key": "mcae_spps",
+      "dataset": "MCAE-SPPS",
+      "language": "Mandarin",
+      "chance": 0.142857
+    },
+    {
+      "key": "mess",
+      "dataset": "MESS",
+      "language": "English",
+      "chance": 0.25
+    },
+    {
+      "key": "ravdess",
+      "dataset": "RAVDESS",
+      "language": "English",
+      "chance": 0.142857
+    },
+    {
+      "key": "tess",
+      "dataset": "TESS",
+      "language": "English",
+      "chance": 0.142857
+    },
+    {
+      "key": "jl_corpus",
+      "dataset": "JL-Corpus",
+      "language": "English (New Zealand)",
+      "chance": 0.24
+    }
+  ],
+  "shared_emotions": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "results": {
+    "emotion2vec_plus_large": {
+      "crema_d": {
+        "clips": 7442,
+        "total_clips": 7442,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.864553,
+        "unweighted_accuracy": 0.865401,
+        "macro_f1": 0.865683,
+        "shared_clips": 4900,
+        "shared_accuracy": 0.932041,
+        "shared_unweighted_accuracy": 0.931004
+      },
+      "mcae_spps": {
+        "clips": 6675,
+        "total_clips": 6675,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.613483,
+        "unweighted_accuracy": 0.541993,
+        "macro_f1": 0.500753,
+        "shared_clips": 4297,
+        "shared_accuracy": 0.877822,
+        "shared_unweighted_accuracy": 0.85327
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.407778,
+        "unweighted_accuracy": 0.407778,
+        "macro_f1": 0.352239,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.407778,
+        "shared_unweighted_accuracy": 0.407778
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.920833,
+        "unweighted_accuracy": 0.922867,
+        "macro_f1": 0.922045,
+        "shared_clips": 864,
+        "shared_accuracy": 0.924769,
+        "shared_unweighted_accuracy": 0.928819
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.855357,
+        "unweighted_accuracy": 0.855357,
+        "macro_f1": 0.798306,
+        "shared_clips": 1600,
+        "shared_accuracy": 1.0,
+        "shared_unweighted_accuracy": 1.0
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.925,
+        "unweighted_accuracy": 0.925,
+        "macro_f1": 0.922668,
+        "shared_clips": 960,
+        "shared_accuracy": 0.946875,
+        "shared_unweighted_accuracy": 0.946875
+      }
+    }
+  }
+}

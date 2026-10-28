@@ -1,7 +1,7 @@
 # Audio LLMs: GPT Realtime and Gemini (in progress)
 
-This pipeline evaluates audio LLMs on the same clips and labels as the emotion2vec+ evaluation
-(`scripts/emotion2vec/evaluate.py`): each clip is sent to the model with a prompt, and the model answers with one
+This pipeline evaluates audio LLMs on the same clips and labels as the evaluation of the speech emotion models
+(`scripts/evaluation/evaluate.py`): each clip is sent to the model with a prompt, and the model answers with one
 emotion. The models are GPT Realtime (`gpt-realtime`, `gpt-realtime-2.1`, over WebSocket) and Google Gemini.
 
 So far the folder has the parts that call no API: the prompts, a data loader that prepares the audio in the format
@@ -29,7 +29,7 @@ llm:
   preview: 2                # items per dataset that the preview shows
 ```
 
-The clips are the ones the emotion2vec+ evaluation uses for the same limit: `sample(ds, limit)` in
+The clips are the ones the model evaluation uses for the same limit: `sample(ds, limit)` in
 `scripts/common/eval_datasets.py` takes clips at even intervals within each ground-truth label. The labels and the
 classes that count as correct also come from there (`accepted(ds, label)`), so the label decisions are the same for
 both kinds of model: RAVDESS's and MESS's *calm* count as *neutral*, TESS's *pleasant surprise* as *surprised*, and
@@ -38,7 +38,7 @@ datasets give 1,400 clips and 55 minutes of audio per model.
 
 ## Prompts
 
-The model chooses from the same seven emotions for every dataset (emotion2vec+'s emotions): angry, disgusted,
+The model chooses from the same seven emotions for every dataset (the project's emotions): angry, disgusted,
 fearful, happy, neutral, sad, surprised. `{labels}` in a prompt becomes this list. The prompts, as filled in by
 `python scripts/llm_eval/prompts.py`:
 
@@ -140,10 +140,10 @@ licence forbids it. Use Gemini on a paid plan: on the free tier Google may use w
 - **Retries**: retry network errors and rate limits with a growing pause; ask again, a fixed small number of times,
   when `parse_label` returns None; keep every raw answer. Save each answer as soon as it arrives and skip clips that
   already have one, so that an interrupted run continues without paying twice.
-- **Scoring**: write `outputs/<dataset>_<model>[_sample<N>]_predictions.csv` and `.json` in the format of
+- **Scoring**: write `outputs/<model>/<dataset>[_sample<N>]_predictions.csv` and `.json` in the format of
   `evaluate.py` (`audio_path`, `acted_emotion`, `listener_vote`, `prediction`, `correct` = the prediction is in
   `accepted`, `correct_acted_or_listener`, plus the raw answer; an invalid answer counts as wrong, and the share of
-  invalid answers goes into the metrics), and `reports/<model>_summary.json` like `write_summary` in `evaluate.py`.
+  invalid answers goes into the metrics), and `reports/<model>/summary.json` like `write_summary` in `evaluate.py`.
   `scripts/viewer/make_viewer.py` then shows the results and examples without changes; the LLMs give no probabilities,
   so their rows have no `p_*` columns.
 - **Comparing with emotion2vec+**: the LLMs choose from all seven emotions for every dataset, while the main result

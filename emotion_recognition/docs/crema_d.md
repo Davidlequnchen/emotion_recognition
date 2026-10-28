@@ -155,15 +155,15 @@ CREMA-D 的每个片段都有两类标签：
 
 ## 7. 我们生成的文件
 
-运行 `python scripts/emotion2vec/evaluate.py`（`config/config.yaml` 里的 `evaluation.datasets` 包含 `crema_d`）后会生成：
+运行 `python scripts/evaluation/evaluate.py`（`config/config.yaml` 里的 `evaluation.datasets` 包含 `crema_d`）后，每个模型（`<model>`，如 `emotion2vec_plus_large`）会生成：
 
 | 文件 | 内容 |
 |---|---|
-| `reports/crema_d_emotion2vec_plus_large.md` | 评估报告：两种准确率、各情绪结果、两个混淆矩阵、与听众的对比 |
-| `reports/figures/crema_d_emotion2vec_plus_large_confusion.png` | 混淆矩阵图（严格标准：以表演标签为 ground truth） |
-| `reports/figures/crema_d_emotion2vec_plus_large_confusion_acted_or_listener.png` | 混淆矩阵图（宽松标准：表演标签或听众投票，命中其一即算正确） |
-| `outputs/crema_d_emotion2vec_plus_large_predictions.csv` | 每个片段一行的预测结果（不进 git） |
-| `outputs/crema_d_emotion2vec_plus_large_predictions.json` | 上面 CSV 的说明（数据集、模型、哪一列是 ground truth、各列含义），供 `scripts/viewer/make_viewer.py` 读取 |
+| `reports/<model>/crema_d.md` | 评估报告：两种准确率、各情绪结果、两个混淆矩阵、与听众的对比 |
+| `reports/<model>/figures/crema_d_confusion.png` | 混淆矩阵图（严格标准：以表演标签为 ground truth） |
+| `reports/<model>/figures/crema_d_confusion_acted_or_listener.png` | 混淆矩阵图（宽松标准：表演标签或听众投票，命中其一即算正确） |
+| `outputs/<model>/crema_d_predictions.csv` | 每个片段一行的预测结果（不进 git） |
+| `outputs/<model>/crema_d_predictions.json` | 上面 CSV 的说明（数据集、模型、哪一列是 ground truth、各列含义）和各项指标，供 `scripts/viewer/make_viewer.py` 读取 |
 
 **预测 CSV 各列含义：**
 
@@ -173,10 +173,10 @@ CREMA-D 的每个片段都有两类标签：
 | `acted_emotion` | 表演标签，即 ground truth |
 | `listener_vote` | 只听声音的听众多数票，即 `summaryTable.csv` 的 `VoiceVote`，转成了完整英文名；平票写成 `neutral or sad` 的形式 |
 | `prediction` | 模型预测：在 CREMA-D 的 6 种情绪中取概率最大的一个。报告里的准确率按这一列计算 |
-| `prediction_9_classes` | 模型预测：在模型全部 9 个类别中取概率最大的一个，可能是 CREMA-D 没有的 `other`、`surprised`、`<unk>` |
+| `prediction_all_classes` | 模型预测：在模型的全部类别中取概率最大的一个，可能是 CREMA-D 没有的类别（emotion2vec+ 是 9 类，可能是 `other`、`surprised`、`<unk>`） |
 | `correct` | 严格标准：`prediction` 是否等于 `acted_emotion`（True / False） |
 | `correct_acted_or_listener` | 宽松标准：`prediction` 等于 `acted_emotion`，或等于 `listener_vote`（平票时等于其中任一种情绪），就算正确 |
-| `p_angry` … `p_unk` | 模型对 9 个类别的概率（softmax 输出，加起来等于 1）；`p_unk` 对应模型的 `<unk>` 类 |
+| `p_<类别>` | 模型对每个类别的概率（softmax 输出，加起来等于 1），按模型的输出顺序；emotion2vec+ 是 `p_angry` … `p_unk` 共 9 列，`p_unk` 对应它的 `<unk>` 类 |
 
 运行 `python scripts/viewer/make_viewer.py` 会生成 `outputs/viewer.html`：随机挑选预测正确和错误的片段，
-可以在浏览器里播放，并同时看到表演标签、听众投票和模型预测。
+可以在浏览器里播放，并同时看到表演标签、听众投票和模型预测（可以在模型之间切换）。

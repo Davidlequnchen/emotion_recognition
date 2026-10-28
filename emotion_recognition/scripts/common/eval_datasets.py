@@ -1,14 +1,15 @@
 """
 Evaluation datasets: one loader per dataset turns its files and labels into a common list of clips.
 
-Every loader returns an EvalSet whose labels use emotion2vec+ class names
-(angry, disgusted, fearful, happy, neutral, sad, surprised). A label that has no such class can stay
-as it is when the dataset says which classes count as correct for it (EvalSet.accept, e.g. JL-Corpus's
-excited: happy or surprised); accepted(ds, label) gives these classes for any label, and sample(ds, limit)
+Every loader returns an EvalSet whose labels use the project's class names
+(angry, disgusted, fearful, happy, neutral, sad, surprised), which every model loader also uses. A label that has no
+such class can stay as it is when the dataset says which classes count as correct for it (EvalSet.accept, e.g.
+JL-Corpus's excited: happy or surprised); accepted(ds, label) gives these classes for any label, and sample(ds, limit)
 the clips that an evaluation with evaluation.limit uses. To evaluate on a new dataset, write a
-loader below and add it to LOADERS; scripts/emotion2vec/evaluate.py, its report and
-scripts/viewer/make_viewer.py then work without other changes. Download the data first with
-scripts/common/download_data.py.
+loader below and add it to LOADERS; scripts/evaluation/evaluate.py, its report and
+scripts/viewer/make_viewer.py then work without other changes. Whether a dataset is in a model's training data is
+not set here but in the model registry (`training_data` under `models` in config/config.yaml). Download the data
+first with scripts/common/download_data.py.
 """
 import csv
 from dataclasses import dataclass, field
@@ -16,12 +17,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 DATA = ROOT / "data"
-NOT_IN_EMOBOX = ("**Not in EmoBox**, so emotion2vec+ seed was not fine-tuned on it. emotion2vec+ large was later "
-                 "trained on 40k hours of pseudo-labelled data whose sources are not published, so earlier exposure "
-                 "cannot be ruled out completely.")
-IN_EMOBOX = ("**In EmoBox.** EmoBox data fine-tuned emotion2vec+ seed, the first model in the chain that led to "
-             "emotion2vec+ large, so the model has probably seen these clips or labels derived from them. "
-             "Treat these numbers as optimistic.")
 
 
 @dataclass
@@ -29,7 +24,7 @@ class EvalSet:
     key: str            # short name used in file names, e.g. "crema_d"
     name: str           # display name, e.g. "CREMA-D"
     language: str
-    classes: list       # the model classes a prediction is chosen from, as emotion2vec+ class names
+    classes: list       # the classes a prediction is chosen from, as the project's class names
     clips: list         # one dict per clip: {"audio": Path, "acted": label, "listener": label(s) or ""}; "acted" is
                         # a class name, or a composite label from accept
     ground_truth: str   # what "acted" means here, for the report
@@ -38,8 +33,8 @@ class EvalSet:
     # prediction for it, e.g. {"excited": ["happy", "surprised"]} (the first one is used where one class is needed)
     accept: dict = field(default_factory=dict)
     notes: list = field(default_factory=list)    # extra setup lines for the report (mappings, exclusions)
-    caveats: list = field(default_factory=list)  # caveats for the report
-    in_emobox: bool = False
+    caveats: list = field(default_factory=list)  # caveats for the report (the training-data caveat comes from the
+                                                 # model registry and is added by the evaluation)
 
 
 def accepted(ds, label):
@@ -59,7 +54,7 @@ def truth_labels(ds):
 
 
 def sample(ds, limit):
-    """The clips that scripts/emotion2vec/evaluate.py evaluates with evaluation.limit: every clip when limit is null
+    """The clips that scripts/evaluation/evaluate.py evaluates with evaluation.limit: every clip when limit is null
     or not smaller than the dataset, otherwise `limit` clips taken at even intervals, ground-truth label by label (in
     the order of truth_labels, and in file order within each), so that every label is sampled even when the file
     order repeats (TESS: the 7 emotions of each word in a row)."""
@@ -101,9 +96,7 @@ def crema_d():
                      "`NEU`, `SAD`)",
         listener="the majority vote of crowd-sourced listeners who heard the voice only (`summaryTable.csv`, "
                  "`VoiceVote`); a tie counts every tied emotion",
-        caveats=[IN_EMOBOX,
-                 "One clip, `1076_MTI_SAD_XX.wav`, contains no audio (a known CREMA-D issue); it is kept."],
-        in_emobox=True)
+        caveats=["One clip, `1076_MTI_SAD_XX.wav`, contains no audio (a known CREMA-D issue); it is kept."])
 
 
 def mcae_spps():
@@ -130,9 +123,8 @@ def mcae_spps():
                  "a tie counts every tied emotion",
         notes=["Label mapping: Neutral = neutral, Happiness = happy, Anger = angry, Fear = fearful, Sadness = sad, "
                "Disgust = disgusted, Surprise = surprised."],
-        caveats=[NOT_IN_EMOBOX,
-                 "**Validated clips only.** The dataset keeps a clip only if at least 43% of its 40 listeners chose the "
-                 "intended emotion, so the acted label and the listeners' vote usually agree.",
+        caveats=["**Validated clips only.** The dataset keeps a clip only if at least 43% of its 40 listeners chose "
+                 "the intended emotion, so the acted label and the listeners' vote usually agree.",
                  "Mandarin speech, 48 kHz, resampled to 16 kHz by the model's loader."])
 
 
@@ -159,12 +151,11 @@ def thai_ser():
         ground_truth="the emotion assigned to the actor for the scene (`assigned_emo`)",
         listener="the crowd-sourced majority label (`majority_emo`); clips without a majority have none",
         notes=["Label mapping: Neutral = neutral, Angry = angry, Happy = happy, Sad = sad. Clips assigned "
-               "*Frustrated* (5,270 of 27,854) are left out because emotion2vec+ has no such class; a listener vote of "
-               "*frustrated* can therefore never match.",
+               "*Frustrated* (5,270 of 27,854) are left out because none of the project's emotions matches it; a "
+               "listener vote of *frustrated* can therefore never match.",
                "Audio: the condenser microphone for studio sessions and the Zoom recording for online sessions "
                "(44.1 kHz FLAC, resampled to 16 kHz)."],
-        caveats=[NOT_IN_EMOBOX,
-                 "**Labels often disagree.** The assigned and the crowd-majority labels differ for many clips; the "
+        caveats=["**Labels often disagree.** The assigned and the crowd-majority labels differ for many clips; the "
                  "dataset authors recommend the high-agreement subset (agreement >= 0.71) for clean comparisons.",
                  "Some sessions were recorded in an untreated studio room or over Zoom, so audio quality varies."])
 
@@ -186,8 +177,7 @@ def nemo():
         ground_truth="the emotion each speaker was asked to portray (`emotion`)",
         notes=["Label mapping: anger = angry, fear = fearful, happiness = happy, sadness = sad, surprised = surprised, "
                "neutral = neutral."],
-        caveats=[NOT_IN_EMOBOX,
-                 "No listeners' labels are published: listeners only screened the recordings, so there is one way of "
+        caveats=["No listeners' labels are published: listeners only screened the recordings, so there is one way of "
                  "counting a prediction as correct.",
                  "Recorded at home (24 kHz); only 3 of the 9 speakers are professional voice actors."])
 
@@ -200,10 +190,9 @@ def mess():
         "mess", "MESS", "English", ["angry", "happy", "neutral", "sad"], clips,
         ground_truth="the emotion each speaker was asked to portray, from the first letter of the file name "
                      "(`A`ngry, `C`alm, `H`appy, `S`ad)",
-        notes=["Label mapping: angry = angry, happy = happy, sad = sad, and **calm = neutral** (emotion2vec+ has no "
-               "*calm* class)."],
-        caveats=[NOT_IN_EMOBOX,
-                 "*Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.",
+        notes=["Label mapping: angry = angry, happy = happy, sad = sad, and **calm = neutral** (the project's "
+               "emotions have no *calm*)."],
+        caveats=["*Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.",
                  "The public version has 1,800 clips and acted labels only; the listeners' ratings are available "
                  "from the author on request. Audio is sampled at 24,414 Hz, resampled to 16 kHz."])
 
@@ -219,10 +208,8 @@ def esd():
         notes=["Label mapping: Neutral = neutral, Angry = angry, Happy = happy, Sad = sad, Surprise = surprised.",
                "Speakers 0001–0010 speak Mandarin and 0011–0020 English. Each says the same 350 sentences in all five "
                "emotions (for about 3.5% of them the wording differs slightly between emotions)."],
-        caveats=[IN_EMOBOX,
-                 "No listeners' labels are published, so there is one way of counting a prediction as correct.",
-                 "Audio: 16 kHz WAV, the model's own sampling rate."],
-        in_emobox=True)
+        caveats=["No listeners' labels are published, so there is one way of counting a prediction as correct.",
+                 "Audio: 16 kHz WAV, the models' own sampling rate."])
 
 
 def ravdess():
@@ -239,17 +226,15 @@ def ravdess():
         ground_truth="the emotion each actor was asked to portray, from the third number in the file name (01 neutral, "
                      "02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised)",
         notes=["Label mapping: neutral, happy, sad, angry, fearful and surprised keep their names; disgust = disgusted, "
-               f"and **calm = neutral** (emotion2vec+ has no *calm* class), so neutral has {neutral + calm:,} clips: "
-               f"{neutral:,} acted neutral and {calm:,} acted calm.",
+               f"and **calm = neutral** (the project's emotions have no *calm*), so neutral has {neutral + calm:,} "
+               f"clips: {neutral:,} acted neutral and {calm:,} acted calm.",
                "24 professional actors (12 female, 12 male) say two sentences, \"Kids are talking by the door\" and "
                "\"Dogs are sitting by the door\", twice in each emotion, at two intensities (normal and strong) except "
                "for neutral."],
-        caveats=[IN_EMOBOX,
-                 "*Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.",
-                 "Listeners rated every file 10 times (247 listeners). The paper publishes their ratings as recognition "
-                 "rates per file, not as a vote for an emotion, so this report has no listeners' labels.",
-                 "Audio: 48 kHz WAV, resampled to 16 kHz; 5 files are stereo, and FunASR averages their channels."],
-        in_emobox=True)
+        caveats=["*Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.",
+                 "Listeners rated every file 10 times (247 listeners). The paper publishes their ratings as "
+                 "recognition rates per file, not as a vote for an emotion, so this report has no listeners' labels.",
+                 "Audio: 48 kHz WAV, resampled to 16 kHz; 5 files are stereo, and their channels are averaged."])
 
 
 def tess():
@@ -266,12 +251,10 @@ def tess():
                "**pleasant surprise = surprised**.",
                "Two actresses, aged 26 and 64, say \"Say the word ...\" with the same 200 target words in each of the "
                "seven emotions."],
-        caveats=[IN_EMOBOX,
-                 "Only two speakers, so the result says little about other voices; models often score close to 100% on "
+        caveats=["Only two speakers, so the result says little about other voices; models often score close to 100% on "
                  "TESS.",
                  "No listeners' labels are published with the dataset. Audio: 24,414 Hz WAV (one file, "
-                 "`OAF_food_fear.wav`, is 96 kHz), resampled to 16 kHz."],
-        in_emobox=True)
+                 "`OAF_food_fear.wav`, is 96 kHz), resampled to 16 kHz."])
 
 
 def jl_corpus():
@@ -292,15 +275,13 @@ def jl_corpus():
                "apologetic, assertive, concerned, encouraging) have no model class and are left out.",
                "Four trained voice actors of New Zealand English (two female, two male) say the same 15 sentences in "
                "each primary emotion, in two sessions, twice each."],
-        caveats=[IN_EMOBOX,
-                 "*Excited* is neither *happy* nor *surprised*: excited clips predicted as happy or surprised count as "
+        caveats=["*Excited* is neither *happy* nor *surprised*: excited clips predicted as happy or surprised count as "
                  "correct. Surprised is a possible prediction only because of excited, and it is wrong for a clip of "
                  "any other emotion.",
                  "This is the raw corpus (\"unchecked and unannotated\"). In the authors' perception test (120 listeners) "
                  "about 70% of the primary-emotion clips were recognised; the results per clip are not published, so "
                  "poorly acted clips are included.",
-                 "Audio: 44.1 kHz WAV, resampled to 16 kHz."],
-        in_emobox=True)
+                 "Audio: 44.1 kHz WAV, resampled to 16 kHz."])
 
 
 LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd,
