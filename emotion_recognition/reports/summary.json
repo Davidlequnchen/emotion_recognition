@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-28",
+  "date": "2026-10-29",
   "models": [
     {
       "model": "emotion2vec_plus_large",
@@ -13,6 +13,39 @@
         "esd"
       ],
       "summary": "emotion2vec_plus_large/summary.md"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "name": "MERaLiON-SER-v1",
+      "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+      "training_data": [
+        "crema_d",
+        "esd"
+      ],
+      "summary": "meralion_ser_v1/summary.md"
+    },
+    {
+      "model": "melati_emotion",
+      "name": "Melati",
+      "training_source": "nine acted corpora, JL-Corpus among them",
+      "training_data": [
+        "jl_corpus"
+      ],
+      "summary": "melati_emotion/summary.md"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "name": "Vox-Profile Whisper",
+      "training_source": "MSP-Podcast",
+      "training_data": [],
+      "summary": "vox_profile_whisper/summary.md"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "name": "Vox-Profile WavLM",
+      "training_source": "MSP-Podcast",
+      "training_data": [],
+      "summary": "vox_profile_wavlm/summary.md"
     }
   ],
   "datasets": [
@@ -132,6 +165,302 @@
         "shared_clips": 960,
         "shared_accuracy": 0.946875,
         "shared_unweighted_accuracy": 0.946875
+      }
+    },
+    "meralion_ser_v1": {
+      "crema_d": {
+        "clips": 7442,
+        "total_clips": 7442,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.846815,
+        "unweighted_accuracy": 0.848713,
+        "macro_f1": 0.847376,
+        "shared_clips": 4900,
+        "shared_accuracy": 0.931633,
+        "shared_unweighted_accuracy": 0.93171
+      },
+      "mcae_spps": {
+        "clips": 6675,
+        "total_clips": 6675,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.648989,
+        "unweighted_accuracy": 0.577856,
+        "macro_f1": 0.544171,
+        "shared_clips": 4297,
+        "shared_accuracy": 0.884338,
+        "shared_unweighted_accuracy": 0.864542
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.745,
+        "unweighted_accuracy": 0.745,
+        "macro_f1": 0.746711,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.745,
+        "shared_unweighted_accuracy": 0.745
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.593056,
+        "unweighted_accuracy": 0.612599,
+        "macro_f1": 0.59684,
+        "shared_clips": 864,
+        "shared_accuracy": 0.653935,
+        "shared_unweighted_accuracy": 0.695747
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.4925,
+        "unweighted_accuracy": 0.4925,
+        "macro_f1": 0.378642,
+        "shared_clips": 1600,
+        "shared_accuracy": 0.738125,
+        "shared_unweighted_accuracy": 0.738125
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.759167,
+        "unweighted_accuracy": 0.759167,
+        "macro_f1": 0.772844,
+        "shared_clips": 960,
+        "shared_accuracy": 0.745833,
+        "shared_unweighted_accuracy": 0.745833
+      }
+    },
+    "melati_emotion": {
+      "crema_d": {
+        "clips": 7442,
+        "total_clips": 7442,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.513706,
+        "unweighted_accuracy": 0.524463,
+        "macro_f1": 0.46725,
+        "shared_clips": 4900,
+        "shared_accuracy": 0.665102,
+        "shared_unweighted_accuracy": 0.675824
+      },
+      "mcae_spps": {
+        "clips": 6675,
+        "total_clips": 6675,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.48839,
+        "unweighted_accuracy": 0.480546,
+        "macro_f1": 0.433239,
+        "shared_clips": 4297,
+        "shared_accuracy": 0.662323,
+        "shared_unweighted_accuracy": 0.687002
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.404444,
+        "unweighted_accuracy": 0.404444,
+        "macro_f1": 0.375449,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.404444,
+        "shared_unweighted_accuracy": 0.404444
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.484028,
+        "unweighted_accuracy": 0.493304,
+        "macro_f1": 0.466076,
+        "shared_clips": 864,
+        "shared_accuracy": 0.642361,
+        "shared_unweighted_accuracy": 0.678385
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.504286,
+        "unweighted_accuracy": 0.504286,
+        "macro_f1": 0.434398,
+        "shared_clips": 1600,
+        "shared_accuracy": 0.75375,
+        "shared_unweighted_accuracy": 0.75375
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.995,
+        "unweighted_accuracy": 0.995,
+        "macro_f1": 0.994802,
+        "shared_clips": 960,
+        "shared_accuracy": 0.996875,
+        "shared_unweighted_accuracy": 0.996875
+      }
+    },
+    "vox_profile_whisper": {
+      "crema_d": {
+        "clips": 7442,
+        "total_clips": 7442,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.336603,
+        "unweighted_accuracy": 0.351988,
+        "macro_f1": 0.299302,
+        "shared_clips": 4900,
+        "shared_accuracy": 0.498163,
+        "shared_unweighted_accuracy": 0.515393
+      },
+      "mcae_spps": {
+        "clips": 6675,
+        "total_clips": 6675,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.459775,
+        "unweighted_accuracy": 0.409409,
+        "macro_f1": 0.351958,
+        "shared_clips": 4297,
+        "shared_accuracy": 0.586688,
+        "shared_unweighted_accuracy": 0.543384
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.363889,
+        "unweighted_accuracy": 0.363889,
+        "macro_f1": 0.267674,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.363889,
+        "shared_unweighted_accuracy": 0.363889
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.507639,
+        "unweighted_accuracy": 0.493304,
+        "macro_f1": 0.445022,
+        "shared_clips": 864,
+        "shared_accuracy": 0.590278,
+        "shared_unweighted_accuracy": 0.575521
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.301071,
+        "unweighted_accuracy": 0.301071,
+        "macro_f1": 0.174065,
+        "shared_clips": 1600,
+        "shared_accuracy": 0.499375,
+        "shared_unweighted_accuracy": 0.499375
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.450833,
+        "unweighted_accuracy": 0.450833,
+        "macro_f1": 0.473273,
+        "shared_clips": 960,
+        "shared_accuracy": 0.426042,
+        "shared_unweighted_accuracy": 0.426042
+      }
+    },
+    "vox_profile_wavlm": {
+      "crema_d": {
+        "clips": 7442,
+        "total_clips": 7442,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.307444,
+        "unweighted_accuracy": 0.320936,
+        "macro_f1": 0.274098,
+        "shared_clips": 4900,
+        "shared_accuracy": 0.44,
+        "shared_unweighted_accuracy": 0.455473
+      },
+      "mcae_spps": {
+        "clips": 6675,
+        "total_clips": 6675,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.396105,
+        "unweighted_accuracy": 0.367027,
+        "macro_f1": 0.336439,
+        "shared_clips": 4297,
+        "shared_accuracy": 0.570863,
+        "shared_unweighted_accuracy": 0.555164
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.363333,
+        "unweighted_accuracy": 0.363333,
+        "macro_f1": 0.287223,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.363333,
+        "shared_unweighted_accuracy": 0.363333
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.446528,
+        "unweighted_accuracy": 0.424107,
+        "macro_f1": 0.384374,
+        "shared_clips": 864,
+        "shared_accuracy": 0.592593,
+        "shared_unweighted_accuracy": 0.565538
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.401429,
+        "unweighted_accuracy": 0.401429,
+        "macro_f1": 0.315539,
+        "shared_clips": 1600,
+        "shared_accuracy": 0.56375,
+        "shared_unweighted_accuracy": 0.56375
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.483333,
+        "unweighted_accuracy": 0.483333,
+        "macro_f1": 0.504985,
+        "shared_clips": 960,
+        "shared_accuracy": 0.482292,
+        "shared_unweighted_accuracy": 0.482292
       }
     }
   }
