@@ -1,6 +1,6 @@
 # models/
 
-One sub-folder per model, registered under `models:` in `config/config.yaml`. Each model is run by its loader,
+One sub-folder per model, registered in `config/models.yaml`. Each model is run by its loader,
 `scripts/models/<loader>.py`, which builds it from the files in its folder only and never uses the network.
 
 | Folder | Source | Licence | Size | How it is loaded |
@@ -19,10 +19,10 @@ One sub-folder per model, registered under `models:` in `config/config.yaml`. Ea
 python scripts/common/download_model.py
 ```
 
-It downloads every model listed in `download.models` (`all`, or a list such as `[meralion_ser_v1]`), runs the loader's
-`prepare()` (extra files for loading offline), lists the files and checks their sizes against Hugging Face. Files that
-are already complete are not downloaded again. `download.hub: ms` uses ModelScope instead, for models with an
-`ms_repo` (only emotion2vec+ large).
+It downloads every model listed in `models` of `config/download_model.yaml` (`all`, or a list such as
+`[meralion_ser_v1]`), runs the loader's `prepare()` (extra files for loading offline), lists the files and checks their
+sizes against Hugging Face. Files that are already complete are not downloaded again. `hub: ms` there uses ModelScope
+instead, for models with an `ms_repo` (only emotion2vec+ large).
 
 **On a machine without Hugging Face** (the NVIDIA server): the weights come through git, cut into 90 MiB parts.
 
@@ -33,15 +33,15 @@ python scripts/common/join_parts.py
 
 `join_parts.py` puts each `<file>.part000`, `.part001`, ... back together next to its parts and checks the whole file
 against `<file>.sha256`. Nothing else is needed: every file a model loads is in its folder. emotion2vec+ large is not in
-git: download it with `download_model.py` (`download.models: [emotion2vec_plus_large]`, and `download.hub: ms` if
-only ModelScope is reachable).
+git: download it with `download_model.py` (`models: [emotion2vec_plus_large]` in `config/download_model.yaml`, and
+`hub: ms` if only ModelScope is reachable).
 
 ## Pushing new weights through git
 
 GitHub refuses files over 100 MB and pushes over 2 GB. On the Mac:
 
 1. Download the model (above).
-2. `python scripts/common/split_parts.py` cuts every file listed in `parts.files` (config) into 90 MiB parts and writes
+2. `python scripts/common/split_parts.py` cuts every file listed in FILES at the top of the script into 90 MiB parts and writes
    its `.sha256`. It skips files that are already split and replaces the parts of a file that changed.
 3. git ignores the model folders, so add files with `git add -f`, and name them: `git add -f models/<key>` would also
    add the whole weights file (over 100 MB) and `.cache/`. Add the small files first, then the parts.
@@ -148,9 +148,9 @@ follow these restrictions and pass them on.
 
 ## Adding a model
 
-1. Register it under `models:` in `config/config.yaml` (`name`, `loader`, `dir`, `hf_repo`, `training_data`,
-   `training_source`).
+1. Register it in `config/models.yaml` (`name`, `loader`, `dir`, `hf_repo`, `training_data`, `training_source`).
 2. Write its loader, `scripts/models/<loader>.py`: `load(model_dir, device)`, and `prepare(model_dir)` if it needs
    files that are not in its repository to load offline.
-3. Download it: `download.models: [<key>]`, then `python scripts/common/download_model.py`.
-4. For a machine without Hugging Face: add its large files to `parts.files`, run `split_parts.py` and commit the parts.
+3. Download it: `models: [<key>]` in `config/download_model.yaml`, then `python scripts/common/download_model.py`.
+4. For a machine without Hugging Face: add its large files to FILES at the top of `scripts/common/split_parts.py`, run
+   it and commit the parts.

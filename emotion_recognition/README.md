@@ -24,22 +24,30 @@ cd emotion_recognition                         # this folder of the repository
 pip install -r requirements-mac.txt            # NVIDIA server: pip install -r requirements-cuda121.txt
 pip install -r requirements.txt
 python scripts/common/download_model.py        # the five models -> models/<key>/ (server: see section 2)
-python scripts/emotion2vec/inference.py        # NVIDIA server: first set `mode: cuda` in config/config.yaml
-# optional (first set `download.dataset: all` in config/config.yaml): the evaluation datasets -> data/,
+python scripts/emotion2vec/inference.py        # the six test clips, on the GPU it finds (section 5)
+# optional (first set `dataset: all` in config/download_data.yaml): the evaluation datasets -> data/,
 # every model's accuracy on each -> reports/, and a web page with the results and examples -> outputs/viewer.html
 python scripts/common/download_data.py
 python scripts/evaluation/evaluate.py
 python scripts/viewer/make_viewer.py
 ```
 
-The scripts have no command-line options: every setting is in [`config/config.yaml`](config/config.yaml), one
-section per script. Each step is explained below.
+The scripts have no command-line options. Each script reads its settings from its own YAML file in
+[`config/`](config/), and the models are registered in `config/models.yaml`; the two small scripts
+`scripts/emotion2vec/inference.py` and `scripts/common/split_parts.py` have their few settings at the top of the
+script instead. Each step is explained below.
 
 ## Layout
 
 ```
 emotion_recognition/
-├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, one section per script
+├── config/                     # settings, one YAML file per script (paths in them are relative to this folder)
+│   ├── models.yaml             # the model registry: name, loader, folder, repository and training data of each model
+│   ├── evaluation.yaml         # evaluate.py: hardware mode (auto | mac | cuda), models, datasets, sample size, devices
+│   ├── viewer.yaml             # make_viewer.py: example clips, seed, output pages
+│   ├── download_model.yaml     # download_model.py: which models, from which hub
+│   ├── download_data.yaml      # download_data.py: which dataset
+│   └── llm.yaml                # scripts/llm_eval/: datasets, sample size, audio format, prompts
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
 │   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
@@ -178,15 +186,15 @@ Expected output: on the Mac, `2.5.1 | CUDA: False | MPS: True`. On the server, `
 **On the Mac, or any machine that reaches Hugging Face:**
 
 ```bash
-python scripts/common/download_model.py   # every model in `download.models` (default: all) -> models/<key>/
+python scripts/common/download_model.py   # every model in `models` of config/download_model.yaml (default: all)
 ```
 
 The script downloads each model's Hugging Face repository into its folder (about 14 GB for all five; the Vox-Profile
 Whisper release alone is 6.19 GB). Then it runs the loader's `prepare()`, which saves the few extra files the model
 needs to load offline (for Vox-Profile Whisper it also writes a 1.29 GB weights file without the unused text decoder),
 and checks the file sizes against Hugging Face. Files that are already complete are skipped, so the script can simply
-be re-run. `download.models: [meralion_ser_v1]` gets one model only; `download.hub: ms` uses ModelScope (faster in
-mainland China; only emotion2vec+ large is there). The "unauthenticated requests" warning from Hugging Face is
+be re-run. In `config/download_model.yaml`, `models: [meralion_ser_v1]` gets one model only; `hub: ms` uses ModelScope
+(faster in mainland China; only emotion2vec+ large is there). The "unauthenticated requests" warning from Hugging Face is
 harmless: the models are public and need no token.
 
 **On the NVIDIA server, which cannot reach Hugging Face:** the four new models come through git, in 90 MiB parts
@@ -197,12 +205,12 @@ git pull
 python scripts/common/join_parts.py       # joins the parts under data/ and models/, checks each file's SHA-256
 ```
 
-emotion2vec+ large is not in git: get it with `download_model.py` (`download.models: [emotion2vec_plus_large]`, and
-`download.hub: ms` if only ModelScope is reachable).
+emotion2vec+ large is not in git: get it with `download_model.py` (`models: [emotion2vec_plus_large]` in
+`config/download_model.yaml`, and `hub: ms` if only ModelScope is reachable).
 
 Every file a model loads is then in its folder; the evaluation never touches the network. On the Mac, after
-downloading or changing weights, `python scripts/common/split_parts.py` cuts the files in `parts.files` into parts for
-git. [models/README.md](models/README.md) lists every model's files and licence, and how to commit the parts.
+downloading or changing weights, `python scripts/common/split_parts.py` cuts the files listed in FILES at the top of
+the script into parts for git. [models/README.md](models/README.md) lists every model's files and licence, and how to commit the parts.
 
 ## 3. Download the data (CREMA-D)
 
@@ -210,7 +218,7 @@ git. [models/README.md](models/README.md) lists every model's files and licence,
 python scripts/common/download_data.py
 ```
 
-The `download` section of `config/config.yaml` chooses what to get. With `dataset: crema_d` (the default),
+`config/download_data.yaml` chooses what to get. With `dataset: crema_d` (the default),
 `crema_d: samples` gets the 6 test clips into `data/samples/` (0.4 MB) and `crema_d: full` the whole dataset into
 `data/crema_d/` (606 MB). Both come from **CREMA-D** (Crowd-sourced Emotional Multimodal Actors Dataset), an open dataset for
 emotion recognition research: 7,442 clips from 91 actors (48 male, 43 female, aged 20 to 74), each saying one of
@@ -252,7 +260,7 @@ data/crema_d/
 └── LICENSE.txt
 ```
 
-The first download took about 9 minutes on the MacBook (8 files in parallel; set this with `download.workers`). Most of
+The first download took about 9 minutes on the MacBook (8 files in parallel; set this with `workers` in `config/download_data.yaml`). Most of
 that time is GitHub's response time for each file. If the download is interrupted, run the same command again:
 files that are already correct are skipped, and checking all 7,442 files takes about 10 seconds. The clips last
 1.3 to 5.0 s (5.3 hours in total). To evaluate the models on every clip, see section 6.
@@ -298,11 +306,11 @@ emotions. They were chosen from the emotion recognition public dataset survey in
 which has links, sizes and caveats for many more.
 
 ```bash
-python scripts/common/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd,
-                                         # ravdess, tess, jl_corpus; all = everything)
+python scripts/common/download_data.py   # with `dataset: mcae_spps` in config/download_data.yaml (or thai_ser,
+                                         # nemo, mess, esd, ravdess, tess, jl_corpus; all = everything)
 ```
 
-| `download.dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
+| `dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
 |---|---|---|---|---|---|---|
 | `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC 4.0 |
 | `thai_ser` | Thai | 27,854 (200 actors) | 12.7 GB | Parquet with the audio inside (up to 4 microphones per clip) | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
@@ -326,18 +334,23 @@ except the CREMA-D test clips.
 
 ## 4. Choose the hardware mode
 
-Edit `config/config.yaml`:
+By default there is nothing to choose: the two scripts that run models find the hardware themselves.
 
-```yaml
-mode: mac          # mac  = Apple Silicon MacBook  |  cuda = NVIDIA GPU server
+- **Evaluation** (section 6): `mode` in `config/evaluation.yaml` chooses the entry of `devices` in the same file.
 
-devices:
-  mac: mps         # mps (Apple GPU) | cpu
-  cuda: cuda:0     # cuda:<gpu index> | cpu
-```
+  ```yaml
+  # Hardware mode: which entry of `devices` (below) the models run on
+  #   auto : cuda when PyTorch sees an NVIDIA GPU (torch.cuda.is_available()), otherwise mac
+  #   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
+  #   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
+  mode: auto
+  ```
 
-Every script reads `mode` from this file. `devices` is the device of the inference script (section 5); the
-evaluation has its own setting, `evaluation.devices` (section 6).
+  The script prints the mode it uses, e.g. `mode        : mac (auto: CUDA is not available)`. Set `mode: mac` or
+  `mode: cuda` to choose it yourself; a model's `mac_device` in `config/models.yaml` overrides `devices.mac`.
+- **Inference demo** (section 5): `DEVICE` at the top of `scripts/emotion2vec/inference.py`. `"auto"` (the default)
+  takes `cuda:0` if CUDA is available, else `mps` if available, else `cpu`; `"cuda:0"`, `"mps"` or `"cpu"` sets the
+  device, and the script stops with an error if it is not available.
 
 ## 5. Run inference
 
@@ -346,25 +359,28 @@ python scripts/emotion2vec/inference.py
 ```
 
 This script is a step-by-step demo of one model, emotion2vec+ large; the evaluation (section 6) runs all five.
-Settings in `config/config.yaml`: `mode` and `devices` choose the hardware (set `devices.mac: cpu` to force the CPU),
-`model` the emotion2vec model to run, and `inference.audio` the audio file or folder to run on (wav, flac, mp3, ogg;
-default `data/samples`).
+Its settings are at the top of the script (it reads no YAML file); paths are relative to this folder:
 
-The script runs six steps and prints each one: (1) read the configuration, (2) check Python, PyTorch, CUDA and MPS,
+```python
+AUDIO = "data/samples"  # a file, or a folder: every audio file in it (wav, flac, mp3, ogg)
+DEVICE = "auto"  # auto = cuda:0 if CUDA is available, else mps if available, else cpu; or "cuda:0", "mps", "cpu"
+MODEL_DIR = "models/emotion2vec_plus_large"  # the emotion2vec+ large files (python scripts/common/download_model.py)
+```
+
+The script runs six steps and prints each one: (1) show the settings and the device, (2) check Python, PyTorch, CUDA and MPS,
 (3) activate the device and run a small test computation on it, (4) load the model onto the device,
 (5) list the audio files, (6) predict an emotion for every file.
-If the requested device is not available, it stops with an error instead of silently falling back to the CPU.
+If a device set in `DEVICE` is not available, it stops with an error instead of silently falling back to the CPU.
 
-Output on the M4 Max (`mode: mac`, MPS; paths shortened):
+Output on the M4 Max (`DEVICE = "auto"`, which picks MPS; paths shortened):
 
 ```
 ================================================================
-Step 1/6 | Load configuration
+Step 1/6 | Settings
 ================================================================
-  config      : .../emotion_recognition/config/config.yaml
-  mode        : mac
-  device      : mps
-  model       : emotion2vec_plus_large (.../emotion_recognition/models/emotion2vec_plus_large)
+  settings    : AUDIO, DEVICE, MODEL_DIR at the top of scripts/emotion2vec/inference.py
+  device      : mps (auto: no CUDA, MPS is available)
+  model       : .../emotion_recognition/models/emotion2vec_plus_large
   audio       : .../emotion_recognition/data/samples
 
 ================================================================
@@ -447,28 +463,37 @@ What to expect:
 python scripts/evaluation/evaluate.py
 ```
 
-Settings, in the `evaluation` section of `config/config.yaml`:
+Settings, in `config/evaluation.yaml`:
 
 ```yaml
-evaluation:
-  models: all       # all registered models, or a list such as [emotion2vec_plus_large, meralion_ser_v1]
-  datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess]
-  exclude: [esd, thai_ser, nemo]  # never evaluated, even with `all`, and left out of the summaries (old results:
-                                  # reports/archive/); their data stays in data/
-  limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
-                    # sample); null = every clip
-  overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/
-  devices:          # device per mode; a model's mac_device (in `models`) overrides the one for the Mac
-    mac: mps        # emotion2vec+ large has mac_device: cpu (faster for it, see the speeds below)
-    cuda: cuda:0
-  summary_figure:   # every dataset's confusion matrix in one figure, in each model's summary report
-    order: [crema_d, mcae_spps, mess]  # panels row by row; datasets not listed come last
-    acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
-                                  # the others show the acted emotion
+# Hardware mode: which entry of `devices` (below) the models run on
+#   auto : cuda when PyTorch sees an NVIDIA GPU (torch.cuda.is_available()), otherwise mac
+#   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
+#   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
+mode: auto
+
+models: all       # all registered models, or a list such as [emotion2vec_plus_large, meralion_ser_v1]
+datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess]
+                  # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus)
+exclude: [esd, thai_ser, nemo]  # never evaluated, even with `all`, and left out of the summaries (old results:
+                                # reports/archive/); their data stays in data/
+limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
+                  # sample); null = every clip
+overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/;
+                  # true: evaluate it again and replace them. The summaries show every result there,
+                  # except those of excluded datasets
+devices:          # device per mode; a model's mac_device (in config/models.yaml) overrides devices.mac
+  mac: mps
+  cuda: cuda:0
+summary_figure:   # every dataset's confusion matrix in one figure, in each model's summary report
+  order: [crema_d, mcae_spps, mess]  # panels row by row; datasets not listed come last
+  acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
+                                # the others show the acted emotion
 ```
 
-The models are registered under `models:` in the same file: display name, loader, folder, Hugging Face repository,
-and `training_data`, the evaluation datasets that the model was trained on. Each model runs through its loader in
+The models are registered in `config/models.yaml`: display name, loader, folder, Hugging Face repository, and
+`training_data`, the evaluation datasets that the model was trained on (emotion2vec+ large also has `mac_device: cpu`,
+faster for it, see the speeds below). Each model runs through its loader in
 `scripts/models/` and loads from its folder in `models/` only: the script sets `HF_HUB_OFFLINE=1` and never touches
 the network. A model whose folder has no weights yet is skipped with a message. To add a model, see
 [models/README.md](models/README.md#adding-a-model).
@@ -541,7 +566,7 @@ How the probabilities become a prediction:
   called 吃惊 (surprised).
 
 Results: only emotion2vec+ large has full results so far. The four new models were only tested on 14 clips per
-dataset (those test results are not kept). To evaluate them on every clip, keep `evaluation.models: all` (or list them) and `limit: null`, run
+dataset (those test results are not kept). To evaluate them on every clip, keep `models: all` (or list them) and `limit: null` in `config/evaluation.yaml`, run
 `python scripts/evaluation/evaluate.py` (about 4.5 hours on the Mac, see the speeds below), then
 `python scripts/viewer/make_viewer.py`. [reports/summary.md](reports/summary.md) compares every model on every
 dataset.
@@ -574,8 +599,8 @@ ESD, THAI-SER and nEMO are left out of the evaluation for now (`exclude`): ESD's
 sharing it, it has no listener test, and it is in EmoBox; THAI-SER (Thai) and nEMO (Polish) are in languages that
 matter less for this project. Their data stays in `data/`; their earlier emotion2vec+ reports are in
 [reports/archive/](reports/archive/README.md) (ESD on a 3,500-clip sample: 97.0%; THAI-SER: 63.2%; nEMO: 52.0%) and
-their predictions in `outputs/archive/`. Remove a dataset from `exclude` (and from `viewer.exclude`) to evaluate it
-again.
+their predictions in `outputs/archive/`. Remove a dataset from `exclude` in `config/evaluation.yaml` (and in
+`config/viewer.yaml`) to evaluate it again.
 
 RAVDESS, TESS and JL-Corpus, the three English datasets added last, are all in EmoBox, and their results are high, as
 expected. TESS's two speakers reach 99% to 100% on six emotions, but none of its 400 *pleasant surprise* clips comes
@@ -622,7 +647,7 @@ faster (not measured).
 python scripts/viewer/make_viewer.py
 ```
 
-Settings, in the `viewer` section of `config/config.yaml`: `predictions` (`all` = every
+Settings, in `config/viewer.yaml`: `predictions` (`all` = every
 `outputs/<model>/*_predictions.csv`, or a list of such files), `correct` and `wrong` (per dataset and model: how many
 clips it got right and wrong to add to the examples; default 10 and 10), `seed` (the same seed always picks the same
 clips), `link_audio`, `out` (the page for this machine), `site` (the public page, see 7.1) and `exclude` (datasets
@@ -675,7 +700,7 @@ To turn it on, once: in the repository's Settings > Pages, set Source to "GitHub
 `main` that changes `emotion_recognition/site/` publishes the page at
 https://davidlequnchen.github.io/emotion_recognition/ (the workflow can also be run by hand from the Actions tab).
 Everything in `site/` becomes public, so look at the page before pushing it. Each rebuild picks new clips and adds
-the whole page (about 2.5 MB with one model) to the git history; set `viewer.seed` to keep the same clips (a
+the whole page (about 2.5 MB with one model) to the git history; set `seed` in `config/viewer.yaml` to keep the same clips (a
 dataset's clips depend only on the seed and on that dataset's results).
 
 ## 8. Audio LLMs (in progress)
@@ -684,10 +709,10 @@ dataset's clips depend only on the seed and on that dataset's results).
 Gemini, on the same clips and labels as the speech emotion models: each clip is sent with a prompt that asks for one
 of the seven emotions (angry, disgusted, fearful, happy, neutral, sad, surprised), the same list for every dataset.
 The parts that call no API are ready: the prompts (`prompts.yaml`, with a system and a user prompt), a data loader
-that takes the same clips as the evaluation (`llm.limit`, default 200 per dataset, sampled like `evaluation.limit`)
+that takes the same clips as the evaluation (`limit`, default 200 per dataset, sampled like the evaluation's `limit`)
 and converts each clip to the format of the API (24 kHz 16-bit mono PCM for Realtime, a 16 kHz WAV file for Gemini),
 and a parser for the answers. `python scripts/llm_eval/data_loader.py` previews the first clips of each dataset
-without calling any API; the settings are in the `llm` section of `config/config.yaml`. The LLMs choose from all
+without calling any API; the settings are in `config/llm.yaml`. The LLMs choose from all
 seven emotions, so the emotion2vec+ number to compare with is its accuracy on all model classes (in each report), not
 the main result.
 A dataset whose licence forbids giving its audio to others (ESD) is never sent to an API. Details:
@@ -756,5 +781,5 @@ cache) loads and runs all four.
 | `module 'torch' has no attribute 'accelerator'` | transformers is newer than 5.18.0, which is the newest release that works with PyTorch 2.5.1 (5.19.0 calls `torch.accelerator`, new in PyTorch 2.6). Run `pip install -r requirements.txt` again to get 5.18.0. |
 | `ERROR: no audio files found` | Run `python scripts/common/download_data.py`. |
 | `ERROR: ... file(s) failed` from `download_data.py` | A network error, or GitHub sent an error page instead of the audio (for example a temporary LFS bandwidth limit). Run the same command again: correct files are skipped. |
-| Download from Hugging Face is slow or blocked | Set `download.hub: ms` in `config/config.yaml` and run `python scripts/common/download_model.py` again. Only emotion2vec+ large is on ModelScope; the other models also come through git (section 2). |
+| Download from Hugging Face is slow or blocked | Set `hub: ms` in `config/download_model.yaml` and run `python scripts/common/download_model.py` again. Only emotion2vec+ large is on ModelScope; the other models also come through git (section 2). |
 | `Notice: ffmpeg is not installed ...` | Printed by FunASR on machines without ffmpeg. Harmless: wav, flac, mp3 and ogg are read without it. To silence it: `conda install -c conda-forge ffmpeg`. |

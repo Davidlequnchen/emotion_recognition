@@ -3,8 +3,8 @@ to Hugging Face). GitHub refuses files over 100 MB, so model weights travel thro
 
 Usage (from the emotion_recognition/ folder):
     python scripts/common/split_parts.py
-Settings are in the `parts` section of config/config.yaml: `files` lists the files to cut, `size_mib` the size of a
-part. Next to each file it writes:
+The settings are at the top of this file: FILES lists the files to cut, PART_MIB the size of a part. Next to each file
+it writes:
     <file>.part000, <file>.part001, ...   the parts, in order (the last one is smaller)
     <file>.sha256                         SHA-256 of the whole file ("<hex>  <name>", as sha256sum writes it)
 When to run it: after downloading or changing one of these files, before committing its parts. A file whose parts are
@@ -20,10 +20,18 @@ import hashlib
 import sys
 from pathlib import Path
 
-import yaml
+# ======================================================================
+# Settings (paths are relative to the emotion_recognition/ folder)
+# ======================================================================
+FILES = [  # the files to cut, each into <file>.part000, .part001, ... and <file>.sha256
+    "models/meralion_ser_v1/model.safetensors",
+    "models/melati_emotion/model.safetensors",
+    "models/vox_profile_whisper/model_slim.safetensors",
+    "models/vox_profile_wavlm/model.safetensors",
+]
+PART_MIB = 90  # size of each part, in MiB (GitHub refuses files over 100 MB)
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
 
 
 def step(title):
@@ -44,21 +52,20 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # show progress immediately
 
     # ------------------------------------------------------------------
-    # Step 1: Read the configuration (section `parts`)
+    # Step 1: The settings at the top of this file
     # ------------------------------------------------------------------
-    step("Step 1/3 | Load configuration")
-    settings = yaml.safe_load(CONFIG.read_text())["parts"]
-    size = settings["size_mib"] * 2**20  # bytes per part
-    print(f"  config      : {CONFIG}")
-    print(f"  part size   : {settings['size_mib']} MiB ({size / 1e6:.1f} MB)")
-    print(f"  files       : {len(settings['files'])}")
+    step("Step 1/3 | Settings")
+    size = PART_MIB * 2**20  # bytes per part
+    print(f"  settings    : FILES, PART_MIB at the top of {Path(__file__).resolve().relative_to(ROOT)}")
+    print(f"  part size   : {PART_MIB} MiB ({size / 1e6:.1f} MB)")
+    print(f"  files       : {len(FILES)}")
 
     # ------------------------------------------------------------------
     # Step 2: Cut each file into parts, unless its parts are already there and match its SHA-256
     # ------------------------------------------------------------------
     step("Step 2/3 | Split files")
     done, missing = [], []
-    for name in settings["files"]:
+    for name in FILES:
         path = ROOT / name
         if not path.exists():
             print(f"  {name}: not there yet, skipped (download it first)")

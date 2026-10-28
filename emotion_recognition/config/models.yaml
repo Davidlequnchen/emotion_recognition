@@ -1,0 +1,50 @@
+# =====================================================================
+# Model registry: one entry here and one sub-folder in models/ per model.
+# Read by scripts/evaluation/evaluate.py, scripts/common/download_model.py and scripts/viewer/make_viewer.py
+# (the summaries and the results page list the models in this order). Run them from the emotion_recognition/
+# folder, e.g. `python scripts/evaluation/evaluate.py`; paths in this file are relative to that folder.
+#   name            : display name in the reports and on the results page
+#   loader          : the code that runs it, scripts/models/<loader>.py
+#   dir             : where its files are
+#   hf_repo         : the Hugging Face repository it comes from (ms_repo: ModelScope, if it is there too)
+#   training_data   : the evaluation datasets it was trained on, so its results there are optimistic
+#   training_source : what its training data was, in a few words (shown next to training_data)
+#   mac_device      : (optional) its device on the Mac, when it differs from devices.mac in config/evaluation.yaml
+# =====================================================================
+emotion2vec_plus_large:
+  name: emotion2vec+ large
+  loader: emotion2vec
+  dir: models/emotion2vec_plus_large
+  hf_repo: emotion2vec/emotion2vec_plus_large
+  ms_repo: iic/emotion2vec_plus_large
+  training_data: [crema_d, ravdess, tess, jl_corpus, esd]
+  training_source: EmoBox (through emotion2vec+ seed)
+  mac_device: cpu   # MPS compiles new kernels for every new clip length, so the CPU is faster
+meralion_ser_v1:
+  name: MERaLiON-SER-v1
+  loader: meralion_ser
+  dir: models/meralion_ser_v1
+  hf_repo: MERaLiON/MERaLiON-SER-v1
+  training_data: [crema_d, esd]
+  training_source: CREMA-D, ESD, MELD, M3ED and Singaporean speech
+melati_emotion:
+  name: Melati
+  loader: melati
+  dir: models/melati_emotion
+  hf_repo: Scicom-intl/Melati-Emotion-Whisper-Large-V3
+  training_data: [jl_corpus]
+  training_source: nine acted corpora, JL-Corpus among them
+vox_profile_whisper:
+  name: Vox-Profile Whisper
+  loader: vox_profile
+  dir: models/vox_profile_whisper
+  hf_repo: tiantiaf/whisper-large-v3-msp-podcast-emotion
+  training_data: []
+  training_source: MSP-Podcast
+vox_profile_wavlm:
+  name: Vox-Profile WavLM
+  loader: vox_profile
+  dir: models/vox_profile_wavlm
+  hf_repo: tiantiaf/wavlm-large-categorical-emotion
+  training_data: []
+  training_source: MSP-Podcast

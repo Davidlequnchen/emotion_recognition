@@ -5,10 +5,10 @@ Every loader returns an EvalSet whose labels use the project's class names
 (angry, disgusted, fearful, happy, neutral, sad, surprised), which every model loader also uses. A label that has no
 such class can stay as it is when the dataset says which classes count as correct for it (EvalSet.accept, e.g.
 JL-Corpus's excited: happy or surprised); accepted(ds, label) gives these classes for any label, and sample(ds, limit)
-the clips that an evaluation with evaluation.limit uses. To evaluate on a new dataset, write a
+the clips that an evaluation with `limit` (config/evaluation.yaml) uses. To evaluate on a new dataset, write a
 loader below and add it to LOADERS; scripts/evaluation/evaluate.py, its report and
 scripts/viewer/make_viewer.py then work without other changes. Whether a dataset is in a model's training data is
-not set here but in the model registry (`training_data` under `models` in config/config.yaml). Download the data
+not set here but in the model registry (`training_data` in config/models.yaml). Download the data
 first with scripts/common/download_data.py.
 """
 import csv
@@ -54,10 +54,10 @@ def truth_labels(ds):
 
 
 def sample(ds, limit):
-    """The clips that scripts/evaluation/evaluate.py evaluates with evaluation.limit: every clip when limit is null
-    or not smaller than the dataset, otherwise `limit` clips taken at even intervals, ground-truth label by label (in
-    the order of truth_labels, and in file order within each), so that every label is sampled even when the file
-    order repeats (TESS: the 7 emotions of each word in a row)."""
+    """The clips that scripts/evaluation/evaluate.py evaluates with `limit` (config/evaluation.yaml): every clip when
+    limit is null or not smaller than the dataset, otherwise `limit` clips taken at even intervals, ground-truth label
+    by label (in the order of truth_labels, and in file order within each), so that every label is sampled even when
+    the file order repeats (TESS: the 7 emotions of each word in a row)."""
     if not limit or limit >= len(ds.clips):
         return ds.clips
     order = truth_labels(ds)
@@ -216,7 +216,7 @@ def ravdess():
     root = DATA / "ravdess" / "audio"  # Actor_<nn>/03-01-<emotion>-<intensity>-<statement>-<repetition>-<actor>.wav
     codes = {"01": "neutral", "02": "neutral", "03": "happy", "04": "sad", "05": "angry", "06": "fearful",
              "07": "disgusted", "08": "surprised"}  # 02 = calm, scored as neutral
-    # Ordered by emotion code, then actor: acted neutral comes before acted calm, so that a sample (evaluation.limit)
+    # Ordered by emotion code, then actor: acted neutral comes before acted calm, so that a sample (`limit`)
     # of the neutral clips holds both in proportion (within each actor, 4 neutral clips precede 8 calm ones)
     files = sorted(root.glob("Actor_*/*.wav"), key=lambda f: (f.stem.split("-")[2], f))
     clips = [{"audio": f, "acted": codes[f.stem.split("-")[2]], "listener": ""} for f in files]

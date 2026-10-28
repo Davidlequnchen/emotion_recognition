@@ -2,7 +2,7 @@
 
 Usage (from the emotion_recognition/ folder):
     python scripts/common/download_data.py
-Settings are in the `download` section of config/config.yaml:
+Settings are in config/download_data.yaml:
     dataset: crema_d   with  crema_d: samples   -> the 6 CREMA-D test clips in data/samples/ (default)
     dataset: crema_d   with  crema_d: full      -> all 7,442 CREMA-D clips and label files in data/crema_d/
     dataset: nemo                               -> another dataset in data/nemo/ (list below)
@@ -44,7 +44,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
+CONFIG = ROOT / "config" / "download_data.yaml"  # this script's settings
 DATA = ROOT / "data"
 
 # CREMA-D: hosted on GitHub with its audio in Git LFS (served from media.githubusercontent.com)
@@ -264,10 +264,10 @@ def download_dataset(name, workers):
 
 def main():
     sys.stdout.reconfigure(line_buffering=True)  # show progress immediately, also when redirected to a log
-    settings = yaml.safe_load(CONFIG.read_text())["download"]
+    settings = yaml.safe_load(CONFIG.read_text())
     dataset, workers = settings["dataset"], settings["workers"]
     if dataset not in ["crema_d", *DATASETS, "all"]:
-        sys.exit(f"ERROR: unknown download.dataset '{dataset}' in config/config.yaml; "
+        sys.exit(f"ERROR: unknown `dataset: {dataset}` in config/download_data.yaml; "
                  f"use one of: crema_d, {', '.join(DATASETS)}, all")
 
     for name in (["crema_d", *DATASETS] if dataset == "all" else [dataset]):

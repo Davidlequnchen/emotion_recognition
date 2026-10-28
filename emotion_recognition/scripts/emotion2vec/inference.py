@@ -6,8 +6,7 @@ device (Apple GPU / NVIDIA GPU / CPU) and the model are all in order.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/emotion2vec/inference.py
-Settings are in config/config.yaml: `mode` and `devices` choose the hardware, `inference.audio` the
-audio file or folder.
+The settings (AUDIO, DEVICE, MODEL_DIR) are at the top of this file; it reads no configuration file.
 """
 import logging
 import platform
@@ -17,10 +16,15 @@ from pathlib import Path
 
 import soundfile as sf
 import torch
-import yaml
 
-ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/); config paths are relative to it
-CONFIG = ROOT / "config" / "config.yaml"
+# ======================================================================
+# Settings (paths are relative to the emotion_recognition/ folder)
+# ======================================================================
+AUDIO = "data/samples"  # a file, or a folder: every audio file in it (wav, flac, mp3, ogg)
+DEVICE = "auto"  # auto = cuda:0 if CUDA is available, else mps if available, else cpu; or "cuda:0", "mps", "cpu"
+MODEL_DIR = "models/emotion2vec_plus_large"  # the emotion2vec+ large files (python scripts/common/download_model.py)
+
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/); the paths above are relative to it
 AUDIO_EXTS = {".wav", ".flac", ".mp3", ".ogg"}
 MODEL_FILES = ["model.pt", "config.yaml", "configuration.json", "tokens.txt"]
 
@@ -33,19 +37,22 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order with warnings, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the project configuration (config/config.yaml)
+    # Step 1: The settings at the top of this file, and the device that DEVICE = "auto" picks
     # ------------------------------------------------------------------
-    step("Step 1/6 | Load configuration")
-    cfg = yaml.safe_load(CONFIG.read_text())
-    mode = cfg["mode"]
-    device_name = cfg["devices"][mode]
-    model_name = cfg["model"]
-    model_dir = ROOT / cfg["models"][model_name]["dir"]
-    audio_path = ROOT / cfg["inference"]["audio"]  # an absolute path in the config is kept as it is
-    print(f"  config      : {CONFIG}")
-    print(f"  mode        : {mode}")
-    print(f"  device      : {device_name}")
-    print(f"  model       : {model_name} ({model_dir})")
+    step("Step 1/6 | Settings")
+    model_dir = ROOT / MODEL_DIR  # an absolute path is kept as it is
+    audio_path = ROOT / AUDIO
+    device_name, why = DEVICE, ""
+    if DEVICE == "auto":  # the best device this machine has
+        if torch.cuda.is_available():
+            device_name, why = "cuda:0", " (auto: CUDA is available)"
+        elif torch.backends.mps.is_available():
+            device_name, why = "mps", " (auto: no CUDA, MPS is available)"
+        else:
+            device_name, why = "cpu", " (auto: neither CUDA nor MPS is available)"
+    print(f"  settings    : AUDIO, DEVICE, MODEL_DIR at the top of {Path(__file__).resolve().relative_to(ROOT)}")
+    print(f"  device      : {device_name}{why}")
+    print(f"  model       : {model_dir}")
     print(f"  audio       : {audio_path}")
 
     # ------------------------------------------------------------------
@@ -82,7 +89,7 @@ def main():
     elif device.type == "mps":
         if not torch.backends.mps.is_available():
             sys.exit("ERROR: MPS was requested but is not available.\n"
-                     "       Use an arm64 (not Rosetta) Python on Apple Silicon, or set the device to cpu.")
+                     "       Use an arm64 (not Rosetta) Python on Apple Silicon, or set DEVICE to \"cpu\".")
         print("  using       : Apple GPU via Metal (MPS)")
     else:
         print(f"  using       : CPU ({torch.get_num_threads()} threads)")

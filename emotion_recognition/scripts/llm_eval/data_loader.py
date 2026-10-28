@@ -1,8 +1,8 @@
 """
 Data for the audio-LLM evaluation: one item per clip, with the prompts and the audio ready to send to the model.
 
-For the datasets chosen in the `llm` section of config/config.yaml, the loader takes the same clips and labels as the
-model evaluation (scripts/common/eval_datasets.py: its loaders, `sample` for llm.limit and `accepted` for the
+For the datasets chosen in config/llm.yaml, the loader takes the same clips and labels as the
+model evaluation (scripts/common/eval_datasets.py: its loaders, `sample` for `limit` and `accepted` for the
 classes that count as correct). items() yields one item per clip and prepares each clip only when it is asked for
 (a generator), so thousands of clips never sit in memory. Each item is a dict:
     dataset        dataset key, e.g. "crema_d"
@@ -14,7 +14,7 @@ classes that count as correct). items() yields one item per clip and prepares ea
                    surprised (`accepted` in eval_datasets.py)
     listener       the listeners' majority vote ("a or b" for a tie); "" if the dataset has none
     system, user   the prompts, with the labels filled in (prompts.yaml, read by prompts.py)
-    audio_format   pcm16_24k or wav16k (llm.audio_format)
+    audio_format   pcm16_24k or wav16k (`audio_format` in config/llm.yaml)
     sample_rate    sampling rate of the prepared audio (24000 or 16000)
     samples        length of the prepared audio in samples; seconds: the same in seconds
     audio          the prepared audio as base64 text:
@@ -27,7 +27,7 @@ Each clip is read with soundfile, its channels are averaged to mono, it is resam
 
 Usage (from the emotion_recognition/ folder):
     python scripts/llm_eval/data_loader.py
-prints step by step what the loader does and shows the first items of each dataset (llm.preview), without calling any
+prints step by step what the loader does and shows the first items of each dataset (`preview`), without calling any
 API. The API runners will import items() from this file.
 """
 import base64
@@ -51,8 +51,8 @@ from eval_datasets import LOADERS, SOURCES, accepted, sample
 from prompts import load_prompts  # scripts/llm_eval/prompts.py
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
-RATES = {"pcm16_24k": 24000, "wav16k": 16000}  # llm.audio_format -> sampling rate of the audio sent to the model
+CONFIG = ROOT / "config" / "llm.yaml"  # the settings
+RATES = {"pcm16_24k": 24000, "wav16k": 16000}  # audio_format -> sampling rate of the audio sent to the model
 
 
 def step(title):
@@ -60,7 +60,7 @@ def step(title):
 
 
 def select_datasets(settings):
-    """The datasets to use (llm.datasets without llm.exclude), and those left out with the reason."""
+    """The datasets to use (`datasets` without `exclude`, config/llm.yaml), and those left out with the reason."""
     wanted = settings["datasets"]
     if wanted == "all":
         keys = [k for k in LOADERS if (ROOT / "data" / k).is_dir()]
@@ -69,9 +69,9 @@ def select_datasets(settings):
     exclude = settings["exclude"] or []
     unknown = [k for k in [*keys, *exclude] if k not in LOADERS]
     if unknown:
-        sys.exit(f"ERROR: unknown dataset(s) {unknown} in the llm section of config/config.yaml; use: "
+        sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/llm.yaml; use: "
                  f"{', '.join(LOADERS)} or all")
-    left_out = {k: "llm.exclude" for k in keys if k in exclude}
+    left_out = {k: "exclude in config/llm.yaml" for k in keys if k in exclude}
     # Every request gives the clip to OpenAI or Google, so a dataset whose licence does not allow giving its audio to
     # others is never used (public_audio in SOURCES of eval_datasets.py; ESD's licence forbids it)
     left_out |= {k: "its licence does not allow giving its audio to others" for k in keys
@@ -82,7 +82,7 @@ def select_datasets(settings):
         sys.exit(f"ERROR: not downloaded: {', '.join(missing)}. Download it with scripts/common/download_data.py.")
     if not keys:
         sys.exit(f"ERROR: no dataset left to use ({'; '.join(f'{k}: {r}' for k, r in left_out.items())}); check "
-                 "`llm.datasets` and `llm.exclude` in config/config.yaml.")
+                 "`datasets` and `exclude` in config/llm.yaml.")
     return keys, left_out
 
 
@@ -132,13 +132,13 @@ def dataset_items(ds, clips, prompts, audio_format):
         }
 
 
-def items(cfg=None, audio_format=None):
-    """Every item for the `llm` settings, dataset by dataset (a generator). cfg: the parsed config/config.yaml (None =
-    read it); audio_format: None = llm.audio_format (a runner can ask for the format its API takes)."""
-    settings = (cfg or yaml.safe_load(CONFIG.read_text()))["llm"]
+def items(settings=None, audio_format=None):
+    """Every item for the settings, dataset by dataset (a generator). settings: the parsed config/llm.yaml (None = read
+    it); audio_format: None = `audio_format` there (a runner can ask for the format its API takes)."""
+    settings = settings or yaml.safe_load(CONFIG.read_text())
     audio_format = audio_format or settings["audio_format"]
     if audio_format not in RATES:
-        sys.exit(f"ERROR: unknown llm.audio_format {audio_format!r}; use {' or '.join(RATES)}")
+        sys.exit(f"ERROR: unknown audio_format {audio_format!r}; use {' or '.join(RATES)}")
     prompts = load_prompts(ROOT / settings["prompts"])
     keys, _ = select_datasets(settings)
     for key in keys:
@@ -154,13 +154,13 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the settings (config/config.yaml, section `llm`) and choose the datasets
+    # Step 1: Read the settings (config/llm.yaml) and choose the datasets
     # ------------------------------------------------------------------
     step("Step 1/4 | Load configuration")
-    settings = yaml.safe_load(CONFIG.read_text())["llm"]
+    settings = yaml.safe_load(CONFIG.read_text())
     limit, audio_format, n_show = settings["limit"], settings["audio_format"], settings["preview"]
     if audio_format not in RATES:
-        sys.exit(f"ERROR: unknown llm.audio_format {audio_format!r}; use {' or '.join(RATES)}")
+        sys.exit(f"ERROR: unknown `audio_format: {audio_format}` in config/llm.yaml; use {' or '.join(RATES)}")
     keys, left_out = select_datasets(settings)
     print(f"  config      : {CONFIG}")
     print(f"  datasets    : {', '.join(keys)}")

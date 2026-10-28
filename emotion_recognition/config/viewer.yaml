@@ -1,0 +1,15 @@
+# =====================================================================
+# Settings of scripts/viewer/make_viewer.py: a web page with the results of every model and example clips.
+# Run it from the emotion_recognition/ folder: python scripts/viewer/make_viewer.py
+# Paths are relative to that folder. The page lists the models in the order of config/models.yaml.
+# =====================================================================
+predictions: all  # all = every outputs/<model>/*_predictions.csv, or a list of such files
+correct: 10       # per dataset and model: how many clips it got right to add to the examples (the page shows
+                  # every model's prediction for every clip added)
+wrong: 10         # per dataset and model: how many clips it got wrong to add
+seed: null        # a number gives the same selection every time; null picks new clips on each run
+link_audio: false # false = embed each clip as 16 kHz mono MP3; true = link to the audio files instead (smaller
+                  # page, works only in this repo; the public page always embeds)
+out: outputs/viewer.html  # the page for this machine (not in git)
+site: site/index.html     # the public page for GitHub Pages (only clips whose licence allows it); null = none
+exclude: [esd, thai_ser, nemo]  # datasets left out of both pages: no results, no clips

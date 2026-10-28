@@ -13,5 +13,5 @@ numpy==2.4.6              # newest numpy for Python 3.11 (2.5+ needs Python >= 3
 matplotlib==3.11.2        # confusion-matrix figure in the evaluation report
 pyarrow==26.0.0           # reads the Parquet files of THAI-SER and nEMO
 openpyxl==3.1.5           # reads the MCAE-SPPS label spreadsheet
-pyyaml==6.0.3             # reads config/config.yaml
+pyyaml==6.0.3             # reads the settings in config/*.yaml
 soundfile==0.14.0         # reads audio files
