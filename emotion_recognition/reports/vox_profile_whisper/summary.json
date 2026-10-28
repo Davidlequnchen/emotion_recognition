@@ -1,0 +1,244 @@
+{
+  "model": "vox_profile_whisper",
+  "name": "Vox-Profile Whisper",
+  "date": "2026-10-29",
+  "training_source": "MSP-Podcast",
+  "datasets": [
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 1440,
+      "total_clips": 1440,
+      "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.507639,
+        "unweighted_accuracy": 0.493304,
+        "macro_f1": 0.445022,
+        "accuracy_all_classes": 0.50625
+      }
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 6675,
+      "total_clips": 6675,
+      "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "angry",
+        "fearful",
+        "sad",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.459775,
+        "unweighted_accuracy": 0.409409,
+        "macro_f1": 0.351958,
+        "accuracy_all_classes": 0.459775,
+        "accuracy_acted_or_listener": 0.459775,
+        "listeners_vs_acted": 1.0,
+        "model_vs_listeners": 0.459775
+      }
+    },
+    {
+      "dataset": "JL-Corpus",
+      "key": "jl_corpus",
+      "language": "English (New Zealand)",
+      "clips": 1200,
+      "total_clips": 1200,
+      "emotions": 5,
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad",
+        "excited"
+      ],
+      "chance": 0.24,
+      "accept": {
+        "excited": [
+          "happy",
+          "surprised"
+        ]
+      },
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.450833,
+        "unweighted_accuracy": 0.450833,
+        "macro_f1": 0.473273,
+        "accuracy_all_classes": 0.435833
+      }
+    },
+    {
+      "dataset": "MESS",
+      "key": "mess",
+      "language": "English",
+      "clips": 1800,
+      "total_clips": 1800,
+      "emotions": 4,
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "chance": 0.25,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.363889,
+        "unweighted_accuracy": 0.363889,
+        "macro_f1": 0.267674,
+        "accuracy_all_classes": 0.357778
+      }
+    },
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 7442,
+      "total_clips": 7442,
+      "emotions": 6,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "chance": 0.166667,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.336603,
+        "unweighted_accuracy": 0.351988,
+        "macro_f1": 0.299302,
+        "accuracy_all_classes": 0.307175,
+        "accuracy_acted_or_listener": 0.704515,
+        "listeners_vs_acted": 0.455869,
+        "model_vs_listeners": 0.63857
+      }
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 2800,
+      "total_clips": 2800,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "surprised",
+        "sad"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.301071,
+        "unweighted_accuracy": 0.301071,
+        "macro_f1": 0.174065,
+        "accuracy_all_classes": 0.299286
+      }
+    }
+  ],
+  "figure": "figures/summary_confusion.png",
+  "figure_datasets": [
+    "CREMA-D",
+    "MCAE-SPPS",
+    "MESS",
+    "RAVDESS",
+    "TESS",
+    "JL-Corpus"
+  ],
+  "acted_or_listener": [
+    "CREMA-D"
+  ],
+  "shared_emotions": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "shared": [
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 864,
+      "sample": false,
+      "accuracy": 0.590278,
+      "unweighted_accuracy": 0.575521,
+      "in_training_data": false
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 4297,
+      "sample": false,
+      "accuracy": 0.586688,
+      "unweighted_accuracy": 0.543384,
+      "in_training_data": false
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 1600,
+      "sample": false,
+      "accuracy": 0.499375,
+      "unweighted_accuracy": 0.499375,
+      "in_training_data": false
+    },
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 4900,
+      "sample": false,
+      "accuracy": 0.498163,
+      "unweighted_accuracy": 0.515393,
+      "in_training_data": false
+    },
+    {
+      "dataset": "JL-Corpus",
+      "key": "jl_corpus",
+      "language": "English (New Zealand)",
+      "clips": 960,
+      "sample": false,
+      "accuracy": 0.426042,
+      "unweighted_accuracy": 0.426042,
+      "in_training_data": false
+    },
+    {
+      "dataset": "MESS",
+      "key": "mess",
+      "language": "English",
+      "clips": 1800,
+      "sample": false,
+      "accuracy": 0.363889,
+      "unweighted_accuracy": 0.363889,
+      "in_training_data": false
+    }
+  ]
+}

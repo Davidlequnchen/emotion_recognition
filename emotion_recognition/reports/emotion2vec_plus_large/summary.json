@@ -1,7 +1,7 @@
 {
   "model": "emotion2vec_plus_large",
   "name": "emotion2vec+ large",
-  "date": "2026-10-28",
+  "date": "2026-10-29",
   "training_source": "EmoBox (through emotion2vec+ seed)",
   "datasets": [
     {
