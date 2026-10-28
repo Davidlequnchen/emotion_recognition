@@ -45,6 +45,7 @@ emotion_recognition/
 │   ├── models.yaml             # the model registry: name, loader, folder, repository and training data of each model
 │   ├── evaluation.yaml         # evaluate.py: hardware mode (auto | mac | cuda), models, datasets, sample size, devices
 │   ├── viewer.yaml             # make_viewer.py: example clips, seed, output pages
+│   ├── plots.yaml              # plot_results.py: metrics, models, datasets of the bar plots
 │   ├── download_model.yaml     # download_model.py: which models, from which hub
 │   ├── download_data.yaml      # download_data.py: which dataset
 │   └── llm.yaml                # scripts/llm_eval/: datasets, sample size, audio format, prompts
@@ -89,6 +90,7 @@ emotion_recognition/
 │   ├── llm_eval/               # audio LLMs (GPT Realtime, Gemini): prompts, data loader, answer parser
 │   └── viewer/
 │       ├── make_viewer.py      # builds a web page with every model's results and example clips
+│       ├── plot_results.py     # bar plots of every model on every dataset (reports/figures/, PNG and PDF)
 │       └── templates/          # viewer.html, the page template used by make_viewer.py
 ├── site/index.html             # the public results page (built by make_viewer.py, published by GitHub Pages)
 ├── test_scripts/               # informal one-off checks, e.g. of the OpenAI API (see its README)
@@ -482,6 +484,8 @@ limit: null       # only N clips of each dataset, taken at even intervals within
 overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/;
                   # true: evaluate it again and replace them. The summaries show every result there,
                   # except those of excluded datasets
+plots: true       # true: at the end, draw the bar plots of every model on every dataset (scripts/viewer/plot_results.py,
+                  # settings in config/plots.yaml); false: run that script by hand when you want the plots
 devices:          # device per mode; a model's mac_device (in config/models.yaml) overrides devices.mac
   mac: mps
   cuda: cuda:0
@@ -702,6 +706,25 @@ https://davidlequnchen.github.io/emotion_recognition/ (the workflow can also be 
 Everything in `site/` becomes public, so look at the page before pushing it. Each rebuild picks new clips and adds
 the whole page (about 2.5 MB with one model) to the git history; set `seed` in `config/viewer.yaml` to keep the same clips (a
 dataset's clips depend only on the seed and on that dataset's results).
+
+### 7.2 Bar plots for papers and slides
+
+```bash
+python scripts/viewer/plot_results.py   # also runs at the end of evaluate.py when `plots: true` (config/evaluation.yaml)
+```
+
+For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, macro F1) it writes to
+`reports/figures/`, as PNG (300 dpi) and PDF:
+
+- `<metric>_by_dataset`: one panel per dataset (six, in two rows of three), one bar per model;
+- `overview_<metric>`: every dataset side by side, a group of bars per dataset.
+
+Each model keeps its colour (colour-blind-safe), bars have black outlines, a hatch marks a dataset in that model's
+training data, a dashed line shows chance level, and a value with * comes from a sample of the dataset. The script
+reads every `outputs/<model>/<dataset>_predictions.json`, so a model evaluated elsewhere, for example GPT Realtime or
+Gemini through their APIs, appears as soon as its JSON files are in `outputs/<its key>/` with the same fields:
+`dataset`, `key`, `language`, `model_name`, `clips`, `total_clips`, `chance`, `in_training_data` and `metrics`
+(`accuracy`, `unweighted_accuracy`, `macro_f1`).
 
 ## 8. Audio LLMs (in progress)
 

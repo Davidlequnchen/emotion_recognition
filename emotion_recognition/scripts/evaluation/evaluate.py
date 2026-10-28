@@ -1068,6 +1068,12 @@ def main():
     step("Step 8/8 | Summary of every model")
     write_comparison(registry, exclude)
 
+    # Bar plots of every model on every dataset (a separate script, scripts/viewer/plot_results.py), if `plots: true`
+    if settings.get("plots"):
+        sys.path.insert(0, str(ROOT / "scripts" / "viewer"))
+        import plot_results
+        plot_results.main()
+
 
 if __name__ == "__main__":
     main()
