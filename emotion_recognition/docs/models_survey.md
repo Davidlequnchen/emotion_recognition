@@ -39,7 +39,7 @@
 
 | # | 模型 | 机构 | 年份 | 公开报告的效果 | 论文 | 下载 | 大小 | 许可 | 运行方式 |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | ⭐ **emotion2vec+ large**（本项目在用） | 上海交大、复旦、港中文、阿里巴巴 | 2024-05 | 本项目实测 7 个数据集，准确率 40.8–92.5%（[报告](../reports/emotion2vec_plus_large_summary.md)）；Melati 卡片的留出数据，7 类 UAR 0.522 | 无单独论文，见 [GitHub](https://github.com/ddlBoJack/emotion2vec) | [HF](https://huggingface.co/emotion2vec/emotion2vec_plus_large)；[ModelScope](https://modelscope.cn/models/iic/emotion2vec_plus_large) | 162.1M（卡片写约 300M）；1.95 GB（含优化器状态） | ① | FunASR |
+| 1 | ⭐ **emotion2vec+ large**（本项目在用） | 上海交大、复旦、港中文、阿里巴巴 | 2024-05 | 本项目实测 6 个数据集，准确率 40.8–92.5%（[报告](../reports/emotion2vec_plus_large/summary.md)）；Melati 卡片的留出数据，7 类 UAR 0.522 | 无单独论文，见 [GitHub](https://github.com/ddlBoJack/emotion2vec) | [HF](https://huggingface.co/emotion2vec/emotion2vec_plus_large)；[ModelScope](https://modelscope.cn/models/iic/emotion2vec_plus_large) | 162.1M（卡片写约 300M）；1.95 GB（含优化器状态） | ① | FunASR |
 | 2 | ⭐ **MERaLiON-SER-v1** | A*STAR I²R（新加坡） | 2025-10 | MSP-Podcast、IEMOCAP、MELD 上 7 类 UAR 64–70%（论文；前两个没参与训练）；Melati 卡片的留出数据，UAR 0.464 | [arXiv 2511.04914](https://arxiv.org/abs/2511.04914) | [HF](https://huggingface.co/MERaLiON/MERaLiON-SER-v1) | 313.4M（不含解码器；卡片写 309M）；文件 770.0M、3.08 GB（含用不到的 Whisper 解码器） | MERaLiON Public Licence（MIT 加署名等条款，可商用） | transformers（`trust_remote_code`） |
 | 3 | ⭐ **Melati 情绪分类** | Scicom（马来西亚） | 2026-10 | nEMO 和 NonverbalTTS 的 VoxCeleb 部分（7,791 条，没参与训练）上 7 类 UAR 0.538，其中 nEMO 0.559（卡片） | 无（只有模型卡） | [HF](https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3) | 637.3M；1.28 GB（编码器 fp16） | 仅限非商用研究 | transformers（`trust_remote_code`） |
 | 4 | ⭐ **Vox-Profile Whisper 分类** | USC SAIL 等 | 2025-05 | MSP-Podcast v1.12 开发集 macro-F1 0.416（论文表 4） | [arXiv 2505.14648](https://arxiv.org/abs/2505.14648)（DMLR） | [HF](https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion) | 639.9M（不含用不到的解码器）；文件 1.55B、6.19 GB | OpenRAIL，但卡片写明不可商用 | [vox-profile-release](https://github.com/tiantiaf0627/vox-profile-release) + loralib |
@@ -148,14 +148,17 @@ MERaLiON-SER-v1（1a #2）和 Vox-Profile 分类模型（#4、#5）也有维度�
 
 ## 5. 接入本项目的难度
 
-`scripts/emotion2vec/evaluate.py` 用 FunASR 的 `AutoModel` 加载模型，从 `tokens.txt` 读 9 个类别，再取 `generate()` 返回的各类概率（`scores`），对应到每个数据集的类别。其他框架的模型要自己写加载代码。
+每个模型由一个加载器 `scripts/models/<loader>.py` 运行：它只从 `models/` 下模型自己的文件夹构建模型（不联网），对一个片段返回模型各类别的概率，类名统一用本项目的名字；`scripts/evaluation/evaluate.py` 再把它们对应到每个数据集的情绪（见 `models/README.md` 的 "Adding a model"）。emotion2vec+ large 用 FunASR 运行。MERaLiON-SER-v1、Melati 和两个 Vox-Profile 分类模型已于 2026-10-28 接入（表的前三行）。项目锁定 transformers 5.18.0，这是能配 PyTorch 2.5.1 的最新版本：5.19.0 在 PyTorch 2.5.1 上无法导入任何模型类，因为它调用 PyTorch 2.6 才有的 `torch.accelerator`。
 
 | 难度 | 模型 | 要做的事 |
 |---|---|---|
-| 只改配置 | emotion2vec+ seed、base；emotion2vec base finetuned | 按 `models/README.md` 在 `config/config.yaml` 的 `models:` 下注册、下载，再改 `model:`。三者都输出同样的 9 类 |
+| 已接入（2026-10-28） | MERaLiON-SER-v1 | `meralion_ser.py` 先用模型类构建模型、再加载权重，因为 transformers 5 在 meta device 上构建模型，模型自带的远程代码在那里会出错；这份代码导入了 peft 和 omegaconf（已加进 `requirements.txt`，实际不用）；`prepare()` 保存 openai/whisper-medium 的 config.json，加载时不用联网 |
+| 已接入（2026-10-28） | Melati | `melati.py` 用 transformers 加载它的远程代码（`trust_remote_code`），不用改；预测取原始概率最大的类（argmax），不用官方 `melati_emotion.py` 的阈值 |
+| 已接入（2026-10-28） | Vox-Profile Whisper、WavLM（分类） | `vox_profile.py` 重写了官方的推理代码，不需要 loralib、speechbrain，也不调用 `.cuda()`；概率和官方代码最多差 2.4e-6；`prepare()` 去掉用不到的文本解码器，把 Whisper 版的文件从 6.19 GB 减到 1.29 GB |
+| 只改配置 | emotion2vec+ seed、base；emotion2vec base finetuned | 按 `models/README.md` 在 `config/config.yaml` 的 `models:` 下注册（`loader: emotion2vec`）并下载。三者都输出同样的 9 类 |
 | 小改 | SenseVoiceSmall | 也用 FunASR 加载，但 `generate()` 返回带 tag 的文本：要把 tag 转成类别，拿不到各类概率（除非读情绪 token 的 CTC logits） |
-| 写一个 transformers 加载器（几十行） | MERaLiON-SER-v1、Odyssey 2024 基线、Melati（要 `trust_remote_code`）；Aniemore、SUPERB 和 1c 节的社区模型（标准 `AutoModelForAudioClassification`） | 写一个返回各类概率的 `Predictor`，再把模型的类名对到本项目的 7 类（如 `ang` → angry，`Happiness` → happy）。项目锁定 transformers 5.19.0，为 4.x 写的远程代码可能要改（未测试） |
-| 要装别的包或改代码 | Vox-Profile（vox-profile-release、loralib；Whisper 版要去掉写死的 `.cuda()` 才能在 Mac 上跑）、SpeechBrain 的两个模型、autrainer、ParaCLAP；Emotion2Vec-S 和 emotion2vec base 只出特征，要先训分类头 | 新依赖和 FunASR 1.4.16、transformers 5.19.0 能否共存未测试 |
+| 写一个 transformers 加载器（几十行） | Odyssey 2024 基线（要 `trust_remote_code`）；Aniemore、SUPERB 和 1c 节的社区模型（标准 `AutoModelForAudioClassification`） | 写一个返回各类概率的加载器（可参考 `melati.py`），再把模型的类名对到本项目的 7 类（如 `ang` → angry，`Happiness` → happy）。为 transformers 4.x 写的远程代码可能要绕开问题，像 MERaLiON-SER-v1 那样 |
+| 要装别的包或改代码 | SpeechBrain 的两个模型、autrainer、ParaCLAP；Emotion2Vec-S 和 emotion2vec base 只出特征，要先训分类头 | 新依赖和 FunASR 1.4.16、transformers 5.18.0 能否共存未测试；像 `vox_profile.py` 那样重写推理代码，就不用装这些包 |
 | 要另写评估 | 第 2 节的维度模型；第 4 节的音频大模型 | 本项目的数据集只有类别标签，维度输出要换分析方法（例如看各情绪在 arousal、valence 上的分布）；音频大模型可以沿用 `scripts/llm_eval/` 的提示词和解析，但要在本地 GPU 上推理 |
 
 ## 6. 注意事项
@@ -169,7 +172,7 @@ MERaLiON-SER-v1（1a #2）和 Vox-Profile 分类模型（#4、#5）也有维度�
 
 ## 7. 主要来源
 
-- emotion2vec：https://github.com/ddlBoJack/emotion2vec 、https://arxiv.org/abs/2312.15185 、https://huggingface.co/emotion2vec 、https://modelscope.cn/models/iic/emotion2vec_base_finetuned （以及 iic/emotion2vec_base、iic/emotion2vec_plus_seed、iic/emotion2vec_plus_base、iic/emotion2vec_plus_large）；EmoBox 4 类结果表：https://github.com/ddlBoJack/emotion2vec/blob/main/src/emotion2vec%2Bperformance.png ；本项目的 emotion2vec+ large 结果：[../reports/emotion2vec_plus_large_summary.md](../reports/emotion2vec_plus_large_summary.md)；FunASR 模型协议：https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE ；EmoBox：https://arxiv.org/abs/2406.07162
+- emotion2vec：https://github.com/ddlBoJack/emotion2vec 、https://arxiv.org/abs/2312.15185 、https://huggingface.co/emotion2vec 、https://modelscope.cn/models/iic/emotion2vec_base_finetuned （以及 iic/emotion2vec_base、iic/emotion2vec_plus_seed、iic/emotion2vec_plus_base、iic/emotion2vec_plus_large）；EmoBox 4 类结果表：https://github.com/ddlBoJack/emotion2vec/blob/main/src/emotion2vec%2Bperformance.png ；本项目的 emotion2vec+ large 结果：[../reports/emotion2vec_plus_large/summary.md](../reports/emotion2vec_plus_large/summary.md)；FunASR 模型协议：https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE ；EmoBox：https://arxiv.org/abs/2406.07162
 - Emotion2Vec-S、C²SER：https://arxiv.org/abs/2502.18186 、https://github.com/ASLP-lab/C2SER 、https://huggingface.co/ASLP-lab/Emotion2Vec-S 、https://huggingface.co/ASLP-lab/C2SER-LLM
 - MERaLiON-SER：https://arxiv.org/abs/2511.04914 、https://huggingface.co/MERaLiON/MERaLiON-SER-v1 、许可：https://huggingface.co/MERaLiON/MERaLiON-SER-v1/resolve/main/MERaLiON-Public-Licence-SER-V1.pdf
 - Vox-Profile：https://arxiv.org/abs/2505.14648 、https://github.com/tiantiaf0627/vox-profile-release 、https://arxiv.org/abs/2506.10930
