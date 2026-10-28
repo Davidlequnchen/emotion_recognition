@@ -9,6 +9,10 @@ This is a side project of the repository, independent of the speech emotion reco
 ([`../emotion_recognition/`](../emotion_recognition/README.md)). The only link between them: by default it scores
 the six CREMA-D test clips of that project.
 
+How the model is built and trained (architecture diagram, size, training data and method):
+[docs/xlsr_1b_antideepfake.md](docs/xlsr_1b_antideepfake.md) (Chinese) and
+[docs/xlsr_1b_antideepfake_en.md](docs/xlsr_1b_antideepfake_en.md) (English).
+
 ## Quick start
 
 Run every command from this folder, `antideepfake/`: every path in this README is relative to it.
@@ -32,6 +36,7 @@ antideepfake/
 ├── requirements.txt    # torch, torchaudio, soundfile, pyyaml (standalone)
 ├── download_model.py   # downloads the checkpoint from Zenodo and checks its size and MD5
 ├── inference.py        # step-by-step inference: P(real) for every audio file
+├── docs/               # the model explained (Chinese and English), with its architecture diagram in figures/
 └── models/             # xlsr_1b.ckpt, LICENSE-CHECKPOINT, README.txt (downloaded, not in git; git keeps .gitkeep)
 ```
 
