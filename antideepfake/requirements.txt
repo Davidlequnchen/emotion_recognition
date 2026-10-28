@@ -1,0 +1,27 @@
+# Packages for deepfake detection with AntiDeepfake XLS-R-1B: inference.py (the network, on MPS, CUDA or the CPU)
+# and download_model.py (the checkpoint from Zenodo). Python 3.11.
+# Standalone: everything a machine that runs only this project needs. The emotion_recognition environment
+# (../emotion_recognition/requirements*.txt) already has all of them at the same versions, so there this file
+# installs nothing (checked with `pip install --dry-run`: nothing is installed, upgraded or downgraded).
+#
+# Install from this folder (antideepfake/):
+#   Mac (Apple Silicon, MPS + CPU):
+#     pip install -r requirements.txt
+#   NVIDIA server (CUDA 12.1): first the CUDA build of PyTorch from the PyTorch index (its wheels bundle the CUDA
+#   runtime and cuDNN; the driver must support CUDA 12.1, see `nvidia-smi`), then this file, which keeps that build
+#   (torch==2.5.1 below also accepts 2.5.1+cu121):
+#     pip install torch==2.5.1+cu121 torchaudio==2.5.1+cu121 --index-url https://download.pytorch.org/whl/cu121
+#     pip install -r requirements.txt
+torch==2.5.1              # the network; 2.5.1 is the newest release with CUDA 12.1 wheels (as in emotion_recognition)
+torchaudio==2.5.1         # resampling to 16 kHz
+soundfile==0.14.0         # reads audio files
+pyyaml==6.0.3             # reads config.yaml
+# The download from Zenodo and its MD5 check use only the Python standard library (urllib, hashlib).
+#
+# Upstream AntiDeepfake also installs these, which are deliberately not used here:
+#   fairseq      builds the XLS-R network upstream. Its latest release (0.12.2) and the commit AntiDeepfake pins
+#                (862efab) require hydra-core<1.1 and omegaconf<2.1, so installing it next to emotion_recognition
+#                would downgrade hydra-core (1.3.7) and omegaconf (2.3.1) and break FunASR, which requires
+#                hydra-core>=1.3.2; it also has no wheel for Python 3.11. inference.py defines the same network in
+#                plain PyTorch, with fairseq's parameter names, so xlsr_1b.ckpt loads unchanged.
+#   speechbrain  the upstream training framework (data loading, checkpoints, metrics); inference does not need it.
