@@ -46,7 +46,11 @@ emotion_recognition/
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   ├── datasets_survey.md      # emotion recognition public dataset survey (in Chinese)
-│   └── datasets_survey_en.md   # the same survey in English
+│   ├── datasets_survey_en.md   # the same survey in English
+│   ├── models_survey.md        # open-source emotion recognition model survey (English: models_survey_en.md)
+│   ├── emotion2vec_plus_large.md             # the model explained: architecture, size, training (+ _en.md)
+│   ├── finetuning_emotion2vec_plus_large.md  # what fine-tuning would need: data, GPUs, which layers (+ _en.md)
+│   └── figures/                # the architecture diagram (PowerPoint and PNG)
 ├── models/
 │   ├── README.md               # what each model file is, how to add models
 │   └── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
@@ -608,9 +612,16 @@ in [test_scripts/](test_scripts/README.md).
 
 ## Model: emotion2vec+ large
 
+More detail, in Chinese and English: [docs/emotion2vec_plus_large.md](docs/emotion2vec_plus_large.md) (architecture
+diagram, size, how it was trained), [docs/finetuning_emotion2vec_plus_large.md](docs/finetuning_emotion2vec_plus_large.md)
+(how much data and GPU time fine-tuning would need, and which layers to train) and
+[docs/models_survey.md](docs/models_survey.md) (other open-source emotion recognition models).
+
 - Paper: *emotion2vec: Self-Supervised Pre-Training for Speech Emotion Representation* ([arXiv:2312.15185](https://arxiv.org/abs/2312.15185));
   code: [ddlBoJack/emotion2vec](https://github.com/ddlBoJack/emotion2vec).
 - Fine-tuned on about 42,500 hours of pseudo-labelled speech emotion data.
+- 162.1 M parameters (counted in `model.pt`; the model card says about 300M). `model.pt` is 1.95 GB because it also
+  holds the optimizer state; the weights alone are 0.65 GB.
 - 9 output classes (`tokens.txt`): angry, disgusted, fearful, happy, neutral, other, sad, surprised, `<unk>`.
 - Input: audio, converted to 16 kHz mono. Output: one probability per class for the whole utterance.
 - Runtime: [FunASR](https://github.com/modelscope/FunASR) builds the PyTorch network from `config.yaml` and loads `model.pt`.
