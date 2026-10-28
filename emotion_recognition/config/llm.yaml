@@ -1,0 +1,16 @@
+# =====================================================================
+# Settings of scripts/llm_eval/: audio LLMs (GPT Realtime, Gemini) on the same clips and labels as the evaluation.
+# Read by scripts/llm_eval/data_loader.py and scripts/llm_eval/prompts.py. Run them from the emotion_recognition/
+# folder, e.g. python scripts/llm_eval/data_loader.py (a preview; no API is called). Paths are relative to that folder.
+# =====================================================================
+datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess] (the same names as in
+                  # config/evaluation.yaml)
+exclude: [esd, thai_ser, nemo]  # never sent to a model, even with `all` (default: the same as `exclude` in
+                                # config/evaluation.yaml). A dataset whose licence forbids giving its audio to
+                                # others (ESD) is never sent anyway
+limit: 200        # N clips of each dataset, sampled as with `limit` in config/evaluation.yaml (even intervals
+                  # within each emotion), to keep the API cost low; null = every clip
+audio_format: pcm16_24k  # pcm16_24k = 16-bit PCM at 24 kHz, mono (the only input of the GPT Realtime API)
+                         # | wav16k = a 16 kHz mono 16-bit WAV file (for Gemini); both sent as base64
+prompts: scripts/llm_eval/prompts.yaml  # the system and user prompts and the emotions the model chooses from
+preview: 2        # python scripts/llm_eval/data_loader.py shows this many items of each dataset

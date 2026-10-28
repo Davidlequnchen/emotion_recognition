@@ -1,9 +1,9 @@
-"""Download the models of config/config.yaml into models/<key>/, ready to load without the network.
+"""Download the models of config/models.yaml into models/<key>/, ready to load without the network.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/common/download_model.py
-Settings are in the `download` section of config/config.yaml:
-    models: all   every model registered under `models:`, or a list of their keys such as [meralion_ser_v1]
+Settings are in config/download_model.yaml:
+    models: all   every model registered in config/models.yaml, or a list of their keys such as [meralion_ser_v1]
     hub: hf       Hugging Face; ms = ModelScope (faster in mainland China; only for models with an ms_repo)
 Each model's repository is downloaded into its `dir`. Then, if the model's loader (scripts/models/<loader>.py) has a
 prepare() function, it runs: it fetches the small extra files the model needs to load offline (e.g. a base model's
@@ -22,7 +22,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
+CONFIG = ROOT / "config" / "download_model.yaml"  # this script's settings
+MODELS_CONFIG = ROOT / "config" / "models.yaml"    # the model registry
 LOADERS = ROOT / "scripts" / "models"       # the model loaders: scripts/models/<loader>.py
 # Not downloaded: compiled Python files, and the repository's .gitattributes: its Git LFS rules (*.png, *.pdf, ...)
 # would apply to the model folder in this repository and send the licence and figures to LFS when committed
@@ -37,25 +38,28 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the configuration (section `download`) and check the chosen models
+    # Step 1: Read the settings (config/download_model.yaml) and the model registry (config/models.yaml)
     # ------------------------------------------------------------------
     step("Step 1/4 | Load configuration")
-    cfg = yaml.safe_load(CONFIG.read_text())
-    registry, wanted, hub = cfg["models"], cfg["download"]["models"], cfg["download"]["hub"]
+    settings = yaml.safe_load(CONFIG.read_text())
+    registry = yaml.safe_load(MODELS_CONFIG.read_text())
+    wanted, hub = settings["models"], settings["hub"]
     keys = list(registry) if wanted == "all" else [wanted] if isinstance(wanted, str) else list(wanted)
     unknown = [k for k in keys if k not in registry]
     if unknown:
-        sys.exit(f"ERROR: unknown model(s) {unknown} in download.models; use: {', '.join(registry)} or all")
+        sys.exit(f"ERROR: unknown model(s) {unknown} in `models` of config/download_model.yaml; use: "
+                 f"{', '.join(registry)} or all")
     if hub not in ("hf", "ms"):
-        sys.exit(f"ERROR: download.hub is {hub!r}; use hf (Hugging Face) or ms (ModelScope)")
+        sys.exit(f"ERROR: `hub` in config/download_model.yaml is {hub!r}; use hf (Hugging Face) or ms (ModelScope)")
     no_ms = [k for k in keys if hub == "ms" and not registry[k].get("ms_repo")]
     if no_ms:
-        sys.exit(f"ERROR: not on ModelScope (no ms_repo in config/config.yaml): {', '.join(no_ms)}. Set "
-                 "download.hub: hf, or download.models to models that have an ms_repo.")
+        sys.exit(f"ERROR: not on ModelScope (no ms_repo in config/models.yaml): {', '.join(no_ms)}. In "
+                 "config/download_model.yaml, set `hub: hf`, or `models` to models that have an ms_repo.")
     no_loader = [registry[k]["loader"] for k in keys if not (LOADERS / f"{registry[k]['loader']}.py").exists()]
     if no_loader:
         sys.exit(f"ERROR: loader(s) not found: {', '.join(f'scripts/models/{n}.py' for n in no_loader)}")
     print(f"  config      : {CONFIG}")
+    print(f"  registry    : {MODELS_CONFIG}")
     print(f"  hub         : {'Hugging Face' if hub == 'hf' else 'ModelScope'}")
     for key in keys:
         entry = registry[key]

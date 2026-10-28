@@ -6,7 +6,7 @@ labels into the prompts in place of {labels} ("angry, disgusted, ...") and check
 word, that at least one prompt lists the labels and that no placeholder is left unfilled.
 
 Usage (from the emotion_recognition/ folder):
-    python scripts/llm_eval/prompts.py     prints the filled prompts of `llm.prompts` in config/config.yaml
+    python scripts/llm_eval/prompts.py     prints the filled prompts of `prompts` in config/llm.yaml
 """
 import re
 import sys
@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
+CONFIG = ROOT / "config" / "llm.yaml"  # the settings of scripts/llm_eval/
 
 
 def load_prompts(path):
@@ -39,7 +39,7 @@ def load_prompts(path):
 
 
 def main():
-    path = ROOT / yaml.safe_load(CONFIG.read_text())["llm"]["prompts"]
+    path = ROOT / yaml.safe_load(CONFIG.read_text())["prompts"]
     prompts = load_prompts(path)
     print(f"prompts : {path.relative_to(ROOT)}")
     print(f"labels  : {', '.join(prompts['labels'])}")

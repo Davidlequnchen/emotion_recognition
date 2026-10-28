@@ -1,0 +1,9 @@
+# =====================================================================
+# Settings of scripts/common/download_data.py: downloads the speech emotion datasets into data/.
+# Run it from the emotion_recognition/ folder: python scripts/common/download_data.py
+# Paths are relative to that folder.
+# =====================================================================
+dataset: crema_d  # what download_data.py gets: crema_d | mcae_spps | thai_ser | nemo | mess | esd
+                  # | ravdess | tess | jl_corpus | all
+crema_d: samples  # CREMA-D only: samples (the 6 test clips) | full (all 7,442 clips and label files)
+workers: 8        # parallel downloads

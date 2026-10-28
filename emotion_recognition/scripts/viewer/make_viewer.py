@@ -10,17 +10,17 @@ prediction for the same clip. Datasets: the source, licence and credit of each d
 hash (#results, #examples, #datasets), so a tab can be linked and the browser's back button works.
 It is a single self-contained file (outputs/viewer.html; audio embedded as 16 kHz mono MP3) that opens in any browser.
 
-The same run also writes the public version for GitHub Pages (viewer.site, e.g. site/index.html): the same page,
+The same run also writes the public version for GitHub Pages (`site`, e.g. site/index.html): the same page,
 but only with the clips of datasets whose licence allows putting them on a public web page (`public_audio` in
 SOURCES of scripts/common/eval_datasets.py; a dataset missing there counts as not public). The results of all
-datasets are shown. Datasets in viewer.exclude are left out of both pages: no results, no clips.
+datasets are shown. Datasets in `exclude` are left out of both pages: no results, no clips.
 
 Input, written by the evaluation, scripts/evaluation/evaluate.py:
     reports/<model>/summary.json               one model on every dataset: name, training data, metrics, figure
     outputs/<model>/<dataset>_predictions.csv  one row per clip; the .json next to it describes the run
-Models come in the order of the `models` registry in config/config.yaml; a model folder that is not registered comes
-last. New models and datasets appear automatically. If a model has a full run and a sample (evaluation.limit) of a
-dataset, the page uses the one with the most clips. A predictions CSV needs:
+Models come in the order of the model registry, config/models.yaml; a model folder that is not registered comes
+last. New models and datasets appear automatically. If a model has a full run and a sample (`limit` in
+config/evaluation.yaml) of a dataset, the page uses the one with the most clips. A predictions CSV needs:
     audio_path       audio file, relative to the emotion_recognition/ folder (the same in every model's CSV)
     prediction       the model's answer; other columns whose names start with "prediction" (e.g.
                      prediction_all_classes) are shown in the details
@@ -34,15 +34,15 @@ Any other column (e.g. listener_vote) is shown as an extra label of the clip. Th
 each correct... column), "columns" (a description of each column) and "accept" (composite labels, e.g.
 {"excited": ["happy", "surprised"]}: a ground truth of excited also matches a prediction of happy or surprised).
 
-Example clips are shared by the models. For each dataset, every model with results on it adds up to viewer.correct
-clips it got right and viewer.wrong clips it got wrong, at random and spread over the ground-truth emotions, and the
+Example clips are shared by the models. For each dataset, every model with results on it adds up to `correct`
+clips it got right and `wrong` clips it got wrong, at random and spread over the ground-truth emotions, and the
 page shows every model's prediction for each of these clips. All models take their clips from the same shuffled list
 of the dataset's clips, so their picks overlap and the page stays small.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/viewer/make_viewer.py
 Settings (which predictions, datasets to leave out, how many clips, seed, linked or embedded audio, output files)
-are in the `viewer` section of config/config.yaml.
+are in config/viewer.yaml; `site`, `exclude`, `correct` and `wrong` above are among them.
 """
 import base64
 import csv
@@ -64,7 +64,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_
 from eval_datasets import SOURCES
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
+CONFIG = ROOT / "config" / "viewer.yaml"         # this script's settings
+MODELS_CONFIG = ROOT / "config" / "models.yaml"  # the model registry (the order of the models)
 TEMPLATE = ROOT / "scripts" / "viewer" / "templates" / "viewer.html"
 SR = 16000  # sampling rate of the embedded clips
 MP3 = "MP3" in sf.available_formats()  # libsndfile 1.1+ writes MP3; without it the clips are embedded as WAV
@@ -220,19 +221,19 @@ def write_page(path, data, datasets, link_audio):
 
 
 def main():
-    # Step 1: settings, the `viewer` section of config/config.yaml; the model order comes from the `models` registry
+    # Step 1: settings, config/viewer.yaml; the model order comes from the model registry, config/models.yaml
     step("Step 1/5 | Load configuration")
-    config = yaml.safe_load(CONFIG.read_text())
-    settings = config["viewer"]
+    settings = yaml.safe_load(CONFIG.read_text())
     n_correct, n_wrong, link_audio = settings["correct"], settings["wrong"], settings["link_audio"]
     seed = settings["seed"] if settings["seed"] is not None else random.randrange(1_000_000)  # printed, to rebuild the page
     exclude = set(settings["exclude"] or [])  # left out of both pages: no results, no clips
     out = (ROOT / settings["out"]).resolve()
     site = (ROOT / settings["site"]).resolve() if settings["site"] else None
-    registry = list(config.get("models") or {})
-    print(f"  clips       : up to {n_correct} right and {n_wrong} wrong per dataset and model (viewer.correct, viewer.wrong)")
-    print(f"  seed        : {seed} (to get the same clips again, set `viewer.seed: {seed}` in config/config.yaml)")
-    print(f"  excluded    : {', '.join(sorted(exclude)) or 'none'} (viewer.exclude)")
+    registry = list(yaml.safe_load(MODELS_CONFIG.read_text()) or {})
+    print(f"  config      : {CONFIG}")
+    print(f"  clips       : up to {n_correct} right and {n_wrong} wrong per dataset and model (correct, wrong)")
+    print(f"  seed        : {seed} (to get the same clips again, set `seed: {seed}` in config/viewer.yaml)")
+    print(f"  excluded    : {', '.join(sorted(exclude)) or 'none'} (exclude)")
     print(f"  pages       : {rel(out)}" + (f", and {rel(site)} for the public" if site else ""))
 
     # Step 2: find every model (a folder with a summary or predictions), in registry order; read each one's summary
@@ -245,7 +246,7 @@ def main():
     metas = {}  # predictions CSV -> the JSON next to it, for the finished runs of datasets that are not excluded
     for f in files:
         if not f.is_file():
-            sys.exit(f"ERROR: {rel(f)} (viewer.predictions) does not exist")
+            sys.exit(f"ERROR: {rel(f)} (`predictions` in config/viewer.yaml) does not exist")
         meta = read_json(f.with_suffix(".json")) if f.with_suffix(".json").is_file() else {}
         if "metrics" not in meta:  # the evaluation writes the JSON, with the metrics, after the CSV
             print(f"  skipped     : {rel(f)}, no finished .json next to it (a run in progress?)")
@@ -310,7 +311,7 @@ def main():
     # Step 5: the page for this machine, then the public one (only clips that may be shared; audio always embedded)
     step("Step 5/5 | Write the pages")
     embedded = "16 kHz mono MP3, 40 kbit/s" if MP3 else "16 kHz mono 16-bit WAV (this libsndfile cannot write MP3)"
-    print("  audio       : " + (f"linked to the original files (viewer.link_audio); the public page embeds {embedded}"
+    print("  audio       : " + (f"linked to the original files (link_audio); the public page embeds {embedded}"
                                 if link_audio else f"embedded as {embedded}"))
     sources = {k: SOURCES[k] for k in order if k in SOURCES}
     data = {"seed": seed, "picks": {"correct": n_correct, "wrong": n_wrong}, "models": page_models, "sources": sources}

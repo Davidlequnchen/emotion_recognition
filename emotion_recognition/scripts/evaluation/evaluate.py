@@ -2,7 +2,7 @@
 Evaluate speech emotion recognition models on the speech emotion datasets and write a Markdown report for each.
 
 Runs every chosen model on every clip of every chosen dataset, compares each prediction with the dataset's labels
-and writes, per model (<model> is its key in the model registry, `models` in config/config.yaml):
+and writes, per model (<model> is its key in the model registry, config/models.yaml):
     outputs/<model>/<dataset>_predictions.csv          one row per clip (read by scripts/viewer/make_viewer.py)
     outputs/<model>/<dataset>_predictions.json         what the CSV contains, the metrics and the runtime
     reports/<model>/<dataset>.md                       accuracy, per-emotion results, confusion matrices
@@ -11,23 +11,25 @@ and writes, per model (<model> is its key in the model registry, `models` in con
     reports/<model>/figures/summary_confusion.png      every dataset's confusion matrix in one figure
 and for every model with results:
     reports/summary.md                                 every model on every dataset (.json: the same numbers)
-A sample run (evaluation.limit) adds _sample<N> to the dataset's file names, e.g. reports/<model>/crema_d_sample14.md.
+A sample run (`limit` in config/evaluation.yaml) adds _sample<N> to the dataset's file names, e.g.
+reports/<model>/crema_d_sample14.md.
 
 Each model runs through its loader, scripts/models/<loader>.py: load(model_dir, device) returns a predictor that,
 called with an audio file, returns the probabilities of the model's classes; it also gives the classes (labels),
-library versions and notes for the report. A loader may also define TRAINING_NOTE, a sentence added to the
-training-data caveat of the model's reports.
+library versions and notes for the report. Clips run one at a time. A loader may also
+define TRAINING_NOTE, a sentence added to the training-data caveat of the model's reports.
 The datasets are defined in scripts/common/eval_datasets.py; download them first with scripts/common/download_data.py
 and the models with scripts/common/download_model.py. The evaluation never touches the network: every model loads
 from its folder in models/.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/evaluation/evaluate.py
-Settings (which models and datasets, an optional sample size, devices) are in the `evaluation` section of
-config/config.yaml. A model and dataset whose results for the same sample size are already in outputs/<model>/ are
-skipped, unless `evaluation.overwrite` is true; a model whose folder has no weights yet is skipped with a message.
-The summaries cover every result in outputs/; datasets listed in `evaluation.exclude` are never evaluated and left
-out of the summaries.
+Settings (hardware mode, which models and datasets, an optional sample size, devices) are in
+config/evaluation.yaml;
+the models are registered in config/models.yaml. A model and dataset whose results for the same sample size are
+already in outputs/<model>/ are skipped, unless `overwrite` is true; a model whose folder has no weights yet is skipped
+with a message. The summaries cover every result in outputs/; datasets listed in `exclude` are never evaluated and
+left out of the summaries.
 
 reports/summary.json (fractions, rounded to 6 decimals):
     date             the day it was written
@@ -66,13 +68,15 @@ os.environ.setdefault("HF_HUB_OFFLINE", "1")
 os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
-CONFIG = ROOT / "config" / "config.yaml"
+CONFIG = ROOT / "config" / "evaluation.yaml"     # this script's settings
+MODELS_CONFIG = ROOT / "config" / "models.yaml"  # the model registry
 sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, imported by name (`loader` in the registry)
 from eval_datasets import LOADERS, accepted, sample, truth_labels
 
-SETTINGS = ["models", "datasets", "exclude", "limit", "overwrite", "devices", "summary_figure"]  # evaluation.*
-REGISTRY = ["name", "loader", "dir", "training_data", "training_source"]  # what the evaluation reads of each model
+# What the script reads of config/evaluation.yaml, and of each model in config/models.yaml
+SETTINGS = ["mode", "models", "datasets", "exclude", "limit", "overwrite", "devices", "summary_figure"]
+REGISTRY = ["name", "loader", "dir", "training_data", "training_source"]
 WEIGHTS = {".pt", ".pth", ".bin", ".safetensors", ".ckpt"}  # a model folder with such a file has its weights
 # Figure colours: a one-hue blue ramp (light = small share, dark = large share) and neutral inks
 BLUES = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
@@ -270,8 +274,8 @@ def evaluate(ds, predict, model, entry, note, device, limit):
     # Step 4: Load the dataset (scripts/common/eval_datasets.py) and its labels
     # ------------------------------------------------------------------
     step(f"Step 4/8 | {name}: load {ds.name}")
-    # evaluation.limit: clips taken at even intervals, emotion by emotion (in file order within each), so that
-    # every emotion is sampled even when the file order repeats (TESS: the 7 emotions of each word in a row)
+    # limit: clips taken at even intervals, emotion by emotion (in file order within each), so that every emotion
+    # is sampled even when the file order repeats (TESS: the 7 emotions of each word in a row)
     clips = sample(ds, limit)
     sampled = len(clips) < len(ds.clips)
     acted = [c["acted"] for c in clips]
@@ -484,7 +488,7 @@ def evaluate(ds, predict, model, entry, note, device, limit):
         "",
         f"Generated by `scripts/evaluation/evaluate.py` on {date.today()}."
         + (f" **Sample**: {len(clips):,} of the {len(ds.clips):,} clips, taken at even intervals within each emotion "
-           "(`evaluation.limit` in config/config.yaml)." if sampled else ""),
+           "(`limit` in config/evaluation.yaml)." if sampled else ""),
         "",
         "## Summary",
         "",
@@ -602,8 +606,8 @@ def evaluate(ds, predict, model, entry, note, device, limit):
 
 def best_runs(model, exclude=()):
     """Per dataset key, in eval_datasets.LOADERS order: the predictions JSON of the run in outputs/<model>/ with the
-    most clips (a full run rather than a sample), with its file stem added. Datasets in exclude (evaluation.exclude)
-    are left out."""
+    most clips (a full run rather than a sample), with its file stem added. Datasets in exclude (`exclude` in
+    config/evaluation.yaml) are left out."""
     out, order = ROOT / "outputs" / model, list(LOADERS)
     best = {}
     for p in sorted(out.glob("*_predictions.json")):
@@ -641,11 +645,11 @@ def shared_scores(model, run, shared):
 
 def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exclude=()):
     """reports/<model>/summary.md: one row per evaluated dataset, read from the JSON files in outputs/<model>/. A
-    dataset with a full run and a sample (evaluation.limit) is shown with the run that has the most clips. The datasets
-    in the model's training data come first, then the others, each group sorted by accuracy. The summary figure shows
-    the datasets in figure_order first (the others follow in eval_datasets.LOADERS order); those in acted_or_listener
-    show their "acted emotion or listeners' vote" confusion matrix. Datasets in exclude (evaluation.exclude) are left
-    out."""
+    dataset with a full run and a sample (`limit`) is shown with the run that has the most clips. The datasets in the
+    model's training data come first, then the others, each group sorted by accuracy. The summary figure shows the
+    datasets in figure_order first (the others follow in eval_datasets.LOADERS order); those in acted_or_listener show
+    their "acted emotion or listeners' vote" confusion matrix. Datasets in exclude are left out. figure_order and
+    acted_or_listener come from `summary_figure`, exclude from `exclude`, in config/evaluation.yaml."""
     runs = list(best_runs(model, exclude).values())
     if not runs:
         print(f"  no results in outputs/{model}/ yet, so no summary")
@@ -698,8 +702,8 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         "many emotions it has.",
         "- **Accuracy: acted or listeners' vote** also accepts the listeners' majority vote; it exists only for "
         "datasets that publish listeners' labels.",
-        *(["- **(sample)**: evaluated on clips taken at even intervals within each emotion (`evaluation.limit`), not on "
-           "every clip."]
+        *(["- **(sample)**: evaluated on clips taken at even intervals within each emotion (`limit` in "
+           "config/evaluation.yaml), not on every clip."]
           if sampled else []),
         "",
     ]
@@ -720,7 +724,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
             f"![Confusion matrices of {name} on every dataset]({grid.relative_to(reports).as_posix()})",
             "",
             f"One matrix per dataset, from each dataset's report: {', '.join(r['dataset'] for r in shown)} (order: "
-            "`evaluation.summary_figure` in config/config.yaml). Rows: acted emotion; columns: predicted emotion; each "
+            "`summary_figure` in config/evaluation.yaml). Rows: acted emotion; columns: predicted emotion; each "
             "row adds up to 100%."
             + (f" {', '.join(r['dataset'] for r in lenient)}: the matrix where a prediction also counts as correct when "
                "it matches the listeners' vote, so a clip whose prediction matched that vote sits in the row of that "
@@ -829,7 +833,8 @@ def write_comparison(registry, exclude=()):
         "- **†**: the dataset is in the model's training data, so the model has probably seen these clips; treat the "
         "result as optimistic.",
         "- **Bold**: the best model on the dataset.",
-        *(["- **(N clips)**: a sample of the dataset (`evaluation.limit`), not every clip."] if samples else []),
+        *(["- **(N clips)**: a sample of the dataset (`limit` in config/evaluation.yaml), not every clip."]
+          if samples else []),
         "",
         "## Accuracy: prediction matches the acted emotion",
         "",
@@ -895,7 +900,7 @@ def write_comparison(registry, exclude=()):
 
 def finished_run(model, key, limit):
     """The predictions JSON of an earlier finished run that a run with these settings would replace, or None.
-    With evaluation.limit smaller than the dataset, a run writes outputs/<model>/<key>_sample<limit>_*, otherwise
+    With `limit` smaller than the dataset, a run writes outputs/<model>/<key>_sample<limit>_*, otherwise
     outputs/<model>/<key>_*. The JSON is written last, so it exists only for a finished run."""
     out = ROOT / "outputs" / model
     sample = out / f"{key}_sample{limit}_predictions.json"
@@ -912,26 +917,31 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the project configuration (config/config.yaml: the model registry and the `evaluation` section)
+    # Step 1: Read the settings (config/evaluation.yaml) and the model registry (config/models.yaml)
     # ------------------------------------------------------------------
     step("Step 1/8 | Load configuration")
-    cfg = yaml.safe_load(CONFIG.read_text())
-    registry, settings, mode = cfg["models"], cfg["evaluation"], cfg["mode"]
+    settings = yaml.safe_load(CONFIG.read_text()) or {}
+    registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
     missing = [k for k in SETTINGS if k not in settings]
     if missing:
-        sys.exit(f"ERROR: `evaluation` in config/config.yaml lacks {', '.join(missing)}.")
+        sys.exit(f"ERROR: config/evaluation.yaml lacks {', '.join(missing)}.")
+    # The hardware mode: auto = cuda when PyTorch sees an NVIDIA GPU, otherwise mac
+    mode, why = settings["mode"], ""
+    if mode == "auto":
+        mode = "cuda" if torch.cuda.is_available() else "mac"
+        why = " (auto: CUDA is available)" if mode == "cuda" else " (auto: CUDA is not available)"
     if mode not in settings["devices"]:
-        sys.exit(f"ERROR: `mode: {mode}` has no device in `evaluation.devices` of config/config.yaml "
+        sys.exit(f"ERROR: mode {mode} has no device in `devices` of config/evaluation.yaml "
                  f"(it has: {', '.join(settings['devices'])}).")
     for m, entry in registry.items():
         lacks = [k for k in REGISTRY if k not in entry]
         if lacks:
-            sys.exit(f"ERROR: model {m} in `models` of config/config.yaml lacks {', '.join(lacks)}.")
+            sys.exit(f"ERROR: model {m} in config/models.yaml lacks {', '.join(lacks)}.")
     models = list(registry) if settings["models"] == "all" else as_list(settings["models"])
     unknown = [m for m in models if m not in registry]
     if unknown or not models:
-        sys.exit(f"ERROR: unknown model(s) {unknown} in `evaluation.models` of config/config.yaml; use all or "
-                 f"registered models: {', '.join(registry)}")
+        sys.exit(f"ERROR: unknown model(s) {unknown} in `models` of config/evaluation.yaml; use all or "
+                 f"models registered in config/models.yaml: {', '.join(registry)}")
     wanted, exclude = settings["datasets"], as_list(settings["exclude"])
     keys = [k for k in LOADERS if (ROOT / "data" / k).is_dir()] if wanted == "all" else as_list(wanted)
     figure = settings["summary_figure"] or {}
@@ -940,17 +950,17 @@ def main():
              *(k for m in models for k in registry[m]["training_data"])]
     unknown = sorted({k for k in named if k not in LOADERS})
     if unknown:
-        sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/config.yaml (evaluation, or training_data in models); "
-                 f"use: {', '.join(LOADERS)} or all")
+        sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/evaluation.yaml (or in training_data in "
+                 f"config/models.yaml); use: {', '.join(LOADERS)} or all")
     limit, overwrite = settings["limit"], settings["overwrite"]
     if limit is not None and (not isinstance(limit, int) or limit < 1):
-        sys.exit(f"ERROR: `evaluation.limit` must be a positive number or null, not {limit!r}.")
-    # Datasets in evaluation.exclude are never evaluated (their data can stay in data/)
+        sys.exit(f"ERROR: `limit` in config/evaluation.yaml must be a positive number or null, not {limit!r}.")
+    # Datasets in exclude are never evaluated (their data can stay in data/)
     excluded = [k for k in keys if k in exclude]
     keys = [k for k in keys if k not in exclude]
     if excluded and not keys:
-        sys.exit(f"ERROR: every dataset to evaluate is in `evaluation.exclude` ({', '.join(excluded)}).")
-    # Each model's device: evaluation.devices for the mode, or on the Mac the model's own mac_device
+        sys.exit(f"ERROR: every dataset to evaluate is in `exclude` in config/evaluation.yaml ({', '.join(excluded)}).")
+    # Each model's device: devices for the mode, or on the Mac the model's own mac_device (config/models.yaml)
     devices = {}
     for m in models:
         wish = settings["devices"][mode]
@@ -959,36 +969,38 @@ def main():
         try:
             devices[m] = torch.device(wish)
         except RuntimeError:
-            sys.exit(f"ERROR: unknown device {wish!r} for {m} in config/config.yaml; use cpu, mps or cuda:<index>.")
+            sys.exit(f"ERROR: unknown device {wish!r} for {m} (`devices` in config/evaluation.yaml, or its mac_device "
+                     "in config/models.yaml); use cpu, mps or cuda:<index>.")
     # Models and datasets that already have results for this limit in outputs/<model>/ are skipped, unless overwrite
     # is true; so is a model that cannot run yet (no loader or no weights)
     done = {m: {k: run for k in keys if not overwrite and (run := finished_run(m, k, limit))} for m in models}
     todo = {m: [k for k in keys if k not in done[m]] for m in models}
-    waiting = {m: why for m in models if todo[m] and (why := not_ready(registry[m]))}
+    waiting = {m: reason for m in models if todo[m] and (reason := not_ready(registry[m]))}
     todo = {m: ks for m, ks in todo.items() if ks and m not in waiting}
     missing = [k for k in keys if any(k in ks for ks in todo.values()) and not (ROOT / "data" / k).is_dir()]
     if not keys or missing:
         sys.exit(f"ERROR: not downloaded: {', '.join(missing) or 'any dataset'}. Download it with "
-                 "scripts/common/download_data.py (set `download.dataset` in config/config.yaml).")
+                 "scripts/common/download_data.py (set `dataset` in config/download_data.yaml).")
     print(f"  config      : {CONFIG}")
-    print(f"  mode        : {mode}")
+    print(f"  registry    : {MODELS_CONFIG}")
+    print(f"  mode        : {mode}{why}")
     for m in models:
         print(f"  model       : {m} = {registry[m]['name']}, device {devices[m]} ({registry[m]['dir']})")
     print(f"  datasets    : {', '.join(keys)}")
     if excluded:
-        print(f"  excluded    : {', '.join(excluded)} (evaluation.exclude)")
+        print(f"  excluded    : {', '.join(excluded)} (exclude in config/evaluation.yaml)")
     print(f"  limit       : {f'{limit:,} clips of each dataset, taken at even intervals within each emotion' if limit else 'every clip'}")
     print(f"  overwrite   : {'yes, evaluate again' if overwrite else 'no, skip what already has results'}")
     for m in models:
         if done[m]:
             print(f"  skipped     : {m} on {', '.join(done[m])} (results in outputs/{m}/)")
-    for m, why in waiting.items():
-        print(f"  not ready   : {m}: {why}")
+    for m, reason in waiting.items():
+        print(f"  not ready   : {m}: {reason}")
     for m, ks in todo.items():
         print(f"  to evaluate : {m} on {', '.join(ks)}")
     if not todo:
         print("\nNothing to evaluate, so only the summaries are written. To evaluate again, set "
-              "`evaluation.overwrite: true` in config/config.yaml.")
+              "`overwrite: true` in config/evaluation.yaml.")
     else:
         # ------------------------------------------------------------------
         # Step 2: Check the software stack and the devices

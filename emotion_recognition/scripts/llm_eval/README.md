@@ -17,24 +17,28 @@ from the `emotion_recognition/` folder.
 
 ## Settings
 
-The `llm` section of `config/config.yaml`:
+In `config/llm.yaml`:
 
 ```yaml
-llm:
-  datasets: all             # all downloaded datasets, or a list such as [crema_d, nemo]
-  exclude: [esd, thai_ser]  # never sent to a model (default: the same as evaluation.exclude)
-  limit: 200                # clips per dataset, sampled as with evaluation.limit; null = every clip
-  audio_format: pcm16_24k   # pcm16_24k (GPT Realtime) | wav16k (Gemini)
-  prompts: scripts/llm_eval/prompts.yaml
-  preview: 2                # items per dataset that the preview shows
+datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess] (the same names as in
+                  # config/evaluation.yaml)
+exclude: [esd, thai_ser, nemo]  # never sent to a model, even with `all` (default: the same as `exclude` in
+                                # config/evaluation.yaml). A dataset whose licence forbids giving its audio to
+                                # others (ESD) is never sent anyway
+limit: 200        # N clips of each dataset, sampled as with `limit` in config/evaluation.yaml (even intervals
+                  # within each emotion), to keep the API cost low; null = every clip
+audio_format: pcm16_24k  # pcm16_24k = 16-bit PCM at 24 kHz, mono (the only input of the GPT Realtime API)
+                         # | wav16k = a 16 kHz mono 16-bit WAV file (for Gemini); both sent as base64
+prompts: scripts/llm_eval/prompts.yaml  # the system and user prompts and the emotions the model chooses from
+preview: 2        # python scripts/llm_eval/data_loader.py shows this many items of each dataset
 ```
 
 The clips are the ones the model evaluation uses for the same limit: `sample(ds, limit)` in
 `scripts/common/eval_datasets.py` takes clips at even intervals within each ground-truth label. The labels and the
 classes that count as correct also come from there (`accepted(ds, label)`), so the label decisions are the same for
 both kinds of model: RAVDESS's and MESS's *calm* count as *neutral*, TESS's *pleasant surprise* as *surprised*, and
-for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the default limit of 200, the seven
-datasets give 1,400 clips and 55 minutes of audio per model.
+for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the default limit of 200, the six
+datasets give 1,200 clips and 48 minutes of audio per model.
 
 ## Prompts
 
@@ -71,9 +75,10 @@ source and the prepared audio (sampling rate, length in samples and seconds) and
 the output on the M4 Max:
 
 ```
-  datasets    : crema_d, mcae_spps, nemo, mess, ravdess, tess, jl_corpus
-  left out    : thai_ser (llm.exclude)
-  left out    : esd (llm.exclude)
+  datasets    : crema_d, mcae_spps, mess, ravdess, tess, jl_corpus
+  left out    : thai_ser (exclude in config/llm.yaml)
+  left out    : nemo (exclude in config/llm.yaml)
+  left out    : esd (exclude in config/llm.yaml)
   limit       : 200 clips of each dataset, sampled as in the evaluation
   audio       : pcm16_24k (24,000 Hz, mono, 16-bit, sent as base64)
 ...
@@ -90,7 +95,7 @@ Step 4/4 | JL-Corpus: clips and the first 2 item(s)
       prepared   : 24,000 Hz, 1 ch, 66,000 samples, 2.75 s
       payload    : 176,000 base64 characters = 132,000 bytes (raw PCM), starts BgALAAkACgAIAAoA...
 ...
-Done: 7 dataset(s), 1,400 clips, 55.4 min of audio would be sent. Nothing was sent to any API.
+Done: 6 dataset(s), 1,200 clips, 47.5 min of audio would be sent. Nothing was sent to any API.
 ```
 
 ## The data loader
@@ -126,7 +131,7 @@ will count as an invalid answer.
 ## Data sent to the APIs
 
 Each request gives the clip to OpenAI or Google. The loader never uses a dataset whose licence does not allow giving
-its audio to others (`public_audio` in `SOURCES` of `eval_datasets.py`), even when it is not in `llm.exclude`: ESD's
+its audio to others (`public_audio` in `SOURCES` of `eval_datasets.py`), even when it is not in `exclude`: ESD's
 licence forbids it. Use Gemini on a paid plan: on the free tier Google may use what is sent to improve its products.
 
 ## Next steps
