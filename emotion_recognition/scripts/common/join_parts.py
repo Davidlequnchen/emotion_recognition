@@ -1,7 +1,7 @@
 """Join dataset files that were cut into parts to pass through git, and check each against its SHA-256.
 
-Usage:
-    python scripts/join_parts.py
+Usage (from the emotion_recognition/ folder):
+    python scripts/common/join_parts.py
 GitHub refuses files over 100 MB, so large dataset files can be committed in 90 MiB parts, for a machine that
 cannot download them from their host:
     data/nemo/data/train-00000-of-00002.parquet.part000, .part001, ...   the parts, in order
@@ -13,7 +13,7 @@ import hashlib
 import sys
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+DATA = Path(__file__).resolve().parents[2] / "data"  # data/ of the project root (emotion_recognition/)
 
 
 def sha256(path):

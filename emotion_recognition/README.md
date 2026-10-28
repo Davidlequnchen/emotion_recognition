@@ -11,37 +11,41 @@ run with PyTorch on two kinds of machines:
 
 ## Quick start
 
+This folder is the main project of the repository (the deepfake detection side project is in
+[`../antideepfake/`](../antideepfake/README.md)). Run every command from this folder, `emotion_recognition/`: every
+path in this README is relative to it.
+
 ```bash
 conda create -n emotion_recognition python=3.11 -y
 conda activate emotion_recognition
-pip install -r requirements-mac.txt        # NVIDIA server: pip install -r requirements-cuda121.txt
+cd emotion_recognition                         # this folder of the repository
+pip install -r requirements-mac.txt            # NVIDIA server: pip install -r requirements-cuda121.txt
 pip install -r requirements.txt
-python scripts/download_model.py           # model files -> models/emotion2vec_plus_large/
-python scripts/inference.py                # NVIDIA server: first set `mode: cuda` in config/config.yaml
+python scripts/emotion2vec/download_model.py   # model files -> models/emotion2vec_plus_large/
+python scripts/emotion2vec/inference.py        # NVIDIA server: first set `mode: cuda` in config/config.yaml
 # optional (first set `download.dataset: all` in config/config.yaml): the evaluation datasets -> data/,
 # the model's accuracy on each -> reports/, and a web page with the results and examples -> outputs/viewer.html
-python scripts/download_data.py
-python scripts/evaluate.py
-python scripts/make_viewer.py
+python scripts/common/download_data.py
+python scripts/emotion2vec/evaluate.py
+python scripts/viewer/make_viewer.py
 ```
 
 The scripts have no command-line options: every setting is in [`config/config.yaml`](config/config.yaml), one
 section per script. Each step is explained below.
 
-## Repository layout
+## Layout
 
 ```
 emotion_recognition/
-├── .github/workflows/pages.yml # publishes site/ with GitHub Pages
 ├── config/config.yaml          # hardware mode (mac | cuda), devices, model registry, audio path, viewer settings
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
 │   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
-│   ├── mcae_spps/ thai_ser/ nemo/ mess/ esd/   # more datasets like CREMA-D (optional downloads, not in git)
+│   ├── mcae_spps/ thai_ser/ nemo/ mess/ esd/   # more evaluation datasets (optional downloads, not in git)
 │   └── ravdess/ tess/ jl_corpus/               # three more English ones (optional downloads, not in git)
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
-│   ├── datasets_survey.md      # survey (in Chinese) of datasets like CREMA-D: parallel text, good labels, larger
+│   ├── datasets_survey.md      # emotion recognition public dataset survey (in Chinese)
 │   └── datasets_survey_en.md   # the same survey in English
 ├── models/
 │   ├── README.md               # what each model file is, how to add models
@@ -50,14 +54,17 @@ emotion_recognition/
 ├── reports/                    # evaluation reports, e.g. crema_d_emotion2vec_plus_large.md
 │   └── figures/                # figures used in the reports
 ├── scripts/
-│   ├── download_model.py       # downloads a model from HuggingFace or ModelScope
-│   ├── download_data.py        # downloads CREMA-D (test clips or full) and eight more datasets, checks every file
-│   ├── join_parts.py           # joins dataset files committed in 90 MiB parts, checks their SHA-256
-│   ├── eval_datasets.py        # one loader per evaluation dataset (labels -> emotion2vec+ classes)
-│   ├── evaluate.py             # runs the model on each dataset, writes the reports and a summary
-│   ├── make_viewer.py          # builds a web page with the results and random right and wrong examples
-│   ├── templates/viewer.html   # the page template used by make_viewer.py
-│   └── inference.py            # step-by-step inference
+│   ├── common/                 # shared by the pipelines
+│   │   ├── download_data.py    # downloads CREMA-D (test clips or full) and eight more datasets, checks every file
+│   │   ├── join_parts.py       # joins dataset files committed in 90 MiB parts, checks their SHA-256
+│   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> emotion2vec+ classes)
+│   ├── emotion2vec/            # the emotion2vec+ pipeline
+│   │   ├── download_model.py   # downloads a model from HuggingFace or ModelScope
+│   │   ├── inference.py        # step-by-step inference
+│   │   └── evaluate.py         # runs the model on each dataset, writes the reports and a summary
+│   └── viewer/
+│       ├── make_viewer.py      # builds a web page with the results and random right and wrong examples
+│       └── templates/          # viewer.html, the page template used by make_viewer.py
 ├── site/index.html             # the public results page (built by make_viewer.py, published by GitHub Pages)
 ├── requirements.txt            # common packages (both machines)
 ├── requirements-mac.txt        # PyTorch for Apple Silicon (MPS + CPU)
@@ -65,11 +72,12 @@ emotion_recognition/
 ```
 
 Git tracks the code, configuration, documentation and the six small test clips. Model files and the full dataset
-are in `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the two download scripts.
+are in the repository's `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the
+two download scripts.
 For now there are exceptions, for a machine that cannot reach the hosts of these datasets: the unpacked MCAE-SPPS files
 (without its zips), the TESS files, the JL-Corpus recordings (`JL(wav+txt)/`; not the rest of its zip, see
 `data/jl_corpus/README.md`), and the nEMO Parquet files in 90 MiB parts (GitHub refuses files over 100 MB); after
-`git pull`, `python scripts/join_parts.py` joins and checks them.
+`git pull`, `python scripts/common/join_parts.py` joins and checks them.
 
 ## 1. Set up the environment
 
@@ -101,7 +109,8 @@ Activate the environment (`conda activate emotion_recognition`) in every new ter
 
 ### 1.3 Install the requirements
 
-Run both commands from the repository root: first PyTorch for your hardware, then the common packages.
+Run both commands from this folder (`emotion_recognition/`): first PyTorch for your hardware, then the common
+packages.
 
 **MacBook (Apple Silicon)**
 
@@ -141,7 +150,8 @@ Expected output: on the Mac, `2.5.1 | CUDA: False | MPS: True`. On the server, `
 ## 2. Download the model
 
 ```bash
-python scripts/download_model.py   # from HuggingFace; set `download.hub: ms` for ModelScope (faster in mainland China)
+python scripts/emotion2vec/download_model.py   # from HuggingFace; set `download.hub: ms` for ModelScope (faster in
+                                               # mainland China)
 ```
 
 This fills `models/emotion2vec_plus_large/` with `model.pt` (1.9 GB of weights), `config.yaml`,
@@ -151,7 +161,7 @@ The "unauthenticated requests" warning from HuggingFace is harmless: the model i
 ## 3. Download the data (CREMA-D)
 
 ```bash
-python scripts/download_data.py
+python scripts/common/download_data.py
 ```
 
 The `download` section of `config/config.yaml` chooses what to get. With `dataset: crema_d` (the default),
@@ -166,7 +176,7 @@ perceived) and every column of the label files such as `summaryTable.csv`.
 ### 3.1 Test clips (default)
 
 `data/samples/` gets six clips: actor 1001 saying "Don't forget a jacket" (`DFA`) with each emotion, so only the
-emotion changes between files. `scripts/inference.py` uses them by default. Names follow
+emotion changes between files. `scripts/emotion2vec/inference.py` uses them by default. Names follow
 `<actor>_<sentence>_<emotion>_<level>.wav`, where `XX` means the intensity level was not specified. Each file is
 16 kHz mono WAV, about 2 s and 70 kB. The six clips are committed to the repository, so they are already there
 after `git clone`; the command above restores any that are missing and checks their SHA-256.
@@ -234,15 +244,16 @@ its individual contents are licensed under the [Database Contents License](http:
 Citation: H. Cao, D. G. Cooper, M. K. Keutmann, R. C. Gur, A. Nenkova and R. Verma, "CREMA-D: Crowd-sourced
 Emotional Multimodal Actors Dataset", *IEEE Transactions on Affective Computing*, 5(4), 377–390, 2014.
 
-### 3.4 More datasets like CREMA-D
+### 3.4 More evaluation datasets
 
-The same script downloads eight more datasets that also record the same sentences in different emotions.
-They were chosen from the survey in [docs/datasets_survey_en.md](docs/datasets_survey_en.md) (Chinese:
-[docs/datasets_survey.md](docs/datasets_survey.md)), which has links, sizes and caveats for many more.
+The same script downloads eight more datasets that, like CREMA-D, record the same sentences in different
+emotions. They were chosen from the emotion recognition public dataset survey in
+[docs/datasets_survey_en.md](docs/datasets_survey_en.md) (Chinese: [docs/datasets_survey.md](docs/datasets_survey.md)),
+which has links, sizes and caveats for many more.
 
 ```bash
-python scripts/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd, ravdess, tess,
-                                  # jl_corpus; all = everything)
+python scripts/common/download_data.py   # with `download.dataset: mcae_spps` (or thai_ser, nemo, mess, esd,
+                                         # ravdess, tess, jl_corpus; all = everything)
 ```
 
 | `download.dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
@@ -260,7 +271,8 @@ Every file is checked against the checksum its host publishes (OSF SHA-256, Zeno
 Borealis MD5). Google Drive and Kaggle publish none, so the ESD and JL-Corpus zips are checked with their own CRCs and
 a SHA-256 written in the script. For RAVDESS only the speech audio is downloaded, not its song audio and videos.
 Zip files are unpacked into `audio/` and kept. The Parquet files of THAI-SER and nEMO hold the audio and the labels
-together (reading them needs `pyarrow`); `scripts/evaluate.py` extracts the audio it needs into `audio/` on its first run.
+together (reading them needs `pyarrow`); `scripts/emotion2vec/evaluate.py` extracts the audio it needs into `audio/` on
+its first run.
 ESD is for research only: before using it, complete the licence form on its
 [GitHub page](https://github.com/HLTSingapore/Emotional-Speech-Data) and email it to the authors.
 Several licences forbid commercial use or sharing copies, so use the data for research only; `data/` is git-ignored
@@ -283,7 +295,7 @@ Every script reads `mode` from this file; scripts that run the model use the dev
 ## 5. Run inference
 
 ```bash
-python scripts/inference.py
+python scripts/emotion2vec/inference.py
 ```
 
 Settings in `config/config.yaml`: `mode` and `devices` choose the hardware (set `devices.mac: cpu` to force the CPU),
@@ -383,7 +395,7 @@ What to expect:
 ## 6. Evaluate on the datasets
 
 ```bash
-python scripts/evaluate.py
+python scripts/emotion2vec/evaluate.py
 ```
 
 Settings, in the `evaluation` section of `config/config.yaml`:
@@ -404,17 +416,19 @@ evaluation:
                                   # the others show the acted emotion
 ```
 
-Each dataset has a loader in `scripts/eval_datasets.py` that reads its labels and maps them to emotion2vec+ classes;
-to evaluate on a new dataset, add a loader there. For each dataset the script writes:
+Each dataset has a loader in `scripts/common/eval_datasets.py` that reads its labels and maps them to emotion2vec+
+classes; to evaluate on a new dataset, add a loader there. For each dataset the script writes:
 
 - `reports/<dataset>_emotion2vec_plus_large.md`: accuracy, results per emotion, confusion matrices (figures in
   `reports/figures/` and tables), comparison with human listeners where the dataset has their labels, and caveats.
 - `outputs/<dataset>_emotion2vec_plus_large_predictions.csv`: one row per clip (not in git) with the audio path, the
   labels, the model's prediction, whether it is correct, and all class probabilities. The JSON file next to it
-  describes the columns and holds the metrics; [docs/crema_d.md](docs/crema_d.md) explains the CREMA-D columns in Chinese.
-- [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side,
-  every dataset's confusion matrix in one figure (`reports/figures/emotion2vec_plus_large_summary_confusion.png`), and
-  a comparison on the emotions that every dataset has.
+  describes the columns and holds the metrics and the ground-truth labels (`labels`, in the order of the
+  confusion-matrix rows); [docs/crema_d.md](docs/crema_d.md) explains the CREMA-D columns in Chinese.
+- [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md): every dataset side by side
+  (with its language, its ground-truth labels and whether it is in emotion2vec+'s training data), every dataset's
+  confusion matrix in one figure (`reports/figures/emotion2vec_plus_large_summary_confusion.png`), and a comparison on
+  the emotions that every dataset has.
 
 A dataset whose results for the same model and `limit` are already in `outputs/` is skipped, so after adding a
 dataset the script evaluates only the new one; set `overwrite: true` to evaluate again. The summary always covers
@@ -432,9 +446,9 @@ happy, neutral, other, sad, surprised and `<unk>`. Each loader maps its dataset'
 | nEMO | 6, column `emotion`: neutral, anger, fear, happiness, sadness, surprised | neutral → neutral, anger → angry, fear → fearful, happiness → happy, sadness → sad, surprised → surprised | disgusted, other, `<unk>` |
 | MESS | 4, first letter of the file name: `A`ngry, `C`alm, `H`appy, `S`ad | A → angry, **C (calm) → neutral, the closest class**, H → happy, S → sad | disgusted, fearful, surprised, other, `<unk>` |
 | ESD (excluded for now) | 5, folder name: Neutral, Angry, Happy, Sad, Surprise (the Mandarin transcripts say 中立, 生气, 快乐, 伤心, 惊喜) | Neutral → neutral, Angry → angry, Happy → happy, Sad → sad, Surprise → surprised | disgusted, fearful, other, `<unk>` |
-| RAVDESS | 8, third number of the file name: 01 neutral, 02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised | neutral, happy, sad, angry, fearful and surprised keep their names, disgust → disgusted; **calm has no match, so its 192 clips are left out** | other, `<unk>` |
+| RAVDESS | 8, third number of the file name: 01 neutral, 02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised | neutral, happy, sad, angry, fearful and surprised keep their names, disgust → disgusted, **calm → neutral, the closest class** (so neutral has 96 + 192 clips) | other, `<unk>` |
 | TESS | 7, last word of the file name: angry, disgust, fear, happy, neutral, ps, sad | angry, happy, neutral and sad keep their names, disgust → disgusted, fear → fearful, **ps (pleasant surprise) → surprised** | other, `<unk>` |
-| JL-Corpus | 10, second part of the file name: angry, excited, happy, neutral, sad (primary); anxious, apologetic, assertive, concerned, encouraging (secondary) | angry, happy, neutral and sad keep their names; **excited and the five secondary emotions have no match, so their 1,440 clips are left out** | disgusted, fearful, surprised, other, `<unk>` |
+| JL-Corpus | 10, second part of the file name: angry, excited, happy, neutral, sad (primary); anxious, apologetic, assertive, concerned, encouraging (secondary) | angry, happy, neutral and sad keep their names; **excited stays excited, and a prediction of happy or surprised counts as correct** (a composite label, below); **the five secondary emotions have no match, so their 1,200 clips are left out** | disgusted, fearful, other, `<unk>` |
 
 How the nine probabilities become a prediction:
 
@@ -445,24 +459,42 @@ How the nine probabilities become a prediction:
   that the dataset does not have (for example surprised on CREMA-D) counts as wrong.
 - **Listeners' votes** (CREMA-D, MCAE-SPPS, THAI-SER) use the same mapping; for a tied vote, any of the tied emotions
   counts.
-- Some labels do not match exactly. MESS's *calm* is scored as *neutral*. Clips of emotions that the model does not
-  have are left out: THAI-SER's *frustrated* (and a listeners' vote of *frustrated* can never match), RAVDESS's
-  *calm*, and JL-Corpus's *excited* and secondary emotions. TESS's *pleasant surprise* and ESD's Mandarin label for
-  Surprise, 惊喜, both mean a pleasant surprise, while the model's class is called 吃惊 (surprised).
+- **Composite labels**: a label without a matching class can keep its name and accept several classes (`accept` in
+  the loader). JL-Corpus's *excited* accepts happy or surprised: an excited clip counts as correct when the prediction
+  is either (also with all 9 classes), surprised is one of JL-Corpus's prediction classes for that reason, and chance
+  level counts both (24% instead of 20%). In the report, such a label has its own row in the confusion matrix
+  (*excited (happy or surprised)*), whose cells that count as correct are in bold and, in the figure, outlined (bold
+  text alone is hard to see in a light cell); for precision, recall and macro F1,
+  a correct excited clip counts as a clip of the class predicted and a wrong one as happy (macro F1 leaves out
+  surprised, which no clip is acted, as long as the model never predicts it).
+- Some labels do not match exactly. MESS's and RAVDESS's *calm* are scored as *neutral*, and JL-Corpus's *excited* as
+  happy or surprised. Clips of emotions that the model does not have are left out: THAI-SER's *frustrated* (and a
+  listeners' vote of *frustrated* can never match) and JL-Corpus's secondary emotions. TESS's *pleasant surprise* and
+  ESD's Mandarin label for Surprise, 惊喜, both mean a pleasant surprise, while the model's class is called 吃惊
+  (surprised).
 
 Results:
 
-| Dataset | Language | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote | In EmoBox |
-|---|---|---|---|---|---|---|
-| [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | 7,442 | 6 (16.7%) | **86.5%** | 89.6% | yes |
-| [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | 6,675 | 7 (14.3%) | **61.3%** | 61.3% | no |
-| [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 4,481 | 6 (16.7%) | **52.0%** | – | no |
-| [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | 4 (25.0%) | **40.8%** | – | no |
+| Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote |
+|---|---|---|---|---|---|---|---|
+| [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | angry, disgusted, fearful, happy, neutral, sad | yes | 7,442 | 6 (16.7%) | **86.5%** | 89.6% |
+| [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | neutral, happy, angry, fearful, sad, disgusted, surprised | no | 6,675 | 7 (14.3%) | **61.3%** | 61.3% |
+| [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | angry, fearful, happy, neutral, sad, surprised | no | 4,481 | 6 (16.7%) | **52.0%** | – |
+| [MESS](reports/mess_emotion2vec_plus_large.md) | English | angry, happy, neutral, sad | no | 1,800 | 4 (25.0%) | **40.8%** | – |
+| [RAVDESS](reports/ravdess_emotion2vec_plus_large.md) | English | neutral, happy, sad, angry, fearful, disgusted, surprised | yes | 1,440 | 7 (14.3%) | **92.1%** | – |
+| [TESS](reports/tess_emotion2vec_plus_large.md) | English | angry, disgusted, fearful, happy, neutral, surprised, sad | yes | 2,800 | 7 (14.3%) | **85.5%** | – |
+| [JL-Corpus](reports/jl_corpus_emotion2vec_plus_large.md) | English (New Zealand) | angry, happy, neutral, sad, excited (happy or surprised) | yes | 1,200 | 5 (24.0%) | **92.5%** | – |
 
-*Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that publish
-listeners' labels (for MCAE-SPPS the two agree by construction, because only clips that listeners recognised were
-kept). CREMA-D is in EmoBox, which emotion2vec+ was trained from, so its result is optimistic; the other three are a
-more realistic picture.
+*Ground-truth labels*: the acted emotions under their emotion2vec+ names (*neutral* includes MESS's and RAVDESS's
+*calm*, TESS's *surprised* is its *pleasant surprise*, and JL-Corpus's *excited* is a composite label, see above), in
+the order of the confusion-matrix rows. *In emotion2vec+ training data (EmoBox)*: *yes* means that the dataset is in
+EmoBox, whose data fine-tuned emotion2vec+ seed, the first model in the chain that led to emotion2vec+ large, so the
+model has probably seen its clips; *no* means that it is not in EmoBox, although earlier exposure cannot be ruled out
+completely (emotion2vec+ large was later trained on pseudo-labelled data whose sources are not published). The
+results of CREMA-D, RAVDESS, TESS and JL-Corpus are therefore optimistic; MCAE-SPPS, nEMO and MESS give a more
+realistic picture. *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets
+that publish listeners' labels (for MCAE-SPPS the two agree by construction, because only clips that listeners
+recognised were kept).
 
 ESD and THAI-SER are left out of the evaluation for now (`exclude`): ESD's licence is research-only and forbids
 sharing it, it has no listener test, and it is in EmoBox; THAI-SER is in Thai, which matters less for this project.
@@ -470,35 +502,39 @@ Their data stays in `data/`; their earlier reports are in [reports/archive/](rep
 sample: 97.0%; THAI-SER: 63.2%) and their predictions in `outputs/archive/`. Remove a dataset from `exclude` to
 evaluate it again.
 
-RAVDESS, TESS and JL-Corpus have loaders, checked on 20 clips each, but are not evaluated in full yet. To evaluate
-only them, set `datasets: [ravdess, tess, jl_corpus]`; they are in EmoBox, so expect optimistic results.
+RAVDESS, TESS and JL-Corpus, the three English datasets added last, are all in EmoBox, and their results are high, as
+expected. TESS's two speakers reach 99% to 100% on six emotions, but none of its 400 *pleasant surprise* clips comes
+out as surprised (70% are predicted as fearful); JL-Corpus counts only its five primary emotions.
 
 The datasets have different emotions, and some emotions are much harder than others. On the four emotions that every
 dataset has (angry, happy, neutral and sad; chance 25%), counting only clips of these emotions and taking the most
 probable of the four as the prediction (also in the [summary](reports/emotion2vec_plus_large_summary.md)):
 
-| Dataset | Language | Clips | Accuracy, 4 shared emotions | In EmoBox |
-|---|---|---|---|---|
-| [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | 4,900 | **93.2%** | yes |
-| [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | 4,297 | **87.8%** | no |
-| [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | 3,076 | **67.8%** | no |
-| [MESS](reports/mess_emotion2vec_plus_large.md) | English | 1,800 | **40.8%** | no |
+| Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Accuracy, 4 shared emotions |
+|---|---|---|---|---|---|
+| [TESS](reports/tess_emotion2vec_plus_large.md) | English | angry, disgusted, fearful, happy, neutral, surprised, sad | yes | 1,600 | **100.0%** |
+| [JL-Corpus](reports/jl_corpus_emotion2vec_plus_large.md) | English (New Zealand) | angry, happy, neutral, sad, excited (happy or surprised) | yes | 960 | **94.7%** |
+| [CREMA-D](reports/crema_d_emotion2vec_plus_large.md) | English | angry, disgusted, fearful, happy, neutral, sad | yes | 4,900 | **93.2%** |
+| [RAVDESS](reports/ravdess_emotion2vec_plus_large.md) | English | neutral, happy, sad, angry, fearful, disgusted, surprised | yes | 864 | **92.5%** |
+| [MCAE-SPPS](reports/mcae_spps_emotion2vec_plus_large.md) | Mandarin | neutral, happy, angry, fearful, sad, disgusted, surprised | no | 4,297 | **87.8%** |
+| [nEMO](reports/nemo_emotion2vec_plus_large.md) | Polish | angry, fearful, happy, neutral, sad, surprised | no | 3,076 | **67.8%** |
+| [MESS](reports/mess_emotion2vec_plus_large.md) | English | angry, happy, neutral, sad | no | 1,800 | **40.8%** |
 
-CREMA-D, which is in EmoBox, still comes first, but MCAE-SPPS, which is not, is close behind: its lower overall result
-comes from its three other emotions (recall: fearful 8.5%, disgusted 8.5%, surprised 28.6%). nEMO and MESS differ
-from CREMA-D in more than training data: language (Polish), recording conditions (at home) and, for MESS, *calm*
-scored as *neutral*.
+The four datasets in EmoBox come first (92.5% to 100%), but MCAE-SPPS, which is not, is close behind: its lower
+overall result comes from its three other emotions (recall: fearful 8.5%, disgusted 8.5%, surprised 28.6%). nEMO and
+MESS differ from CREMA-D in more than training data: language (Polish), recording conditions (at home) and, for MESS,
+*calm* scored as *neutral*.
 
 Speed on the M4 Max: for these evaluations the CPU is faster than MPS, because nearly every clip has a different
 length and MPS compiles new kernels for every new length (THAI-SER, now archived: about 140 ms per clip on the CPU,
 about 235 ms on MPS). MPS is fast only for lengths it has seen before (CREMA-D, run many times: 18 ms per clip). MPS also cannot
-process clips longer than about 20 s; the scripts run those on the CPU automatically. On the CPU nEMO takes about
-5 minutes and MESS 12 minutes (its 24,414 Hz audio is slow to resample; TESS has the same rate).
+process clips longer than about 20 s; the scripts run those on the CPU automatically. On the CPU JL-Corpus takes about
+2 minutes, RAVDESS 2.5, nEMO 5, MESS 12 and TESS 23 (MESS's and TESS's 24,414 Hz audio is slow to resample).
 
 ## 7. Results and examples in the browser
 
 ```bash
-python scripts/make_viewer.py
+python scripts/viewer/make_viewer.py
 ```
 
 Settings, in the `viewer` section of `config/config.yaml`: `correct` and `wrong` (how many clips of each kind,
@@ -506,19 +542,26 @@ default 10 and 10), `seed` (the same seed always picks the same clips), `predict
 predictions files), `exclude` (datasets whose clips are left out; default ESD and THAI-SER), `link_audio`, `out`
 (the page for this machine) and `site` (the public page, see 7.1).
 
-The script writes one self-contained page, `outputs/viewer.html` (audio embedded: about 13 MB with 20 clips from
-each of the four evaluated datasets; open it in any browser). It has three parts:
+The script writes one self-contained page, `outputs/viewer.html` (audio embedded: about 32 MB with 20 clips from
+each of the seven evaluated datasets; open it in any browser). It has three tabs:
 
-- **Results**: the summary of every evaluated dataset, as in
+- **Results** (opens first): the summary of every evaluated dataset, as in
   [`reports/emotion2vec_plus_large_summary.md`](reports/emotion2vec_plus_large_summary.md) (read from the JSON file
-  next to it): the results table, every dataset's confusion matrix (click the figure to enlarge it) and the comparison
-  on the emotions that every dataset has. Click a dataset to jump to its examples.
+  next to it): the results tables, with each dataset's language, ground-truth labels and whether it is in
+  emotion2vec+'s training data, notes on the columns, every dataset's confusion matrix (click the figure to enlarge
+  it) and the comparison on the emotions that every dataset has. Click a dataset to open the Examples tab with that
+  dataset selected.
 - **Examples**: random clips the model got right and wrong (below).
-- **Datasets and licences**: the source, licence and credit of each dataset (`SOURCES` in `scripts/eval_datasets.py`).
+- **Datasets**: the source, licence and credit of each dataset (`SOURCES` in `scripts/common/eval_datasets.py`).
+
+The open tab is part of the page's address (`#results`, `#examples`, `#datasets`), so a link can open a tab directly
+(for example `index.html#examples`) and the browser's back button returns to the previous tab. The tabs also work
+with the keyboard (arrow keys, Home and End). On a phone, a wide table scrolls sideways inside its card.
 
 The examples are a table with one row per clip: play the audio and compare the acted emotion (ground truth) and the listeners' vote with the model's
-prediction and confidence; a ✓ marks the labels the prediction matches, and each row expands to show every class
-probability. You can switch between the two ways of counting a prediction as correct, and filter by result (all,
+prediction and confidence; a ✓ marks the labels the prediction matches (for a composite label such as JL-Corpus's
+*excited*, any class it accepts), and each row expands to show every class probability. You can switch between the
+two ways of counting a prediction as correct, and filter by result (all,
 correct, wrong) and by ground-truth emotion. Clips are picked using the first way (acted emotion). The script prints the seed it
 used, so you can rebuild the same page later. `link_audio: true` links to the audio files instead of embedding them
 (a much smaller page that only works inside this repository).
@@ -526,21 +569,25 @@ used, so you can rebuild the same page later. `link_audio: true` links to the au
 The page is built from the predictions files, so it grows with the project. Every `outputs/*_predictions.csv` (with
 its JSON file) becomes one dataset-and-model run that you can switch between in the page. A new evaluation script
 only has to write the same kind of files: a CSV with `audio_path`, `prediction`, `correct`, a ground-truth column and
-optional `p_<class>` probabilities, plus a JSON file with `dataset`, `model` and the name of the ground-truth column.
-The docstring of `scripts/make_viewer.py` lists the exact format.
+optional `p_<class>` probabilities, plus a JSON file with `dataset`, `model`, the name of the ground-truth column
+and, for composite labels, `accept`.
+The docstring of `scripts/viewer/make_viewer.py` lists the exact format.
 
 ### 7.1 Publish the page with GitHub Pages
 
 The same run writes `site/index.html`, the page for the public: the same results, with embedded audio, but only clips
 of datasets whose licence allows putting them on a public web page (`public_audio` in `SOURCES`). ESD's licence forbids
 giving the data to anyone, so its clips never go on the public page, even if it is evaluated again; a dataset that
-is not in `SOURCES` gets no clips either. The workflow `.github/workflows/pages.yml` publishes only the `site/` folder.
+is not in `SOURCES` gets no clips either. The workflow `.github/workflows/pages.yml`, at the repository root, publishes
+only this `site/` folder.
 
 To turn it on, once: in the repository's Settings > Pages, set Source to "GitHub Actions". After that, every push to
-`main` that changes `site/` publishes the page at https://davidlequnchen.github.io/emotion_recognition/ (the workflow
-can also be run by hand from the Actions tab). Everything in `site/` becomes public, so look at the page before
-pushing it. Each rebuild picks new clips and adds the whole page (about 20 MB) to the git history; set `viewer.seed`
-to keep the same clips.
+`main` that changes `emotion_recognition/site/` publishes the page at
+https://davidlequnchen.github.io/emotion_recognition/ (the workflow can also be run by hand from the Actions tab).
+Everything in `site/` becomes public, so look at the page before pushing it. Each rebuild picks new clips and adds
+the whole page (about 32 MB) to the git history; set `viewer.seed` to keep the same clips. The clips also depend on
+the list of predictions files: a new dataset changes the clips of the datasets after it (`all` sorts them by name), so
+to keep the earlier clips, list the files in `predictions` with the new ones last.
 
 ## Model: emotion2vec+ large
 
@@ -558,8 +605,8 @@ to keep the same clips.
 |---|---|
 | `MPS ... available=False` on the Mac | Python is x86_64 (Rosetta). `platform.machine()` must print `arm64`: reinstall Miniconda for Apple Silicon. |
 | `CUDA ... available=False` on the server | `torch.__version__` must end in `+cu121`: reinstall with `requirements-cuda121.txt`. Otherwise the driver is too old: check `nvidia-smi`. |
-| `ERROR: .../model.pt not found` | Run `python scripts/download_model.py`. |
-| `ERROR: no audio files found` | Run `python scripts/download_data.py`. |
+| `ERROR: .../model.pt not found` | Run `python scripts/emotion2vec/download_model.py`. |
+| `ERROR: no audio files found` | Run `python scripts/common/download_data.py`. |
 | `ERROR: ... file(s) failed` from `download_data.py` | A network error, or GitHub sent an error page instead of the audio (for example a temporary LFS bandwidth limit). Run the same command again: correct files are skipped. |
-| Download from HuggingFace is slow or blocked | Set `download.hub: ms` in `config/config.yaml` and run `python scripts/download_model.py` again. |
+| Download from HuggingFace is slow or blocked | Set `download.hub: ms` in `config/config.yaml` and run `python scripts/emotion2vec/download_model.py` again. |
 | `Notice: ffmpeg is not installed ...` | Printed by FunASR on machines without ffmpeg. Harmless: wav, flac, mp3 and ogg are read without it. To silence it: `conda install -c conda-forge ffmpeg`. |

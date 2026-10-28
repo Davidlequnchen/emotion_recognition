@@ -1,10 +1,10 @@
 # models/
 
 One sub-folder per model. Model files are large, so git ignores them (only the empty
-folder placeholders are tracked). Download them on each machine with:
+folder placeholders are tracked). Download them on each machine with (from the emotion_recognition/ folder):
 
 ```bash
-python scripts/download_model.py   # downloads the model named by `model:` in config/config.yaml
+python scripts/emotion2vec/download_model.py   # downloads the model named by `model:` in config/config.yaml
 ```
 
 | Folder | Source | Status |
@@ -28,7 +28,7 @@ The official release has no `config.json`; `configuration.json` plays that role.
 
 1. Register it under `models:` in `config/config.yaml` (`dir`, `hf_repo`, `ms_repo`).
 2. Make it active: `model: <name>` in the config.
-3. Download it: `python scripts/download_model.py`.
+3. Download it: `python scripts/emotion2vec/download_model.py`.
 
 The other emotion2vec+ sizes (`emotion2vec_plus_base`, `emotion2vec_plus_seed`) use the same
 FunASR code, so they should only need steps 1–3. Other model families will need their own loading code.

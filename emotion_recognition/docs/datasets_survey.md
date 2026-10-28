@@ -1,9 +1,9 @@
-# 与 CREMA-D 同类的情感语音数据集调研
+# 情绪识别公开数据集调研（Emotion Recognition Public Dataset Survey）
 
 英文版：[datasets_survey_en.md](datasets_survey_en.md)（内容相同）。
 
-调研日期：2026-10-23。目标：找到像 CREMA-D 那样"同一句话用不同情绪表达"（排除语义线索）、标签质量高、而且规模更大的数据集，
-用于评估情绪识别模型和音频大模型（audio LLM）。
+调研日期：2026-10-23。目标：调研能用于评估情绪识别模型（emotion2vec+）和音频大模型（audio LLM）的公开情感语音数据集。
+筛选标准：同一句话用不同情绪表达，排除语义线索；标签质量高；规模大；许可和获取方式清楚。
 
 方法：检索论文、官方项目页、GitHub、HuggingFace、Zenodo、OSF 等，汇总数据集信息。
 大小以十进制 GB 计，来自各平台 API 的文件列表或 HTTP 请求；标"约"的是推算值，标"未公开"的是平台没有给出大小。
@@ -11,8 +11,8 @@
 
 ## 0. 要点
 
-- **CREMA-D 本身就在 EmoBox 里**，所以 emotion2vec+ 在 CREMA-D 上的结果不是 held-out 结果。
-  候选清单里的 ESD、MEAD、RAVDESS、TESS、SAVEE、EmoDB、CASIA、Emozionalmente、SUBESCO、JL-Corpus、CaFE、EMOVO、EmoV-DB 也都在 EmoBox 中。
+- **CREMA-D 在 EmoBox 里**，所以很可能是 emotion2vec+ 训练数据的一部分，emotion2vec+ 在 CREMA-D 上的结果偏高（不是严格的 held-out 结果）。
+  调研到的数据集里，ESD、MEAD、RAVDESS、TESS、SAVEE、EmoDB、CASIA、Emozionalmente、SUBESCO、JL-Corpus、CaFE、EMOVO、EmoV-DB 也都在 EmoBox 中。
 - **emotion2vec+ 训练数据的公开程度：**
   - seed 用 EmoBox 的学术数据微调（201 h）。EmoBox 全部约 294 h，具体用了哪些子集没有列出，保守起见把 EmoBox 全部视为模型已见过的数据。
   - base 和 large 用"过滤后的大规模伪标签数据"微调（4,788 h 和 42,526 h）。官方说数据工程细节以后公布，伪标签数据的来源不明，所以任何公开数据都无法 100% 排除。
@@ -38,7 +38,7 @@
 
 **排名理由：**
 
-1. **MCAE-SPPS**：最接近"CREMA-D 加强版"。平行设计，每条有 40 人的感知标签和强度评分；200 个句子的词汇多样性远高于 CREMA-D 的 12 句；
+1. **MCAE-SPPS**：平行设计彻底，每条都有 40 人的感知标签和强度评分；200 个句子的词汇多样性远高于 CREMA-D 的 12 句；
    7 个类别正好对应 emotion2vec+ 的类别。2025 年以后才发布，没有找到它被任何音频大模型用于训练或评测的记录。
    缺点：只有 6 位说话人，许可是 NC（不能商用）。
    引用：Li M, Zhou A, Yan H, Li Q, Ma C, Wu C. *Scientific Data*, 2026, doi:10.1038/s41597-026-06976-z；数据 doi:10.17605/OSF.IO/9JYZC。
@@ -63,6 +63,7 @@
 
 | 数据集（年份，语言） | 规模 / **大小** | 情绪；强度 | 平行设计 | 标签 | 音频；许可 | 已知被哪些音频大模型用过 | 链接 |
 |---|---|---|---|---|---|---|---|
+| CREMA-D ✅（2014，美式英语） | 91 人（48 男 43 女，20–74 岁）/ 7,442 条 / 5.3 h / **0.61 GB**；在 EmoBox 中，很可能是 emotion2vec+ 的训练数据，结果偏高 | 6 类（愤怒、厌恶、恐惧、开心、中性、悲伤）；只有 IEO 一句按低/中/高 3 级强度各录一遍，其余句子和全部中性片段只标未指定（XX） | 12 个句子 × 6 种情绪 | 2,443 名众包评分者，每人评 90 条（30 条只听声音、30 条只看脸、30 条音视频）；只听声音时多数票与表演标签一致率 45.6%，音视频时 76.5%（表演标签当 ground truth） | 16 kHz 单声道（原始含音视频，我们只用音频）；ODbL（单条内容为 DbCL） | [AF1](https://arxiv.org/abs/2402.01831)/[AF2](https://arxiv.org/abs/2503.03983) 零样本评测（训练时明确排除）；[LISTEN](https://arxiv.org/abs/2510.10444)；[VoxEmo](https://arxiv.org/abs/2603.08936) | [GitHub（Git LFS）](https://github.com/CheyneyComputerScience/CREMA-D) |
 | ESD ✅（2021，英语 + 中文） | 20 人 / 35,000 条 / 29.1 h / **2.45 GB**（zip） | 5 类；无强度 | 每人 350 句 × 5 种情绪 | 只有表演标签；论文只用自动情绪识别模型检验（中文 92%，英文 89%），没有人工听辨 | 室内录制，信噪比 > 20 dB，16 kHz；仅限研究，需填表并发邮件申请 | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT（29 h）；[OSUM](https://arxiv.org/abs/2501.13306) 训练和测试；[LISTEN](https://arxiv.org/abs/2510.10444)；[VoxEmo](https://arxiv.org/abs/2603.08936) | [GitHub（许可表 + Google Drive 链接）](https://github.com/HLTSingapore/Emotional-Speech-Data) |
 | MEAD（2020，英语） | 60 人（公开的 Part0 只有 48 人，已确认）/ 31,729 条 / 37.3 h / **音频 3.07 GB**（48 人的 audio.tar）；视频约 0.4 TB | 8 类；3 级强度 | 每种情绪 30 句（3 句通用 + 7 句与该情绪相关 + 20 句一般句），不同情绪用不同的句表；同一情绪的不同强度用相同句子 | 100 人参与的视频评估 | 48 kHz，音视频；按使用条款 | [emotion2vec](https://arxiv.org/abs/2312.15185) 预训练；[VoxEmo](https://arxiv.org/abs/2603.08936) | [Google Drive Part0](https://drive.google.com/drive/folders/1GwXP-KpWOxOenOxITTsURJZQ_1pkd4-j)；[百度网盘（提取码 th8e）](https://pan.baidu.com/s/1zYKz19kmQH6vnO2nogPk4Q)；[GitHub](https://github.com/uniBruce/Mead)（官方项目页现已 404） |
 | RAVDESS ✅（2018，英语） | 24 人 / 1,440 条 / 1.5 h / **语音音频 0.208 GB**；全部（含歌唱和视频）25.6 GB | 8 类；2 级强度 | 2 个句子 | 每个文件评 10 次（共 247 人） | 48 kHz，音视频；CC BY-NC-SA | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT；[AF1](https://arxiv.org/abs/2402.01831)/[AF2](https://arxiv.org/abs/2503.03983) 零样本评测 | [Zenodo 1188976](https://zenodo.org/records/1188976) |
@@ -143,7 +144,7 @@
 
 ## 6. 已下载到本地（2026-10-23；ESD 为 2026-10-26；RAVDESS、TESS、JL-Corpus 为 2026-10-27）
 
-在 `config/config.yaml` 里把 `download.dataset` 设为数据集名称（`all` 表示全部），然后运行 `python scripts/download_data.py`。每个文件都按托管平台公布的校验值核对过（ESD 和 JL-Corpus 例外，见表格最后一列），
+在 `config/config.yaml` 里把 `download.dataset` 设为数据集名称（`all` 表示全部），然后运行 `python scripts/common/download_data.py`。每个文件都按托管平台公布的校验值核对过（ESD 和 JL-Corpus 例外，见表格最后一列），
 中断后重新运行同一条命令即可续传（ESD 和 JL-Corpus 各是一个 zip，中断后会从头下载）。数据都在 `data/` 下，默认不进 git（多个许可禁止分发）；为了给打不开这些网站的电脑使用，MCAE-SPPS、nEMO、TESS 和 JL-Corpus 暂时例外，见 README。
 
 | 数据集 | `download.dataset` | 本地位置 | 内容（实测） | 校验 |
@@ -152,11 +153,13 @@
 | THAI-SER | `thai_ser` | `data/thai_ser/` | 29 个 parquet（12.71 GB），共 27,854 行；音频和标签在同一个文件里：最多 4 路麦克风的音频（`mic_clip`、`mic_con`、`mic_middle`、`mic_zoom`），以及指定情绪、多数票情绪、一致率、演员信息等列 | 按 HuggingFace 上的 SHA-256 核对 |
 | nEMO | `nemo` | `data/nemo/` | 2 个 parquet（0.53 GB），共 4,481 行：音频、情绪、原始文本和规范化文本、说话人、性别、年龄 | 按 HuggingFace 上的 SHA-256 核对 |
 | MESS | `mess` | `data/mess/` | 1,800 个 WAV（24,414 Hz 单声道，1.7–3.7 秒，共 1.3 h），解压在 `audio/`。官方没有附命名规则，以下是根据文件名统计推断的：首字母是情绪（`A` 愤怒、`C` 平静、`H` 开心、`S` 悲伤，各 450 条），第 2 个字母是性别（`M` / `F`），随后的数字是说话人编号（每种性别 1–3），再后面是句子编号（`V`、`T`、`M` 加两位数字）；例如 `HM1V10_SCR.wav` | 按 Zenodo 的 MD5 核对 |
+| CREMA-D | `crema_d`（`download.crema_d: full`） | `data/crema_d/` | 7,442 个 WAV（实测 16 kHz 单声道，1.3–5.0 秒，共 5.3 h），在 `AudioWAV/`；标签（句子、情绪、强度代码）编码在文件名里；听众的众包多数票在 `processedResults/summaryTable.csv` | 按 Git LFS 指针给出的 SHA-256 逐个核对（锚定 commit `1658cd3`，2025-03-21） |
 | ESD | `esd` | `data/esd/` | 35,000 个 WAV（16 kHz 单声道，1.1–8.1 秒，共 29.1 h：中文 15.7 h，英语 13.4 h），解压在 `audio/Emotion Speech Dataset/`；20 位说话人，`0001`–`0010` 说中文，`0011`–`0020` 说英语；每人把同一套 350 句话用 5 种情绪各说一遍，按 `<说话人>/<情绪>/<说话人>_<编号>.wav` 存放，情绪文件夹为 `Neutral`、`Angry`、`Happy`、`Sad`、`Surprise`；每位说话人的文本和情绪标签在 `<说话人>/<说话人>.txt`（制表符分隔：编号、文本、情绪；中文说话人的标签是中文，如"中立""生气"） | Google Drive 不公布校验值：先用 zip 自带的 CRC 自检，再核对脚本里固定的 SHA-256 |
 | RAVDESS | `ravdess` | `data/ravdess/` | 1,440 个 WAV（48 kHz，其中 5 个是双声道；2.9–5.3 秒，共 1.5 h），解压在 `audio/Actor_<编号>/`；文件名是 7 组数字，如 `03-01-05-01-01-01-22.wav`：模态（03 = 只有音频）、声道（01 = 说话）、情绪（01 中性、02 平静、03 开心、04 悲伤、05 愤怒、06 恐惧、07 厌恶、08 惊讶）、强度（01 普通、02 强烈；中性只有普通）、句子（01 "Kids are talking by the door"，02 "Dogs are sitting by the door"）、第几遍（01、02）、演员（01–24，单数为男，双数为女） | 按 Zenodo 的 MD5 核对；只下载语音音频的 zip（不含歌唱和视频） |
 | TESS | `tess` | `data/tess/` | 2,800 个 WAV（24,414 Hz 单声道，只有 `OAF_food_fear.wav` 是 96 kHz；1.3–3.0 秒，共 1.6 h），直接放在文件夹里；文件名为"说话人_单词_情绪"，如 `OAF_back_angry.wav`：说话人 `OAF`（64 岁；`OA_bite_neutral.wav` 是写错前缀的同一人）或 `YAF`（26 岁），情绪为 angry、disgust、fear、happy、neutral、ps（pleasant surprise，惊喜）、sad，各 400 条 | 按 Borealis 的 MD5 逐个核对 |
 | JL-Corpus | `jl_corpus` | `data/jl_corpus/` | Kaggle 整包 zip（17,143 个文件），解压在 `audio/`；评估用的是 `audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/`：2,400 个 WAV（44.1 kHz 单声道，1.2–3.8 秒，共 1.4 h），每个配一个转写文本 `.txt`；文件名为"说话人_情绪_句子编号+session_第几遍"，如 `female1_angry_10a_1.wav`：说话人 female1、female2、male1、male2，情绪为主要的 angry、excited、happy、neutral、sad 和次要的 anxious、apologetic、assertive、concerned、encouraging（与论文中次要情绪的名称不完全一样），每人每种 60 条。另有感知测试材料（录音的副本、问卷设计，没有逐条结果，还有一张含参与者个人信息的表）和图片素材（含第三方图库照片），这两部分不要转发 | Kaggle 不公布校验值：先用 zip 自带的 CRC 自检，再核对脚本里固定的 SHA-256 |
 
-这八个数据集在本地共占用约 29.9 GB（THAI-SER 17.3 GB，ESD 5.8 GB，JL-Corpus 2.2 GB）。zip 解压后连同原 zip 一起保留，所以 MCAE-SPPS、MESS、ESD、RAVDESS 和 JL-Corpus 约占下载大小的两倍；
-THAI-SER 和 nEMO 是 parquet 格式（读取需要 `pyarrow`），`scripts/evaluate.py` 第一次运行时会把评估要用的音频解压到各自的 `audio/` 文件夹（THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音）。
+这九个数据集在本地共占用约 30.5 GB（THAI-SER 17.3 GB，ESD 5.8 GB，JL-Corpus 2.2 GB）。zip 解压后连同原 zip 一起保留，所以 MCAE-SPPS、MESS、ESD、RAVDESS 和 JL-Corpus 约占下载大小的两倍；
+THAI-SER 和 nEMO 是 parquet 格式（读取需要 `pyarrow`），`scripts/emotion2vec/evaluate.py` 第一次运行时会把评估要用的音频解压到各自的 `audio/` 文件夹（THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音）。
 ESD 仅限研究使用：使用前要按它的 [GitHub 页面](https://github.com/HLTSingapore/Emotional-Speech-Data)的说明填写许可表，并发邮件给作者。
+ESD 和 THAI-SER 虽然都已下载，但目前被 `config/config.yaml` 的 `evaluation.exclude` 排除在评估之外，暂不参与评估；它们之前的评估报告在 `reports/archive/`。
