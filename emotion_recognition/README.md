@@ -58,6 +58,7 @@ emotion_recognition/
 │   │   ├── download_data.py    # downloads CREMA-D (test clips or full) and eight more datasets, checks every file
 │   │   ├── join_parts.py       # joins dataset files committed in 90 MiB parts, checks their SHA-256
 │   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> emotion2vec+ classes)
+│   ├── llm_eval/               # audio LLMs (GPT Realtime, Gemini): prompts, data loader, answer parser
 │   ├── emotion2vec/            # the emotion2vec+ pipeline
 │   │   ├── download_model.py   # downloads a model from HuggingFace or ModelScope
 │   │   ├── inference.py        # step-by-step inference
@@ -66,6 +67,7 @@ emotion_recognition/
 │       ├── make_viewer.py      # builds a web page with the results and random right and wrong examples
 │       └── templates/          # viewer.html, the page template used by make_viewer.py
 ├── site/index.html             # the public results page (built by make_viewer.py, published by GitHub Pages)
+├── test_scripts/               # informal one-off checks, e.g. of the OpenAI API (see its README)
 ├── requirements.txt            # common packages (both machines)
 ├── requirements-mac.txt        # PyTorch for Apple Silicon (MPS + CPU)
 └── requirements-cuda121.txt    # PyTorch for NVIDIA GPUs, CUDA 12.1
@@ -588,6 +590,21 @@ Everything in `site/` becomes public, so look at the page before pushing it. Eac
 the whole page (about 32 MB) to the git history; set `viewer.seed` to keep the same clips. The clips also depend on
 the list of predictions files: a new dataset changes the clips of the datasets after it (`all` sorts them by name), so
 to keep the earlier clips, list the files in `predictions` with the new ones last.
+
+## 8. Audio LLMs (in progress)
+
+`scripts/llm_eval/` will evaluate two audio LLMs, GPT Realtime (`gpt-realtime`, `gpt-realtime-2.1`) and Google
+Gemini, on the same clips and labels as emotion2vec+: each clip is sent with a prompt that asks for one of the seven
+emotions (angry, disgusted, fearful, happy, neutral, sad, surprised), the same list for every dataset. The parts
+that call no API are ready: the prompts (`prompts.yaml`, with a system and a user prompt), a data loader that takes
+the same clips as the evaluation (`llm.limit`, default 200 per dataset, sampled like `evaluation.limit`) and
+converts each clip to the format of the API (24 kHz 16-bit mono PCM for Realtime, a 16 kHz WAV file for Gemini),
+and a parser for the answers. `python scripts/llm_eval/data_loader.py` previews the first clips of each dataset
+without calling any API; the settings are in the `llm` section of `config/config.yaml`. The models choose from all
+seven emotions, so the emotion2vec+ number to compare with is its accuracy on all 9 classes, not the main result.
+A dataset whose licence forbids giving its audio to others (ESD) is never sent to an API. Details:
+[scripts/llm_eval/README.md](scripts/llm_eval/README.md). Quick checks of the OpenAI key and the Realtime API are
+in [test_scripts/](test_scripts/README.md).
 
 ## Model: emotion2vec+ large
 

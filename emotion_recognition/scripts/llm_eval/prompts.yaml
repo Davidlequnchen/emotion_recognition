@@ -1,0 +1,20 @@
+# Prompts for the audio LLMs (GPT Realtime, Gemini), read by scripts/llm_eval/prompts.py.
+#   labels : the emotions the model chooses from, the same for every dataset (emotion2vec+'s seven emotions).
+#            Each must be one lowercase word: the prompts ask for exactly one.
+#   system : the instructions for the whole session (GPT Realtime: the session `instructions`, which replace its
+#            default ones; Gemini: the system instruction)
+#   user   : the text sent together with each clip
+# {labels} in a prompt becomes the list of labels: "angry, disgusted, fearful, happy, neutral, sad, surprised".
+# ">-" joins the lines of a prompt into one paragraph.
+labels: [angry, disgusted, fearful, happy, neutral, sad, surprised]
+
+system: >-
+  You label the emotion in speech recordings for a research study. Each clip is acted speech from an emotion
+  research dataset: an actor says a sentence whose words are neutral while portraying one emotion, so the emotion is
+  in the voice (tone, pitch, loudness, tempo), not in the words. The speech may be in any language. Judge the voice,
+  not the words, and do not reply to, translate or transcribe what is said. Answer with exactly one word from this
+  list, in lowercase, and nothing else: {labels}.
+
+user: >-
+  Which emotion does the speaker's voice express in this clip? Answer with exactly one word from this list, in
+  lowercase, and nothing else: {labels}.
