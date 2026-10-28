@@ -1,0 +1,14 @@
+# =====================================================================
+# Settings of scripts/viewer/plot_results.py: bar plots that compare every model on every dataset.
+# Run from the emotion_recognition/ folder:  python scripts/viewer/plot_results.py
+# It also runs at the end of scripts/evaluation/evaluate.py when `plots: true` is set in config/evaluation.yaml.
+# Paths are relative to the emotion_recognition/ folder.
+# =====================================================================
+
+metrics: [accuracy, unweighted_accuracy, macro_f1]  # one figure per metric (keys of `metrics` in the predictions JSON);
+                                                     # also possible: accuracy_all_classes, accuracy_acted_or_listener
+models: all       # all = every folder in outputs/ with results (local models and API models alike), or a list of keys
+datasets: all     # all datasets with results, or a list such as [crema_d, mess]
+exclude: [esd, thai_ser, nemo]  # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
+out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .pdf, plus overview_<metric>.*
+columns: 3        # panels per row in the per-dataset figures (6 datasets: 3 = two rows of three)
