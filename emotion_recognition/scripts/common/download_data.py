@@ -1,7 +1,7 @@
 """Download the speech emotion datasets of this project into data/.
 
-Usage:
-    python scripts/download_data.py
+Usage (from the emotion_recognition/ folder):
+    python scripts/common/download_data.py
 Settings are in the `download` section of config/config.yaml:
     dataset: crema_d   with  crema_d: samples   -> the 6 CREMA-D test clips in data/samples/ (default)
     dataset: crema_d   with  crema_d: full      -> all 7,442 CREMA-D clips and label files in data/crema_d/
@@ -43,7 +43,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "config.yaml"
 DATA = ROOT / "data"
 

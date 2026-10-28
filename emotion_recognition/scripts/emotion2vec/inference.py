@@ -4,8 +4,8 @@ Minimal speech emotion recognition with emotion2vec+ (PyTorch, via FunASR).
 Every step prints what it does, so you can check that Python, PyTorch, the
 device (Apple GPU / NVIDIA GPU / CPU) and the model are all in order.
 
-Usage:
-    python scripts/inference.py
+Usage (from the emotion_recognition/ folder):
+    python scripts/emotion2vec/inference.py
 Settings are in config/config.yaml: `mode` and `devices` choose the hardware, `inference.audio` the
 audio file or folder.
 """
@@ -19,7 +19,7 @@ import soundfile as sf
 import torch
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]  # repository root; paths in the config are relative to it
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/); config paths are relative to it
 CONFIG = ROOT / "config" / "config.yaml"
 AUDIO_EXTS = {".wav", ".flac", ".mp3", ".ogg"}
 MODEL_FILES = ["model.pt", "config.yaml", "configuration.json", "tokens.txt"]
@@ -97,7 +97,7 @@ def main():
     for name in MODEL_FILES:
         f = model_dir / name
         if not f.exists():
-            sys.exit(f"ERROR: {f} not found. Download the model first: python scripts/download_model.py")
+            sys.exit(f"ERROR: {f} not found. Download the model first: python scripts/emotion2vec/download_model.py")
         print(f"  {name:<19}: {f.stat().st_size / 1e6:,.2f} MB")
 
     from funasr import AutoModel
@@ -136,7 +136,7 @@ def main():
     else:
         files = [audio_path] if audio_path.is_file() else []
     if not files:
-        sys.exit(f"ERROR: no audio files found at {audio_path}. Download the test clips: python scripts/download_data.py")
+        sys.exit(f"ERROR: no audio files found at {audio_path}. Download the test clips: python scripts/common/download_data.py")
     for f in files:
         info = sf.info(f)
         print(f"  {f.name:<24} {info.samplerate} Hz, {info.channels} ch, {info.duration:.2f} s")

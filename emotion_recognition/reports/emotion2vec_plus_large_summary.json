@@ -9,6 +9,15 @@
       "clips": 7442,
       "total_clips": 7442,
       "emotions": 6,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "chance": 0.166667,
       "in_emobox": true,
       "metrics": {
         "accuracy": 0.864553,
@@ -27,6 +36,16 @@
       "clips": 6675,
       "total_clips": 6675,
       "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "angry",
+        "fearful",
+        "sad",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
       "in_emobox": false,
       "metrics": {
         "accuracy": 0.613483,
@@ -45,6 +64,15 @@
       "clips": 4481,
       "total_clips": 4481,
       "emotions": 6,
+      "labels": [
+        "angry",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.166667,
       "in_emobox": false,
       "metrics": {
         "accuracy": 0.519527,
@@ -60,12 +88,98 @@
       "clips": 1800,
       "total_clips": 1800,
       "emotions": 4,
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "chance": 0.25,
       "in_emobox": false,
       "metrics": {
         "accuracy": 0.407778,
         "unweighted_accuracy": 0.407778,
         "macro_f1": 0.352239,
         "accuracy_9_classes": 0.386667
+      }
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 1440,
+      "total_clips": 1440,
+      "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_emobox": true,
+      "metrics": {
+        "accuracy": 0.920833,
+        "unweighted_accuracy": 0.922867,
+        "macro_f1": 0.922045,
+        "accuracy_9_classes": 0.920833
+      }
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 2800,
+      "total_clips": 2800,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "surprised",
+        "sad"
+      ],
+      "chance": 0.142857,
+      "in_emobox": true,
+      "metrics": {
+        "accuracy": 0.855357,
+        "unweighted_accuracy": 0.855357,
+        "macro_f1": 0.798306,
+        "accuracy_9_classes": 0.845
+      }
+    },
+    {
+      "dataset": "JL-Corpus",
+      "key": "jl_corpus",
+      "language": "English (New Zealand)",
+      "clips": 1200,
+      "total_clips": 1200,
+      "emotions": 5,
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad",
+        "excited"
+      ],
+      "chance": 0.24,
+      "accept": {
+        "excited": [
+          "happy",
+          "surprised"
+        ]
+      },
+      "in_emobox": true,
+      "metrics": {
+        "accuracy": 0.925,
+        "unweighted_accuracy": 0.925,
+        "macro_f1": 0.922668,
+        "accuracy_9_classes": 0.925
       }
     }
   ],
@@ -74,7 +188,10 @@
     "CREMA-D",
     "MCAE-SPPS",
     "nEMO",
-    "MESS"
+    "MESS",
+    "RAVDESS",
+    "TESS",
+    "JL-Corpus"
   ],
   "acted_or_listener": [
     "CREMA-D"
@@ -87,6 +204,26 @@
   ],
   "shared": [
     {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 1600,
+      "sample": false,
+      "accuracy": 1.0,
+      "unweighted_accuracy": 1.0,
+      "in_emobox": true
+    },
+    {
+      "dataset": "JL-Corpus",
+      "key": "jl_corpus",
+      "language": "English (New Zealand)",
+      "clips": 960,
+      "sample": false,
+      "accuracy": 0.946875,
+      "unweighted_accuracy": 0.946875,
+      "in_emobox": true
+    },
+    {
       "dataset": "CREMA-D",
       "key": "crema_d",
       "language": "English",
@@ -94,6 +231,16 @@
       "sample": false,
       "accuracy": 0.932041,
       "unweighted_accuracy": 0.931004,
+      "in_emobox": true
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 864,
+      "sample": false,
+      "accuracy": 0.924769,
+      "unweighted_accuracy": 0.928819,
       "in_emobox": true
     },
     {

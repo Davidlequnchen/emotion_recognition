@@ -1,20 +1,24 @@
 """
 Build a static HTML page with the evaluation results and random clips a model got right and wrong.
 
-The page starts with the summary of every evaluated dataset (the tables and confusion matrices of
-reports/<model>_summary.md, read from the .json next to it). Below, you can play each example clip and compare
-its labels (e.g. the acted emotion and the listeners' vote) with the model's prediction and probabilities.
+The page has three tabs. Results (the default): the summary of every evaluated dataset (the tables, with each
+dataset's language, ground-truth labels and whether it is in emotion2vec+'s training data, and the confusion matrices
+of reports/<model>_summary.md, read from the .json next to it); clicking a dataset opens its examples. Examples:
+play each example clip and compare its labels (e.g. the acted emotion and the listeners' vote) with the model's
+prediction and probabilities. Datasets: the source, licence and credit of each dataset. The open tab is in the URL
+hash (#results, #examples, #datasets), so a tab can be linked and the browser's back button works.
 It is a single self-contained file (outputs/viewer.html, audio embedded) that opens in any browser.
 
 The same run also writes the public version for GitHub Pages (viewer.site, e.g. site/index.html): the same page,
 with embedded audio, but only with the clips of datasets whose licence allows putting them on a public web page
-(`public_audio` in SOURCES of scripts/eval_datasets.py; ESD's does not). The results of all datasets are shown.
+(`public_audio` in SOURCES of scripts/common/eval_datasets.py; ESD's does not). The results of all datasets
+are shown.
 
-Input: the per-clip predictions written by an evaluation script, scripts/evaluate.py.
+Input: the per-clip predictions written by an evaluation script, scripts/emotion2vec/evaluate.py.
 Every predictions CSV becomes one "run" (one dataset + one model) that you can switch between in
 the page, so new datasets and models appear automatically. If a dataset and model have a full run and a sample
 (evaluation.limit), the page uses the one with the most clips. A predictions CSV needs:
-    audio_path       audio file, relative to the repository root
+    audio_path       audio file, relative to the emotion_recognition/ folder
     prediction       the model's answer
     correct...       one or more True/False columns whose names start with "correct", e.g. correct and
                      correct_acted_or_listener; the first one decides which clips count as right or wrong
@@ -23,10 +27,11 @@ the page, so new datasets and models appear automatically. If a dataset and mode
     p_<class>        (optional) the model's probability for each class
 Any other column (e.g. listener_vote) is shown as an extra label. The JSON file next to the CSV
 gives "dataset", "model", "ground_truth" and, optionally, "correct_columns" (a display name for
-each correct... column) and "columns" (a description of each column).
+each correct... column), "columns" (a description of each column) and "accept" (composite labels, e.g.
+{"excited": ["happy", "surprised"]}: a ground truth of excited also matches a prediction of happy or surprised).
 
-Usage:
-    python scripts/make_viewer.py
+Usage (from the emotion_recognition/ folder):
+    python scripts/viewer/make_viewer.py
 Settings (which predictions, datasets to leave out, how many clips, seed, linked or embedded audio, output files)
 are in the `viewer` section of config/config.yaml.
 """
@@ -41,11 +46,12 @@ from pathlib import Path
 import soundfile as sf
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
 from eval_datasets import SOURCES
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "config.yaml"
-TEMPLATE = ROOT / "scripts" / "templates" / "viewer.html"
+TEMPLATE = ROOT / "scripts" / "viewer" / "templates" / "viewer.html"
 AUDIO_TYPES = {".wav": "audio/wav", ".flac": "audio/flac", ".mp3": "audio/mpeg", ".ogg": "audio/ogg"}
 
 
@@ -79,7 +85,8 @@ def load_run(csv_path, n_correct, n_wrong, rng):
 
 
 def load_summaries():
-    """The summary of each model (reports/<model>_summary.json, written by scripts/evaluate.py), figure embedded."""
+    """The summary of each model (reports/<model>_summary.json, written by scripts/emotion2vec/evaluate.py), figure
+    embedded."""
     summaries = []
     for f in sorted((ROOT / "reports").glob("*_summary.json")):
         summary = json.loads(f.read_text(encoding="utf-8"))
@@ -131,7 +138,7 @@ def main():
     exclude = settings["exclude"] or []
     files = [f for f in files if json.loads(f.with_suffix(".json").read_text(encoding="utf-8")).get("key") not in exclude]
     if not files:
-        sys.exit("ERROR: no predictions found. Run an evaluation first: python scripts/evaluate.py")
+        sys.exit("ERROR: no predictions found. Run an evaluation first: python scripts/emotion2vec/evaluate.py")
 
     print("Building the example viewer")
     if exclude:
@@ -149,7 +156,7 @@ def main():
         runs.append(run)
 
     summaries = load_summaries()
-    print(f"  summary     : {', '.join(s['model'] for s in summaries) or 'none yet (run scripts/evaluate.py)'}")
+    print(f"  summary     : {', '.join(s['model'] for s in summaries) or 'none yet (run scripts/emotion2vec/evaluate.py)'}")
 
     # The page for this machine, then the public one: only clips that may be shared, audio always embedded
     write_page(out, runs, summaries, seed, link_audio)

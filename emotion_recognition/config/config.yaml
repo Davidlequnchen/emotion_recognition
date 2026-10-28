@@ -1,7 +1,8 @@
 # =====================================================================
 # Project configuration. Every script reads its settings from this file
 # (there are no command-line options): edit a value, then run
-# `python scripts/<name>.py`.
+# `python scripts/<group>/<name>.py` from the emotion_recognition/ folder.
+# Paths in this file are relative to that folder.
 # =====================================================================
 
 # Hardware mode
@@ -30,7 +31,7 @@ models:
   #   ms_repo: iic/emotion2vec_plus_base
 
 # ---------------------------------------------------------------------
-# scripts/download_model.py and scripts/download_data.py
+# scripts/emotion2vec/download_model.py and scripts/common/download_data.py
 # ---------------------------------------------------------------------
 download:
   hub: hf           # where download_model.py gets the active model: hf (Hugging Face) | ms (ModelScope, faster in mainland China)
@@ -40,13 +41,13 @@ download:
   workers: 8        # parallel downloads
 
 # ---------------------------------------------------------------------
-# scripts/inference.py
+# scripts/emotion2vec/inference.py
 # ---------------------------------------------------------------------
 inference:
   audio: data/samples   # a folder (every audio file in it) or a single file
 
 # ---------------------------------------------------------------------
-# scripts/evaluate.py
+# scripts/emotion2vec/evaluate.py
 # ---------------------------------------------------------------------
 evaluation:
   datasets: all     # all downloaded datasets, or a list such as [crema_d, nemo]
@@ -67,7 +68,7 @@ evaluation:
                                   # the others show the acted emotion
 
 # ---------------------------------------------------------------------
-# scripts/make_viewer.py: a web page with random clips the model got right and wrong
+# scripts/viewer/make_viewer.py: a web page with random clips the model got right and wrong
 # ---------------------------------------------------------------------
 viewer:
   predictions: all  # all = every outputs/*_predictions.csv, or a list of such files

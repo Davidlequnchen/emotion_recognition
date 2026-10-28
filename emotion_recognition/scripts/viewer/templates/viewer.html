@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Template for scripts/make_viewer.py, which fills the JSON block near the end with the results and the selected clips. -->
+<!-- Template for scripts/viewer/make_viewer.py, which fills the JSON block near the end with the results and the selected clips. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -29,6 +29,15 @@
   h1 { font-size: 24px; line-height: 1.2; margin: 0; }
   .sub { color: var(--ink-2); margin: 6px 0 24px; max-width: 72ch; }
 
+  /* Tabs: Results, Examples, Datasets (the open tab is in the URL hash) */
+  .tabs { display: flex; gap: 4px; margin: 0 0 28px; box-shadow: inset 0 -1px 0 var(--line); }
+  .tab { font: inherit; font-weight: 600; color: var(--ink-2); background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 14px; cursor: pointer; white-space: nowrap; }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px 6px 0 0; }
+  .panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 4px; }
+  .panel > h2:first-child { margin-top: 0; }
+
   /* Summary tiles */
   .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
@@ -39,9 +48,9 @@
 
   /* Controls */
   .toolbar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin-bottom: 12px; }
-  .control { display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
-  select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
-  .seg { display: inline-flex; background: var(--chip); border-radius: 9px; padding: 3px; gap: 2px; }
+  .control { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--ink-2); max-width: 100%; }
+  select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; max-width: 100%; }
+  .seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; background: var(--chip); border-radius: 9px; padding: 3px; gap: 2px; }
   .seg button { font: inherit; color: var(--ink-2); background: none; border: 0; border-radius: 7px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
   .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
   .hint { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
@@ -101,10 +110,17 @@
   .results .n { text-align: right; font-variant-numeric: tabular-nums; }
   .results td.n { white-space: nowrap; }
   .results td.name { font-weight: 600; white-space: nowrap; }
+  /* The dataset column stays in view while a wide table scrolls inside its card (phones) */
+  .results td.name, .results th:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface); }
+  .results .labels { min-width: 15em; }
+  .results th.training { min-width: 8.5em; }
   .results tr.linked { cursor: pointer; }
-  .results tr.linked:hover { background: var(--hover); }
+  .results tr.linked:hover, .results tr.linked:hover td.name { background: linear-gradient(var(--hover), var(--hover)) var(--surface); }
   .results tr.linked td.name::after { content: " ›"; color: var(--accent); }
   .results a { color: var(--accent); }
+  .results tr.linked td.name a { color: inherit; text-decoration: none; }
+  .results tr.linked:hover td.name a { text-decoration: underline; }
+  .results a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
   .notes { color: var(--ink-2); font-size: 12.5px; margin: 10px 0 0; padding-left: 18px; max-width: 92ch; }
   .notes li { margin: 3px 0; }
   .figure { margin: 0; background: #fcfcfb; border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; }
@@ -119,8 +135,13 @@
 <main>
   <h1>Emotion recognition: results and examples</h1>
   <p class="sub" id="intro"></p>
-  <section id="summary"></section>
-  <section id="examples">
+  <div class="tabs" id="tabs" role="tablist" aria-label="Sections of this page">
+    <button class="tab" id="tab-results" type="button" role="tab" aria-controls="panel-results" aria-selected="true">Results</button>
+    <button class="tab" id="tab-examples" type="button" role="tab" aria-controls="panel-examples" aria-selected="false" tabindex="-1">Examples</button>
+    <button class="tab" id="tab-datasets" type="button" role="tab" aria-controls="panel-datasets" aria-selected="false" tabindex="-1">Datasets</button>
+  </div>
+  <section class="panel" id="panel-results" role="tabpanel" aria-labelledby="tab-results" tabindex="0"></section>
+  <section class="panel" id="panel-examples" role="tabpanel" aria-labelledby="tab-examples" tabindex="0" hidden>
   <h2>Examples</h2>
   <p class="sub" id="sub"></p>
   <div class="tiles" id="tiles"></div>
@@ -136,7 +157,7 @@
     <tbody id="rows"></tbody>
   </table></div>
   </section>
-  <section id="datasets"></section>
+  <section class="panel" id="panel-datasets" role="tabpanel" aria-labelledby="tab-datasets" tabindex="0" hidden></section>
   <footer id="footer"></footer>
 </main>
 
@@ -147,7 +168,9 @@
   const $ = (id) => document.getElementById(id);
   const pretty = (key) => key.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
   const percent = (p) => `${(100 * p).toFixed(p >= 0.995 || p < 0.005 ? 0 : 1)}%`;
-  const matches = (value, prediction) => value.split(" or ").includes(prediction);  // "a or b" is a tie
+  // "a or b" is a tie; a composite label such as excited also matches the classes it accepts (accept: run.accept)
+  const matches = (value, prediction, accept = {}) =>
+    value.split(" or ").some((v) => v === prediction || (accept[v] ?? []).includes(prediction));
   const ICONS = { play: "M5 3.2v9.6L12.8 8z", pause: "M4 3h3v10H4zM9 3h3v10H9z", chevron: "M3.5 6l4.5 4.5L12.5 6l-1-1-3.5 3.5L4.5 5z" };
 
   // Create an element with properties and children; data is always inserted as text, never as HTML
@@ -189,12 +212,13 @@
 
   function probabilities(ex, run) {
     const truth = ex.labels[run.ground_truth];
+    const accepted = run.accept?.[truth] ?? [];  // the classes a composite ground truth such as excited accepts
     const sorted = Object.entries(ex.probs).sort((a, b) => b[1] - a[1]);
-    const keep = sorted.filter(([name, p]) => p >= 0.01 || name === truth || name === ex.labels.prediction);
+    const keep = sorted.filter(([name, p]) => p >= 0.01 || name === truth || accepted.includes(name) || name === ex.labels.prediction);
     const grid = el("div", { className: "probs" });
     for (const [name, p] of keep) {
       grid.append(
-        el("span", { textContent: name === truth ? `${name} (ground truth)` : name }),
+        el("span", { textContent: name === truth ? `${name} (ground truth)` : accepted.includes(name) ? `${name} (accepted for ${truth})` : name }),
         el("div", { className: "track" }, el("div", { className: `fill${name === ex.labels.prediction ? " pred" : ""}`, style: `width: ${100 * p}%` })),
         el("span", { className: "num", textContent: percent(p) }));
     }
@@ -221,7 +245,7 @@
           el("div", { className: "meta", textContent: ex.duration ? `${ex.duration.toFixed(1)} s` : "" }),
           el("div", { className: "progress" }, bar)))),
       ...labelKeys.map((key) => el("td", {}, ex.labels[key]
-        ? el("span", { className: "chip" }, ex.labels[key], matches(ex.labels[key], prediction) ? el("span", { className: "ok", textContent: "✓", title: "the prediction matches this label" }) : null)
+        ? el("span", { className: "chip" }, ex.labels[key], matches(ex.labels[key], prediction, run.accept) ? el("span", { className: "ok", textContent: "✓", title: "the prediction matches this label" }) : null)
         : el("span", { className: "meta", textContent: "–" }))),
       el("td", {}, el("span", { className: "chip pred", textContent: prediction })),
       el("td", {}, p === undefined ? null : el("div", { className: "conf" },
@@ -288,35 +312,52 @@
   // ---- Results: one summary per model (from reports/<model>_summary.json) and the datasets' sources ----
   const pct = (x) => (x === null || x === undefined) ? "–" : `${(100 * x).toFixed(1)}%`;
   const sampleOf = (d) => d.total_clips > d.clips ? ` of ${d.total_clips.toLocaleString()}` : "";
-  function resultsTable(columns, rows) {  // columns: [heading, numeric]; rows: <tr> elements
+  // Ground-truth labels in the order of the confusion-matrix rows; a composite label names the classes it accepts
+  const labelText = (d) => d.labels?.length ? d.labels.map((x) => d.accept?.[x] ? `${x} (${d.accept[x].join(" or ")})` : x).join(", ") : "–";
+  const TRAINING = "In emotion2vec+ training data (EmoBox)";
+  function resultsTable(columns, rows) {  // columns: [heading, class ("n": numeric)]; rows: <tr> elements
     return el("div", { className: "table-wrap" }, el("table", { className: "results" },
-      el("thead", {}, el("tr", {}, ...columns.map(([text, numeric]) => el("th", { className: numeric ? "n" : "", textContent: text })))),
+      el("thead", {}, el("tr", {}, ...columns.map(([text, cls]) => el("th", { className: cls ?? "", textContent: text })))),
       el("tbody", {}, ...rows)));
   }
-  function datasetRow(key, model, cells) {  // a row that shows the dataset's examples when clicked, if the page has them
-    const index = DATA.runs.findIndex((r) => r.key === key && r.model === model);
-    const tr = el("tr", { className: index >= 0 ? "linked" : "", title: index >= 0 ? "Show example clips of this dataset" : "No example clips of this dataset on this page" }, ...cells);
-    if (index >= 0) tr.addEventListener("click", () => { $("run").value = String(index); selectRun(index); $("examples").scrollIntoView({ behavior: "smooth" }); });
+  // A row whose dataset opens its example clips in the Examples tab, if the page has them: the name is a link
+  // (#examples, reachable with the keyboard) and the whole row can be clicked
+  function datasetRow(d, model, cells) {
+    const index = DATA.runs.findIndex((r) => r.key === d.key && r.model === model);
+    const name = el("td", { className: "name" }, index >= 0 ? el("a", { href: "#examples", textContent: d.dataset }) : d.dataset);
+    const tr = el("tr", { className: index >= 0 ? "linked" : "", title: index >= 0 ? `Listen to example clips of ${d.dataset}` : "No example clips of this dataset on this page" }, name, ...cells);
+    if (index >= 0) tr.addEventListener("click", (e) => {
+      e.preventDefault();  // the link's own navigation; openTab sets the hash
+      $("run").value = String(index);
+      selectRun(index);
+      openTab("examples");
+      $("tab-examples").focus({ preventScroll: true });
+    });
     return tr;
   }
-  const td = (text, numeric) => el("td", { className: numeric ? "n" : "", textContent: text });
+  const td = (text, cls) => el("td", { className: cls ?? "", textContent: text });
 
   function renderSummary(s) {
     const listeners = s.datasets.some((d) => d.metrics.accuracy_acted_or_listener !== undefined);
+    // Composite labels, e.g. "JL-Corpus's excited (happy or surprised)"
+    const composite = s.datasets.flatMap((d) => Object.entries(d.accept ?? {}).map(([label, classes]) => `${d.dataset}'s ${label} (${classes.join(" or ")})`));
+    const byKey = Object.fromEntries(s.datasets.map((d) => [d.key, d]));
     const main = resultsTable(
-      [["Dataset"], ["Language"], ["Clips", 1], ["Emotions", 1], ["Chance", 1], ["Accuracy: acted emotion", 1],
-       ...(listeners ? [["Accuracy: acted or listeners' vote", 1]] : []), ["Unweighted accuracy", 1], ["Macro F1", 1], ["In EmoBox"]],
-      s.datasets.map((d) => datasetRow(d.key, s.model, [
-        el("td", { className: "name", textContent: d.dataset }), td(d.language), td(d.clips.toLocaleString() + sampleOf(d), 1),
-        td(String(d.emotions), 1), td(pct(1 / d.emotions), 1), el("td", { className: "n" }, el("b", { textContent: pct(d.metrics.accuracy) })),
-        ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), 1)] : []), td(pct(d.metrics.unweighted_accuracy), 1),
-        td(pct(d.metrics.macro_f1), 1), td(d.in_emobox ? "yes" : "no")])));
+      [["Dataset"], ["Language"], ["Ground-truth labels", "labels"], [TRAINING, "training"], ["Clips", "n"], ["Emotions", "n"], ["Chance", "n"],
+       ["Accuracy: acted emotion", "n"], ...(listeners ? [["Accuracy: acted or listeners' vote", "n"]] : []), ["Unweighted accuracy", "n"], ["Macro F1", "n"]],
+      s.datasets.map((d) => datasetRow(d, s.model, [
+        td(d.language), td(labelText(d), "labels"), td(d.in_emobox ? "yes" : "no"), td(d.clips.toLocaleString() + sampleOf(d), "n"),
+        td(String(d.emotions), "n"), td(pct(d.chance ?? 1 / d.emotions), "n"), el("td", { className: "n" }, el("b", { textContent: pct(d.metrics.accuracy) })),
+        ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), "n")] : []), td(pct(d.metrics.unweighted_accuracy), "n"),
+        td(pct(d.metrics.macro_f1), "n")])));
     const notes = el("ul", { className: "notes" },
+      el("li", { textContent: "Ground-truth labels: the emotions the speakers were asked to portray, named after emotion2vec+'s classes, in the order of the rows of the confusion matrices." }),
+      composite.length ? el("li", { textContent: `Composite labels (no model class; a prediction of any class in brackets counts as correct): ${composite.join(", ")}. Chance level counts these classes, so it is higher than 1 in the number of emotions.` }) : null,
+      el("li", { textContent: `${TRAINING}: yes means that the dataset is in EmoBox, whose data fine-tuned emotion2vec+ seed, the first model in the chain that led to emotion2vec+ large; the model has probably seen these clips, so the result is optimistic. No: not in EmoBox, although earlier exposure cannot be ruled out completely.` }),
       el("li", { textContent: "Accuracy: acted emotion compares the prediction with the emotion the speaker was asked to portray. The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many emotions it has." }),
       listeners ? el("li", { textContent: "Accuracy: acted or listeners' vote also accepts the listeners' majority vote; only datasets that publish listeners' labels have it." }) : null,
-      el("li", { textContent: "In EmoBox: the dataset was probably part of the model's training data, so its result is optimistic." }),
       s.datasets.some((d) => d.total_clips > d.clips) ? el("li", { textContent: "Clips such as 3,500 of 35,000: evaluated on a sample taken at even intervals within each emotion, not on every clip." }) : null,
-      el("li", { textContent: "Click a dataset to listen to example clips (› marks the datasets with clips on this page)." }));
+      el("li", { textContent: "Click a dataset to listen to its example clips in the Examples tab (› marks the datasets with clips on this page)." }));
     const parts = [el("h2", { textContent: `Results of ${s.model} on every dataset` }),
       el("p", { className: "sub", textContent: `${s.datasets.length} datasets, summary of ${s.date}. One prediction per clip, the model as released (no fine-tuning).` }),
       main, notes];
@@ -326,16 +367,17 @@
       parts.push(el("h3", { textContent: "Confusion matrices" }), figure, el("p", { className: "caption", textContent:
         `One matrix per dataset: ${s.figure_datasets.join(", ")}. Rows: acted emotion; columns: predicted emotion; each row adds up to 100%.`
         + (s.acted_or_listener.length ? ` ${s.acted_or_listener.join(", ")}: a prediction also counts as correct when it matches the listeners' vote, and such a clip sits in the row of that vote.` : "")
+        + (composite.length ? " A composite label has its own row, whose bold cells count as correct." : "")
         + " Click the figure to enlarge it." }));
     }
     if (s.shared.length) {
       const n = s.shared_emotions.length;
       parts.push(el("h3", { textContent: `Only the emotions every dataset has: ${s.shared_emotions.join(", ")}` }),
         el("p", { className: "caption", textContent: `The datasets have different emotions, and some are much harder than others. Here every dataset is scored on the same ${n} emotions (chance ${pct(1 / n)}): clips of other emotions are left out, and the prediction is the most probable of these ${n}.` }),
-        resultsTable([["Dataset"], ["Language"], ["Clips", 1], ["Accuracy", 1], ["Unweighted accuracy", 1], ["In EmoBox"]],
-          s.shared.map((d) => datasetRow(d.key, s.model, [el("td", { className: "name", textContent: d.dataset }), td(d.language),
-            td(d.clips.toLocaleString() + (d.sample ? " (sample)" : ""), 1), el("td", { className: "n" }, el("b", { textContent: pct(d.accuracy) })),
-            td(pct(d.unweighted_accuracy), 1), td(d.in_emobox ? "yes" : "no")]))));
+        resultsTable([["Dataset"], ["Language"], ["Ground-truth labels", "labels"], [TRAINING, "training"], ["Clips", "n"], ["Accuracy", "n"], ["Unweighted accuracy", "n"]],
+          s.shared.map((d) => datasetRow(d, s.model, [td(d.language), td(labelText(byKey[d.key] ?? d), "labels"), td(d.in_emobox ? "yes" : "no"),
+            td(d.clips.toLocaleString() + (d.sample ? " (sample)" : ""), "n"), el("td", { className: "n" }, el("b", { textContent: pct(d.accuracy) })),
+            td(pct(d.unweighted_accuracy), "n")]))));
     }
     return parts;
   }
@@ -346,6 +388,7 @@
     if (!keys.length) return [];
     const link = (text, href) => href ? el("a", { href, textContent: text, target: "_blank", rel: "noopener" }) : text;
     return [el("h2", { textContent: "Datasets and licences" }),
+      el("p", { className: "sub", textContent: "Where each dataset comes from, its licence and the credit its authors ask for. A dataset's clips are on this page only if its licence allows it." }),
       resultsTable([["Dataset"], ["Licence"], ["Credit"], ["Clips on this page"]], keys.map((key) => {
         const src = DATA.sources[key];
         const shown = DATA.runs.some((r) => r.key === key);
@@ -364,19 +407,52 @@
     render();
   }
 
+  // ---- Tabs: the open tab is in the URL hash (#results, #examples, #datasets), so a tab can be linked and the
+  // browser's back button returns to the previous tab ----
+  const TABS = ["results", "examples", "datasets"];
+  const shownTabs = () => TABS.filter((t) => !$(`tab-${t}`).hidden);
+  const tabInHash = () => shownTabs().includes(location.hash.slice(1)) ? location.hash.slice(1) : "results";
+  function showTab(name) {
+    for (const t of TABS) {
+      $(`tab-${t}`).setAttribute("aria-selected", String(t === name));
+      $(`tab-${t}`).tabIndex = t === name ? 0 : -1;  // only the open tab is in the Tab order; arrow keys move between tabs
+      $(`panel-${t}`).hidden = t !== name;
+    }
+    if (name !== "examples") player.pause();
+  }
+  function openTab(name) {  // a user's choice: a new history entry, and the tabs scrolled into view if above the window
+    showTab(name);
+    if (location.hash !== `#${name}`) location.hash = name;
+    if ($("tabs").getBoundingClientRect().top < 0) $("tabs").scrollIntoView();
+  }
+  window.addEventListener("hashchange", () => showTab(tabInHash()));
+  for (const t of TABS) $(`tab-${t}`).addEventListener("click", () => openTab(t));
+  $("tabs").addEventListener("keydown", (e) => {
+    const tabs = shownTabs(), k = tabs.indexOf(e.target.id.replace("tab-", ""));
+    const next = { ArrowLeft: k - 1, ArrowRight: k + 1, Home: 0, End: tabs.length - 1 }[e.key];
+    if (k < 0 || next === undefined) return;
+    e.preventDefault();
+    const name = tabs[(next + tabs.length) % tabs.length];
+    openTab(name);
+    $(`tab-${name}`).focus();
+  });
+
   const models = [...new Set([...DATA.summaries.map((s) => s.model), ...DATA.runs.map((r) => r.model)])];
-  $("intro").textContent = `Speech emotion recognition with ${models.join(", ")}: the results on every evaluated dataset, then random clips it got right and wrong.`;
-  $("summary").replaceChildren(...DATA.summaries.flatMap(renderSummary));
-  $("datasets").replaceChildren(...renderDatasets());
+  $("intro").textContent = `Speech emotion recognition with ${models.join(", ")}: the results on every evaluated dataset, random clips it got right and wrong, and where the datasets come from.`;
+  $("panel-results").replaceChildren(...(DATA.summaries.length ? DATA.summaries.flatMap(renderSummary)
+    : [el("p", { className: "empty", textContent: "No results yet: run scripts/emotion2vec/evaluate.py, then this script again." })]));
+  $("panel-datasets").replaceChildren(...renderDatasets());
   $("run").replaceChildren(...DATA.runs.map((r, i) => el("option", { value: i, textContent: `${r.dataset} / ${r.model}` })));
   $("run-control").hidden = DATA.runs.length < 2;
   $("run").addEventListener("change", (e) => selectRun(Number(e.target.value)));
   $("emotion").addEventListener("change", (e) => { state.emotion = e.target.value; render(); });
-  $("footer").append("Generated by ", el("code", { textContent: "scripts/make_viewer.py" }),
+  $("footer").append("Generated by ", el("code", { textContent: "scripts/viewer/make_viewer.py" }),
     ". To get the same clips again, set ", el("code", { textContent: `viewer.seed: ${DATA.seed}` }), " in ",
     el("code", { textContent: "config/config.yaml" }), ".");
-  $("examples").hidden = !DATA.runs.length;
+  $("tab-examples").hidden = !DATA.runs.length;
+  $("tab-datasets").hidden = !Object.keys(DATA.sources).length;
   if (DATA.runs.length) selectRun(0);
+  showTab(tabInHash());
 </script>
 </body>
 </html>

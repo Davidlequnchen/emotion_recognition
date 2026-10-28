@@ -2,15 +2,19 @@
 Evaluation datasets: one loader per dataset turns its files and labels into a common list of clips.
 
 Every loader returns an EvalSet whose labels use emotion2vec+ class names
-(angry, disgusted, fearful, happy, neutral, sad, surprised). To evaluate on a new dataset, write a
-loader below and add it to LOADERS; scripts/evaluate.py, its report and scripts/make_viewer.py then
-work without other changes. Download the data first with scripts/download_data.py.
+(angry, disgusted, fearful, happy, neutral, sad, surprised). A label that has no such class can stay
+as it is when the dataset says which classes count as correct for it (EvalSet.accept, e.g. JL-Corpus's
+excited: happy or surprised); accepted(ds, label) gives these classes for any label, and sample(ds, limit)
+the clips that an evaluation with evaluation.limit uses. To evaluate on a new dataset, write a
+loader below and add it to LOADERS; scripts/emotion2vec/evaluate.py, its report and
+scripts/viewer/make_viewer.py then work without other changes. Download the data first with
+scripts/common/download_data.py.
 """
 import csv
 from dataclasses import dataclass, field
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 DATA = ROOT / "data"
 NOT_IN_EMOBOX = ("**Not in EmoBox**, so emotion2vec+ seed was not fine-tuned on it. emotion2vec+ large was later "
                  "trained on 40k hours of pseudo-labelled data whose sources are not published, so earlier exposure "
@@ -25,13 +29,45 @@ class EvalSet:
     key: str            # short name used in file names, e.g. "crema_d"
     name: str           # display name, e.g. "CREMA-D"
     language: str
-    classes: list       # the emotions that are evaluated, as emotion2vec+ class names
-    clips: list         # one dict per clip: {"audio": Path, "acted": class name, "listener": label(s) or ""}
+    classes: list       # the model classes a prediction is chosen from, as emotion2vec+ class names
+    clips: list         # one dict per clip: {"audio": Path, "acted": label, "listener": label(s) or ""}; "acted" is
+                        # a class name, or a composite label from accept
     ground_truth: str   # what "acted" means here, for the report
     listener: str = ""  # what "listener" means here, if the dataset has listeners' labels
+    # Composite labels: a ground-truth label that is not a model class -> the classes that count as a correct
+    # prediction for it, e.g. {"excited": ["happy", "surprised"]} (the first one is used where one class is needed)
+    accept: dict = field(default_factory=dict)
     notes: list = field(default_factory=list)    # extra setup lines for the report (mappings, exclusions)
     caveats: list = field(default_factory=list)  # caveats for the report
     in_emobox: bool = False
+
+
+def accepted(ds, label):
+    """The model classes that count as a correct prediction for a ground-truth label: the label itself when it is a
+    model class, or the classes of a composite label (ds.accept)."""
+    return set(ds.accept.get(label, [label]))
+
+
+def truth_labels(ds):
+    """The ground-truth labels that the dataset's clips have, in a fixed order: its classes first (in the order of
+    ds.classes), then its composite labels (in the order of ds.accept). The rows of the confusion matrices."""
+    found = {c["acted"] for c in ds.clips}
+    unknown = found - set(ds.classes) - set(ds.accept)
+    if unknown:
+        raise ValueError(f"{ds.name}: the labels {sorted(unknown)} are neither in `classes` nor in `accept`")
+    return [label for label in [*ds.classes, *ds.accept] if label in found]
+
+
+def sample(ds, limit):
+    """The clips that scripts/emotion2vec/evaluate.py evaluates with evaluation.limit: every clip when limit is null
+    or not smaller than the dataset, otherwise `limit` clips taken at even intervals, ground-truth label by label (in
+    the order of truth_labels, and in file order within each), so that every label is sampled even when the file
+    order repeats (TESS: the 7 emotions of each word in a row)."""
+    if not limit or limit >= len(ds.clips):
+        return ds.clips
+    order = truth_labels(ds)
+    ordered = sorted(ds.clips, key=lambda c: order.index(c["acted"]))  # a stable sort keeps the file order
+    return ordered[::len(ordered) // limit][:limit]
 
 
 def extract_audio(parquet_files, columns, out, pick):
@@ -191,22 +227,25 @@ def esd():
 
 def ravdess():
     root = DATA / "ravdess" / "audio"  # Actor_<nn>/03-01-<emotion>-<intensity>-<statement>-<repetition>-<actor>.wav
-    codes = {"01": "neutral", "03": "happy", "04": "sad", "05": "angry", "06": "fearful", "07": "disgusted",
-             "08": "surprised"}  # "02" is calm, which emotion2vec+ does not have
-    files = sorted(root.glob("Actor_*/*.wav"))
-    clips = [{"audio": f, "acted": codes[f.stem.split("-")[2]], "listener": ""} for f in files
-             if f.stem.split("-")[2] in codes]
+    codes = {"01": "neutral", "02": "neutral", "03": "happy", "04": "sad", "05": "angry", "06": "fearful",
+             "07": "disgusted", "08": "surprised"}  # 02 = calm, scored as neutral
+    # Ordered by emotion code, then actor: acted neutral comes before acted calm, so that a sample (evaluation.limit)
+    # of the neutral clips holds both in proportion (within each actor, 4 neutral clips precede 8 calm ones)
+    files = sorted(root.glob("Actor_*/*.wav"), key=lambda f: (f.stem.split("-")[2], f))
+    clips = [{"audio": f, "acted": codes[f.stem.split("-")[2]], "listener": ""} for f in files]
+    neutral, calm = (sum(f.stem.split("-")[2] == code for f in files) for code in ("01", "02"))
     return EvalSet(
-        "ravdess", "RAVDESS", "English", list(codes.values()), clips,
+        "ravdess", "RAVDESS", "English", list(dict.fromkeys(codes.values())), clips,
         ground_truth="the emotion each actor was asked to portray, from the third number in the file name (01 neutral, "
                      "02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised)",
-        notes=["Label mapping: neutral, happy, sad, angry, fearful and surprised keep their names; disgust = disgusted. "
-               f"Clips acted *calm* ({len(files) - len(clips):,} of {len(files):,}) are left out because emotion2vec+ has "
-               "no such class.",
+        notes=["Label mapping: neutral, happy, sad, angry, fearful and surprised keep their names; disgust = disgusted, "
+               f"and **calm = neutral** (emotion2vec+ has no *calm* class), so neutral has {neutral + calm:,} clips: "
+               f"{neutral:,} acted neutral and {calm:,} acted calm.",
                "24 professional actors (12 female, 12 male) say two sentences, \"Kids are talking by the door\" and "
                "\"Dogs are sitting by the door\", twice in each emotion, at two intensities (normal and strong) except "
                "for neutral."],
         caveats=[IN_EMOBOX,
+                 "*Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.",
                  "Listeners rated every file 10 times (247 listeners). The paper publishes their ratings as recognition "
                  "rates per file, not as a vote for an emotion, so this report has no listeners' labels.",
                  "Audio: 48 kHz WAV, resampled to 16 kHz; 5 files are stereo, and FunASR averages their channels."],
@@ -238,18 +277,25 @@ def tess():
 def jl_corpus():
     # <speaker>_<emotion>_<sentence><session>_<repetition>.wav, e.g. female1_angry_10a_1.wav, with its transcript in .txt
     root = DATA / "jl_corpus" / "audio" / "Raw JL corpus (unchecked and unannotated)" / "JL(wav+txt)"
-    keep = ["angry", "happy", "neutral", "sad"]  # excited and the five secondary emotions have no model class
+    primary = ["angry", "happy", "neutral", "sad", "excited"]  # the five secondary emotions have no model class
     files = sorted(root.glob("*.wav"))
-    clips = [{"audio": f, "acted": f.stem.split("_")[1], "listener": ""} for f in files if f.stem.split("_")[1] in keep]
+    clips = [{"audio": f, "acted": f.stem.split("_")[1], "listener": ""} for f in files
+             if f.stem.split("_")[1] in primary]
     return EvalSet(
-        "jl_corpus", "JL-Corpus", "English (New Zealand)", keep, clips,
+        "jl_corpus", "JL-Corpus", "English (New Zealand)", ["angry", "happy", "neutral", "sad", "surprised"], clips,
         ground_truth="the emotion each speaker was asked to portray, from the second part of the file name",
-        notes=["Only the four primary emotions that emotion2vec+ has: angry, happy, neutral and sad "
-               f"({len(clips):,} of {len(files):,} clips). The fifth primary emotion, *excited*, and the five secondary "
-               "emotions (anxious, apologetic, assertive, concerned, encouraging) have no model class and are left out.",
+        accept={"excited": ["happy", "surprised"]},  # excited has no model class
+        notes=[f"Only the five primary emotions ({len(clips):,} of {len(files):,} clips): angry, happy, neutral and sad "
+               "keep their names; **excited has no model class, so a prediction of happy or surprised counts as "
+               "correct** for it (its label stays excited). The prediction is therefore chosen from angry, happy, "
+               "neutral, sad and surprised, although no clip is acted surprised. The five secondary emotions (anxious, "
+               "apologetic, assertive, concerned, encouraging) have no model class and are left out.",
                "Four trained voice actors of New Zealand English (two female, two male) say the same 15 sentences in "
                "each primary emotion, in two sessions, twice each."],
         caveats=[IN_EMOBOX,
+                 "*Excited* is neither *happy* nor *surprised*: excited clips predicted as happy or surprised count as "
+                 "correct. Surprised is a possible prediction only because of excited, and it is wrong for a clip of "
+                 "any other emotion.",
                  "This is the raw corpus (\"unchecked and unannotated\"). In the authors' perception test (120 listeners) "
                  "about 70% of the primary-emotion clips were recognised; the results per clip are not published, so "
                  "poorly acted clips are included.",
@@ -260,8 +306,8 @@ def jl_corpus():
 LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd,
            "ravdess": ravdess, "tess": tess, "jl_corpus": jl_corpus}
 
-# Source, licence and credit of each dataset, shown on the viewer page (scripts/make_viewer.py). public_audio: the
-# licence allows putting its clips on a public web page. A dataset that is not listed here counts as not allowed.
+# Source, licence and credit of each dataset, shown on the viewer page (scripts/viewer/make_viewer.py). public_audio:
+# the licence allows putting its clips on a public web page. A dataset that is not listed here counts as not allowed.
 CC = "https://creativecommons.org/licenses/"
 SOURCES = {
     "crema_d": {"url": "https://github.com/CheyneyComputerScience/CREMA-D", "public_audio": True,

@@ -1,7 +1,7 @@
 """Download the active model of config/config.yaml into models/<name>/.
 
-Usage:
-    python scripts/download_model.py
+Usage (from the emotion_recognition/ folder):
+    python scripts/emotion2vec/download_model.py
 Settings are in config/config.yaml: `model` names the model to download, `download.hub` where to get it
 (hf = HuggingFace, ms = ModelScope, faster in mainland China).
 """
@@ -9,7 +9,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "config.yaml"
 
 cfg = yaml.safe_load(CONFIG.read_text())

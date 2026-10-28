@@ -1,10 +1,11 @@
-# Survey of emotional speech datasets like CREMA-D
+# Emotion Recognition Public Dataset Survey
 
 English translation of [datasets_survey.md](datasets_survey.md) (Chinese); the two have the same content.
 
-Survey date: 2026-10-23. Goal: find datasets that, like CREMA-D, have the same sentences spoken in different emotions (so
-the words give no clue), high-quality labels and more data, to evaluate emotion recognition models and audio large
-language models (audio LLMs).
+Survey date: 2026-10-23. Goal: survey public emotional speech datasets that can be used to evaluate emotion recognition
+models (emotion2vec+) and audio large language models (audio LLMs).
+Selection criteria: the same sentences spoken in different emotions, so the words give no clue; high-quality labels;
+large size; and a clear licence and way to get the data.
 
 Method: searched papers, official project pages, GitHub, Hugging Face, Zenodo, OSF and similar sources, and collected the
 information on each dataset.
@@ -15,8 +16,8 @@ and "not published" means the platform gives no size.
 
 ## 0. Key points
 
-- **CREMA-D itself is in EmoBox**, so emotion2vec+'s results on CREMA-D are not held-out results.
-  ESD, MEAD, RAVDESS, TESS, SAVEE, EmoDB, CASIA, Emozionalmente, SUBESCO, JL-Corpus, CaFE, EMOVO and EmoV-DB from the candidate list are in EmoBox too.
+- **CREMA-D is in EmoBox**, so it is probably part of emotion2vec+'s training data, and emotion2vec+'s results on CREMA-D are optimistic (not a strict held-out result).
+  Among the surveyed datasets, ESD, MEAD, RAVDESS, TESS, SAVEE, EmoDB, CASIA, Emozionalmente, SUBESCO, JL-Corpus, CaFE, EMOVO and EmoV-DB are in EmoBox too.
 - **What is public about emotion2vec+'s training data:**
   - seed was fine-tuned on the academic data of EmoBox (201 h). EmoBox has about 294 h in total, and the subsets used are not listed, so to be safe all of EmoBox is treated as data the model has seen.
   - base and large were fine-tuned on "filtered large-scale pseudo-labelled data" (4,788 h and 42,526 h). The authors say the data engineering details will be published later; the sources of the pseudo-labelled data are unknown, so no public dataset can be ruled out 100%.
@@ -42,7 +43,7 @@ and "not published" means the platform gives no size.
 
 **Why this ranking:**
 
-1. **MCAE-SPPS**: the closest to "a better CREMA-D". Parallel design, perceptual labels from 40 listeners and intensity ratings for every clip; its 200 sentences have far more lexical variety than CREMA-D's 12;
+1. **MCAE-SPPS**: a thoroughly parallel design, with perceptual labels from 40 listeners and intensity ratings for every clip; its 200 sentences have far more lexical variety than CREMA-D's 12;
    its 7 classes match those of emotion2vec+ exactly. Released only in 2025, and no record was found of any audio LLM trained or evaluated on it.
    Drawbacks: only 6 speakers; NC licence (no commercial use).
    Citation: Li M, Zhou A, Yan H, Li Q, Ma C, Wu C. *Scientific Data*, 2026, doi:10.1038/s41597-026-06976-z; data doi:10.17605/OSF.IO/9JYZC.
@@ -67,6 +68,7 @@ These datasets are in EmoBox, so they cannot serve as clean test sets for emotio
 
 | Dataset (year, language) | Scale / **size** | Emotions; intensity | Parallel design | Labels | Audio; licence | Known use by audio LLMs | Links |
 |---|---|---|---|---|---|---|---|
+| CREMA-D ✅ (2014, American English) | 91 speakers (48 male, 43 female, aged 20–74) / 7,442 clips / 5.3 h / **0.61 GB**; in EmoBox, so probably part of emotion2vec+'s training data, and its result is optimistic | 6 classes (angry, disgusted, fearful, happy, neutral, sad); only one sentence (IEO) has low/medium/high intensity levels, every other clip (including all neutral ones) is unspecified (XX) | 12 sentences × 6 emotions | 2,443 crowd-sourced raters, each rating 90 clips (30 audio only, 30 face only, 30 audio-visual); with audio only, the majority vote agrees with the acted label only 45.6% of the time, 76.5% with audio-visual (the acted label is the ground truth) | 16 kHz mono (originally audio and video; we use audio only); ODbL (individual contents under DbCL) | [AF1](https://arxiv.org/abs/2402.01831)/[AF2](https://arxiv.org/abs/2503.03983) zero-shot evaluation (explicitly excluded from training); [LISTEN](https://arxiv.org/abs/2510.10444); [VoxEmo](https://arxiv.org/abs/2603.08936) | [GitHub (Git LFS)](https://github.com/CheyneyComputerScience/CREMA-D) |
 | ESD ✅ (2021, English + Mandarin) | 20 speakers / 35,000 clips / 29.1 h / **2.45 GB** (zip) | 5 classes; no intensity | 350 sentences × 5 emotions per speaker | acted labels only; the paper checked them only with an automatic emotion recognition model (Mandarin 92%, English 89%), no listening test | recorded indoors, SNR > 20 dB, 16 kHz; research only, apply with a form and an email | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT (29 h); [OSUM](https://arxiv.org/abs/2501.13306) training and test; [LISTEN](https://arxiv.org/abs/2510.10444); [VoxEmo](https://arxiv.org/abs/2603.08936) | [GitHub (licence form + Google Drive link)](https://github.com/HLTSingapore/Emotional-Speech-Data) |
 | MEAD (2020, English) | 60 speakers (the public Part0 has only 48, confirmed) / 31,729 clips / 37.3 h / **audio 3.07 GB** (audio.tar of the 48 speakers); video about 0.4 TB | 8 classes; 3 intensity levels | 30 sentences per emotion (3 common + 7 related to that emotion + 20 general), with a different sentence list for each emotion; the intensities of one emotion use the same sentences | video evaluation with 100 participants | 48 kHz, audio and video; terms of use | [emotion2vec](https://arxiv.org/abs/2312.15185) pre-training; [VoxEmo](https://arxiv.org/abs/2603.08936) | [Google Drive Part0](https://drive.google.com/drive/folders/1GwXP-KpWOxOenOxITTsURJZQ_1pkd4-j); [Baidu Netdisk (extraction code th8e)](https://pan.baidu.com/s/1zYKz19kmQH6vnO2nogPk4Q); [GitHub](https://github.com/uniBruce/Mead) (the official project page now returns 404) |
 | RAVDESS ✅ (2018, English) | 24 speakers / 1,440 clips / 1.5 h / **speech audio 0.208 GB**; everything (with song and video) 25.6 GB | 8 classes; 2 intensity levels | 2 sentences | each file rated 10 times (247 raters in total) | 48 kHz, audio and video; CC BY-NC-SA | [Kimi-Audio](https://arxiv.org/abs/2504.18425) SFT; [AF1](https://arxiv.org/abs/2402.01831)/[AF2](https://arxiv.org/abs/2503.03983) zero-shot evaluation | [Zenodo 1188976](https://zenodo.org/records/1188976) |
@@ -147,7 +149,7 @@ Note: AF1 and AF2 are NVIDIA's Audio Flamingo 1 and 2; emotion2vec is the pre-tr
 
 ## 6. Downloaded locally (2026-10-23; ESD on 2026-10-26; RAVDESS, TESS and JL-Corpus on 2026-10-27)
 
-Set `download.dataset` in `config/config.yaml` to the dataset's name (`all` for all of them), then run `python scripts/download_data.py`. Every file is checked against the checksum its host publishes (except ESD and JL-Corpus, see the last column),
+Set `download.dataset` in `config/config.yaml` to the dataset's name (`all` for all of them), then run `python scripts/common/download_data.py`. Every file is checked against the checksum its host publishes (except ESD and JL-Corpus, see the last column),
 and running the same command again after an interruption resumes the download (ESD and JL-Corpus are single zips and start again from the beginning). The data stays in `data/` and is by default not in git (several licences forbid sharing copies); for a machine that cannot reach these hosts, MCAE-SPPS, nEMO, TESS and JL-Corpus are exceptions for now (see the README).
 
 | Dataset | `download.dataset` | Local folder | Content (measured) | Check |
@@ -156,11 +158,13 @@ and running the same command again after an interruption resumes the download (E
 | THAI-SER | `thai_ser` | `data/thai_ser/` | 29 Parquet files (12.71 GB) with 27,854 rows; audio and labels are in the same files: the audio of up to 4 microphones (`mic_clip`, `mic_con`, `mic_middle`, `mic_zoom`) and columns such as the assigned emotion, the majority emotion, the agreement and actor information | checked against Hugging Face's SHA-256 |
 | nEMO | `nemo` | `data/nemo/` | 2 Parquet files (0.53 GB) with 4,481 rows: audio, emotion, raw and normalised text, speaker, gender, age | checked against Hugging Face's SHA-256 |
 | MESS | `mess` | `data/mess/` | 1,800 WAV files (24,414 Hz mono, 1.7–3.7 s, 1.3 h in total), unpacked into `audio/`. No official naming scheme comes with the data; the following is inferred from the file names: the first letter is the emotion (`A` angry, `C` calm, `H` happy, `S` sad, 450 each), the second letter the gender (`M` / `F`), then the speaker number (1–3 for each gender), then the sentence number (`V`, `T` or `M` plus two digits); e.g. `HM1V10_SCR.wav` | checked against Zenodo's MD5 |
+| CREMA-D | `crema_d` (`download.crema_d: full`) | `data/crema_d/` | 7,442 WAV files (measured 16 kHz mono, 1.3–5.0 s, 5.3 h in total), in `AudioWAV/`; the labels (sentence, emotion, intensity codes) are coded in the file name; the listeners' crowd-sourced majority vote is in `processedResults/summaryTable.csv` | checked individually against the SHA-256 from the Git LFS pointers (pinned at commit `1658cd3`, 2025-03-21) |
 | ESD | `esd` | `data/esd/` | 35,000 WAV files (16 kHz mono, 1.1–8.1 s, 29.1 h in total: Mandarin 15.7 h, English 13.4 h), unpacked into `audio/Emotion Speech Dataset/`; 20 speakers, `0001`–`0010` speak Mandarin and `0011`–`0020` English; each speaker says the same 350 sentences once in each of the 5 emotions, stored as `<speaker>/<emotion>/<speaker>_<number>.wav`, with the emotion folders `Neutral`, `Angry`, `Happy`, `Sad` and `Surprise`; each speaker's text and emotion labels are in `<speaker>/<speaker>.txt` (tab-separated: number, text, emotion; the Mandarin speakers' labels are in Chinese, e.g. 中立, 生气) | Google Drive publishes no checksum: the zip's own CRCs are checked first, then a SHA-256 written in the script |
 | RAVDESS | `ravdess` | `data/ravdess/` | 1,440 WAV files (48 kHz, 5 of them stereo; 2.9–5.3 s, 1.5 h in total), unpacked into `audio/Actor_<nn>/`; the file name is 7 numbers, e.g. `03-01-05-01-01-01-22.wav`: modality (03 = audio only), vocal channel (01 = speech), emotion (01 neutral, 02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised), intensity (01 normal, 02 strong; neutral only normal), sentence (01 "Kids are talking by the door", 02 "Dogs are sitting by the door"), repetition (01, 02), actor (01–24; odd = male, even = female) | checked against Zenodo's MD5; only the speech audio zip is downloaded (no song audio, no videos) |
 | TESS | `tess` | `data/tess/` | 2,800 WAV files (24,414 Hz mono, only `OAF_food_fear.wav` is 96 kHz; 1.3–3.0 s, 1.6 h in total), directly in the folder; the file name is "speaker_word_emotion", e.g. `OAF_back_angry.wav`: speaker `OAF` (aged 64; `OA_bite_neutral.wav` is the same speaker with a misspelt prefix) or `YAF` (aged 26), emotion angry, disgust, fear, happy, neutral, ps (pleasant surprise) or sad, 400 each | each file checked against Borealis's MD5 |
 | JL-Corpus | `jl_corpus` | `data/jl_corpus/` | the Kaggle bundle (17,143 files), unpacked into `audio/`; the evaluation uses `audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/`: 2,400 WAV files (44.1 kHz mono, 1.2–3.8 s, 1.4 h in total), each with its transcript in a `.txt`; the file name is "speaker_emotion_sentence+session_repetition", e.g. `female1_angry_10a_1.wav`: speakers female1, female2, male1, male2; emotions angry, excited, happy, neutral, sad (primary) and anxious, apologetic, assertive, concerned, encouraging (secondary; not quite the names in the paper), 60 clips per speaker and emotion. The bundle also holds perception-test material (copies of the recordings, the survey design without results per clip, and a sheet with personal details of the participants) and picture prompts (including stock photos owned by others): do not share those two parts | Kaggle publishes no checksum: the zip's own CRCs are checked first, then the SHA-256 pinned in the script |
 
-These eight datasets take about 29.9 GB locally (THAI-SER 17.3 GB, ESD 5.8 GB, JL-Corpus 2.2 GB). Zips are kept after unpacking, so MCAE-SPPS, MESS, ESD, RAVDESS and JL-Corpus take about twice their download size;
-THAI-SER and nEMO are Parquet files (reading them needs `pyarrow`), and on its first run `scripts/evaluate.py` extracts the audio it evaluates into each dataset's `audio/` folder (for THAI-SER the studio condenser microphone, or the Zoom recording for online sessions).
+These nine datasets take about 30.5 GB locally (THAI-SER 17.3 GB, ESD 5.8 GB, JL-Corpus 2.2 GB). Zips are kept after unpacking, so MCAE-SPPS, MESS, ESD, RAVDESS and JL-Corpus take about twice their download size;
+THAI-SER and nEMO are Parquet files (reading them needs `pyarrow`), and on its first run `scripts/emotion2vec/evaluate.py` extracts the audio it evaluates into each dataset's `audio/` folder (for THAI-SER the studio condenser microphone, or the Zoom recording for online sessions).
 ESD is for research only: before using it, complete the licence form as described on its [GitHub page](https://github.com/HLTSingapore/Emotional-Speech-Data) and email it to the authors.
+ESD and THAI-SER are both downloaded, but are currently left out of the evaluation by `evaluation.exclude` in `config/config.yaml`; their earlier reports are in `reports/archive/`.
