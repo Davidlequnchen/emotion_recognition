@@ -11,12 +11,15 @@
 mode: auto
 
 models: all       # all registered models, or a list such as [emotion2vec_plus_large, meralion_ser_v1]
+api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
+                  # requests, key in the .env file at the repository root); false: skip them, also when listed
+                  # in `models`
 datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess]
                   # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus)
 exclude: [esd, thai_ser, nemo]  # never evaluated, even with `all`, and left out of the summaries (old results:
                                 # reports/archive/); their data stays in data/
 limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
-                  # sample); null = every clip
+                  # sample); null = every clip. A model's own `limit` in config/models.yaml wins (API models: 200)
 overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/;
                   # true: evaluate it again and replace them. The summaries show every result there,
                   # except those of excluded datasets

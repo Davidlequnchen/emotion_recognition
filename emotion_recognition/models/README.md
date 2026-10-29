@@ -154,3 +154,11 @@ follow these restrictions and pass them on.
 3. Download it: `models: [<key>]` in `config/download_model.yaml`, then `python scripts/common/download_model.py`.
 4. For a machine without Hugging Face: add its large files to FILES at the top of `scripts/common/split_parts.py`, run
    it and commit the parts.
+
+## API models (audio LLMs)
+
+GPT Realtime (`gpt_realtime`) and Gemini (`gemini`) are also in `config/models.yaml`, with `api: true` and the
+`api_model` name instead of a folder: they run at OpenAI and Google, so nothing is downloaded and `download_model.py`
+skips them. Their loaders, `scripts/models/gpt_realtime.py` and `gemini.py` (a placeholder for now), call the API for
+every clip; see section 8 of the [README](../README.md#8-audio-llms).
+
