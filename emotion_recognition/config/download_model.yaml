@@ -3,5 +3,6 @@
 # Run it from the emotion_recognition/ folder: python scripts/common/download_model.py
 # Paths are relative to that folder. Each model's repository and folder are in config/models.yaml.
 # =====================================================================
-models: all       # what download_model.py gets: all registered models, or a list such as [meralion_ser_v1]
+models: all       # what download_model.py gets: all registered models (except the API models, which have nothing to
+                  # download), or a list such as [meralion_ser_v1]
 hub: hf           # hf (Hugging Face) | ms (ModelScope, faster in mainland China; only models with an ms_repo)

@@ -1,43 +1,30 @@
-# Audio LLMs: GPT Realtime and Gemini (in progress)
+# Audio LLMs: prompts, audio and answers
 
-This pipeline evaluates audio LLMs on the same clips and labels as the evaluation of the speech emotion models
-(`scripts/evaluation/evaluate.py`): each clip is sent to the model with a prompt, and the model answers with one
-emotion. The models are GPT Realtime (`gpt-realtime`, `gpt-realtime-2.1`, over WebSocket) and Google Gemini.
-
-So far the folder has the parts that call no API: the prompts, a data loader that prepares the audio in the format
-each API takes, and a parser for the answers. The API runners come next (see the end of this file). Run every command
-from the `emotion_recognition/` folder.
+The audio LLMs run through `scripts/evaluation/evaluate.py`, like the speech emotion models, through their loaders
+`scripts/models/gpt_realtime.py` (GPT Realtime, over WebSocket) and `scripts/models/gemini.py` (Gemini, a placeholder
+for now); how to run them: section 8 of the [README](../../README.md#8-audio-llms). They get the same clips and labels
+as the other models. This folder has the parts they share, which call no API. Run every command from the
+`emotion_recognition/` folder.
 
 | File | What it does |
 |---|---|
 | `prompts.yaml` | The `system` and `user` prompts, and the `labels` the model chooses from |
 | `prompts.py` | Reads `prompts.yaml`, fills the labels into the prompts and checks that no placeholder is left |
-| `data_loader.py` | Yields one item per clip: labels, prompts and the prepared audio. Run on its own, it shows a preview |
+| `data_loader.py` | `prepare_audio(path, format)`: one clip as base64 in the format of the API (used by the loaders). Run on its own, it shows a preview of the items a run would send |
 | `parsing.py` | `parse_label(text, labels)`: turns a model's answer into one label, or None for an invalid answer |
 
 ## Settings
 
-In `config/llm.yaml`:
-
-```yaml
-datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess] (the same names as in
-                  # config/evaluation.yaml)
-exclude: [esd, thai_ser, nemo]  # never sent to a model, even with `all` (default: the same as `exclude` in
-                                # config/evaluation.yaml). A dataset whose licence forbids giving its audio to
-                                # others (ESD) is never sent anyway
-limit: 200        # N clips of each dataset, sampled as with `limit` in config/evaluation.yaml (even intervals
-                  # within each emotion), to keep the API cost low; null = every clip
-audio_format: pcm16_24k  # pcm16_24k = 16-bit PCM at 24 kHz, mono (the only input of the GPT Realtime API)
-                         # | wav16k = a 16 kHz mono 16-bit WAV file (for Gemini); both sent as base64
-prompts: scripts/llm_eval/prompts.yaml  # the system and user prompts and the emotions the model chooses from
-preview: 2        # python scripts/llm_eval/data_loader.py shows this many items of each dataset
-```
+In `config/llm.yaml`: `prompts` (the prompts file), `retries`, `retries_invalid` and `timeout_s` (read by the
+loaders), and the settings of the preview (`datasets`, `exclude`, `limit`, `audio_format`, `preview`). In a run, the
+datasets come from `config/evaluation.yaml` and the number of clips from the model's `limit` in `config/models.yaml`
+(200).
 
 The clips are the ones the model evaluation uses for the same limit: `sample(ds, limit)` in
 `scripts/common/eval_datasets.py` takes clips at even intervals within each ground-truth label. The labels and the
 classes that count as correct also come from there (`accepted(ds, label)`), so the label decisions are the same for
 both kinds of model: RAVDESS's and MESS's *calm* count as *neutral*, TESS's *pleasant surprise* as *surprised*, and
-for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the default limit of 200, the six
+for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the limit of 200, the six
 datasets give 1,200 clips and 48 minutes of audio per model.
 
 ## Prompts
@@ -100,7 +87,7 @@ Done: 6 dataset(s), 1,200 clips, 47.5 min of audio would be sent. Nothing was se
 
 ## The data loader
 
-`items()` in `data_loader.py` is a generator: it prepares each clip only when the runner asks for the next one, so
+`items()` in `data_loader.py` (used by the preview) is a generator: it prepares each clip only when it is asked for, so
 thousands of clips never sit in memory. Each item is a dict with `dataset`, `clip_id` (`<dataset>/<file name>`,
 unique), `audio_path` (relative to this folder, as in the predictions CSV of `evaluate.py`), `acted` (the ground
 truth), `accepted` (the classes that count as correct), `listener` (the listeners' vote, or ""), the filled `system`
@@ -125,8 +112,8 @@ run; for `wav16k` it is large (373 MiB, and about 1.6 GB of memory for a moment 
 `parse_label(text, labels)` lowercases the answer, splits it into words and accepts it when exactly one label, or a
 common variant of one (anger, happiness, sadness, fear, afraid, scared, disgust, surprise and the like), appears in an
 answer of at most 15 words, with no negation. "Neutral." gives neutral, "The speaker sounds angry." angry and
-"Surprise!" surprised; "happy or sad", "I can't tell", "Not happy." and long explanations give None, which the runner
-will count as an invalid answer.
+"Surprise!" surprised; "happy or sad", "I can't tell", "Not happy." and long explanations give None, which
+counts as an invalid answer (asked again once, then the class `invalid`).
 
 ## Data sent to the APIs
 
@@ -134,23 +121,11 @@ Each request gives the clip to OpenAI or Google. The loader never uses a dataset
 its audio to others (`public_audio` in `SOURCES` of `eval_datasets.py`), even when it is not in `exclude`: ESD's
 licence forbids it. Use Gemini on a paid plan: on the free tier Google may use what is sent to improve its products.
 
-## Next steps
+## How a run uses them
 
-- **GPT Realtime runner**: one WebSocket session per clip, as in `test_scripts/check_openai_realtime.py`: set the
-  session's `instructions` to the system prompt, text output only and no turn detection; send one user message with
-  the `input_audio` item and the user prompt; read the answer from `response.done`. Temperature cannot be 0 in the
-  Realtime API.
-- **Gemini runner**: the system prompt as system instruction; the WAV payload and the user prompt as the contents;
-  temperature 0.
-- **Retries**: retry network errors and rate limits with a growing pause; ask again, a fixed small number of times,
-  when `parse_label` returns None; keep every raw answer. Save each answer as soon as it arrives and skip clips that
-  already have one, so that an interrupted run continues without paying twice.
-- **Scoring**: write `outputs/<model>/<dataset>[_sample<N>]_predictions.csv` and `.json` in the format of
-  `evaluate.py` (`audio_path`, `acted_emotion`, `listener_vote`, `prediction`, `correct` = the prediction is in
-  `accepted`, `correct_acted_or_listener`, plus the raw answer; an invalid answer counts as wrong, and the share of
-  invalid answers goes into the metrics), and `reports/<model>/summary.json` like `write_summary` in `evaluate.py`.
-  `scripts/viewer/make_viewer.py` then shows the results and examples without changes; the LLMs give no probabilities,
-  so their rows have no `p_*` columns.
-- **Comparing with emotion2vec+**: the LLMs choose from all seven emotions for every dataset, while the main result
-  of emotion2vec+ takes the most probable of the dataset's own emotions. The closest emotion2vec+ number is its
-  accuracy with all nine classes (in each report).
+`gpt_realtime.py` prepares each clip with `prepare_audio(path, "pcm16_24k")`, opens one WebSocket session per clip
+(the system prompt as the session `instructions`, text output, no turn detection), sends the audio with the user
+prompt and reads the answer from `response.done`. `parse_label` turns it into a label; the loader returns a one-hot
+vector over the seven labels plus `invalid`, and `evaluate.py` scores it like any model, with an answer outside the
+dataset's emotions counted as wrong. Every answer is kept in `outputs/<model>/responses.jsonl` (the cache), so no
+clip is paid twice. The Gemini loader will do the same with `prepare_audio(path, "wav16k")` and the google-genai SDK.

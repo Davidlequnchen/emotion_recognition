@@ -28,7 +28,7 @@ Each clip is read with soundfile, its channels are averaged to mono, it is resam
 Usage (from the emotion_recognition/ folder):
     python scripts/llm_eval/data_loader.py
 prints step by step what the loader does and shows the first items of each dataset (`preview`), without calling any
-API. The API runners will import items() from this file.
+API. The API loaders (scripts/models/gpt_realtime.py) import prepare_audio() from this file.
 """
 import base64
 import functools
@@ -134,7 +134,7 @@ def dataset_items(ds, clips, prompts, audio_format):
 
 def items(settings=None, audio_format=None):
     """Every item for the settings, dataset by dataset (a generator). settings: the parsed config/llm.yaml (None = read
-    it); audio_format: None = `audio_format` there (a runner can ask for the format its API takes)."""
+    it); audio_format: None = `audio_format` there (a caller can ask for the format its API takes)."""
     settings = settings or yaml.safe_load(CONFIG.read_text())
     audio_format = audio_format or settings["audio_format"]
     if audio_format not in RATES:

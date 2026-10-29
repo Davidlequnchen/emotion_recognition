@@ -7,7 +7,7 @@ angry."). parse_label lowercases the answer, splits it into words (spaces and pu
 word to a label: a label itself, or one of its VARIANTS (anger -> angry, happiness -> happy, ...). It returns that
 label when exactly one label appears, the answer has at most MAX_WORDS words and no word negates it ("not",
 "isn't", ...). Anything else gives None: no label ("I can't tell"), two or more ("happy or sad"), a negation, a
-longer answer, an emotion that is not in the list. The runner counts None as an invalid answer.
+longer answer, an emotion that is not in the list. The loaders count None as an invalid answer.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/llm_eval/parsing.py     checks the examples in parse_label's docstring and prints a few more

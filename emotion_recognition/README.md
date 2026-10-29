@@ -43,12 +43,13 @@ script instead. Each step is explained below.
 emotion_recognition/
 ├── config/                     # settings, one YAML file per script (paths in them are relative to this folder)
 │   ├── models.yaml             # the model registry: name, loader, folder, repository and training data of each model
-│   ├── evaluation.yaml         # evaluate.py: hardware mode (auto | mac | cuda), models, datasets, sample size, devices
+│   ├── evaluation.yaml         # evaluate.py: hardware mode (auto | mac | cuda), models (api_models: the paid LLMs),
+│   │                           # datasets, sample size, devices
 │   ├── viewer.yaml             # make_viewer.py: example clips, seed, output pages
 │   ├── plots.yaml              # plot_results.py: metrics, models, datasets of the bar plots
 │   ├── download_model.yaml     # download_model.py: which models, from which hub
 │   ├── download_data.yaml      # download_data.py: which dataset
-│   └── llm.yaml                # scripts/llm_eval/: datasets, sample size, audio format, prompts
+│   └── llm.yaml                # audio LLMs: prompts, retries, timeout (and the settings of the data loader preview)
 ├── data/
 │   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
 │   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
@@ -82,7 +83,8 @@ emotion_recognition/
 │   │   ├── join_parts.py       # joins such parts after git pull (models and datasets), checks their SHA-256
 │   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> the project's classes)
 │   ├── models/                 # one loader per model: emotion2vec.py, meralion_ser.py, melati.py, vox_profile.py
-│   │                           # (+ vox_profile_LICENSE.txt); audio_io.py reads audio as 16 kHz mono
+│   │                           # (+ vox_profile_LICENSE.txt); audio_io.py reads audio as 16 kHz mono;
+│   │                           # gpt_realtime.py and gemini.py (placeholder) call the audio LLMs' APIs
 │   ├── evaluation/
 │   │   └── evaluate.py         # runs every chosen model on every chosen dataset, writes the reports and summaries
 │   ├── emotion2vec/
@@ -475,12 +477,15 @@ Settings, in `config/evaluation.yaml`:
 mode: auto
 
 models: all       # all registered models, or a list such as [emotion2vec_plus_large, meralion_ser_v1]
+api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
+                  # requests, key in the .env file at the repository root); false: skip them, also when listed
+                  # in `models`
 datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess]
                   # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus)
 exclude: [esd, thai_ser, nemo]  # never evaluated, even with `all`, and left out of the summaries (old results:
                                 # reports/archive/); their data stays in data/
 limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
-                  # sample); null = every clip
+                  # sample); null = every clip. A model's own `limit` in config/models.yaml wins (API models: 200)
 overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/;
                   # true: evaluate it again and replace them. The summaries show every result there,
                   # except those of excluded datasets
@@ -721,26 +726,44 @@ For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, 
 
 Each model keeps its colour (colour-blind-safe), bars have black outlines, a hatch marks a dataset in that model's
 training data, a dashed line shows chance level, and a value with * comes from a sample of the dataset. The script
-reads every `outputs/<model>/<dataset>_predictions.json`, so a model evaluated elsewhere, for example GPT Realtime or
-Gemini through their APIs, appears as soon as its JSON files are in `outputs/<its key>/` with the same fields:
-`dataset`, `key`, `language`, `model_name`, `clips`, `total_clips`, `chance`, `in_training_data` and `metrics`
-(`accuracy`, `unweighted_accuracy`, `macro_f1`).
+reads every `outputs/<model>/<dataset>_predictions.json`, so every evaluated model appears, the audio LLMs too
+(section 8).
 
-## 8. Audio LLMs (in progress)
+## 8. Audio LLMs
 
-`scripts/llm_eval/` will evaluate two audio LLMs, GPT Realtime (`gpt-realtime`, `gpt-realtime-2.1`) and Google
-Gemini, on the same clips and labels as the speech emotion models: each clip is sent with a prompt that asks for one
-of the seven emotions (angry, disgusted, fearful, happy, neutral, sad, surprised), the same list for every dataset.
-The parts that call no API are ready: the prompts (`prompts.yaml`, with a system and a user prompt), a data loader
-that takes the same clips as the evaluation (`limit`, default 200 per dataset, sampled like the evaluation's `limit`)
-and converts each clip to the format of the API (24 kHz 16-bit mono PCM for Realtime, a 16 kHz WAV file for Gemini),
-and a parser for the answers. `python scripts/llm_eval/data_loader.py` previews the first clips of each dataset
-without calling any API; the settings are in `config/llm.yaml`. The LLMs choose from all
-seven emotions, so the emotion2vec+ number to compare with is its accuracy on all model classes (in each report), not
-the main result.
-A dataset whose licence forbids giving its audio to others (ESD) is never sent to an API. Details:
-[scripts/llm_eval/README.md](scripts/llm_eval/README.md). Quick checks of the OpenAI key and the Realtime API are
-in [test_scripts/](test_scripts/README.md).
+GPT Realtime runs through `scripts/evaluation/evaluate.py` like the other models, through its loader
+`scripts/models/gpt_realtime.py`; Gemini (`scripts/models/gemini.py`) is a placeholder for now and is skipped with a
+message. Each clip is sent as 24 kHz 16-bit mono PCM with the prompts of `scripts/llm_eval/prompts.yaml`, which ask
+for one of the seven emotions; the one-word answer becomes the prediction.
+
+To run it (paid):
+
+1. Put the key in the `.env` file at the repository root (git-ignored): a line `OPENAI_API_KEY=...`.
+2. In `config/evaluation.yaml`: `api_models: true`, and `models: [gpt_realtime]` (or `all`: the local models, already
+   done, are skipped).
+3. `python scripts/evaluation/evaluate.py`
+
+- **Clips**: `limit: 200` per dataset (the model's `limit` in `config/models.yaml`, which wins over the one in
+  `config/evaluation.yaml`), sampled like any `limit`: about 1,200 clips and 48 minutes of audio for the six datasets.
+  The results are `<dataset>_sample200_*` files. ESD is never sent (its licence).
+- **Cost and time**: one request per clip, one at a time. A 2 s CREMA-D clip took about 190 input tokens (about 20
+  of them audio, the rest the prompts), 3 output tokens and 5.5 s (2026-10-29), so the 1,200 clips take about 2 hours
+  and, at the published gpt-realtime prices, a few US dollars.
+- **Cache**: every answer is saved at once in `outputs/gpt_realtime/responses.jsonl` (raw answer, label, tokens). A
+  clip already answered with the same model and prompts is not sent again, so an interrupted run continues where it
+  stopped and nothing is paid twice. Changing the prompts starts a new set of answers.
+- **Retries** (`config/llm.yaml`): network errors, rate limits and server errors are tried again (`retries: 3`, with
+  a growing pause); an answer that is not exactly one emotion is asked again once (`retries_invalid: 1`), then
+  counts as `invalid`.
+- **Scoring**: an answer that is not one of the dataset's emotions (e.g. surprised on CREMA-D) or `invalid` counts as
+  wrong, and has its own column, *other answer*, in the confusion matrices. The Realtime API does not allow
+  temperature 0, so answers can vary between runs.
+
+The results go where every model's go: `outputs/gpt_realtime/` (predictions CSV and JSON) and `reports/gpt_realtime/`,
+and they appear in `reports/summary.md`, the bar plots and the results page without further steps. The LLMs choose
+from all seven emotions, so their accuracy compares best with the local models' *accuracy with all model classes*
+(in each report). The prompts, the data loader preview and the parser: [scripts/llm_eval/README.md](scripts/llm_eval/README.md).
+Quick checks of the key and the API: [test_scripts/](test_scripts/README.md).
 
 ## Models
 

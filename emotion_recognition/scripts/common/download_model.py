@@ -3,7 +3,7 @@
 Usage (from the emotion_recognition/ folder):
     python scripts/common/download_model.py
 Settings are in config/download_model.yaml:
-    models: all   every model registered in config/models.yaml, or a list of their keys such as [meralion_ser_v1]
+    models: all   every model registered in config/models.yaml (except API models), or a list such as [meralion_ser_v1]
     hub: hf       Hugging Face; ms = ModelScope (faster in mainland China; only for models with an ms_repo)
 Each model's repository is downloaded into its `dir`. Then, if the model's loader (scripts/models/<loader>.py) has a
 prepare() function, it runs: it fetches the small extra files the model needs to load offline (e.g. a base model's
@@ -49,6 +49,11 @@ def main():
     if unknown:
         sys.exit(f"ERROR: unknown model(s) {unknown} in `models` of config/download_model.yaml; use: "
                  f"{', '.join(registry)} or all")
+    api = [k for k in keys if registry[k].get("api")]  # audio LLMs run at their provider: nothing to download
+    if api and wanted != "all":
+        sys.exit(f"ERROR: {', '.join(api)} {'is an API model' if len(api) == 1 else 'are API models'} (api: true in "
+                 "config/models.yaml): there is nothing to download.")
+    keys = [k for k in keys if k not in api]
     if hub not in ("hf", "ms"):
         sys.exit(f"ERROR: `hub` in config/download_model.yaml is {hub!r}; use hf (Hugging Face) or ms (ModelScope)")
     no_ms = [k for k in keys if hub == "ms" and not registry[k].get("ms_repo")]
