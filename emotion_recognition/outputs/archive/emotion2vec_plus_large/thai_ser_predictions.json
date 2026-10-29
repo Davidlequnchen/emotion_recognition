@@ -1,0 +1,52 @@
+{
+  "dataset": "THAI-SER",
+  "key": "thai_ser",
+  "language": "Thai",
+  "model": "emotion2vec_plus_large",
+  "date": "2026-10-23",
+  "clips": 22584,
+  "classes": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "metrics": {
+    "accuracy": 0.63204,
+    "unweighted_accuracy": 0.628057,
+    "macro_f1": 0.625198,
+    "accuracy_all_classes": 0.572839,
+    "accuracy_acted_or_listener": 0.684688,
+    "listeners_vs_acted": 0.64634,
+    "model_vs_listeners": 0.546223
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion assigned to the actor for the scene (`assigned_emo`)",
+    "listener_vote": "the crowd-sourced majority label (`majority_emo`); clips without a majority have none; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 4 emotions evaluated (neutral, angry, happy, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "model_name": "emotion2vec+ large",
+  "in_training_data": false,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ]
+}

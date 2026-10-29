@@ -1,0 +1,68 @@
+{
+  "dataset": "TESS",
+  "key": "tess",
+  "language": "English",
+  "model": "vox_profile_wavlm",
+  "model_name": "Vox-Profile WavLM",
+  "date": "2026-10-29",
+  "clips": 2800,
+  "total_clips": 2800,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "surprised",
+    "sad"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "surprised",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_source": "MSP-Podcast",
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "metrics": {
+    "accuracy": 0.401429,
+    "unweighted_accuracy": 0.401429,
+    "macro_f1": 0.315539,
+    "accuracy_all_classes": 0.387857
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actress was asked to portray, from the last word of the file name (`angry`, `disgust`, `fear`, `happy`, `neutral`, `ps` for pleasant surprise, `sad`)",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, surprised, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 456.1,
+    "ms_per_clip": 162.9,
+    "on_cpu": 0
+  }
+}

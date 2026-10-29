@@ -1,0 +1,67 @@
+{
+  "dataset": "JL-Corpus",
+  "key": "jl_corpus",
+  "language": "English (New Zealand)",
+  "model": "meralion_ser_v1",
+  "model_name": "MERaLiON-SER-v1",
+  "date": "2026-10-29",
+  "clips": 1200,
+  "total_clips": 1200,
+  "classes": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad",
+    "excited"
+  ],
+  "accept": {
+    "excited": [
+      "happy",
+      "surprised"
+    ]
+  },
+  "chance": 0.24,
+  "in_training_data": false,
+  "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "metrics": {
+    "accuracy": 0.759167,
+    "unweighted_accuracy": 0.759167,
+    "macro_f1": 0.772844,
+    "accuracy_all_classes": 0.759167
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray, from the second part of the file name",
+    "prediction": "model prediction: the most probable of the 5 emotions evaluated (angry, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion or is accepted for it (excited: happy or surprised)",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 308.2,
+    "ms_per_clip": 256.8,
+    "on_cpu": 0
+  }
+}

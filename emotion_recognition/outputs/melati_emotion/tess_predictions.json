@@ -1,0 +1,66 @@
+{
+  "dataset": "TESS",
+  "key": "tess",
+  "language": "English",
+  "model": "melati_emotion",
+  "model_name": "Melati",
+  "date": "2026-10-29",
+  "clips": 2800,
+  "total_clips": 2800,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "surprised",
+    "sad"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "surprised",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_source": "nine acted corpora, JL-Corpus among them",
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "surprised",
+    "fearful",
+    "disgusted"
+  ],
+  "metrics": {
+    "accuracy": 0.504286,
+    "unweighted_accuracy": 0.504286,
+    "macro_f1": 0.434398,
+    "accuracy_all_classes": 0.504286
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actress was asked to portray, from the last word of the file name (`angry`, `disgust`, `fear`, `happy`, `neutral`, `ps` for pleasant surprise, `sad`)",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, surprised, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 1052.7,
+    "ms_per_clip": 376.0,
+    "on_cpu": 0
+  }
+}

@@ -68,7 +68,7 @@ emotion_recognition/
 │   ├── meralion_ser_v1/        # MERaLiON-SER-v1: its Hugging Face repository; weights in git as 90 MiB parts
 │   ├── melati_emotion/         # Melati: the same
 │   └── vox_profile_whisper/ vox_profile_wavlm/  # the two Vox-Profile models: the same
-├── outputs/                    # per-clip predictions (outputs/<model>/) and the page viewer.html (not in git)
+├── outputs/                    # per-clip predictions (outputs/<model>/, in git); viewer.html, the local page (not in git)
 ├── reports/
 │   ├── summary.md              # every model on every dataset (.json: the same numbers)
 │   ├── <model>/                # one report per dataset (e.g. emotion2vec_plus_large/crema_d.md) and summary.md
@@ -509,7 +509,7 @@ the model's key in the registry, e.g. `emotion2vec_plus_large`):
 - `reports/<model>/<dataset>.md`: accuracy, unweighted accuracy, macro F1, results per emotion, confusion matrices
   (figures in `reports/<model>/figures/` and tables), comparison with human listeners where the dataset has their
   labels, and caveats.
-- `outputs/<model>/<dataset>_predictions.csv`: one row per clip (not in git) with the audio path, the labels, the
+- `outputs/<model>/<dataset>_predictions.csv`: one row per clip (in git) with the audio path, the labels, the
   model's prediction, whether it is correct, and all class probabilities. The JSON file next to it describes the
   columns and holds the metrics, the run time and the ground-truth labels (`labels`, in the order of the
   confusion-matrix rows); [docs/crema_d.md](docs/crema_d.md) explains the CREMA-D columns in Chinese.

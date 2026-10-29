@@ -1,0 +1,60 @@
+{
+  "dataset": "MESS",
+  "key": "mess",
+  "language": "English",
+  "model": "meralion_ser_v1",
+  "model_name": "MERaLiON-SER-v1",
+  "date": "2026-10-28",
+  "clips": 1800,
+  "total_clips": 1800,
+  "classes": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "labels": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.25,
+  "in_training_data": false,
+  "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "metrics": {
+    "accuracy": 0.745,
+    "unweighted_accuracy": 0.745,
+    "macro_f1": 0.746711,
+    "accuracy_all_classes": 0.745
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray, from the first letter of the file name (`A`ngry, `C`alm, `H`appy, `S`ad)",
+    "prediction": "model prediction: the most probable of the 4 emotions evaluated (angry, happy, neutral, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 458.4,
+    "ms_per_clip": 254.7,
+    "on_cpu": 0
+  }
+}

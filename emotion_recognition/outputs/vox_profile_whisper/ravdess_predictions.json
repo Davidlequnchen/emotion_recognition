@@ -1,0 +1,68 @@
+{
+  "dataset": "RAVDESS",
+  "key": "ravdess",
+  "language": "English",
+  "model": "vox_profile_whisper",
+  "model_name": "Vox-Profile Whisper",
+  "date": "2026-10-29",
+  "clips": 1440,
+  "total_clips": 1440,
+  "classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "labels": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_source": "MSP-Podcast",
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "metrics": {
+    "accuracy": 0.507639,
+    "unweighted_accuracy": 0.493304,
+    "macro_f1": 0.445022,
+    "accuracy_all_classes": 0.50625
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the third number in the file name (01 neutral, 02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised)",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (neutral, happy, sad, angry, fearful, disgusted, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 292.2,
+    "ms_per_clip": 202.9,
+    "on_cpu": 0
+  }
+}

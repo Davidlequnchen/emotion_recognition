@@ -1,0 +1,74 @@
+{
+  "dataset": "MCAE-SPPS",
+  "key": "mcae_spps",
+  "language": "Mandarin",
+  "model": "vox_profile_whisper",
+  "model_name": "Vox-Profile Whisper",
+  "date": "2026-10-29",
+  "clips": 6675,
+  "total_clips": 6675,
+  "classes": [
+    "neutral",
+    "happy",
+    "angry",
+    "fearful",
+    "sad",
+    "disgusted",
+    "surprised"
+  ],
+  "labels": [
+    "neutral",
+    "happy",
+    "angry",
+    "fearful",
+    "sad",
+    "disgusted",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_source": "MSP-Podcast",
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "metrics": {
+    "accuracy": 0.459775,
+    "unweighted_accuracy": 0.409409,
+    "macro_f1": 0.351958,
+    "accuracy_all_classes": 0.459775,
+    "accuracy_acted_or_listener": 0.459775,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.459775
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the second digit of the file name",
+    "listener_vote": "the majority vote of the 40 listeners who rated each clip (`Corpus information.xlsx`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (neutral, happy, angry, fearful, sad, disgusted, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 1351.1,
+    "ms_per_clip": 202.4,
+    "on_cpu": 0
+  }
+}
