@@ -1,0 +1,48 @@
+{
+  "dataset": "nEMO",
+  "key": "nemo",
+  "language": "Polish",
+  "model": "emotion2vec_plus_large",
+  "date": "2026-10-23",
+  "clips": 4481,
+  "classes": [
+    "angry",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "metrics": {
+    "accuracy": 0.519527,
+    "unweighted_accuracy": 0.505879,
+    "macro_f1": 0.473726,
+    "accuracy_all_classes": 0.467306
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray (`emotion`)",
+    "prediction": "model prediction: the most probable of the 6 emotions evaluated (angry, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "model_name": "emotion2vec+ large",
+  "in_training_data": false,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ]
+}

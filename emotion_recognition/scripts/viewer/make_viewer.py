@@ -85,14 +85,34 @@ def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def embed_image(path):
-    """A figure as a data URI: lossless WebP (the same pixels, about 2.5 times smaller than the PNG), or the PNG
-    itself if this Pillow has no WebP."""
-    if not features.check("webp"):
+def embed_image(path, width=None):
+    """A figure as a data URI: lossless WebP (the same pixels, about 2.5 times smaller than the PNG), or a PNG if this
+    Pillow has no WebP; width: shrink a wider figure to this many pixels first (the bar plots are drawn at 300 dpi)."""
+    image = Image.open(path)
+    if width and image.width > width:
+        image = image.resize((width, round(image.height * width / image.width)), Image.LANCZOS)
+    elif not features.check("webp"):
         return f"data:image/png;base64,{base64.b64encode(path.read_bytes()).decode()}"
     buf = io.BytesIO()
-    Image.open(path).save(buf, "WEBP", lossless=True)
-    return f"data:image/webp;base64,{base64.b64encode(buf.getvalue()).decode()}"
+    image.save(buf, "WEBP" if features.check("webp") else "PNG", lossless=True)
+    kind = "webp" if features.check("webp") else "png"
+    return f"data:image/{kind};base64,{base64.b64encode(buf.getvalue()).decode()}"
+
+
+def load_plots():
+    """The bar plots of scripts/viewer/plot_results.py (metrics and folder from config/plots.yaml), embedded at 2,400
+    pixels wide: [{metric, name, by_dataset, overview}] for every metric whose figures exist."""
+    settings = yaml.safe_load((ROOT / "config" / "plots.yaml").read_text()) or {}
+    folder, plots = ROOT / settings.get("out", "reports/figures"), []
+    names = {"accuracy": "Accuracy", "unweighted_accuracy": "Unweighted accuracy", "macro_f1": "Macro F1",
+             "accuracy_all_classes": "Accuracy, all model classes",
+             "accuracy_acted_or_listener": "Accuracy, acted or listeners' vote"}
+    for metric in settings.get("metrics", []):
+        grid, overview = folder / f"{metric}_by_dataset.png", folder / f"overview_{metric}.png"
+        if grid.is_file():
+            plots.append({"metric": metric, "name": names.get(metric, metric), "by_dataset": embed_image(grid, 2400),
+                          "overview": embed_image(overview, 2400) if overview.is_file() else None})
+    return plots
 
 
 def load_summary(path, exclude):
@@ -314,7 +334,10 @@ def main():
     print("  audio       : " + (f"linked to the original files (link_audio); the public page embeds {embedded}"
                                 if link_audio else f"embedded as {embedded}"))
     sources = {k: SOURCES[k] for k in order if k in SOURCES}
-    data = {"seed": seed, "picks": {"correct": n_correct, "wrong": n_wrong}, "models": page_models, "sources": sources}
+    plots = load_plots()  # the bar plots of plot_results.py, if they have been drawn
+    print(f"  bar plots   : {', '.join(p['metric'] for p in plots) or 'none (run scripts/viewer/plot_results.py)'}")
+    data = {"seed": seed, "picks": {"correct": n_correct, "wrong": n_wrong}, "models": page_models, "sources": sources,
+            "plots": plots}
     write_page(out, data, datasets, link_audio)
     if site:
         public = [d for d in datasets if SOURCES.get(d["key"], {}).get("public_audio")]

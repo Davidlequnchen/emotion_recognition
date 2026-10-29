@@ -39,5 +39,11 @@ emotion_recognition/data/*
 /data/
 /models/
 
-# Outputs (any outputs/ folder, e.g. emotion_recognition/outputs/)
+# Outputs. emotion_recognition/outputs/ (per-clip predictions of every model) is committed, except: the local results page
+# (site/index.html is the public one), run logs (they hold local paths), and anything of ESD (its licence forbids
+# sharing any part of the data). Other outputs/ folders stay local.
 outputs/
+!emotion_recognition/outputs/
+emotion_recognition/outputs/*.html
+emotion_recognition/outputs/*.log
+emotion_recognition/outputs/**/esd_*

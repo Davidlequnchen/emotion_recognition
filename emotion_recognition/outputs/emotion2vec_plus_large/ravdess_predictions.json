@@ -1,0 +1,52 @@
+{
+  "dataset": "RAVDESS",
+  "key": "ravdess",
+  "language": "English",
+  "model": "emotion2vec_plus_large",
+  "date": "2026-10-27",
+  "clips": 1440,
+  "total_clips": 1440,
+  "classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "metrics": {
+    "accuracy": 0.920833,
+    "unweighted_accuracy": 0.922867,
+    "macro_f1": 0.922045,
+    "accuracy_all_classes": 0.920833
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the third number in the file name (01 neutral, 02 calm, 03 happy, 04 sad, 05 angry, 06 fearful, 07 disgust, 08 surprised)",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (neutral, happy, sad, angry, fearful, disgusted, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "model_name": "emotion2vec+ large",
+  "in_training_data": true,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ]
+}

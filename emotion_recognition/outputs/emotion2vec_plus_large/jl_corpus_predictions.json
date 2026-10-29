@@ -1,0 +1,69 @@
+{
+  "dataset": "JL-Corpus",
+  "key": "jl_corpus",
+  "language": "English (New Zealand)",
+  "model": "emotion2vec_plus_large",
+  "model_name": "emotion2vec+ large",
+  "date": "2026-10-28",
+  "clips": 1200,
+  "total_clips": 1200,
+  "classes": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad",
+    "excited"
+  ],
+  "accept": {
+    "excited": [
+      "happy",
+      "surprised"
+    ]
+  },
+  "chance": 0.24,
+  "in_training_data": true,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ],
+  "metrics": {
+    "accuracy": 0.925,
+    "unweighted_accuracy": 0.925,
+    "macro_f1": 0.922668,
+    "accuracy_all_classes": 0.925
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray, from the second part of the file name",
+    "prediction": "model prediction: the most probable of the 5 emotions evaluated (angry, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion or is accepted for it (excited: happy or surprised)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "cpu",
+    "hardware": "Apple M4 Max",
+    "seconds": 108.7,
+    "ms_per_clip": 90.6,
+    "on_cpu": 0
+  }
+}

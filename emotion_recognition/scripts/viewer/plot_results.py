@@ -81,14 +81,15 @@ def setup_matplotlib():
     return plt
 
 
-def legend_handles(plt, names, colours, any_trained):
+def legend_handles(plt, names, colours, any_trained, chance=True):
     from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
     handles = [Patch(facecolor=colours[m], edgecolor=INK, linewidth=1.2, label=names[m]) for m in names]
     if any_trained:
         handles.append(Patch(facecolor="white", edgecolor=INK, hatch="///", linewidth=1.2,
                              label="dataset in the model's training data"))
-    handles.append(Line2D([0], [0], color=INK_2, linestyle="--", linewidth=1.6, label="chance level"))
+    if chance:  # macro F1 has no chance line
+        handles.append(Line2D([0], [0], color=INK_2, linestyle="--", linewidth=1.6, label="chance level"))
     return handles
 
 
@@ -135,7 +136,7 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
         axes[k // columns][k % columns].axis("off")
     fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} of every model on every dataset", fontsize=20,
                  fontweight="bold", color=INK, y=0.995)
-    fig.legend(handles=legend_handles(plt, names, colours, trained), loc="lower center",
+    fig.legend(handles=legend_handles(plt, names, colours, trained, metric != "macro_f1"), loc="lower center",
                ncol=min(4, len(models) + 2), frameon=False, bbox_to_anchor=(0.5, 0.0))
     fig.tight_layout(rect=(0, 0.09 + 0.03 * (len(models) > 4), 1, 0.96))
     return save(fig, plt, out / f"{metric}_by_dataset")
@@ -168,7 +169,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
                 ax.hlines(100 * chance_of(first[key]), j - 0.45, j + 0.45, colors=INK_2, linestyles="--",
                           linewidth=1.6, zorder=4)
     ax.set_title(f"{METRIC_NAMES.get(metric, metric)}: every model on every dataset", fontsize=18, pad=12)
-    ax.legend(handles=legend_handles(plt, names, colours, trained), loc="upper center", bbox_to_anchor=(0.5, -0.1),
+    ax.legend(handles=legend_handles(plt, names, colours, trained, metric != "macro_f1"), loc="upper center", bbox_to_anchor=(0.5, -0.1),
               ncol=min(4, len(models) + 2), frameon=False)
     fig.tight_layout()
     return save(fig, plt, out / f"overview_{metric}")

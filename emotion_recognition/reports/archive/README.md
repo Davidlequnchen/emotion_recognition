@@ -8,7 +8,7 @@ The archive has the same layout as the active results, one folder per model (nam
 registry, `config/models.yaml`):
 
 - `reports/archive/<model>/<dataset>.md`: the report, with its figures in `reports/archive/<model>/figures/`
-- `outputs/archive/<model>/<dataset>_predictions.csv` and `.json`: the per-clip predictions (not in git)
+- `outputs/archive/<model>/<dataset>_predictions.csv` and `.json`: the per-clip predictions (in git, except ESD's: its licence forbids sharing any part of the data)
 
 A sample run has `_sample<N>` after the dataset's name. Every archived result is from emotion2vec+ large; the other
 models were never run on these datasets.

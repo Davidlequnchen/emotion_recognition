@@ -1,0 +1,70 @@
+{
+  "dataset": "CREMA-D",
+  "key": "crema_d",
+  "language": "English",
+  "model": "melati_emotion",
+  "model_name": "Melati",
+  "date": "2026-10-29",
+  "clips": 7442,
+  "total_clips": 7442,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.166667,
+  "in_training_data": false,
+  "training_source": "nine acted corpora, JL-Corpus among them",
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "surprised",
+    "fearful",
+    "disgusted"
+  ],
+  "metrics": {
+    "accuracy": 0.513706,
+    "unweighted_accuracy": 0.524463,
+    "macro_f1": 0.46725,
+    "accuracy_all_classes": 0.513034,
+    "accuracy_acted_or_listener": 0.767267,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.59694
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the file name (`ANG`, `DIS`, `FEA`, `HAP`, `NEU`, `SAD`)",
+    "listener_vote": "the majority vote of crowd-sourced listeners who heard the voice only (`summaryTable.csv`, `VoiceVote`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 6 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 2739.7,
+    "ms_per_clip": 368.1,
+    "on_cpu": 0
+  }
+}

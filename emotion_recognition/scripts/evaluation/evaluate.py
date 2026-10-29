@@ -537,7 +537,7 @@ def evaluate(ds, predict, model, entry, note, device, limit):
         f"Inference took {f'{runtime:.0f} s' if runtime < 60 else f'{runtime / 60:.1f} min'} "
         f"({runtime / len(clips) * 1000:.0f} ms per clip)."
         + (f" {on_cpu:,} clips ran on the CPU, because `{device}` could not process them." if on_cpu else ""),
-        f"- **Per-clip predictions**: `{predictions.relative_to(ROOT)}` (not in git; re-run the script to recreate it). "
+        f"- **Per-clip predictions**: `{predictions.relative_to(ROOT)}` (in git, so the results can be checked clip by clip). "
         "The JSON file next to it describes the columns.",
         "",
         "## Results per emotion",

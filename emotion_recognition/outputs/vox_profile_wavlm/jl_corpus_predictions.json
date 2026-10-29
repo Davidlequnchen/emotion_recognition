@@ -1,0 +1,69 @@
+{
+  "dataset": "JL-Corpus",
+  "key": "jl_corpus",
+  "language": "English (New Zealand)",
+  "model": "vox_profile_wavlm",
+  "model_name": "Vox-Profile WavLM",
+  "date": "2026-10-29",
+  "clips": 1200,
+  "total_clips": 1200,
+  "classes": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad",
+    "excited"
+  ],
+  "accept": {
+    "excited": [
+      "happy",
+      "surprised"
+    ]
+  },
+  "chance": 0.24,
+  "in_training_data": false,
+  "training_source": "MSP-Podcast",
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "metrics": {
+    "accuracy": 0.483333,
+    "unweighted_accuracy": 0.483333,
+    "macro_f1": 0.504985,
+    "accuracy_all_classes": 0.46
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray, from the second part of the file name",
+    "prediction": "model prediction: the most probable of the 5 emotions evaluated (angry, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion or is accepted for it (excited: happy or surprised)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 53.8,
+    "ms_per_clip": 44.9,
+    "on_cpu": 0
+  }
+}

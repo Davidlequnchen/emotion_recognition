@@ -1,0 +1,55 @@
+{
+  "dataset": "MCAE-SPPS",
+  "key": "mcae_spps",
+  "language": "Mandarin",
+  "model": "emotion2vec_plus_large",
+  "date": "2026-10-23",
+  "clips": 6675,
+  "classes": [
+    "neutral",
+    "happy",
+    "angry",
+    "fearful",
+    "sad",
+    "disgusted",
+    "surprised"
+  ],
+  "metrics": {
+    "accuracy": 0.613483,
+    "unweighted_accuracy": 0.541993,
+    "macro_f1": 0.500753,
+    "accuracy_all_classes": 0.613483,
+    "accuracy_acted_or_listener": 0.613483,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.613483
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the second digit of the file name",
+    "listener_vote": "the majority vote of the 40 listeners who rated each clip (`Corpus information.xlsx`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (neutral, happy, angry, fearful, sad, disgusted, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "model_name": "emotion2vec+ large",
+  "in_training_data": false,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ]
+}

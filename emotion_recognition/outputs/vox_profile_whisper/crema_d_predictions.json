@@ -1,0 +1,72 @@
+{
+  "dataset": "CREMA-D",
+  "key": "crema_d",
+  "language": "English",
+  "model": "vox_profile_whisper",
+  "model_name": "Vox-Profile Whisper",
+  "date": "2026-10-29",
+  "clips": 7442,
+  "total_clips": 7442,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.166667,
+  "in_training_data": false,
+  "training_source": "MSP-Podcast",
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "metrics": {
+    "accuracy": 0.336603,
+    "unweighted_accuracy": 0.351988,
+    "macro_f1": 0.299302,
+    "accuracy_all_classes": 0.307175,
+    "accuracy_acted_or_listener": 0.704515,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.63857
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the file name (`ANG`, `DIS`, `FEA`, `HAP`, `NEU`, `SAD`)",
+    "listener_vote": "the majority vote of crowd-sourced listeners who heard the voice only (`summaryTable.csv`, `VoiceVote`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 6 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 1510.9,
+    "ms_per_clip": 203.0,
+    "on_cpu": 0
+  }
+}

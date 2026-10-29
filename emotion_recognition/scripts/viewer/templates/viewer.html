@@ -184,6 +184,7 @@
     <div class="control">Model <div class="seg" id="view" role="group" aria-label="Model whose results are shown"></div></div>
   </div>
   <div id="view-body"></div>
+  <div id="plots-body"></div>
   </section>
   <section class="panel" id="panel-examples" role="tabpanel" aria-labelledby="tab-examples" tabindex="0" hidden>
   <h2>Examples</h2>
@@ -213,7 +214,7 @@
   const DATA = JSON.parse(document.getElementById("data").textContent);
   // Results: the model shown ("all" = every model side by side) and the value in the comparison table.
   // Examples: the dataset (index in DATA.datasets), the model, and the filters, which stay when the model changes.
-  const state = { view: "all", metric: "accuracy", dataset: 0, model: null, criterion: null, status: "all", emotion: "all" };
+  const state = { view: "all", metric: "accuracy", plot: null, dataset: 0, model: null, criterion: null, status: "all", emotion: "all" };
   const MODELS = Object.fromEntries(DATA.models.map((m) => [m.key, m]));
   const $ = (id) => document.getElementById(id);
   const pretty = (key) => key.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
@@ -562,6 +563,31 @@
     $("view-body").replaceChildren(...(state.view === "all" ? comparison(resultModels) : modelResults(MODELS[state.view])));
   }
 
+  // Bar plots of scripts/viewer/plot_results.py (every model on every dataset), below the results, one metric at a time
+  function renderPlots() {
+    const plots = DATA.plots ?? [];
+    if (!plots.length) { $("plots-body").replaceChildren(); return; }
+    if (!plots.some((p) => p.metric === state.plot)) state.plot = plots[0].metric;
+    const plot = plots.find((p) => p.metric === state.plot);
+    const switcher = el("div", { className: "seg", role: "group", ariaLabel: "Metric of the bar plots" });
+    segmented(switcher, plots.map((p) => [p.metric, p.name]), state.plot, (v) => { state.plot = v; renderPlots(); });
+    const zoomable = (src, alt) => {
+      const figure = el("figure", { className: "figure", tabIndex: 0, title: "Click, or press Enter, to enlarge or shrink" },
+        el("img", { src, alt }));
+      figure.addEventListener("click", () => figure.classList.toggle("zoomed"));
+      figure.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); figure.classList.toggle("zoomed"); }
+      });
+      return figure;
+    };
+    $("plots-body").replaceChildren(
+      el("h2", { textContent: "Bar plots" }),
+      el("p", { className: "sub", textContent: "Every model on every dataset, drawn by scripts/viewer/plot_results.py (PNG and PDF in reports/figures/). Hatched bars: the dataset is in that model's training data. Dashed line: chance level. Click a figure to enlarge it." }),
+      el("div", { className: "toolbar" }, el("div", { className: "control" }, "Metric ", switcher)),
+      el("h3", { textContent: `${plot.name}: one panel per dataset` }), zoomable(plot.by_dataset, `${plot.name} of every model, one panel per dataset`),
+      ...(plot.overview ? [el("h3", { textContent: `${plot.name}: every dataset side by side` }), zoomable(plot.overview, `${plot.name} of every model on every dataset`)] : []));
+  }
+
   function renderDatasets() {
     const names = Object.fromEntries([...DATA.models.flatMap((m) => m.summary?.datasets ?? []), ...DATA.datasets].map((d) => [d.key, d.dataset]));
     const keys = Object.keys(DATA.sources);
@@ -613,6 +639,7 @@
     ? `Speech emotion recognition with ${names.length} models (${names.join(", ")}): their results on every evaluated dataset, random clips they got right and wrong, and where the datasets come from.`
     : `Speech emotion recognition with ${names[0] ?? "a model"}: its results on every evaluated dataset, random clips it got right and wrong, and where the datasets come from.`;
   renderResults();
+  renderPlots();
   $("panel-datasets").replaceChildren(...renderDatasets());
   $("dataset").replaceChildren(...DATA.datasets.map((d, i) => el("option", { value: i, textContent: d.dataset })));
   $("dataset-control").hidden = DATA.datasets.length < 2;
