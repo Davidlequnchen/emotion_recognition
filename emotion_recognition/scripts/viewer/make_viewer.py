@@ -100,7 +100,7 @@ def embed_image(path, width=None):
 
 
 def load_plots():
-    """The bar plots of scripts/viewer/plot_results.py (metrics and folder from config/plots.yaml), embedded at 2,400
+    """The bar plots of scripts/viewer/plot_results.py (metrics and folder from config/plots.yaml), embedded at 3,000
     pixels wide: [{metric, name, by_dataset, overview}] for every metric whose figures exist."""
     settings = yaml.safe_load((ROOT / "config" / "plots.yaml").read_text()) or {}
     folder, plots = ROOT / settings.get("out", "reports/figures"), []
@@ -110,8 +110,8 @@ def load_plots():
     for metric in settings.get("metrics", []):
         grid, overview = folder / f"{metric}_by_dataset.png", folder / f"overview_{metric}.png"
         if grid.is_file():
-            plots.append({"metric": metric, "name": names.get(metric, metric), "by_dataset": embed_image(grid, 2400),
-                          "overview": embed_image(overview, 2400) if overview.is_file() else None})
+            plots.append({"metric": metric, "name": names.get(metric, metric), "by_dataset": embed_image(grid, 3000),
+                          "overview": embed_image(overview, 3000) if overview.is_file() else None})
     return plots
 
 
