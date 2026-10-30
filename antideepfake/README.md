@@ -37,14 +37,17 @@ The scripts have no command-line options: every setting is in [`config/antideepf
 antideepfake/
 ├── config/
 │   ├── antideepfake.yaml       # detector: hardware mode (mac | cuda), devices, checkpoint, audio, threshold
+│   ├── evaluation.yaml         # evaluate.py: groups of real and fake files, conditions, telephone channel
 │   ├── voice_clone.yaml        # voice cloning: models (pinned sources), devices, reference, texts, seed, output
 │   └── record.yaml             # recorder: speaker name, length, microphone, sentences to read
-├── requirements.txt            # detector: torch, torchaudio, soundfile, pyyaml (standalone)
+├── requirements.txt            # detector: torch, torchaudio, soundfile, pyyaml, numpy, matplotlib (standalone)
 ├── requirements-voice-clone.txt  # voice cloning: its own conda environment `voice_clone`
 ├── scripts/
 │   ├── antideepfake/
 │   │   ├── download_model.py   # downloads the checkpoint from Zenodo and checks its size and MD5
-│   │   └── inference.py        # step-by-step inference: P(real) for every audio file
+│   │   ├── inference.py        # step-by-step inference: P(real) for every audio file
+│   │   ├── evaluate.py         # real vs fake: scores, ROC-AUC, EER, plots, clean and over the phone
+│   │   └── telephone.py        # the simulated telephone channel (8 kHz, 300-3,400 Hz, G.711)
 │   └── voice_clone/
 │       ├── download_models.py  # CosyVoice code (GitHub), the three models (Hugging Face), wetext FSTs (ModelScope)
 │       ├── record_reference.py # a window that records a 5-10 s reference clip of your voice
@@ -59,7 +62,8 @@ antideepfake/
 │   └── voice_clone/            # cosyvoice2_0.5b/, cosyvoice3_0.5b/, chatterbox/, wetext/ (downloaded, or cloned from
 │                               # the public repository voice_clone_models; not in this repository)
 ├── third_party/CosyVoice/      # the official CosyVoice code at a pinned commit (cloned, not in git)
-└── outputs/voice_clone/        # generated clips: <speaker>/<model>/<id>.wav + manifest.csv (not in git)
+└── outputs/                    # voice_clone/<speaker>/<model>/<id>.wav + manifest.csv; antideepfake/<name>/ results
+                                # (not in git)
 ```
 
 ## 1. Set up the environment
@@ -211,8 +215,8 @@ python scripts/voice_clone/record_reference.py     # -> data/voice_clone/referen
 # 4. Generate: every model, one clip at a time, with the newest recording
 python scripts/voice_clone/generate.py             # -> outputs/voice_clone/<speaker>/<model>/<id>.wav + manifest.csv
 
-# 5. Score the clips: set `audio: outputs/voice_clone` in config/antideepfake.yaml, then (in its environment)
-python scripts/antideepfake/inference.py
+# 5. Evaluate (in the detector's environment): real speech versus the clones, clean and through a telephone channel
+python scripts/antideepfake/evaluate.py            # -> outputs/antideepfake/<name>/ (section 8)
 ```
 
 - **Recorder** (`config/record.yaml`): set `speaker` to your name first; it names the files and the output folder.
@@ -227,6 +231,36 @@ python scripts/antideepfake/inference.py
 - **Time on the M4 Max**: CosyVoice2 runs at about real time on the CPU, CosyVoice3 slightly slower, Chatterbox on
   MPS at about 1.5 × real time: 200 lines (about 15 minutes of speech) take roughly 15, 20 and 25 minutes.
 - A one-line Chatterbox test clip scored P(real) 0.000 with the detector.
+
+## 8. Evaluation: real speech versus voice clones, clean and over the phone
+
+```bash
+python scripts/antideepfake/evaluate.py
+```
+
+Settings in `config/evaluation.yaml`: the groups of real speech (default: your reference recordings, 200 random
+CREMA-D clips and 200 random RAVDESS clips from the emotion project) and of fake speech (one group per cloning model),
+`per_group_limit` and `seed`, the `conditions` (`clean`, `telephone`) and the telephone channel. The detector comes from
+`config/antideepfake.yaml`. Every file is scored under every condition, one at a time (about 1,000 files a minute
+on the M4 Max, MPS).
+
+The telephone channel (`scripts/antideepfake/telephone.py`) does what a call does to the audio before a call centre
+records it: resample to 8 kHz, band-pass to 300-3,400 Hz (4th order), optional white noise (`noise_snr_db`), then
+G.711 A-law (or mu-law) encoding and decoding with Python's `audioop`, and back to 16 kHz for the detector.
+
+Output in `outputs/antideepfake/<name>/` (not in git):
+
+| File | Content |
+|---|---|
+| `scores.csv` | one row per file and condition: group, label, P(real), the two logits, duration |
+| `summary.md`, `summary.json` | per condition: share of each real group kept as real; per fake group (and all fakes) the share detected as fake, ROC-AUC and EER against all real speech, and the P(real) threshold at the EER |
+| `scores.png` | the scores of every group as log-odds of real (logit_real - logit_fake; above 0 = real), clean and telephone side by side |
+| `roc.png` | ROC curves of each cloning model |
+| `telephone_audio/` | the telephone versions of the files (8 kHz wav), to listen to (`save_audio`) |
+
+ROC-AUC is the chance that a random fake clip scores as more fake than a random real one (1 = perfect, 0.5 = chance);
+EER is the error rate at the threshold where real clips flagged as fake and fake clips passed as real are equally
+frequent (0% = perfect).
 
 ## Licence
 
