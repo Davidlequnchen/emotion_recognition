@@ -31,7 +31,7 @@ RTF = generation time ÷ audio duration; below 1 is faster than real time.
 
 ## 2. Sources, papers, and how the company computer gets them
 
-The company computer reaches GitHub, Zenodo and PyPI, not Hugging Face or ModelScope.
+The files from Hugging Face and ModelScope are split into parts in our GitHub repository voice_clone_models; the code comes from GitHub and PyPI.
 
 | | Weights | Code | Paper | Company computer |
 |---|---|---|---|---|

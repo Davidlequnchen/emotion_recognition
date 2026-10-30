@@ -29,7 +29,7 @@ RTF = 生成时间 ÷ 音频时长，小于 1 表示比实时快。
 
 ## 2. 来源、论文和公司电脑的获取方式
 
-公司电脑能访问 GitHub、Zenodo 和 PyPI，不能访问 Hugging Face 和 ModelScope。
+Hugging Face 和 ModelScope 上的文件已按我们的做法拆成分片，放在我们的 GitHub 仓库 voice_clone_models 里；代码来自 GitHub 和 PyPI。
 
 | | 权重 | 代码 | 论文 | 公司电脑怎么拿到 |
 |---|---|---|---|---|
