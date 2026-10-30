@@ -3,11 +3,11 @@
 英文版：[xlsr_1b_antideepfake_en.md](xlsr_1b_antideepfake_en.md)（内容相同）。
 
 整理日期：2026-10-28。本文说明 `antideepfake/` 所用的深度伪造（deepfake）语音检测模型：它做什么、网络结构、大小、两步训练的数据和方法、许可。
-数字来自论文、官方 GitHub、Hugging Face model card 和 Zenodo，或在本地 `models/xlsr_1b.ckpt` 上实测（标"实测"）；来源见第 7 节。标"未核实"的没能从一手资料确认。
+数字来自论文、官方 GitHub、Hugging Face model card 和 Zenodo，或在本地 `models/antideepfake/xlsr_1b.ckpt` 上实测（标"实测"）；来源见第 7 节。标"未核实"的没能从一手资料确认。
 
 ## 0. 要点
 
-- **做什么**：输入任意长度的 16 kHz 单声道波形，输出两个 logits，顺序是 [fake, real]；softmax 后取 P(real)。`config.yaml` 的 `inference.threshold` 默认 0.5：P(real) ≥ 0.5 判为真实，否则判为伪造。
+- **做什么**：输入任意长度的 16 kHz 单声道波形，输出两个 logits，顺序是 [fake, real]；softmax 后取 P(real)。`config/antideepfake.yaml` 的 `inference.threshold` 默认 0.5：P(real) ≥ 0.5 判为真实，否则判为伪造。
 - **结构**：XLS-R 1B（wav2vec 2.0：7 层 CNN + 48 层 Transformer，宽 1280）+ 对所有帧取平均 + 一个 Linear(1280→2)。分类头只有 2,562 个参数，区分真假的能力几乎都在 XLS-R 里。
 - **大小**（实测）：推理网络 962.5 M 参数，98% 在 Transformer；checkpoint 共 965.5 M（多出的 3.0 M 只在预训练时用），全部 fp32，文件 3.86 GB。
 - **两步训练**：Meta 先用 436k h、128 种语言的无标注语音做 wav2vec 2.0 自监督预训练（XLS-R）；NII 再用 29 个数据源、约 74.7k h 语音（真实 56.4k h，伪造 18.3k h，100 多种语言）做真/假二分类的有监督"后训练"（post-training），整个网络一起更新。
@@ -18,7 +18,7 @@
 
 模型读入一段 16 kHz 单声道波形（任意长度，先整段归一化为零均值、单位方差），输出两个 logits，顺序是 [fake, real]。
 softmax 后的第二项就是 P(real)，即"这段语音是真人原声"的概率；P(fake) = 1 − P(real)。
-`config.yaml` 里 `inference.threshold: 0.5`：P(real) ≥ 0.5 判为真实，这也是 AntiDeepfake 的默认阈值。
+`config/antideepfake.yaml` 里 `inference.threshold: 0.5`：P(real) ≥ 0.5 判为真实，这也是 AntiDeepfake 的默认阈值。
 
 "fake" 的范围比 deepfake 宽：后训练时，TTS 和 VC 生成的语音、经 vocoder 重合成的语音、经神经网络修复（restored）的语音、经神经编解码器（neural codec）重建的语音都标为 fake（第 4.2 节）。
 论文明确说 codec 语音不算 deepfake，只是"带痕迹的语音"的一种。所以 P(real) 低说明语音带有生成或重合成的痕迹，不一定是冒充。
@@ -185,7 +185,7 @@ EER（equal error rate）：调整阈值，使"伪造判为真实"和"真实判�
 
 ## 5. 许可
 
-- **checkpoint**：CC BY-NC-SA 4.0（Zenodo record 的许可、`models/LICENSE-CHECKPOINT`、model card）。可以复制和修改，但要署名，不能商用，改编的成果也要用同一许可。版权属于 NII。
+- **checkpoint**：CC BY-NC-SA 4.0（Zenodo record 的许可、`models/antideepfake/LICENSE-CHECKPOINT`、model card）。可以复制和修改，但要署名，不能商用，改编的成果也要用同一许可。版权属于 NII。
 - **上游代码**：BSD-3-Clause（AntiDeepfake 的 `LICENSE-CODE`）。本仓库没有复制上游代码。
 - **其他**：XLS-R 1B 的预训练权重在 Hugging Face 上是 Apache-2.0，fairseq 是 MIT。后训练数据各有许可，其中有不能商用或不能演绎的（如 Codecfake 是 CC BY-NC-ND 4.0）。
 
@@ -207,4 +207,4 @@ EER（equal error rate）：调整阈值，使"伪造判为真实"和"真实判�
 - RawBoost：H. Tak et al., ICASSP 2022；[arXiv:2111.04433](https://arxiv.org/abs/2111.04433)。
 - SpeechBrain `WarmAndExpDecayLRSchedule`：[speechbrain/nnet/schedulers.py（v1.0.2）](https://github.com/speechbrain/speechbrain/blob/v1.0.2/speechbrain/nnet/schedulers.py)（上游安装的版本）。
 - 数据集链接见第 4.1 和 4.2 节的表格。
-- 实测（2026-10-28，PyTorch 2.5.1，CPU）：读取本地 `models/xlsr_1b.ckpt`，统计参数和数据类型并计算 MD5；用 `inference.py` 的网络跑 4 s 输入，逐层打印形状；用 HTTP range 请求读出 Hugging Face 两个版本 `model.safetensors` 中的 5 个张量，与本地 checkpoint 逐位比较。
+- 实测（2026-10-28，PyTorch 2.5.1，CPU）：读取本地 `models/antideepfake/xlsr_1b.ckpt`，统计参数和数据类型并计算 MD5；用 `inference.py` 的网络跑 4 s 输入，逐层打印形状；用 HTTP range 请求读出 Hugging Face 两个版本 `model.safetensors` 中的 5 个张量，与本地 checkpoint 逐位比较。

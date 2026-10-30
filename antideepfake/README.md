@@ -22,22 +22,28 @@ conda create -n antideepfake python=3.11 -y   # or use the emotion_recognition e
 conda activate antideepfake
 cd antideepfake                               # this folder of the repository
 pip install -r requirements.txt               # NVIDIA server: first the CUDA build of PyTorch, see section 1
-python download_model.py                      # xlsr_1b.ckpt (3.86 GB) from Zenodo -> models/
-python inference.py                           # NVIDIA server: first set `mode: cuda` in config.yaml
+python scripts/antideepfake/download_model.py  # xlsr_1b.ckpt (3.86 GB) from Zenodo -> models/antideepfake/
+python scripts/antideepfake/inference.py       # NVIDIA server: first set `mode: cuda` in config/antideepfake.yaml
 ```
 
-The scripts have no command-line options: every setting is in [`config.yaml`](config.yaml).
+The scripts have no command-line options: every setting is in [`config/antideepfake.yaml`](config/antideepfake.yaml).
 
 ## Layout
 
 ```
 antideepfake/
-├── config.yaml         # hardware mode (mac | cuda), devices, checkpoint, audio, threshold
-├── requirements.txt    # torch, torchaudio, soundfile, pyyaml (standalone)
-├── download_model.py   # downloads the checkpoint from Zenodo and checks its size and MD5
-├── inference.py        # step-by-step inference: P(real) for every audio file
-├── docs/               # the model explained (Chinese and English), with its architecture diagram in figures/
-└── models/             # xlsr_1b.ckpt, LICENSE-CHECKPOINT, README.txt (downloaded, not in git; git keeps .gitkeep)
+├── config/
+│   └── antideepfake.yaml       # hardware mode (mac | cuda), devices, checkpoint, audio, threshold
+├── requirements.txt            # torch, torchaudio, soundfile, pyyaml (standalone)
+├── scripts/
+│   └── antideepfake/
+│       ├── download_model.py   # downloads the checkpoint from Zenodo and checks its size and MD5
+│       └── inference.py        # step-by-step inference: P(real) for every audio file
+├── data/
+│   └── voice_clone/texts.csv   # 200 synthetic call-centre lines (for the voice-cloning test set, in progress)
+├── docs/                       # the model explained (Chinese and English), with its architecture diagram in figures/
+└── models/
+    └── antideepfake/           # xlsr_1b.ckpt, LICENSE-CHECKPOINT, README.txt (downloaded, not in git; git keeps .gitkeep)
 ```
 
 ## 1. Set up the environment
@@ -72,17 +78,17 @@ environment, and it has no wheel for Python 3.11; speechbrain is the training fr
 ## 2. Download the model
 
 ```bash
-python download_model.py
+python scripts/antideepfake/download_model.py
 ```
 
 The checkpoint comes from Zenodo only ([record 15580543](https://zenodo.org/records/15580543)), never from Hugging
 Face, so the download also works on a machine that cannot reach Hugging Face or ModelScope. The `model` section of
-`config.yaml` names the record, the file and the folder (`models/`). The file is streamed to disk and checked against
+`config/antideepfake.yaml` names the record, the file and the folder (`models/antideepfake/`). The file is streamed to disk and checked against
 the size and MD5 that Zenodo publishes; a file that is already correct is skipped. Zenodo can be slow (0.2 to
 1.3 MB/s here), can stall a connection without closing it, and sometimes answers "504 Gateway Time-out": the script
 then reconnects and resumes where it stopped. If it gives up, run the same command again.
 
-`models/` then holds:
+`models/antideepfake/` then holds:
 
 | File | Content |
 |---|---|
@@ -92,15 +98,15 @@ then reconnects and resumes where it stopped. If it gives up, run the same comma
 The checkpoint holds no architecture description: `inference.py` defines the network (the `xlsr_1b` configuration of
 AntiDeepfake) and loads every weight by name. 3.0 M of the weights (`mask_emb`, `quantizer`, `project_q`,
 `final_proj`) belong to wav2vec 2.0 pre-training and are not used for inference. Git ignores these files and keeps
-only `models/.gitkeep`.
+only `models/antideepfake/.gitkeep`.
 
 ## 3. Run inference
 
 ```bash
-python inference.py
+python scripts/antideepfake/inference.py
 ```
 
-Settings in `config.yaml`: `mode` (`mac` or `cuda`) and `devices` choose the hardware (set `devices.mac: cpu` to force
+Settings in `config/antideepfake.yaml`: `mode` (`mac` or `cuda`) and `devices` choose the hardware (set `devices.mac: cpu` to force
 the CPU); in the `inference` section, `audio` (a file, a folder with its sub-folders, or a list of files and folders;
 wav, flac, mp3, ogg; default `../emotion_recognition/data/samples`), `threshold` (default 0.5) and `max_seconds`
 (default `null`).
@@ -165,7 +171,7 @@ repository.
 
 | Symptom | Cause and fix |
 |---|---|
-| `ERROR: .../models/xlsr_1b.ckpt not found` | Run `python download_model.py`. |
+| `ERROR: .../models/antideepfake/xlsr_1b.ckpt not found` | Run `python scripts/antideepfake/download_model.py`. |
 | `ERROR: ... is incomplete` or `Zenodo does not answer` from `download_model.py` | Zenodo was slow or busy. Run the same command again: it resumes where it stopped. |
 | `MPS ... available=False` on the Mac | Python is x86_64 (Rosetta). `python -c "import platform; print(platform.machine())"` must print `arm64`: reinstall Miniconda for Apple Silicon. |
 | `CUDA ... available=False` on the server | `torch.__version__` must end in `+cu121`: install the CUDA build as in section 1. Otherwise the driver is too old: check `nvidia-smi`. |

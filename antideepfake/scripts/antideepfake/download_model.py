@@ -1,8 +1,9 @@
-"""Download the AntiDeepfake checkpoint named in config.yaml (xlsr_1b.ckpt, 3.86 GB) into models/, from Zenodo.
+"""Download the AntiDeepfake checkpoint named in config/antideepfake.yaml (xlsr_1b.ckpt, 3.86 GB) into
+models/antideepfake/, from Zenodo.
 
 Usage (from the antideepfake/ folder):
-    python download_model.py
-Settings are in the `model` section of config.yaml: `zenodo_record`, `checkpoint` and `dir`. The download uses Zenodo
+    python scripts/antideepfake/download_model.py
+Settings are in the `model` section of config/antideepfake.yaml: `zenodo_record`, `checkpoint` and `dir`. The download uses Zenodo
 only, never Hugging Face or ModelScope, so it also works on a machine that cannot reach them.
 The checkpoint is streamed to disk and checked against the size and MD5 that Zenodo publishes.
 A file that is already present and correct is skipped; an interrupted download resumes where it stopped when
@@ -18,8 +19,8 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parent  # project root (antideepfake/); paths in config.yaml are relative to it
-CONFIG = ROOT / "config.yaml"
+ROOT = Path(__file__).resolve().parents[2]  # project root (antideepfake/); paths in the config are relative to it
+CONFIG = ROOT / "config" / "antideepfake.yaml"
 # Two small files of the same Zenodo record, kept next to the checkpoint: its licence and its readme (2 kB)
 ZENODO_EXTRAS = ["LICENSE-CHECKPOINT", "README.txt"]
 
@@ -83,7 +84,7 @@ def fetch(url, dest, size, checksum, algo):
 
 
 def main():
-    """The AntiDeepfake checkpoint of config.yaml (xlsr_1b.ckpt) and two small files of its Zenodo record."""
+    """The AntiDeepfake checkpoint of config/antideepfake.yaml (xlsr_1b.ckpt) and two small files of its Zenodo record."""
     sys.stdout.reconfigure(line_buffering=True)  # show progress immediately, also when redirected to a log
     m = yaml.safe_load(CONFIG.read_text())["model"]
     target, record = ROOT / m["dir"], m["zenodo_record"]

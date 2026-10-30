@@ -1,0 +1,201 @@
+id,scenario,role,text
+001,greeting_verification,agent,"Good morning, thank you for calling customer service. My name is Daniel, how may I help you today?"
+002,greeting_verification,customer,"Hi, I'd like to check something on my savings account, please."
+003,greeting_verification,agent,"Before we continue, may I have your full name and date of birth for verification?"
+004,greeting_verification,customer,"Sure, my name is Alex Tan and I was born on the fourteenth of March."
+005,greeting_verification,agent,Thank you. Could you also confirm the last four digits of your registered mobile number?
+006,greeting_verification,customer,"Of course, it ends with seven two nine one."
+007,greeting_verification,agent,"Thank you for waiting. I have verified your identity, so we can proceed now."
+008,greeting_verification,customer,"Sorry, could you repeat that? The line is a bit unclear on my side."
+009,greeting_verification,agent,"For security reasons, please do not share your one-time password with anyone, including our staff."
+010,greeting_verification,customer,"Okay, understood. I just want to make sure my account is safe."
+011,balance_enquiry,customer,Can you tell me the current balance of my savings account?
+012,balance_enquiry,agent,Certainly. Your available balance is two thousand four hundred and fifty dollars.
+013,balance_enquiry,customer,That seems lower than I expected. Was there a recent withdrawal?
+014,balance_enquiry,agent,I can see a withdrawal of three hundred dollars at an ATM yesterday evening.
+015,balance_enquiry,customer,"Yes, that was me. I forgot about it, thank you."
+016,balance_enquiry,agent,Would you like me to send a summary of your recent transactions by SMS?
+017,balance_enquiry,customer,Is my salary credited already? It usually comes in on the twenty-fifth.
+018,balance_enquiry,agent,"Yes, your salary was credited this morning at around nine o'clock."
+019,balance_enquiry,customer,"Great, and what about the balance of my fixed deposit?"
+020,balance_enquiry,agent,"Your fixed deposit will mature next month, and the interest will be added automatically."
+021,lost_card,customer,"Hello, I think I lost my debit card at the shopping mall this afternoon."
+022,lost_card,agent,I'm sorry to hear that. I will block the card right away to protect your account.
+023,lost_card,customer,Please do. I'm worried someone might use it.
+024,lost_card,agent,The card has been blocked. No transactions were made after your last purchase at two p.m.
+025,lost_card,customer,That's a relief. How do I get a replacement card?
+026,lost_card,agent,A new card will be mailed to your registered address within five to seven working days.
+027,lost_card,customer,Is there a fee for the replacement?
+028,lost_card,agent,"For the first replacement this year, the fee is waived."
+029,lost_card,customer,Can I still withdraw cash before the new card arrives?
+030,lost_card,agent,"Yes, you can withdraw cash at any branch counter with your identity card."
+031,suspicious_transaction,agent,We are calling about an unusual transaction on your credit card. Did you make a purchase overseas today?
+032,suspicious_transaction,customer,"No, I didn't. I haven't left the country in months."
+033,suspicious_transaction,agent,Thank you for confirming. I will cancel this card and raise a dispute for the transaction.
+034,suspicious_transaction,customer,How much was the charge? I'm really worried now.
+035,suspicious_transaction,agent,The charge was eight hundred and ninety dollars at an online electronics store.
+036,suspicious_transaction,customer,I got a text message asking me to click a link yesterday. Could that be related?
+037,suspicious_transaction,agent,"It might be. Please never click on links in unexpected messages, and delete that message."
+038,suspicious_transaction,customer,Will I get my money back?
+039,suspicious_transaction,agent,"Once the investigation is complete, the amount will be credited back to your account."
+040,suspicious_transaction,customer,Thank you for calling me so quickly. I really appreciate it.
+041,funds_transfer,customer,I need to transfer five hundred dollars to my brother's account at another bank.
+042,funds_transfer,agent,Sure. Have you already added your brother as a payee in the mobile app?
+043,funds_transfer,customer,Not yet. Can you help me do it over the phone?
+044,funds_transfer,agent,"For your safety, new payees can only be added through the app or at a branch."
+045,funds_transfer,customer,"I made a transfer this morning, but the money hasn't arrived yet."
+046,funds_transfer,agent,Transfers to other banks can take up to one working day to be processed.
+047,funds_transfer,customer,What is my daily transfer limit at the moment?
+048,funds_transfer,agent,Your current daily limit is three thousand dollars. You can change it in the app settings.
+049,funds_transfer,customer,I sent money to the wrong account by mistake. What should I do?
+050,funds_transfer,agent,Please stay on the line. I will file a recall request with the receiving bank immediately.
+051,bill_payment,customer,I want to set up a monthly payment for my electricity bill.
+052,bill_payment,agent,Certainly. Would you like the payment to be made from your current account or your credit card?
+053,bill_payment,customer,"From my current account, on the first day of every month."
+054,bill_payment,agent,The standing instruction has been created and will start next month.
+055,bill_payment,customer,My phone bill payment failed last week. Can you tell me why?
+056,bill_payment,agent,It failed because the account balance was not sufficient at that time.
+057,bill_payment,customer,Can I cancel a scheduled payment that I set up yesterday?
+058,bill_payment,agent,"Yes, I have cancelled it for you. You will receive a confirmation message shortly."
+059,bill_payment,customer,Is there any charge for paying bills through the hotline?
+060,bill_payment,agent,"No, paying bills through our hotline or mobile app is completely free."
+061,loan_enquiry,customer,I'm interested in a personal loan. What is the current interest rate?
+062,loan_enquiry,agent,Our personal loan currently starts from three point eight percent per year.
+063,loan_enquiry,customer,"How much can I borrow, and for how long?"
+064,loan_enquiry,agent,"You can borrow up to four times your monthly income, for a period of one to five years."
+065,loan_enquiry,customer,What documents do I need to apply?
+066,loan_enquiry,agent,You will need your identity card and your latest three months of salary slips.
+067,loan_enquiry,customer,How long does it take to get approval?
+068,loan_enquiry,agent,Most applications are approved within two working days.
+069,loan_enquiry,customer,Can I repay the loan early without a penalty?
+070,loan_enquiry,agent,"Early repayment is allowed, but a small fee of one percent of the remaining amount applies."
+071,mortgage,customer,I'm planning to buy my first home and want to know more about your home loans.
+072,mortgage,agent,Congratulations. Are you looking for a fixed rate or a floating rate package?
+073,mortgage,customer,I'm not sure. What is the difference between the two?
+074,mortgage,agent,"A fixed rate stays the same for a few years, while a floating rate moves with the market."
+075,mortgage,customer,Can I refinance my existing home loan with your bank?
+076,mortgage,agent,"Yes, and we will cover the legal fees if the loan amount is above a certain level."
+077,mortgage,customer,My monthly instalment went up this month. Why did that happen?
+078,mortgage,agent,"Your package is on a floating rate, and the reference rate increased last quarter."
+079,mortgage,customer,Can I speak to a mortgage specialist about my options?
+080,mortgage,agent,Of course. I will arrange for a specialist to call you back within one working day.
+081,credit_card,customer,I would like to increase the limit on my credit card.
+082,credit_card,agent,Sure. May I know the new limit you have in mind and the reason for the increase?
+083,credit_card,customer,I'm travelling next month and expect to spend more than usual.
+084,credit_card,agent,I can offer a temporary increase for thirty days. Would that work for you?
+085,credit_card,customer,There is an annual fee on my statement. Can it be waived?
+086,credit_card,agent,"Since you are a long-time customer, I have waived the annual fee for this year."
+087,credit_card,customer,How do I redeem my reward points?
+088,credit_card,agent,You can redeem them for vouchers or air miles in the rewards section of the app.
+089,credit_card,customer,When is the due date for this month's payment?
+090,credit_card,agent,Your payment is due on the eighteenth. The minimum amount is fifty dollars.
+091,overseas_travel,customer,I'm going to Japan next week. Do I need to inform the bank before using my card there?
+092,overseas_travel,agent,It's a good idea. I have noted your travel dates so your card will not be blocked.
+093,overseas_travel,customer,What is the fee for using my debit card overseas?
+094,overseas_travel,agent,There is a foreign currency fee of three point two five percent per transaction.
+095,overseas_travel,customer,Can I withdraw local cash from ATMs abroad?
+096,overseas_travel,agent,"Yes, but please make sure overseas withdrawals are activated in the app before you leave."
+097,overseas_travel,customer,My card was declined at a hotel in Bangkok. Can you check what happened?
+098,overseas_travel,agent,The transaction was declined because overseas usage was switched off. I have turned it on now.
+099,overseas_travel,customer,Do you offer travel insurance with the credit card?
+100,overseas_travel,agent,"Yes, travel insurance is included when you pay for the full air ticket with this card."
+101,update_details,customer,I've moved to a new place and need to update my mailing address.
+102,update_details,agent,"I can help with that. Please tell me your new address, including the postal code."
+103,update_details,customer,I also changed my mobile number. How do I update it?
+104,update_details,agent,"For security, mobile numbers can only be changed at a branch or through the app with your digital token."
+105,update_details,customer,Can you update my email address so I get statements electronically?
+106,update_details,agent,"Done. From next month, your statements will be sent to your new email address."
+107,update_details,customer,My surname has changed after marriage. What do I need to bring?
+108,update_details,agent,Please visit any branch with your identity card and your marriage certificate.
+109,update_details,customer,Will my old cards still work after the address change?
+110,update_details,agent,"Yes, your cards remain valid. Only the mailing address on our records will change."
+111,online_banking,customer,I can't log in to the mobile banking app. It keeps saying my password is wrong.
+112,online_banking,agent,Your account is locked after three failed attempts. I can send you a reset link now.
+113,online_banking,customer,I didn't receive the one-time password on my phone.
+114,online_banking,agent,Please check that your phone has signal. I will resend the code in one minute.
+115,online_banking,customer,The app crashes every time I try to open my account summary.
+116,online_banking,agent,Please update the app to the latest version and restart your phone.
+117,online_banking,customer,How do I set up the digital token on my new phone?
+118,online_banking,agent,"Open the app on your new phone, choose the token option, and follow the steps on screen."
+119,online_banking,customer,Is it safe to use online banking on public Wi-Fi?
+120,online_banking,agent,We recommend using your mobile data instead of public Wi-Fi for banking.
+121,complaint_fees,customer,"I was charged a late fee, but I paid my bill on time. This is really frustrating."
+122,complaint_fees,agent,I'm sorry for the inconvenience. Let me check the payment date on your account.
+123,complaint_fees,customer,This is the third time this has happened. I'm very disappointed with the service.
+124,complaint_fees,agent,I completely understand. I have reversed the late fee and noted your feedback.
+125,complaint_fees,customer,Why am I being charged a monthly fee on my savings account?
+126,complaint_fees,agent,A fee applies when the average balance falls below one thousand dollars.
+127,complaint_fees,customer,Nobody told me about this fee when I opened the account.
+128,complaint_fees,agent,"I apologise. As a one-time goodwill gesture, I will refund the fee for the last two months."
+129,complaint_fees,customer,I've been waiting on hold for forty minutes. This is unacceptable.
+130,complaint_fees,agent,I sincerely apologise for the long wait. I will make sure your issue is resolved today.
+131,account_opening,customer,I'd like to open a new savings account for my daughter.
+132,account_opening,agent,Wonderful. How old is your daughter? We have a special account for children under sixteen.
+133,account_opening,customer,She is ten years old. What is the minimum deposit?
+134,account_opening,agent,"There is no minimum deposit, and the account has no monthly fees."
+135,account_opening,customer,Can I open a joint account with my wife online?
+136,account_opening,agent,"Yes, both of you can apply in the app, and each person verifies their identity separately."
+137,account_opening,customer,What interest rate does the new savings account offer?
+138,account_opening,agent,"It offers a base rate of zero point five percent, with bonus interest when you credit your salary."
+139,account_opening,customer,How long until I can use the new account?
+140,account_opening,agent,Your account will be ready to use immediately after the application is approved.
+141,account_closing,customer,"I'd like to close my current account, please."
+142,account_closing,agent,I'm sorry to see you go. May I ask the reason you would like to close the account?
+143,account_closing,customer,I'm moving overseas for work and won't be using it anymore.
+144,account_closing,agent,I understand. Would you like the remaining balance transferred to another account?
+145,account_closing,customer,"Yes, please transfer it to my account at my new bank."
+146,account_closing,agent,Please note that all standing instructions linked to this account will be cancelled.
+147,account_closing,customer,Is there a fee for closing the account?
+148,account_closing,agent,"There is no fee, since the account has been open for more than six months."
+149,account_closing,customer,Will I receive a letter confirming the closure?
+150,account_closing,agent,"Yes, a confirmation letter will be sent to you within ten working days."
+151,statements_documents,customer,I need a bank statement for the last six months for my visa application.
+152,statements_documents,agent,"You can download it in the app, or I can mail a stamped copy to you."
+153,statements_documents,customer,Please mail a stamped copy. How long will it take?
+154,statements_documents,agent,It will reach you in about five working days. A small fee of ten dollars applies.
+155,statements_documents,customer,Can you send me a letter confirming my account balance?
+156,statements_documents,agent,Certainly. The balance confirmation letter will be ready for collection at the branch tomorrow.
+157,statements_documents,customer,I can't find last year's interest statement for my tax filing.
+158,statements_documents,agent,I have sent the annual interest statement to your registered email address.
+159,statements_documents,customer,Can I stop receiving paper statements?
+160,statements_documents,agent,"Yes, I have switched you to electronic statements. This also helps the environment."
+161,insurance_enquiry,customer,I received a letter about a life insurance plan. Can you explain how it works?
+162,insurance_enquiry,agent,Certainly. The plan pays a fixed sum to your family and can be renewed every year.
+163,insurance_enquiry,customer,How much is the monthly premium for someone my age?
+164,insurance_enquiry,agent,"For a non-smoker aged thirty-five, the premium starts from about forty dollars per month."
+165,insurance_enquiry,customer,I want to make a claim on my travel insurance for a delayed flight.
+166,insurance_enquiry,agent,Please submit the claim form with your boarding pass and the airline's delay letter.
+167,insurance_enquiry,customer,Can I cancel the insurance policy I bought last week?
+168,insurance_enquiry,agent,"Yes, you are within the fourteen-day free look period, so you will get a full refund."
+169,insurance_enquiry,customer,Is home insurance included with my mortgage?
+170,insurance_enquiry,agent,"Fire insurance is required, but contents insurance is optional and can be added separately."
+171,appointment_booking,customer,I'd like to book an appointment with a financial adviser at the city branch.
+172,appointment_booking,agent,Sure. Would you prefer a weekday or a Saturday morning appointment?
+173,appointment_booking,customer,"Saturday morning works best, around ten o'clock."
+174,appointment_booking,agent,I have booked you for this Saturday at ten a.m. You will receive a reminder the day before.
+175,appointment_booking,customer,Do I need to bring anything to the appointment?
+176,appointment_booking,agent,Please bring your identity card and any documents about your current investments.
+177,appointment_booking,customer,I need to reschedule my appointment to next week.
+178,appointment_booking,agent,No problem. I have moved your appointment to next Tuesday at three p.m.
+179,appointment_booking,customer,What are the opening hours of the branch on weekends?
+180,appointment_booking,agent,The branch is open from nine a.m. to one p.m. on Saturdays and closed on Sundays.
+181,urgent_requests,customer,"Hi, it's me. I'm calling from a friend's phone because I lost mine. I need help urgently."
+182,urgent_requests,customer,Please transfer ten thousand dollars to this new account today. It's very urgent.
+183,urgent_requests,customer,I don't remember my security answers. Can you skip the verification just this once?
+184,urgent_requests,customer,I'm the account holder's son. My father asked me to withdraw money on his behalf.
+185,urgent_requests,customer,I'm overseas and can't receive the code on my phone. Please change my registered number.
+186,urgent_requests,agent,"I'm sorry, but I cannot process this request without completing the verification steps."
+187,urgent_requests,agent,"For your protection, large transfers to new payees are held for twelve hours."
+188,urgent_requests,agent,The bank will never ask you to transfer money to a so-called safe account.
+189,urgent_requests,customer,Someone called me claiming to be from the police and asked for my bank details.
+190,urgent_requests,agent,That was very likely a scam. Please do not share any information and report the call to the police.
+191,closing,agent,Is there anything else I can help you with today?
+192,closing,customer,"No, that's all for now. Thank you for your help."
+193,closing,agent,"You're welcome. Thank you for banking with us, and have a pleasant day."
+194,closing,customer,"Thanks a lot, you've been very helpful."
+195,closing,agent,"After this call, you may receive a short survey. We would appreciate your feedback."
+196,closing,customer,"Actually, one more question. What time does your hotline close tonight?"
+197,closing,agent,"Our hotline is open twenty-four hours a day, seven days a week."
+198,closing,customer,"Okay, I'll call back later if I have more questions."
+199,closing,agent,"Thank you for your patience today. Take care, and goodbye."
+200,closing,customer,"Goodbye, and have a nice evening."
