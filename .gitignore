@@ -22,6 +22,8 @@ emotion_recognition/models/*/*
 !emotion_recognition/models/*/.gitkeep
 antideepfake/models/*/*
 !antideepfake/models/*/.gitkeep
+# The voice-cloning model files: a clone of the private repository Davidlequnchen/voice_clone_models (a git repository of its own)
+antideepfake/models/voice_clone/
 # Third-party code fetched by the download scripts (e.g. the CosyVoice repository at a pinned commit)
 antideepfake/third_party/
 # Model weights anywhere else in the repository
