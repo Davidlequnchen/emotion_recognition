@@ -56,7 +56,8 @@ antideepfake/
 ├── docs/                       # the models explained (Chinese and English); figures/ holds the detector diagram
 ├── models/
 │   ├── antideepfake/           # xlsr_1b.ckpt, LICENSE-CHECKPOINT, README.txt (downloaded, not in git)
-│   └── voice_clone/            # cosyvoice2_0.5b/, cosyvoice3_0.5b/, chatterbox/, wetext/ (downloaded, not in git)
+│   └── voice_clone/            # cosyvoice2_0.5b/, cosyvoice3_0.5b/, chatterbox/, wetext/ (downloaded, or cloned from
+│                               # the private repository voice_clone_models; not in this repository)
 ├── third_party/CosyVoice/      # the official CosyVoice code at a pinned commit (cloned, not in git)
 └── outputs/voice_clone/        # generated clips: <speaker>/<model>/<id>.wav + manifest.csv (not in git)
 ```
@@ -197,6 +198,10 @@ pip install --no-deps chatterbox-tts==0.1.7
 
 # 2. Models (once): CosyVoice code from GitHub, the models from Hugging Face, wetext FSTs from ModelScope (needs Git LFS)
 python scripts/voice_clone/download_models.py      # -> third_party/CosyVoice, models/voice_clone/ (10.7 GB)
+#    Company computer (no Hugging Face / ModelScope): get the model files from the private repository first
+#    git clone https://github.com/Davidlequnchen/voice_clone_models.git models/voice_clone
+#    python models/voice_clone/join_parts.py          # joins the 90 MiB parts, checks every SHA-256
+#    then download_models.py only clones the CosyVoice code from GitHub and skips the models
 
 # 3. Record a reference: a window opens; read the sentence shown after the countdown (8 s)
 python scripts/voice_clone/record_reference.py     # -> data/voice_clone/reference/<speaker>_<time>.wav + .txt
