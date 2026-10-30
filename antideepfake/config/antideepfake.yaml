@@ -30,7 +30,7 @@ model:
 # scripts/antideepfake/inference.py
 # ---------------------------------------------------------------------
 inference:
-  audio: [data/voice_clone/reference, outputs/voice_clone/speaker1]   # default: the six CREMA-D test clips of the emotion project.
+  audio: ../emotion_recognition/data/samples   # default: the six CREMA-D test clips of the emotion project.
                         # A folder (every audio file in it and its sub-folders), a single file, or a list of
                         # files and folders, e.g. [../emotion_recognition/data/samples/1001_DFA_ANG_XX.wav,
                         # /path/to/folder] (wav, flac, mp3, ogg; paths are relative to antideepfake/, or absolute)
