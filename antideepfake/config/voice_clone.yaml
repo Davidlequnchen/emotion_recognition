@@ -1,0 +1,114 @@
+# =====================================================================
+# Voice cloning: synthetic speech in a consenting speaker's own voice, to be scored later by the AntiDeepfake
+# detector (config/antideepfake.yaml).
+# scripts/voice_clone/download_models.py and generate.py read their settings from this file (there are no
+# command-line options): edit a value, then run the script from the antideepfake/ folder, in the `voice_clone`
+# conda environment (requirements-voice-clone.txt). Paths are relative to the antideepfake/ folder, or absolute.
+# =====================================================================
+
+# Hardware mode: which entry of `devices` (below) the models run on
+#   auto : cuda when PyTorch sees an NVIDIA GPU (torch.cuda.is_available()), otherwise mac
+#   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
+#   cuda : Linux server with NVIDIA GPU(s)
+mode: auto
+
+devices:          # device per mode; a model's mac_device (below) overrides devices.mac
+  mac: mps        # mps | cpu
+  cuda: cuda:0    # cuda:<gpu index>
+
+models: all       # all models of the registry below, or a list such as [cosyvoice2, chatterbox]
+
+# ---------------------------------------------------------------------
+# The models. Each one is downloaded from Hugging Face at a pinned commit (`revision`) into `folder`, with only
+# the files that the official inference code reads (`files`; README.md is the model card with the licence).
+# Generation runs offline (HF_HUB_OFFLINE=1): nothing is downloaded at run time.
+# ---------------------------------------------------------------------
+registry:
+  cosyvoice2:
+    name: CosyVoice2-0.5B                 # Alibaba Tongyi Lab, FunAudioLLM; arXiv:2412.10117
+    licence: Apache-2.0
+    hf_repo: FunAudioLLM/CosyVoice2-0.5B
+    revision: eec1ae6c79877dbd9379285cf8789c9e0879293d   # 2026-05-31
+    folder: models/voice_clone/cosyvoice2_0.5b
+    files: [README.md, cosyvoice2.yaml, llm.pt, flow.pt, hift.pt, campplus.onnx, speech_tokenizer_v2.onnx,
+            CosyVoice-BlankEN/config.json, CosyVoice-BlankEN/generation_config.json, CosyVoice-BlankEN/merges.txt,
+            CosyVoice-BlankEN/tokenizer_config.json, CosyVoice-BlankEN/vocab.json]
+    # Not downloaded: CosyVoice-BlankEN/model.safetensors (988 MB: plain Qwen2.5-0.5B weights that llm.pt
+    # overwrites; the LLM is built from config.json instead), flow.decoder.estimator.fp32.onnx (TensorRT only),
+    # speech_tokenizer_v2.batch.onnx (training only), asset/, config.json and configuration.json (unused)
+    mac_device: cpu                       # CosyVoice's code itself picks cuda if available, else the CPU (no MPS)
+    speed: 1.0                            # speaking rate (1.0 = natural); CosyVoice resamples the mel frames
+    text_frontend: true                   # true: normalise the text first (wetext: numbers, dates, money -> words)
+    prompt_prefix: ""                     # put in front of the reference transcript (CosyVoice2: none)
+
+  cosyvoice3:
+    name: Fun-CosyVoice3-0.5B-2512        # Alibaba Tongyi Lab, FunAudioLLM; arXiv:2505.17589
+    licence: Apache-2.0
+    hf_repo: FunAudioLLM/Fun-CosyVoice3-0.5B-2512
+    revision: 29e01c4e8d000f4bcd70751be16fa94bf3d85a18   # 2026-02-03
+    folder: models/voice_clone/cosyvoice3_0.5b
+    files: [README.md, cosyvoice3.yaml, llm.pt, flow.pt, hift.pt, campplus.onnx, speech_tokenizer_v3.onnx,
+            CosyVoice-BlankEN/config.json, CosyVoice-BlankEN/generation_config.json, CosyVoice-BlankEN/merges.txt,
+            CosyVoice-BlankEN/tokenizer_config.json, CosyVoice-BlankEN/vocab.json]
+    # Not downloaded: llm.rl.pt (2.0 GB, the RL-tuned LLM; the code loads llm.pt), CosyVoice-BlankEN/model.safetensors,
+    # flow.decoder.estimator.fp32.onnx (TensorRT only), speech_tokenizer_v3.batch.onnx (training only), asset/,
+    # config.json, configuration.json
+    mac_device: cpu                       # as for cosyvoice2
+    speed: 1.0                            # speaking rate (1.0 = natural)
+    text_frontend: true                   # true: normalise the text first (wetext)
+    prompt_prefix: "You are a helpful assistant.<|endofprompt|>"  # CosyVoice3 expects this before the transcript
+                                                                  # (official example.py)
+
+  chatterbox:
+    name: Chatterbox (English)            # Resemble AI; no paper (model card and GitHub only)
+    licence: MIT
+    hf_repo: ResembleAI/chatterbox
+    revision: 5bb1f6ee58e50c3b8d408bc82a6d3740c2db6e18   # 2026-06-10
+    folder: models/voice_clone/chatterbox
+    files: [README.md, ve.safetensors, t3_cfg.safetensors, s3gen.safetensors, tokenizer.json, conds.pt]
+    # The files of ChatterboxTTS.from_local (chatterbox-tts 0.1.7). Not downloaded: the .pt copies of the same
+    # weights, s3gen_v3.*, and the multilingual model (t3_23lang, t3_mtl23ls_*, mtl_tokenizer.json, Cangjie5_TC.json,
+    # grapheme_mtl_merged_expanded_v1.json)
+    mac_device: mps                       # mps | cpu. Both repeat exactly with the same seed, but give different clips;
+                                          # mps is about 1.6x faster on an M4 Max
+    exaggeration: 0.5                     # emotion intensity, 0.25-2.0 (0.5 = neutral, upstream default)
+    cfg_weight: 0.5                       # classifier-free guidance weight, 0-1 (0.5 upstream; lower = slower pace)
+    temperature: 0.8                      # sampling temperature of the speech-token LLM (upstream default)
+    repetition_penalty: 1.2               # upstream default
+    min_p: 0.05                           # min-p sampling (upstream default)
+    top_p: 1.0                            # top-p sampling (1.0 = off, upstream default)
+    # Every clip carries Resemble's inaudible Perth watermark: upstream always adds it
+
+# Code and resources that are not on Hugging Face
+cosyvoice_code:                           # the official CosyVoice code (Apache-2.0), cloned from GitHub
+  repo: https://github.com/FunAudioLLM/CosyVoice
+  commit: 074ca6dc9e80a2f424f1f74b48bdd7d3fea531cc   # 2026-05-26; its submodule third_party/Matcha-TTS is
+                                                     # pinned by this commit (dd9105b34bf2be2230f4aa1e4769fb586a3c824e)
+  folder: third_party/CosyVoice           # git-ignored
+wetext:                                   # text normaliser of CosyVoice (wetext 0.0.4). Its FSTs are on ModelScope only and
+                                          # wetext would fetch them at run time, so they are kept here. CosyVoice loads the
+                                          # English and Chinese text-normalisation (tn) FSTs, whatever the language
+  ms_repo: pengzhendong/wetext            # fetched with git + Git LFS (ModelScope's file API rate-limits hard)
+  licence: Apache-2.0
+  revision: 67928a15fac1e769e23189c53648a65dea206a39   # 2025-01-07: the FSTs of wetext 0.0.3/0.0.4. Newer FSTs (made
+                                                       # for wetext 0.1.x) give wrong numbers or crash with 0.0.4
+  folder: models/voice_clone/wetext
+  files:                                  # file: SHA-256 (from the Git LFS pointers; checked after the download)
+    README.md: 2f85e7d37b9202ebc3d32ea9a55bb6eaa005352aebc9923d326f241e98cfa811
+    en/tn/tagger.fst: cdbc646a6c0dea245aac43ffa88372fae36e90e7c284b52fc8b60071c1da9410
+    en/tn/verbalizer.fst: c2b44c1c023df96a09c0ac8f5dd8625b139a69a13da5ab1b0c8ad765cda73266
+    zh/tn/tagger.fst: 36d7affd5a4e39efca570e5b10273103e5be75615982e71a6314299ee7b8ebdd
+    zh/tn/verbalizer.fst: 81618a81f4eee9524fae0763152a09d7c70460d2d670043bfc9715668575a9a6
+
+# ---------------------------------------------------------------------
+# scripts/voice_clone/generate.py
+# ---------------------------------------------------------------------
+generate:
+  reference: latest                       # latest: the newest .wav in reference_dir that has a .txt transcript next to
+                                          # it; or a path, e.g. data/voice_clone/reference/alex_20261030_101500.wav
+  reference_dir: data/voice_clone/reference   # recordings of scripts/voice_clone/record_reference.py
+  texts: data/voice_clone/texts.csv       # columns id,scenario,role,text: one clip per row
+  limit: null                             # only the first N rows (quick test); null = every row
+  seed: 1234                              # the clip of row i (0-based, in the whole file) uses seed + i
+  overwrite: false                        # false: skip clips whose .wav already exists; true: make them again
+  out: outputs/voice_clone                # clips go to <out>/<speaker>/<model>/<id>.wav, with a manifest.csv

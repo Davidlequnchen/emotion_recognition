@@ -1,0 +1,67 @@
+# Packages for voice cloning (scripts/voice_clone/: download_models.py, generate.py, record_reference.py) with
+# CosyVoice2-0.5B, Fun-CosyVoice3-0.5B-2512 (official code in third_party/CosyVoice) and Chatterbox (chatterbox-tts).
+# Its own conda environment `voice_clone`, Python 3.11 (conda's Python includes tkinter for the recorder).
+# Tested on an M4 Max MacBook (macOS, MPS + CPU).
+#
+# One environment for both model families. Their pins clash only on transformers: CosyVoice pins 4.51.3,
+# chatterbox-tts 0.1.7 pins 5.2.0 but its English model runs unchanged on 4.51.3 (5.2.0 was only needed for its
+# multilingual model and Gradio app), while CosyVoice's Qwen2 decoding loop (past_key_values) is written for 4.x.
+# So chatterbox-tts is installed with --no-deps, and its other dependencies are listed here. Also left out on purpose:
+# gradio, spacy-pkuseg, pykakasi, pyloudnorm (chatterbox's web demo, multilingual and Turbo models), and
+# CosyVoice's training, serving and TensorRT packages (deepspeed, tensorrt, fastapi, grpcio, tensorboard).
+#
+# Install (from the antideepfake/ folder):
+#   Mac (Apple Silicon):
+#     conda create -n voice_clone python=3.11 -y
+#     conda activate voice_clone
+#     pip install "setuptools<81" wheel
+#     pip install --no-build-isolation openai-whisper==20231117   # its old setup.py needs pkg_resources
+#     pip install -r requirements-voice-clone.txt
+#     pip install --no-deps chatterbox-tts==0.1.7
+#   NVIDIA server (Linux): the same, but first install the CUDA build of PyTorch from the PyTorch index (its wheels
+#   bundle the CUDA runtime and cuDNN; the driver must support CUDA 12.4, see `nvidia-smi`):
+#     pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#   onnxruntime below is the CPU build: on CUDA, CosyVoice asks it for the GPU, gets a warning and runs its two small
+#   ONNX models (speech tokenizer, speaker encoder) on the CPU, once per clip. For the GPU there, replace it with
+#   onnxruntime-gpu (a CUDA 12 build).
+# Then get the models: python scripts/voice_clone/download_models.py
+
+# --- shared ---
+torch==2.6.0                # chatterbox-tts 0.1.7 pins it; CosyVoice (pinned 2.3.1) runs on it too
+torchaudio==2.6.0
+numpy==1.26.4               # both pin numpy 1.x
+transformers==4.51.3        # CosyVoice's pin (see above)
+safetensors==0.5.3          # chatterbox-tts pin
+diffusers==0.29.0           # both: attention blocks of the flow-matching decoders
+conformer==0.3.2            # both
+librosa==0.11.0             # chatterbox-tts pin (CosyVoice pins 0.10.2; only its mel filters are used)
+omegaconf==2.3.0
+soundfile==0.14.0           # writes the clips
+pyyaml==6.0.3               # reads config/voice_clone.yaml
+huggingface_hub==0.36.2     # download_models.py
+setuptools==80.10.2         # <81: perth (Chatterbox's watermarker) and pyworld import pkg_resources (gone in 81)
+
+# --- CosyVoice (official code, commit 074ca6d) ---
+HyperPyYAML==1.2.3          # reads cosyvoice2.yaml / cosyvoice3.yaml
+hydra-core==1.3.2           # imported by Matcha-TTS
+lightning==2.2.4            # imported by Matcha-TTS
+matplotlib==3.7.5           # imported by Matcha-TTS
+rich==13.7.1                # imported by Matcha-TTS
+gdown==5.1.0                # imported by Matcha-TTS
+wget==3.2                   # imported by Matcha-TTS
+einops==0.8.2
+x-transformers==2.11.24     # CosyVoice3's DiT
+inflect==7.3.1              # spells out numbers
+onnxruntime==1.18.0         # speech tokenizer and CAM++ speaker encoder (ONNX)
+openai-whisper==20231117    # log-mel features of the speech tokenizer (installed above, without build isolation)
+wetext==0.0.4               # text normalisation; its FSTs come from models/voice_clone/wetext (no ModelScope at run time)
+modelscope==1.20.0          # imported by CosyVoice and wetext (no download happens)
+pyarrow==18.1.0             # imported when cosyvoice2.yaml / cosyvoice3.yaml is read (data pipeline entries)
+pyworld==0.3.4              # imported when the yaml is read, as above (it builds from source; needs Xcode tools)
+
+# --- Chatterbox (chatterbox-tts 0.1.7, installed with --no-deps) ---
+s3tokenizer==0.3.0          # S3 speech tokenizer network (weights are in s3gen.safetensors)
+resemble-perth==1.0.1       # Perth watermark (its small network ships inside the package)
+
+# --- recorder (scripts/voice_clone/record_reference.py) ---
+sounddevice==0.5.6          # microphone input (tkinter comes with conda's Python)

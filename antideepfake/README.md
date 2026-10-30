@@ -9,6 +9,9 @@ This is a side project of the repository, independent of the speech emotion reco
 ([`../emotion_recognition/`](../emotion_recognition/README.md)). The only link between them: by default it scores
 the six CREMA-D test clips of that project.
 
+It also makes its own test set of synthetic speech: three voice-cloning models read 200 call-centre lines in the voice
+of a consenting speaker (section 7).
+
 How the model is built and trained (architecture diagram, size, training data and method):
 [docs/xlsr_1b_antideepfake.md](docs/xlsr_1b_antideepfake.md) (Chinese) and
 [docs/xlsr_1b_antideepfake_en.md](docs/xlsr_1b_antideepfake_en.md) (English).
@@ -33,17 +36,29 @@ The scripts have no command-line options: every setting is in [`config/antideepf
 ```
 antideepfake/
 ├── config/
-│   └── antideepfake.yaml       # hardware mode (mac | cuda), devices, checkpoint, audio, threshold
-├── requirements.txt            # torch, torchaudio, soundfile, pyyaml (standalone)
+│   ├── antideepfake.yaml       # detector: hardware mode (mac | cuda), devices, checkpoint, audio, threshold
+│   ├── voice_clone.yaml        # voice cloning: models (pinned sources), devices, reference, texts, seed, output
+│   └── record.yaml             # recorder: speaker name, length, microphone, sentences to read
+├── requirements.txt            # detector: torch, torchaudio, soundfile, pyyaml (standalone)
+├── requirements-voice-clone.txt  # voice cloning: its own conda environment `voice_clone`
 ├── scripts/
-│   └── antideepfake/
-│       ├── download_model.py   # downloads the checkpoint from Zenodo and checks its size and MD5
-│       └── inference.py        # step-by-step inference: P(real) for every audio file
-├── data/
-│   └── voice_clone/texts.csv   # 200 synthetic call-centre lines (for the voice-cloning test set, in progress)
-├── docs/                       # the model explained (Chinese and English), with its architecture diagram in figures/
-└── models/
-    └── antideepfake/           # xlsr_1b.ckpt, LICENSE-CHECKPOINT, README.txt (downloaded, not in git; git keeps .gitkeep)
+│   ├── antideepfake/
+│   │   ├── download_model.py   # downloads the checkpoint from Zenodo and checks its size and MD5
+│   │   └── inference.py        # step-by-step inference: P(real) for every audio file
+│   └── voice_clone/
+│       ├── download_models.py  # CosyVoice code (GitHub), the three models (Hugging Face), wetext FSTs (ModelScope)
+│       ├── record_reference.py # a window that records a 5-10 s reference clip of your voice
+│       ├── generate.py         # one clip per line of texts.csv, per model, in the reference voice
+│       └── cosyvoice_tts.py, chatterbox_tts.py  # the model loaders used by generate.py
+├── data/voice_clone/
+│   ├── texts.csv               # 200 synthetic call-centre lines (id, scenario, role, text)
+│   └── reference/              # your recordings (not in git)
+├── docs/                       # the models explained (Chinese and English); figures/ holds the detector diagram
+├── models/
+│   ├── antideepfake/           # xlsr_1b.ckpt, LICENSE-CHECKPOINT, README.txt (downloaded, not in git)
+│   └── voice_clone/            # cosyvoice2_0.5b/, cosyvoice3_0.5b/, chatterbox/, wetext/ (downloaded, not in git)
+├── third_party/CosyVoice/      # the official CosyVoice code at a pinned commit (cloned, not in git)
+└── outputs/voice_clone/        # generated clips: <speaker>/<model>/<id>.wav + manifest.csv (not in git)
 ```
 
 ## 1. Set up the environment
@@ -161,11 +176,59 @@ files longer than 20.48 s; those run on the CPU automatically, or set `max_secon
 files into equal segments and averages their logits; it is not part of AntiDeepfake, but keeps the memory use of
 long recordings in check.
 
+## 7. Voice cloning: a test set of synthetic speech
+
+Three voice-cloning models with licences that allow commercial use read the 200 lines of `data/voice_clone/texts.csv`
+in the voice of a reference recording: CosyVoice2-0.5B, Fun-CosyVoice3-0.5B-2512 (Apache-2.0) and Chatterbox
+(English, MIT). With one reference that gives 3 × 200 = 600 clips. The models, their sources, papers, architecture,
+input and output: [docs/voice_clone_models.md](docs/voice_clone_models.md) (Chinese) and
+[docs/voice_clone_models_en.md](docs/voice_clone_models_en.md) (English).
+
+Only record yourself, or a colleague who has agreed to it. Recordings and generated clips stay on this computer
+(git-ignored); never upload them to an online voice service.
+
+```bash
+# 1. Environment (once): its own conda environment, the exact commands are at the top of requirements-voice-clone.txt
+conda create -n voice_clone python=3.11 -y && conda activate voice_clone
+pip install "setuptools<81" wheel
+pip install --no-build-isolation openai-whisper==20231117
+pip install -r requirements-voice-clone.txt
+pip install --no-deps chatterbox-tts==0.1.7
+
+# 2. Models (once): CosyVoice code from GitHub, the models from Hugging Face, wetext FSTs from ModelScope (needs Git LFS)
+python scripts/voice_clone/download_models.py      # -> third_party/CosyVoice, models/voice_clone/ (10.7 GB)
+
+# 3. Record a reference: a window opens; read the sentence shown after the countdown (8 s)
+python scripts/voice_clone/record_reference.py     # -> data/voice_clone/reference/<speaker>_<time>.wav + .txt
+
+# 4. Generate: every model, one clip at a time, with the newest recording
+python scripts/voice_clone/generate.py             # -> outputs/voice_clone/<speaker>/<model>/<id>.wav + manifest.csv
+
+# 5. Score the clips: set `audio: outputs/voice_clone` in config/antideepfake.yaml, then (in its environment)
+python scripts/antideepfake/inference.py
+```
+
+- **Recorder** (`config/record.yaml`): set `speaker` to your name first; it names the files and the output folder.
+  macOS asks once for microphone access for the terminal app; without it the take is silent (the window warns).
+  The sentence in the text box is saved as the transcript: read it exactly, or edit the box to match.
+- **Generation** (`config/voice_clone.yaml`): `models` (all, or e.g. `[chatterbox]`), `generate.reference`
+  (`latest` or a path), `limit` (first N lines, for a quick test), `seed`, `overwrite`. Models run one after the
+  other and are freed in between; nothing is downloaded at run time.
+- **Reproducible**: row i uses seed + i, and the models, code and wetext files are pinned to fixed revisions. On the
+  same machine and device, a second run gives byte-identical files (checked for all three models); MPS and CPU give
+  different clips. `manifest.csv` records the text, reference and its SHA-256, seed, duration, versions and device.
+- **Time on the M4 Max**: CosyVoice2 runs at about real time on the CPU, CosyVoice3 slightly slower, Chatterbox on
+  MPS at about 1.5 × real time: 200 lines (about 15 minutes of speech) take roughly 15, 20 and 25 minutes.
+- A one-line Chatterbox test clip scored P(real) 0.000 with the detector.
+
 ## Licence
 
 The checkpoint is CC BY-NC-SA 4.0: research and other non-commercial use only, with attribution, and anything built
 from it shared under the same licence. AntiDeepfake's code is BSD-3-Clause; no upstream code is copied into this
 repository.
+
+Voice cloning: CosyVoice2-0.5B, Fun-CosyVoice3-0.5B-2512, the CosyVoice code and the wetext FSTs are Apache-2.0;
+Chatterbox is MIT. The model cards (README.md) are kept in each model folder.
 
 ## Troubleshooting
 
