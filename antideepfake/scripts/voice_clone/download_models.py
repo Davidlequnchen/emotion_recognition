@@ -96,6 +96,10 @@ def main():
         m = registry[key]
         target = ROOT / m["folder"]
         print(f"\n  [{key}] {m['hf_repo']} @ {m['revision'][:12]} ({m['licence']}) -> {target}")
+        if all((target / f).exists() for f in m["files"]):  # e.g. joined from the voice_clone_models repository
+            print("  already present: skipped (Hugging Face not contacted)")
+            list_files(target)
+            continue
         info = api.model_info(m["hf_repo"], revision=m["revision"], files_metadata=True)
         sizes = {s.rfilename: s.size for s in info.siblings}
         missing = [f for f in m["files"] if f not in sizes]

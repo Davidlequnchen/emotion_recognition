@@ -33,12 +33,12 @@ RTF = 生成时间 ÷ 音频时长，小于 1 表示比实时快。
 
 | | 权重 | 代码 | 论文 | 公司电脑怎么拿到 |
 |---|---|---|---|---|
-| CosyVoice2-0.5B | [HF FunAudioLLM/CosyVoice2-0.5B](https://huggingface.co/FunAudioLLM/CosyVoice2-0.5B)，revision `eec1ae6c`；也在 [ModelScope iic/CosyVoice2-0.5B](https://www.modelscope.cn/models/iic/CosyVoice2-0.5B) | [GitHub FunAudioLLM/CosyVoice](https://github.com/FunAudioLLM/CosyVoice)，commit `074ca6dc`（子模块 Matcha-TTS `dd9105b3`） | [CosyVoice 2（arXiv:2412.10117）](https://arxiv.org/abs/2412.10117) | 权重：本仓库的 git 分片；代码：下载脚本从 GitHub clone |
+| CosyVoice2-0.5B | [HF FunAudioLLM/CosyVoice2-0.5B](https://huggingface.co/FunAudioLLM/CosyVoice2-0.5B)，revision `eec1ae6c`；也在 [ModelScope iic/CosyVoice2-0.5B](https://www.modelscope.cn/models/iic/CosyVoice2-0.5B) | [GitHub FunAudioLLM/CosyVoice](https://github.com/FunAudioLLM/CosyVoice)，commit `074ca6dc`（子模块 Matcha-TTS `dd9105b3`） | [CosyVoice 2（arXiv:2412.10117）](https://arxiv.org/abs/2412.10117) | 权重：私有仓库 [voice_clone_models](https://github.com/Davidlequnchen/voice_clone_models) 里的 90 MiB 分片；代码：下载脚本从 GitHub clone |
 | Fun-CosyVoice3-0.5B-2512 | [HF FunAudioLLM/Fun-CosyVoice3-0.5B-2512](https://huggingface.co/FunAudioLLM/Fun-CosyVoice3-0.5B-2512)，revision `29e01c4e`；也在 [ModelScope](https://www.modelscope.cn/models/FunAudioLLM/Fun-CosyVoice3-0.5B-2512) | 同上 | [CosyVoice 3（arXiv:2505.17589）](https://arxiv.org/abs/2505.17589) | 同上 |
-| Chatterbox | [HF ResembleAI/chatterbox](https://huggingface.co/ResembleAI/chatterbox)，revision `5bb1f6ee` | [GitHub resemble-ai/chatterbox](https://github.com/resemble-ai/chatterbox)；pip 包 `chatterbox-tts==0.1.7` | 无论文（只有 model card 和 GitHub） | 权重：本仓库的 git 分片；代码：PyPI |
-| wetext 文本归一化 FST（CosyVoice 用） | [ModelScope pengzhendong/wetext](https://www.modelscope.cn/models/pengzhendong/wetext)，revision `67928a15`，Apache-2.0 | pip 包 `wetext==0.0.4` | – | 本仓库（4 个文件，共 11 MB） |
+| Chatterbox | [HF ResembleAI/chatterbox](https://huggingface.co/ResembleAI/chatterbox)，revision `5bb1f6ee` | [GitHub resemble-ai/chatterbox](https://github.com/resemble-ai/chatterbox)；pip 包 `chatterbox-tts==0.1.7` | 无论文（只有 model card 和 GitHub） | 权重：私有仓库 [voice_clone_models](https://github.com/Davidlequnchen/voice_clone_models) 里的分片；代码：PyPI |
+| wetext 文本归一化 FST（CosyVoice 用） | [ModelScope pengzhendong/wetext](https://www.modelscope.cn/models/pengzhendong/wetext)，revision `67928a15`，Apache-2.0 | pip 包 `wetext==0.0.4` | – | 私有仓库 [voice_clone_models](https://github.com/Davidlequnchen/voice_clone_models)（4 个文件，共 11 MB） |
 
-完整的 revision 和 commit 写在 `config/voice_clone.yaml` 里。
+完整的 revision 和 commit 写在 `config/voice_clone.yaml` 里。公司电脑的做法：把私有仓库 [voice_clone_models](https://github.com/Davidlequnchen/voice_clone_models) clone 到 `models/voice_clone/`，运行其中的 `join_parts.py` 合并分片（逐个校验 SHA-256），再运行 `download_models.py`：它从 GitHub clone CosyVoice 代码，模型文件已存在就跳过，不会连 Hugging Face。
 
 ## 3. 输入和输出
 
