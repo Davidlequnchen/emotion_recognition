@@ -1,0 +1,27 @@
+# =====================================================================
+# Settings of scripts/voice_clone/record_reference.py: a small window that records a 5-10 s reference clip of
+# your voice for voice cloning. Run from the antideepfake/ folder:
+#   python scripts/voice_clone/record_reference.py
+# Each take is saved as <out>/<speaker>_<YYYYmmdd_HHMMSS>.wav (mono, 16-bit PCM) with the transcript next to it
+# (<same name>.txt). scripts/voice_clone/generate.py uses the newest take by default (`reference: latest` in
+# config/voice_clone.yaml). Recordings stay on this computer: data/voice_clone/reference/ is git-ignored.
+# Paths are relative to the antideepfake/ folder.
+# =====================================================================
+
+speaker: speaker1      # name in the file name, and the folder of the generated clips (outputs/voice_clone/<speaker>/).
+                       # Only record yourself, or a colleague who has agreed to it
+seconds: 8             # length of one take; 5-10 s suits every voice-cloning model here
+countdown: 3           # seconds counted down after pressing Record, before the recording starts
+sample_rate: 48000     # Hz; the models resample the reference themselves (CosyVoice 16 kHz, Chatterbox 16 and 24 kHz)
+input_device: null     # null = the system's default microphone; or a device name or index (the script lists them)
+out: data/voice_clone/reference  # where the takes go (git-ignored)
+
+# Sentences shown in the window to read aloud, each about 7 s at a normal pace. The sentence in the text box is
+# saved as the transcript, so read it exactly as written (or edit the box to match what you said).
+# CosyVoice needs the exact transcript of the reference; Chatterbox uses only the audio.
+prompts:
+  - "Hello, I am calling about my account. Could you please help me check my recent transactions?"
+  - "Thank you for waiting. I have checked your request, and everything should be ready by tomorrow afternoon."
+  - "Please remember to bring your identity card and a recent bill when you visit the branch next week."
+  - "The weather was lovely this morning, so I took a long walk by the river before going to work."
+  - "I would like to know whether there are any charges if I change my plan before the end of the year."
