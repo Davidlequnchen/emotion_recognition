@@ -14,13 +14,16 @@ __pycache__/
 .vscode/
 
 # Models: model files are ignored (model.pt alone is ~1.9 GB, xlsr_1b.ckpt 3.86 GB); download them with
-# emotion_recognition/scripts/common/download_model.py or antideepfake/download_model.py. Exception, for a machine
+# emotion_recognition/scripts/common/download_model.py, antideepfake/scripts/antideepfake/download_model.py
+# and antideepfake/scripts/voice_clone/download_models.py. Exception, for a machine
 # without Hugging Face: the weights of some emotion recognition models are committed as 90 MiB parts with their small
 # files (force-added with `git add -f`, see emotion_recognition/models/README.md); the joined weights stay ignored.
 emotion_recognition/models/*/*
 !emotion_recognition/models/*/.gitkeep
-antideepfake/models/*
-!antideepfake/models/.gitkeep
+antideepfake/models/*/*
+!antideepfake/models/*/.gitkeep
+# Third-party code fetched by the download scripts (e.g. the CosyVoice repository at a pinned commit)
+antideepfake/third_party/
 # Model weights anywhere else in the repository
 *.pt
 *.pth
@@ -34,6 +37,14 @@ antideepfake/models/*
 # emotion_recognition/data/samples/ are committed.
 emotion_recognition/data/*
 !emotion_recognition/data/samples/
+# antideepfake: only the synthetic call-centre texts are committed; voice recordings (references) stay local.
+antideepfake/data/*
+!antideepfake/data/voice_clone/
+antideepfake/data/voice_clone/*
+!antideepfake/data/voice_clone/texts.csv
+!antideepfake/data/voice_clone/reference/
+antideepfake/data/voice_clone/reference/*
+!antideepfake/data/voice_clone/reference/.gitkeep
 # Old locations, from before the split into emotion_recognition/ and antideepfake/: datasets and model files that
 # another machine still has there after `git pull` stay ignored until they are moved into the new folders.
 /data/

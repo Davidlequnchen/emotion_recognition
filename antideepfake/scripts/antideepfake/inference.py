@@ -7,9 +7,10 @@ P(real), the probability that the speech is real (bona fide): this is AntiDeepfa
 more likely real. P(fake) = 1 - P(real) is the deepfake score.
 
 Usage (from the antideepfake/ folder):
-    python inference.py
-Settings are in config.yaml: `mode` and `devices` choose the hardware, `inference.audio` the audio file(s) or
-folder(s), `inference.threshold` the decision threshold. Get the checkpoint first, from Zenodo: python download_model.py
+    python scripts/antideepfake/inference.py
+Settings are in config/antideepfake.yaml: `mode` and `devices` choose the hardware, `inference.audio` the audio file(s) or
+folder(s), `inference.threshold` the decision threshold. Get the checkpoint first, from Zenodo:
+python scripts/antideepfake/download_model.py
 
 Works offline: the network is defined in this file and its weights are read from xlsr_1b.ckpt. Nothing is
 downloaded at run time (no Hugging Face, no torch.hub, no fairseq).
@@ -39,8 +40,8 @@ import torchaudio
 import yaml
 from torch import nn
 
-ROOT = Path(__file__).resolve().parent  # project root (antideepfake/); paths in config.yaml are relative to it
-CONFIG = ROOT / "config.yaml"
+ROOT = Path(__file__).resolve().parents[2]  # project root (antideepfake/); paths in the config are relative to it
+CONFIG = ROOT / "config" / "antideepfake.yaml"
 AUDIO_EXTS = {".wav", ".flac", ".mp3", ".ogg"}
 SAMPLE_RATE = 16000  # the model works on 16 kHz mono audio
 # Checkpoint parts that only wav2vec 2.0 pre-training uses (masking, quantizer): not needed for inference
@@ -194,7 +195,7 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order with warnings, also when redirected to a log
 
     # ------------------------------------------------------------------
-    # Step 1: Read the configuration (config.yaml)
+    # Step 1: Read the configuration (config/antideepfake.yaml)
     # ------------------------------------------------------------------
     step("Step 1/6 | Load configuration")
     cfg = yaml.safe_load(CONFIG.read_text())
@@ -254,7 +255,7 @@ def main():
     # ------------------------------------------------------------------
     step("Step 4/6 | Load model")
     if not ckpt.exists():
-        sys.exit(f"ERROR: {ckpt} not found. Download it first (from Zenodo): python download_model.py")
+        sys.exit(f"ERROR: {ckpt} not found. Download it first (from Zenodo): python scripts/antideepfake/download_model.py")
     print(f"  {ckpt.name:<12}: {ckpt.stat().st_size / 1e6:,.2f} MB")
     t0 = time.perf_counter()
     # The network is built from the definition in this file (XLS-R 1B: 48 layers, width 1280), then every

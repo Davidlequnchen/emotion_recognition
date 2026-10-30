@@ -1,7 +1,7 @@
 # =====================================================================
 # Deepfake (spoofed speech) detection with AntiDeepfake.
-# inference.py and download_model.py read their settings from this file (there are no command-line
-# options): edit a value, then run the script from the antideepfake/ folder. Paths in this file are
+# scripts/antideepfake/inference.py and download_model.py read their settings from this file (there are no
+# command-line options): edit a value, then run the script from the antideepfake/ folder. Paths in this file are
 # relative to that folder, or absolute.
 #
 # Model: XLS-R-1B-AntiDeepfake by NII Yamagishi Lab, https://github.com/nii-yamagishilab/AntiDeepfake
@@ -20,14 +20,14 @@ devices:
   cuda: cuda:0    # cuda:<gpu index> | cpu
 
 # The AntiDeepfake checkpoint: one file from Zenodo (never from Hugging Face). To download it, run
-# python download_model.py
+# python scripts/antideepfake/download_model.py
 model:
-  dir: models                        # folder of the checkpoint (git keeps only its .gitkeep)
+  dir: models/antideepfake          # folder of the checkpoint (git keeps only its .gitkeep)
   checkpoint: xlsr_1b.ckpt           # official file name: XLS-R 1B post-trained for deepfake detection, 3.86 GB
   zenodo_record: 15580543            # https://zenodo.org/records/15580543 (version 1.0, 2025-06-24)
 
 # ---------------------------------------------------------------------
-# inference.py
+# scripts/antideepfake/inference.py
 # ---------------------------------------------------------------------
 inference:
   audio: ../emotion_recognition/data/samples   # default: the six CREMA-D test clips of the emotion project.
