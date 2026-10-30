@@ -15,6 +15,9 @@ of a consenting speaker (section 7).
 How the model is built and trained (architecture diagram, size, training data and method):
 [docs/xlsr_1b_antideepfake.md](docs/xlsr_1b_antideepfake.md) (Chinese) and
 [docs/xlsr_1b_antideepfake_en.md](docs/xlsr_1b_antideepfake_en.md) (English).
+Other open-source detectors compared with it (architecture, size, training data, reported EERs, licences):
+[docs/deepfake_models_survey.md](docs/deepfake_models_survey.md) (Chinese) and
+[docs/deepfake_models_survey_en.md](docs/deepfake_models_survey_en.md) (English).
 
 ## Quick start
 
