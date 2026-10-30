@@ -1,0 +1,35 @@
+# =====================================================================
+# Settings of scripts/antideepfake/evaluate.py: how well AntiDeepfake tells real speech from the voice clones,
+# on clean audio and through a simulated telephone channel. Run from the antideepfake/ folder:
+#   python scripts/antideepfake/evaluate.py
+# The detector itself (checkpoint, mode, devices, max_seconds) is set in config/antideepfake.yaml.
+# Paths are relative to the antideepfake/ folder, or absolute.
+# =====================================================================
+
+name: speaker1        # name of this run: everything goes to outputs/antideepfake/<name>/ (not in git)
+
+# Real (bona fide) speech: group name -> a list of files or folders (with sub-folders)
+real:
+  my_recordings: [data/voice_clone/reference]                          # the reference recordings of the speaker
+  crema_d: [../emotion_recognition/data/crema_d/AudioWAV]              # 91 actors, varied microphones
+  ravdess: [../emotion_recognition/data/ravdess/audio]                 # 24 actors, studio
+# Synthetic speech: group name -> a list of files or folders
+fake:
+  cosyvoice2: [outputs/voice_clone/speaker1/cosyvoice2]
+  cosyvoice3: [outputs/voice_clone/speaker1/cosyvoice3]
+  chatterbox: [outputs/voice_clone/speaker1/chatterbox]
+
+per_group_limit: 200  # at most this many files per group, drawn at random with `seed` (null = every file)
+seed: 0               # the random draw above, and the noise of the telephone channel
+
+conditions: [clean, telephone]  # clean = the files as they are; telephone = through the channel below first
+
+telephone:            # the simulated phone call (scripts/antideepfake/telephone.py)
+  sample_rate: 8000   # Hz, narrowband telephony
+  bandpass: [300, 3400]  # Hz, the telephone band; null = no filter
+  noise_snr_db: null  # white noise at this signal-to-noise ratio in dB, e.g. 20; null = no noise
+  codec: alaw         # G.711: alaw (Europe, most of Asia including Singapore) | ulaw (North America, Japan)
+  save_audio: true    # also write the telephone versions (8 kHz wav) to outputs/antideepfake/<name>/telephone_audio/
+
+threshold: 0.5        # a file counts as real when P(real) >= threshold (AntiDeepfake's default)
+plots: true           # score distributions and ROC curves (PNG) next to the results

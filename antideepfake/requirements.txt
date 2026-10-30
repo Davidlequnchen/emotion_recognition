@@ -15,7 +15,9 @@
 torch==2.5.1              # the network; 2.5.1 is the newest release with CUDA 12.1 wheels (as in emotion_recognition)
 torchaudio==2.5.1         # resampling to 16 kHz
 soundfile==0.14.0         # reads audio files
-pyyaml==6.0.3             # reads config.yaml
+pyyaml==6.0.3             # reads the config files
+numpy==2.4.6              # evaluate.py: metrics
+matplotlib==3.11.2        # evaluate.py: plots
 # The download from Zenodo and its MD5 check use only the Python standard library (urllib, hashlib).
 #
 # Upstream AntiDeepfake also installs these, which are deliberately not used here:

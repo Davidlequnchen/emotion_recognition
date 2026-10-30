@@ -108,7 +108,7 @@ generate:
                                           # it; or a path, e.g. data/voice_clone/reference/alex_20261030_101500.wav
   reference_dir: data/voice_clone/reference   # recordings of scripts/voice_clone/record_reference.py
   texts: data/voice_clone/texts.csv       # columns id,scenario,role,text: one clip per row
-  limit: null                             # only the first N rows (quick test); null = every row
+  limit: 2                             # only the first N rows (quick test); null = every row
   seed: 1234                              # the clip of row i (0-based, in the whole file) uses seed + i
   overwrite: false                        # false: skip clips whose .wav already exists; true: make them again
   out: outputs/voice_clone                # clips go to <out>/<speaker>/<model>/<id>.wav, with a manifest.csv
