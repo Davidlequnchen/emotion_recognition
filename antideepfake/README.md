@@ -205,7 +205,7 @@ pip install --no-deps chatterbox-tts==0.1.7
 
 # 2. Models (once): CosyVoice code from GitHub, the models from Hugging Face, wetext FSTs from ModelScope (needs Git LFS)
 python scripts/voice_clone/download_models.py      # -> third_party/CosyVoice, models/voice_clone/ (10.7 GB)
-#    Company computer (no Hugging Face / ModelScope): get the model files from the public repository first
+#    Company computer: get the model files from our repository voice_clone_models first
 #    git clone https://github.com/Davidlequnchen/voice_clone_models.git models/voice_clone
 #    python models/voice_clone/join_parts.py          # joins the 90 MiB parts, checks every SHA-256
 #    git -C models/voice_clone sparse-checkout set --no-cone '/*' '!*.part[0-9][0-9][0-9]'   # then drop the parts
