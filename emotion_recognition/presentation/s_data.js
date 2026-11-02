@@ -144,18 +144,35 @@ module.exports = function (L, A) {
   {
     const s = L.slide(SEC, "Intended vs Perceived Emotion: Audio Examples (CREMA-D)");
     const cs = clips.filter((c) => c.group === "subjectivity" && c.subgroup === "crema_d");
+    const OBS = {
+      "1014_WSI_HAP_XX": "All 10 listeners heard angry; MERaLiON agrees with them, emotion2vec+ with the actor",
+      "1089_TAI_FEA_XX": "All 10 listeners heard sad; both top models still predict the actor's fearful",
+      "1029_IEO_DIS_HI": "9 of 10 listeners heard angry; both top models predict the actor's disgusted",
+      "1082_TAI_SAD_XX": "All 10 listeners heard neutral; emotion2vec+ predicts sad, MERaLiON happy",
+    };
+    // columns: play | clip | actor | listeners | model predictions | observation
+    const cols = [[MX, 0.85, ""], [MX + 0.85, 2.45, "Clip"], [MX + 3.3, 1.35, "Actor (intended)"], [MX + 4.65, 2.6, "Listeners (perceived, n = 10)"], [MX + 7.4, 2.45, "Model predictions"], [MX + 9.95, W - MX - (MX + 9.95), "Observation"]];
+    cols.forEach(([x, w, t]) => L.text(s, t, x + 0.08, 1.4, w - 0.1, 0.3, { fontSize: 12, bold: true, color: C.muted }));
+    s.addShape(p.ShapeType.line, { x: MX, y: 1.72, w: W - 2 * MX, h: 0, line: { color: C.line, width: 1 } });
+    const SH = { "emotion2vec+ large": "emotion2vec+", "MERaLiON-SER-v1": "MERaLiON", "Vox-Profile WavLM": "Vox WavLM" };
     cs.forEach((c, i) => {
-      const y = 1.5 + i * 1.32, x = MX;
-      s.addShape(p.ShapeType.rect, { x, y, w: W - 2 * MX, h: 1.2, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
-      L.audio(s, "assets/" + c.path, x + 0.18, y + 0.25, 0.7);
-      L.text(s, `"${c.sentence}"  ·  speaker ${c.speaker}`, x + 1.1, y + 0.1, 5.5, 0.3, { fontSize: 12, color: C.muted });
-      L.text(s, "Actor", x + 1.1, y + 0.5, 0.7, 0.35, { fontSize: 13, color: C.muted, valign: "middle" });
-      L.tag(s, c.acted_label, x + 1.8, y + 0.52, { w: 1.2 });
-      L.text(s, "Listeners", x + 3.3, y + 0.5, 1.0, 0.35, { fontSize: 13, color: C.muted, valign: "middle" });
-      K.voteBar(s, c, x + 4.3, y + 0.53, 3.0, 0.3);
-      s.addText(K.predRuns(c, ["emotion2vec+ large", "MERaLiON-SER-v1", "Vox-Profile WavLM"], c.acted_label, 12), { x: x + 7.6, y: y + 0.12, w: 4.4, h: 0.3, fontFace: FONT, margin: 0, fit: "shrink" });
-      L.text(s, c.why_interesting, x + 7.6, y + 0.48, 4.45, 0.65, { fontSize: 12, color: C.text });
+      const y = 1.82 + i * 1.27, h = 1.15, stem = c.path.split("__")[1].replace(".mp3", "");
+      s.addShape(p.ShapeType.rect, { x: MX, y, w: W - 2 * MX, h, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
+      L.audio(s, "assets/" + c.path, MX + 0.12, y + 0.24, 0.65);
+      L.text(s, `"${c.sentence}"`, cols[1][0] + 0.08, y + 0.18, cols[1][1] - 0.1, 0.45, { fontSize: 13, italic: true, color: C.ink });
+      L.text(s, `speaker ${c.speaker}`, cols[1][0] + 0.08, y + 0.65, cols[1][1] - 0.1, 0.3, { fontSize: 11, color: C.muted });
+      L.tag(s, c.acted_label, cols[2][0] + 0.08, y + 0.42, { w: 1.15 });
+      K.voteBar(s, c, cols[3][0] + 0.08, y + 0.42, cols[3][1] - 0.2, 0.32);
+      ["emotion2vec+ large", "MERaLiON-SER-v1", "Vox-Profile WavLM"].forEach((m, j) => {
+        const [lab, pr] = c.predictions[m];
+        const col = lab === c.acted_label ? C.good : (lab === c.listener_majority ? C.accent2 : C.muted);
+        const yy = y + 0.12 + j * 0.3;
+        L.text(s, SH[m] + ((c.models_in_training_data || []).includes(m) ? " †" : ""), cols[4][0] + 0.08, yy, 1.2, 0.3, { fontSize: 12, color: C.text, valign: "middle" });
+        L.text(s, `${lab} ${pr.toFixed(2)}`, cols[4][0] + 1.3, yy, cols[4][1] - 1.3, 0.3, { fontSize: 12, bold: true, color: col, valign: "middle" });
+      });
+      L.text(s, OBS[stem] || c.why_interesting, cols[5][0] + 0.08, y + 0.1, cols[5][1] - 0.15, h - 0.2, { fontSize: 12, color: C.text, valign: "middle" });
     });
+    L.source(s, "Prediction colours: green = the actor's emotion · orange = the listeners' majority · grey = neither. † = CREMA-D is in the model's training data.");
     L.notes(s, `Four clips where the actor and the listeners disagree completely. Play each and decide for yourself before revealing the labels.
     First: acted happy, all ten listeners heard angry. Second: acted fearful, all heard sad. Third: acted disgusted, nine heard angry. Fourth: acted sad, all heard neutral.
     Notice that emotion2vec+ and MERaLiON, both trained on CREMA-D's acted labels, often side with the actor, even when every human disagrees.`);
@@ -179,8 +196,10 @@ module.exports = function (L, A) {
       L.text(s, c.sentence, x + 1.0, y + 0.1, w - 1.1, 0.3, { fontSize: 12, color: C.muted });
       L.text(s, "Actor", x + 1.0, y + 0.45, 0.6, 0.3, { fontSize: 12, color: C.muted, valign: "middle" });
       L.tag(s, c.acted_label, x + 1.6, y + 0.45, { w: 1.15 });
-      K.voteBar(s, c, x + 1.0, y + 0.88, w - 1.15, 0.28);
-      s.addText(K.predRuns(c, ["emotion2vec+ large", "MERaLiON-SER-v1"], c.acted_label, 12), { x: x + 1.0, y: y + 1.24, w: w - 1.1, h: 0.28, fontFace: FONT, margin: 0, fit: "shrink" });
+      const n = K.votes(c).reduce((a2, b2) => a2 + b2[1], 0);
+      L.text(s, `Listeners (n = ${n})`, x + 1.0, y + 0.86, 1.45, 0.3, { fontSize: 11, color: C.muted, valign: "middle" });
+      K.voteBar(s, c, x + 2.45, y + 0.87, w - 2.6, 0.28);
+      s.addText([{ text: "Models   ", options: { color: C.muted, fontSize: 11 } }, ...K.predRuns(c, ["emotion2vec+ large", "MERaLiON-SER-v1"], c.acted_label, 12)], { x: x + 1.0, y: y + 1.24, w: w - 1.1, h: 0.28, fontFace: FONT, margin: 0, fit: "shrink" });
     });
     L.notes(s, `How to read the histogram: every clip was rated by 40 native listeners. For each clip we compute the share of these 40 who chose the emotion the actor intended; this is the clip's recognition rate. The histogram counts clips per rate. For example, the bar at 50 percent counts 177 clips that were recognised by only 20 of the 40 listeners. The dashed line is the mean over all clips, 76 percent, so a typical clip is recognised by about 31 of 40 listeners. It is not the share of listeners who agree with a group of clips.
     MCAE-SPPS is a curated corpus: only clips where listeners chose the intended emotion more than any other were kept. Even so, the average clip convinces 76 percent of 40 listeners, and only 36 clips convince all of them.
