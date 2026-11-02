@@ -70,13 +70,22 @@ function box(s, x, y, w, h, text, o = {}) {
   });
 }
 
-// Straight arrow from (x1,y1) to (x2,y2)
+// Straight arrow from (x1,y1) to (x2,y2); horizontal and vertical arrows get an exact zero height or width
 function arrow(s, x1, y1, x2, y2, o = {}) {
+  const horiz = Math.abs(y2 - y1) < 0.005, vert = Math.abs(x2 - x1) < 0.005;
+  if (horiz) y2 = y1;
+  if (vert) x2 = x1;
   s.addShape(pptx.ShapeType.line, {
-    x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1) || 0.001, h: Math.abs(y2 - y1) || 0.001,
-    flipH: x2 < x1, flipV: y2 < y1,
+    x: Math.min(x1, x2), y: Math.min(y1, y2), w: vert ? 0 : Math.abs(x2 - x1), h: horiz ? 0 : Math.abs(y2 - y1),
+    flipH: !vert && x2 < x1, flipV: !horiz && y2 < y1,
     line: { color: o.color || C.muted, width: o.width || 1.75, endArrowType: o.noHead ? undefined : "triangle", dashType: o.dash || "solid", beginArrowType: o.both ? "triangle" : undefined },
   });
+}
+
+// Right-angled connector: along x first, then y (or y first with o.yFirst); arrow head on the last segment
+function elbow(s, x1, y1, x2, y2, o = {}) {
+  if (o.yFirst) { arrow(s, x1, y1, x1, y2, { ...o, noHead: true }); arrow(s, x1, y2, x2, y2, o); }
+  else { arrow(s, x1, y1, x2, y1, { ...o, noHead: true }); arrow(s, x2, y1, x2, y2, o); }
 }
 
 function text(s, t, x, y, w, h, o = {}) {
@@ -141,4 +150,4 @@ function stat(s, num, caption, x, y, w, o = {}) {
   text(s, caption, x, y + 0.75, w, o.capH || 0.7, { fontSize: o.capSize || 13, color: C.text, align: o.align || "left" });
 }
 
-module.exports = { init, slide, bullets, box, arrow, text, source, notes, image, tag, audio, table, stat, C, W, H, MX, FONT, MODEL, MODEL_KEY, EMO, DIR, get pptx() { return pptx; } };
+module.exports = { init, slide, bullets, box, arrow, elbow, text, source, notes, image, tag, audio, table, stat, C, W, H, MX, FONT, MODEL, MODEL_KEY, EMO, DIR, get pptx() { return pptx; } };

@@ -1,6 +1,7 @@
 """Make the embedded MP3s proper PowerPoint audio that plays when its icon is clicked.
 
-pptxgenjs writes audio as <a:videoFile> without timing; this rewrites it as <a:audioFile> and adds, per slide, one
+pptxgenjs writes audio as <a:videoFile> without timing, with shape ids that clash; this gives every shape a unique id,
+rewrites the audio as <a:audioFile> and adds, per slide, one
 click trigger per audio icon (start/pause on click, as PowerPoint's "Start: when clicked on"), then fixes the MP3
 content type. Usage: python fix_audio.py deck.pptx
 """
@@ -17,7 +18,7 @@ zout = zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED)
 
 
 def timing(spids):
-    """Timing tree: an interactive sequence per audio shape (toggle play/pause on click) + the media nodes."""
+    """Timing tree: the media nodes, then an interactive sequence per audio shape (toggle play/pause on click)."""
     nid = [1]
 
     def n():
@@ -25,6 +26,9 @@ def timing(spids):
         return nid[0]
 
     seqs, media = [], []
+    for sp in spids:
+        media.append(f'<p:audio><p:cMediaNode vol="80000"><p:cTn id="{n()}" fill="hold" display="0"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst></p:cTn>'
+                     f'<p:tgtEl><p:spTgt spid="{sp}"/></p:tgtEl></p:cMediaNode></p:audio>')
     for sp in spids:
         a, b, c, d, e = n(), n(), n(), n(), n()
         seqs.append(
@@ -38,11 +42,8 @@ def timing(spids):
             f'<p:cmd type="call" cmd="togglePause"><p:cBhvr><p:cTn id="{e}" dur="1" fill="hold"/><p:tgtEl><p:spTgt spid="{sp}"/></p:tgtEl></p:cBhvr></p:cmd>'
             f'</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>'
             f'</p:childTnLst></p:cTn><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:spTgt spid="{sp}"/></p:tgtEl></p:cond></p:nextCondLst></p:seq>')
-    for sp in spids:
-        media.append(f'<p:audio><p:cMediaNode vol="80000"><p:cTn id="{n()}" fill="hold" display="0"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst></p:cTn>'
-                     f'<p:tgtEl><p:spTgt spid="{sp}"/></p:tgtEl></p:cMediaNode></p:audio>')
     return ('<p:timing><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst>'
-            + "".join(seqs) + "".join(media) + '</p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>')
+            + "".join(media) + "".join(seqs) + '</p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>')
 
 
 n_audio = n_slides = 0
@@ -57,6 +58,10 @@ for name in names:
         rels = zin.read(f"ppt/slides/_rels/slide{m.group(1)}.xml.rels").decode()
         mp3 = set(re.findall(r'Id="(rId\d+)"[^>]*Target="[^"]+\.mp3"', rels))
         xml = data.decode()
+        # pptxgenjs gives media shapes ids that other shapes on the slide also use; PowerPoint then renumbers them
+        # and the click triggers point nowhere (repair prompt). Give every shape a unique id first.
+        counter = iter(range(1, 100000))
+        xml = re.sub(r'<p:cNvPr id="\d+"', lambda _: f'<p:cNvPr id="{next(counter)}"', xml)
         spids = []
 
         def fix(pic):

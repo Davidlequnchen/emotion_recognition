@@ -1665,51 +1665,51 @@
    "duration_s": 1.28
   },
   {
-   "path": "audio/mcae_spps__12007.mp3",
-   "dataset": "MCAE-SPPS",
-   "original_path": "data/mcae_spps/audio/happiness/12007.wav",
-   "speaker": "1 (male)",
-   "sentence": "我去买菜 (I go to buy groceries.)",
-   "sentence_id": "007",
-   "acted_label": "happy",
-   "listener_info": "Listeners (n=40): happy 19 · angry 14 · neutral 3 · fearful 1 · sad 1 · disgusted 1 · surprised 1 (recognition rate 47.5%)",
+   "path": "audio/crema_d__1006_IEO_ANG_MD.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1006_IEO_ANG_MD.wav",
+   "speaker": "1006 (female, 58)",
+   "sentence": "It's eleven o'clock.",
+   "sentence_id": "IEO",
+   "acted_label": "angry",
+   "acted_intensity": "medium",
+   "listener_info": "Listeners (voice only, n=9): angry 3 · happy 3 · neutral 3 → majority angry or happy or neutral",
    "listener_votes": {
-    "happy": 19,
-    "angry": 14,
-    "neutral": 3,
-    "fearful": 1,
-    "sad": 1,
-    "disgusted": 1,
-    "surprised": 1
+    "angry": 3,
+    "happy": 3,
+    "neutral": 3
    },
-   "listener_majority": "happy",
+   "listener_majority": "angry or happy or neutral",
    "predictions": {
     "emotion2vec+ large": [
-     "angry",
-     0.824
+     "happy",
+     0.919
     ],
     "MERaLiON-SER-v1": [
-     "angry",
-     0.637
+     "happy",
+     0.861
     ],
     "Melati": [
      "happy",
-     0.969
+     0.66
     ],
     "Vox-Profile Whisper": [
-     "angry",
-     0.855
+     "neutral",
+     0.282
     ],
     "Vox-Profile WavLM": [
-     "surprised",
-     0.256
+     "neutral",
+     0.366
     ]
    },
-   "models_in_training_data": [],
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
    "group": "failure",
    "subgroup": "iv_questionable_ground_truth",
-   "why_interesting": "Listeners barely chose the intended happy (19 vs 14 angry of 40); both top models say angry. Scored as wrong, but a third of humans agree with them.",
-   "duration_s": 0.79
+   "why_interesting": "Acted angry (medium intensity), but the 9 listeners split three ways (angry 3, happy 3, neutral 3): there is no majority at all. Both top models say happy (0.92 and 0.86): scored as wrong, yet as many listeners heard happy as angry.",
+   "duration_s": 1.8
   },
   {
    "path": "audio/crema_d__1030_WSI_FEA_XX.mp3",

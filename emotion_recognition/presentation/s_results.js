@@ -21,7 +21,7 @@ module.exports = function (L, A) {
 
   // ---- Protocol
   {
-    const s = L.slide("4 · Results", "How we score: same clips, same labels, three metrics");
+    const s = L.slide("4 · Evaluation Results", "Evaluation Protocol and Metrics");
     L.bullets(s, [
       { t: "Prediction = the most probable of the dataset's own emotions", sub: ["A model's extra classes (other, contempt, unknown) are ignored; chance = 1 / number of emotions in the dataset (17–25%)"] },
       { t: "Accuracy: share of clips where the prediction equals the acted emotion", sub: ["Unweighted accuracy (mean recall per emotion) and macro-F1 also reported; the ranking is the same"] },
@@ -35,7 +35,7 @@ module.exports = function (L, A) {
 
   // ---- Headline figure (placeholder, to be replaced by the figure with GPT Realtime and Gemini)
   {
-    const s = L.slide("4 · Results", "Dedicated SER models beat both audio LLMs on every dataset");
+    const s = L.slide("4 · Evaluation Results", "Accuracy Across Models and Datasets");
     L.image(s, "img/accuracy_by_dataset_PLACEHOLDER.png", MX, 1.4, W - 2 * MX, 5.55);
     L.text(s, "PLACEHOLDER: replace with the figure that includes GPT Realtime and Gemini", W - MX - 5.2, 1.3, 5.2, 0.3, { fontSize: 11, bold: true, color: C.bad, align: "right" });
     L.source(s, "Accuracy vs acted emotion (%). Hatched = dataset in the model's training data; dashed = chance. Open models: all clips; audio LLMs: 200 clips per corpus.");
@@ -45,7 +45,7 @@ module.exports = function (L, A) {
 
   // ---- Table with all numbers
   {
-    const s = L.slide("4 · Results", "All numbers: accuracy vs the acted emotion (%)");
+    const s = L.slide("4 · Evaluation Results", "Accuracy Results (%)");
     const hdr = ["Dataset", "Chance", ...MODELS.map((m) => MODEL[m].name + (["gpt", "gemini"].includes(m) ? " *" : ""))];
     const rows = ORDER.map((k) => {
       const d = ACC[k];
@@ -69,14 +69,14 @@ module.exports = function (L, A) {
 
   // ---- Seen vs unseen
   {
-    const s = L.slide("4 · Results", "Training data explains most of the gap: seen corpora score 25–50 points higher");
+    const s = L.slide("4 · Evaluation Results", "Effect of Training-Data Overlap");
     if (has("seen_vs_unseen.png")) L.image(s, fig("seen_vs_unseen.png"), MX, 1.45, 7.4, 5.3);
     else L.box(s, MX, 1.45, 7.4, 5.3, "[seen_vs_unseen.png]");
     L.bullets(s, [
       { t: "emotion2vec+ large", b: true, sub: ["seen (4 corpora): 89% · unseen (2): 51%"] },
       { t: "MERaLiON-SER-v1", b: true, sub: ["seen (CREMA-D): 85% · unseen (5): 65%"] },
       { t: "Melati", b: true, sub: ["seen (JL-Corpus): 99.5% · unseen (5): 48%"] },
-      { t: "Consequence", b: true, color: C.accent2, sub: ["Published scores on popular corpora do not transfer: expect unseen-level accuracy on our calls until we fine-tune on them"] },
+      { t: "Implication", b: true, color: C.accent2, sub: ["Published scores on popular corpora do not transfer; on call-centre audio, unseen-level accuracy is expected until the models are adapted"] },
     ], { x: 8.3, y: 1.6, w: 4.45, h: 5.2, fontSize: 17 });
     L.notes(s, `Same data, regrouped: for each model, the mean accuracy on corpora it was trained on versus corpora it was not.
     The drop is 20 to 50 points. This is the single most useful number for planning: on our own calls, which no model has seen, we should expect the unseen-level numbers or lower, not the published ones. This is the main argument for fine-tuning on our own data.`);
@@ -84,7 +84,7 @@ module.exports = function (L, A) {
 
   // ---- Fair 4-emotion comparison
   {
-    const s = L.slide("4 · Results", "On the four emotions every corpus shares, the top two models are close");
+    const s = L.slide("4 · Evaluation Results", "Four-Class Comparison: Angry, Happy, Neutral, Sad");
     const four = { // accuracy on angry/happy/neutral/sad only (reports/summary.md)
       crema_d: [93.2, 93.2, 66.5, 49.8, 44.0], mcae_spps: [87.8, 88.4, 66.2, 58.7, 57.1], mess: [40.8, 74.5, 40.4, 36.4, 36.3],
       ravdess: [92.5, 65.4, 64.2, 59.0, 59.3], tess: [100.0, 73.8, 75.4, 49.9, 56.4], jl_corpus: [94.7, 74.6, 99.7, 42.6, 48.2],
@@ -107,7 +107,7 @@ module.exports = function (L, A) {
 
   // ---- Audio LLMs and LISTEN
   {
-    const s = L.slide("4 · Results", "Audio LLMs listen to words more than to voices: consistent with LISTEN (2025)");
+    const s = L.slide("4 · Evaluation Results", "Audio LLM Performance and the LISTEN Benchmark");
     const rows = ORDER.map((k) => [ACC[k].name, ACC[k].chance.toFixed(1), { text: ACC[k].gpt.toFixed(1), options: { align: "center", color: ACC[k].gpt < ACC[k].chance ? C.bad : C.ink } }, { text: ACC[k].gemini.toFixed(1), options: { align: "center" } }, { text: Math.max(...["e2v", "meralion", "melati", "voxw", "voxl"].map((m) => ACC[k][m])).toFixed(1), options: { align: "center", color: C.muted } }]);
     L.table(s, ["Dataset", "Chance", "GPT Realtime", "Gemini 3.5 Flash", "Best open"], rows, { y: 1.5, w: 6.2, colW: [1.6, 1.0, 1.2, 1.3, 1.1], fontSize: 13, rowH: 0.48 });
     L.text(s, "red = below chance · 200 clips per corpus", MX, 5.05, 6, 0.3, { fontSize: 11, color: C.muted });
@@ -120,7 +120,7 @@ module.exports = function (L, A) {
 
   // ---- Confusion matrices
   const cm = (key, title, bullets, notes) => {
-    const s = L.slide("4 · Results", title);
+    const s = L.slide("4 · Evaluation Results", title);
     if (has(`cm_pair_${key}.png`)) L.image(s, fig(`cm_pair_${key}.png`), MX, 1.4, 8.6, 5.4);
     else L.box(s, MX, 1.4, 8.6, 5.4, `[cm_pair_${key}.png]`);
     L.bullets(s, bullets, { x: 9.45, y: 1.6, w: 3.3, h: 5.2, fontSize: 15 });

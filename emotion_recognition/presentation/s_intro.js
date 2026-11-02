@@ -1,7 +1,8 @@
-// Title, agenda, motivation, challenges, approach
+// Title, outline, research objective (task definition, challenges, methodology)
 module.exports = function (L) {
   const { C, W, H, MX, FONT } = L;
   const p = L.pptx;
+  const SEC = "1 · Research Objective";
 
   // ---- Title
   {
@@ -9,109 +10,118 @@ module.exports = function (L) {
     s.background = { color: C.white };
     s.addShape(p.ShapeType.rect, { x: MX, y: 2.2, w: 0.08, h: 2.2, fill: { color: C.accent }, line: { color: C.accent, width: 0 } });
     L.text(s, "Speech Emotion Recognition", MX + 0.35, 2.1, 11, 0.8, { fontSize: 40, bold: true, color: C.ink });
-    L.text(s, "Benchmarking open-source and closed audio models on public emotional speech,\nand a path to our own call-centre data", MX + 0.35, 2.95, 11.5, 1.0, { fontSize: 22, color: C.text, ls: 1.1 });
+    L.text(s, "Benchmarking open-source and closed audio models on public emotional speech corpora,\nand a roadmap for adaptation to call-centre audio", MX + 0.35, 2.95, 11.5, 1.0, { fontSize: 22, color: C.text, ls: 1.1 });
     L.text(s, "Chen Lequn  ·  Project update  ·  November 2026", MX + 0.35, 4.15, 11, 0.4, { fontSize: 16, color: C.muted });
     L.text(s, "Audio clips from public research corpora, used under their licences (CREMA-D ODbL, RAVDESS CC BY-NC-SA, TESS and MCAE-SPPS CC BY-NC, MESS CC BY, JL-Corpus CC0).", MX, H - 0.7, W - 2 * MX, 0.4, { fontSize: 10, color: C.faint });
-    L.notes(s, `Goal of this talk (about 35 minutes): what we learned from benchmarking speech emotion recognition (SER) models on public data, why the task is harder than it looks, and a concrete plan to adapt the two best models to our own calls.
-    Audio clips are embedded: click a blue play button to listen.`);
+    L.notes(s, `Scope of this talk (about 35 minutes): results of benchmarking speech emotion recognition (SER) models on public emotional speech corpora, the main sources of difficulty in the task, and a plan to adapt the two strongest models to our own call-centre audio.
+    Audio clips are embedded: click a blue play button to start or pause a clip.`);
   }
 
-  // ---- Agenda / storyline
+  // ---- Outline
   {
-    const s = L.slide("", "Today's story");
+    const s = L.slide("", "Outline");
     const steps = [
-      ["1", "The task", "What we ask the models to do, and why it is hard"],
-      ["2", "Data", "Six public emotional speech corpora: what they sound like, and how much humans disagree"],
-      ["3", "Models", "Five open SER models and two audio LLMs: architecture and scale"],
-      ["4", "Results", "Accuracy on every dataset, the effect of training data, confusion patterns"],
-      ["5", "Listening to errors", "Clips where models and labels disagree: who is right?"],
-      ["6", "Next steps", "Fine-tuning emotion2vec+ and MERaLiON on our calls; labelling with active learning"],
+      ["1", "Research Objective", "The speech emotion recognition (SER) task: definition, challenges and methodology"],
+      ["2", "Public Datasets", "Six emotional speech corpora: design, audio examples and inter-rater agreement"],
+      ["3", "Benchmarking Models", "Five open-source SER models and two audio LLMs: architectures and scale"],
+      ["4", "Evaluation Results", "Accuracy across corpora, effect of training-data overlap and confusion analysis"],
+      ["5", "Error Analysis", "Case studies of disagreement between models, acted labels and listeners"],
+      ["6", "Future Work", "Adaptation of emotion2vec+ and MERaLiON-SER-v1; annotation and active learning"],
     ];
     steps.forEach(([n, t, d], i) => {
       const y = 1.6 + i * 0.86;
       s.addText(n, { x: MX, y, w: 0.6, h: 0.6, shape: p.ShapeType.ellipse, fill: { color: i === 5 ? C.accent2 : C.accent }, line: { color: C.white, width: 0 }, fontFace: FONT, fontSize: 20, bold: true, color: C.white, align: "center", valign: "middle", margin: 0 });
-      L.text(s, t, MX + 0.85, y + 0.02, 3.2, 0.6, { fontSize: 20, bold: true, color: C.ink, valign: "middle" });
-      L.text(s, d, MX + 4.1, y + 0.02, 8.0, 0.6, { fontSize: 17, color: C.text, valign: "middle" });
-      if (i < 5) s.addShape(p.ShapeType.line, { x: MX + 0.3, y: y + 0.62, w: 0.001, h: 0.24, line: { color: C.line, width: 1.5 } });
+      L.text(s, t, MX + 0.85, y + 0.02, 3.4, 0.6, { fontSize: 20, bold: true, color: C.ink, valign: "middle" });
+      L.text(s, d, MX + 4.3, y + 0.02, 7.8, 0.6, { fontSize: 17, color: C.text, valign: "middle" });
+      if (i < 5) s.addShape(p.ShapeType.line, { x: MX + 0.3, y: y + 0.62, w: 0, h: 0.24, line: { color: C.line, width: 1.5 } });
     });
-    L.notes(s, `Six parts. The middle of the talk is about listening: datasets first (to calibrate our ears), then the models, the numbers, and finally clips where the models fail.
-    The last part is the proposal: which two models to adapt, how, with how much data and compute, and how to label our own data.`);
+    L.notes(s, `The talk has six parts. Parts two to five present the benchmark: the corpora, the models, the quantitative results and a qualitative error analysis with audio. Part six presents the proposed adaptation and annotation plan.`);
   }
 
-  // ---- The task
+  // ---- Task definition
   {
-    const s = L.slide("1 · The task", "The task: hear one clip, name one of seven emotions");
-    // pipeline: clip -> model -> 7 probabilities
-    L.box(s, MX, 1.9, 2.6, 1.3, "Speech clip\n1–5 s, 16 kHz mono\n\"Don't forget a jacket.\"", { fill: "EEF4FA", line: "9CC3E6", fontSize: 14 });
-    L.arrow(s, MX + 2.65, 2.55, MX + 3.35, 2.55);
-    L.box(s, MX + 3.4, 1.9, 2.6, 1.3, "SER model\n(or audio LLM)", { fill: C.ink, line: C.ink, color: C.white, bold: true, fontSize: 16 });
-    L.arrow(s, MX + 6.05, 2.55, MX + 6.75, 2.55);
+    const s = L.slide(SEC, "Task Definition");
+    const y0 = 1.65, bh = 1.75;
+    L.box(s, MX, y0, 3.0, bh, "Input: speech clip\n1–5 s, 16 kHz mono\n\"Don't forget a jacket.\"", { fill: "EEF4FA", line: "9CC3E6", fontSize: 15 });
+    L.arrow(s, MX + 3.05, y0 + bh / 2, MX + 3.75, y0 + bh / 2);
+    L.box(s, MX + 3.8, y0, 3.0, bh, "SER model\n(or audio LLM)", { fill: C.ink, line: C.ink, color: C.white, bold: true, fontSize: 17 });
+    L.arrow(s, MX + 6.85, y0 + bh / 2, MX + 7.55, y0 + bh / 2);
+    // output panel of the same height
+    const ox = MX + 7.6, ow = W - MX - ox;
+    s.addShape(p.ShapeType.roundRect, { x: ox, y: y0, w: ow, h: bh, rectRadius: 0.08, fill: { color: C.panel }, line: { color: C.line, width: 1 } });
+    L.text(s, "Output: one probability per class", ox + 0.15, y0 + 0.06, ow - 0.3, 0.25, { fontSize: 12, bold: true, color: C.ink });
     const emos = ["angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised"];
     const probs = [0.02, 0.01, 0.03, 0.05, 0.12, 0.74, 0.03];
     emos.forEach((e, i) => {
-      const y = 1.72 + i * 0.24;
-      L.text(s, e, MX + 6.85, y, 1.2, 0.22, { fontSize: 11, color: C.text, align: "right" });
-      s.addShape(p.ShapeType.rect, { x: MX + 8.15, y: y + 0.03, w: 2.6 * probs[i] + 0.02, h: 0.16, fill: { color: L.EMO[e] }, line: { color: L.EMO[e], width: 0 } });
-      L.text(s, (probs[i] * 100).toFixed(0) + "%", MX + 8.25 + 2.6 * probs[i], y, 0.6, 0.22, { fontSize: 10, color: C.muted });
+      const y = y0 + 0.36 + i * 0.185;
+      L.text(s, e, ox + 0.1, y, 1.15, 0.18, { fontSize: 10, color: C.text, align: "right", valign: "middle" });
+      s.addShape(p.ShapeType.rect, { x: ox + 1.35, y: y + 0.03, w: 2.6 * probs[i] + 0.02, h: 0.12, fill: { color: L.EMO[e] }, line: { color: L.EMO[e], width: 0 } });
+      L.text(s, (probs[i] * 100).toFixed(0) + "%", ox + 1.42 + 2.6 * probs[i], y, 0.55, 0.18, { fontSize: 9, color: C.muted, valign: "middle" });
     });
-    L.text(s, "one probability per class → predicted label = the largest", MX + 6.85, 3.45, 5, 0.3, { fontSize: 12, color: C.muted, italic: true });
     L.bullets(s, [
-      { t: "Categorical SER: seven classes shared by most corpora and models", sub: ["angry · disgusted · fearful · happy · neutral · sad · surprised (the emotion2vec+ label set)"] },
-      { t: "We test the voice, not the words", sub: ["All six corpora use the same neutral sentences in every emotion, so the text gives no clue; models must use tone, pitch, loudness and tempo"] },
-      { t: "Ground truth = the emotion the actor was asked to portray", sub: ["Two corpora also have listener votes, a second, perceptual ground truth (part 2)"] },
-    ], { y: 4.0, h: 3.0, fontSize: 18 });
-    L.notes(s, `Speech emotion recognition here means classification: one clip in, one of seven labels out. Every model gives a probability per class; we take the highest.
-    Key design choice of the benchmark: parallel sentences. The same sentence is spoken in every emotion, so a model that only reads the words cannot do better than chance. This matters especially for audio LLMs, which are strong at text.
-    The ground truth is the acted (intended) emotion. For CREMA-D and MCAE-SPPS we also have what listeners perceived.`);
+      { t: "Utterance-level categorical classification into seven emotion classes", sub: ["angry · disgusted · fearful · happy · neutral · sad · surprised (the emotion2vec+ label set); the predicted label is the class of highest probability"] },
+      { t: "Lexically neutral stimuli", sub: ["Each corpus uses the same sentences across all emotions, so the lexical content carries no emotional information; recognition must rely on paralinguistic cues (pitch, intensity, tempo, voice quality)"] },
+      { t: "Reference labels", sub: ["Intended emotion: the emotion portrayed by the actor (all corpora)", "Perceived emotion: listener ratings per clip (CREMA-D and MCAE-SPPS), analysed in Part 2"] },
+    ], { y: 3.75, h: 3.2, fontSize: 17 });
+    L.notes(s, `The task is utterance-level classification: one clip in, one of seven labels out. Every model returns a probability per class and the class with the highest probability is the prediction.
+    All corpora are lexically neutral by design: the same sentence is spoken in every emotion. A system that relies on the words therefore cannot exceed chance level; this is particularly relevant for audio LLMs, which are strong at text understanding.
+    The reference label is the intended emotion of the actor. For two corpora we also have the perceived emotion from listener ratings.`);
   }
 
-  // ---- Why it's hard
+  // ---- Challenges
   {
-    const s = L.slide("1 · The task", "Why speech emotion recognition is harder than it looks");
+    const s = L.slide(SEC, "Challenges in Speech Emotion Recognition");
     const cards = [
-      ["Subjective labels", "There is no single truth. Listeners disagree with each other and with the actor: on CREMA-D the listeners' majority matches the actor on only about 4 in 10 clips (part 2).", C.accent2],
-      ["Acted ≠ real", "Public corpora are acted, short and exaggerated. Real customers are spontaneous, mostly neutral, with subtle and mixed emotion.", C.accent],
-      ["Domain shift", "New languages and accents, 8 kHz telephone channel, background noise, long turns. Models degrade outside the data they were trained on.", C.accent],
-      ["Leaky benchmarks", "Popular corpora are inside the training data of popular models, so their published scores are optimistic. We mark every such case (†).", C.accent],
+      ["Label subjectivity", "41.6%", "of CREMA-D clips: listeners' majority vote equals the acted emotion", ["No single ground truth", "Requires multiple raters and agreement statistics"], C.accent2],
+      ["Acted vs spontaneous speech", "6 of 6", "evaluation corpora are acted, short and exaggerated", ["Call-centre speech is spontaneous, subtle and mostly neutral", "Benchmark accuracy is an upper bound"], C.accent],
+      ["Domain shift", "8 kHz", "telephone bandwidth, vs 16–48 kHz studio recordings in the corpora", ["Also language, accent, noise and turn length", "Accuracy falls 20–52 points on unseen corpora"], C.accent],
+      ["Training-data overlap", "4 of 6", "evaluation corpora are in the training data of emotion2vec+", ["Published scores are optimistic", "Every overlap is marked (†) in our results"], C.accent],
     ];
-    cards.forEach(([t, d, col], i) => {
-      const x = MX + (i % 2) * 6.15, y = 1.6 + Math.floor(i / 2) * 2.65, w = 5.95, h = 2.4;
-      s.addShape(p.ShapeType.rect, { x, y, w, h, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
-      s.addShape(p.ShapeType.rect, { x, y, w: 0.07, h, fill: { color: col }, line: { color: col, width: 0 } });
-      L.text(s, t, x + 0.3, y + 0.22, w - 0.5, 0.45, { fontSize: 20, bold: true, color: C.ink });
-      L.text(s, d, x + 0.3, y + 0.8, w - 0.55, h - 1.0, { fontSize: 16, color: C.text, ls: 1.1 });
+    const cw = 2.88, gap = 0.2;
+    cards.forEach(([t, num, cap, pts, col], i) => {
+      const x = MX + i * (cw + gap), y = 1.55, h = 5.3;
+      s.addShape(p.ShapeType.rect, { x, y, w: cw, h, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
+      s.addShape(p.ShapeType.rect, { x, y, w: cw, h: 0.09, fill: { color: col }, line: { color: col, width: 0 } });
+      s.addText(String(i + 1), { x: x + 0.25, y: y + 0.32, w: 0.5, h: 0.5, shape: p.ShapeType.ellipse, fill: { color: col }, line: { color: col, width: 0 }, fontFace: FONT, fontSize: 16, bold: true, color: C.white, align: "center", valign: "middle", margin: 0 });
+      L.text(s, t, x + 0.25, y + 0.95, cw - 0.45, 0.7, { fontSize: 18, bold: true, color: C.ink });
+      L.text(s, num, x + 0.25, y + 1.7, cw - 0.45, 0.75, { fontSize: 38, bold: true, color: col });
+      L.text(s, cap, x + 0.25, y + 2.45, cw - 0.45, 0.85, { fontSize: 13, color: C.text });
+      s.addShape(p.ShapeType.line, { x: x + 0.25, y: y + 3.4, w: cw - 0.5, h: 0, line: { color: C.line, width: 1 } });
+      L.bullets(s, pts, { x: x + 0.2, y: y + 3.55, w: cw - 0.35, h: 1.6, fontSize: 13, gap: 6 });
     });
-    L.notes(s, `Four reasons. The first is the most important and we will hear it in the clips: emotion is subjective. Even the "ground truth" is uncertain.
-    Second, the public data is acted; our calls are not. Third, domain shift: language, accent, telephone audio. Fourth, benchmark leakage: many models were trained on the very corpora people evaluate them on, which inflates scores. We tracked this for every model and dataset.`);
+    L.notes(s, `Four sources of difficulty, each with one number.
+    First, label subjectivity: on CREMA-D the listeners' majority agrees with the acted emotion on only 42 percent of clips. There is no single ground truth, which we will hear in Part 2.
+    Second, all six corpora are acted; call-centre speech is spontaneous and mostly neutral, so benchmark accuracy is an upper bound.
+    Third, domain shift: telephone audio is band-limited to 8 kHz, and language, accent, noise and turn length also differ. On corpora outside their training data, the models lose 20 to 52 points of accuracy.
+    Fourth, training-data overlap: four of our six corpora are in the training data of emotion2vec+, so its scores on them are optimistic. We mark every such case with a dagger.`);
   }
 
-  // ---- What we did (approach)
+  // ---- Evaluation methodology
   {
-    const s = L.slide("1 · The task", "What we did: one benchmark, every model on the same clips");
-    const steps = [
-      ["Survey datasets", "37 public emotional\nspeech corpora"],
-      ["Select 6", "parallel text, good labels,\nclear licence"],
-      ["Survey models", "42 SER models\nand audio LLMs"],
-      ["Evaluate 7 models", "5 open (local)\n2 closed (API)"],
-      ["Analyse", "metrics, confusion,\nlistening viewer"],
-      ["Plan", "fine-tuning\n+ labelling"],
+    const s = L.slide(SEC, "Evaluation Methodology");
+    const st = [
+      ["Dataset survey", "37 public emotional speech corpora reviewed", "6 corpora selected: parallel text, validated labels, clear licence"],
+      ["Model survey", "42 SER models and audio LLMs reviewed", "5 open models + 2 closed audio LLMs"],
+      ["Benchmark", "Every model run as released (zero-shot) on identical clips", "Labels mapped to 7 shared classes"],
+      ["Analysis", "Accuracy, unweighted accuracy, macro-F1, confusion matrices", "Listening-based error analysis"],
+      ["Adaptation plan", "Fine-tuning strategy, annotation protocol, active learning", "Roadmap with decision gates"],
     ];
-    const bw = 1.85, gap = 0.17;
-    steps.forEach(([t, d], i) => {
-      const x = MX + i * (bw + gap);
-      L.box(s, x, 1.9, bw, 0.6, t, { fill: i === 5 ? C.accent2 : C.ink, line: i === 5 ? C.accent2 : C.ink, color: C.white, bold: true, fontSize: 14 });
-      L.text(s, d, x, 2.6, bw, 0.7, { fontSize: 13, color: C.text, align: "center" });
-      if (i < 5) L.arrow(s, x + bw + 0.01, 2.2, x + bw + gap - 0.01, 2.2, { width: 1.5 });
+    const cw = 2.3, gap = 0.16, y = 1.6;
+    st.forEach(([t, d, o], i) => {
+      const x = MX + i * (cw + gap);
+      L.box(s, x, y, cw, 0.7, `${i + 1}  ${t}`, { shape: i === 0 ? p.ShapeType.rect : p.ShapeType.chevron, fill: i === 4 ? C.accent2 : C.ink, line: i === 4 ? C.accent2 : C.ink, color: C.white, bold: true, fontSize: 14, r: 0 });
+      s.addShape(p.ShapeType.rect, { x, y: y + 0.85, w: cw, h: 2.3, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
+      L.text(s, d, x + 0.12, y + 0.97, cw - 0.24, 1.15, { fontSize: 13, color: C.ink });
+      L.text(s, o, x + 0.12, y + 2.15, cw - 0.24, 0.95, { fontSize: 12, color: C.accent, italic: true });
     });
-    L.stat(s, "21,357", "clips per model across the 6 corpora\n(all clips; audio LLMs: 200 per corpus)", MX, 3.8, 3.8);
-    L.stat(s, "7", "models: emotion2vec+ large, MERaLiON-SER-v1, Melati, Vox-Profile ×2, GPT Realtime, Gemini", MX + 4.15, 3.8, 4.0);
-    L.stat(s, "3", "metrics: accuracy (vs acted label), unweighted accuracy (mean recall), macro-F1", MX + 8.45, 3.8, 3.7);
-    L.bullets(s, [
-      "Every model runs as released (zero-shot, no tuning on these corpora); labels mapped to the same 7 classes",
-      "Reproducible: one YAML per script, predictions and probabilities saved per clip, an HTML viewer to listen to examples",
-    ], { y: 5.45, h: 1.4, fontSize: 16 });
-    L.notes(s, `The workflow. We surveyed public datasets and models, selected six corpora and seven models, and ran every model on exactly the same clips with the same label mapping.
-    All open models run locally; GPT Realtime and Gemini are API models and were run on 200 clips per corpus, sampled evenly per emotion, to keep cost down.
-    Everything is saved per clip, so we can go back and listen to any prediction.`);
+    const tiles = [["6", "corpora"], ["21,357", "clips per model"], ["7", "models"], ["3", "metrics"]];
+    tiles.forEach(([n, c], i) => {
+      const x = MX + i * 3.08;
+      L.text(s, n, x, 4.95, 2.9, 0.75, { fontSize: 38, bold: true, color: C.accent, align: "center" });
+      L.text(s, c, x, 5.7, 2.9, 0.35, { fontSize: 14, color: C.text, align: "center" });
+    });
+    L.text(s, "Open models: all clips, run locally · audio LLMs: 200 clips per corpus through their APIs · predictions and probabilities stored per clip; an HTML viewer supports listening to any prediction", MX, 6.3, W - 2 * MX, 0.5, { fontSize: 13, color: C.muted, align: "center" });
+    L.notes(s, `The methodology in five stages. We surveyed public corpora and models, selected six corpora and seven models, and ran every model as released on exactly the same clips with the same label mapping. The analysis combines standard metrics with listening to individual clips, and the final stage is the adaptation plan.
+    The open models were run locally on all 21,357 clips. GPT Realtime and Gemini were run through their APIs on 200 clips per corpus, sampled at even intervals over the emotions.`);
   }
 };

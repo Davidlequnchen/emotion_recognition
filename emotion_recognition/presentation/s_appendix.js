@@ -33,4 +33,9 @@ module.exports = function (L, A) {
     L.text(s, "Model side: emotion2vec+ \"other\" and \"<unk>\", Vox-Profile \"Contempt\" and \"Other\" are never chosen (the prediction is the most probable of the dataset's emotions).", MX, 5.5, 12, 0.6, { fontSize: 13, color: C.text });
     L.source(s, "Source: emotion_recognition/docs/label_mapping.md");
   }
+  {
+    const s = L.slide("Appendix", "A3 · emotion2vec+ large: Detailed Architecture");
+    L.image(s, "img/e2v_arch.png", MX, 1.35, L.W - 2 * MX, 5.65);
+    L.notes(s, `Detailed architecture of emotion2vec+ large with tensor shapes for a 4-second clip at 16 kHz, measured with forward hooks on the released model.`);
+  }
 };

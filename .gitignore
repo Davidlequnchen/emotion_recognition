@@ -67,3 +67,8 @@ labeling_tool/**/annotations/*
 # Presentation deck: the Node packages and rendered previews are rebuilt locally
 emotion_recognition/presentation/node_modules/
 emotion_recognition/presentation/render/
+# Office lock files
+~$*
+# Presentation: candidate clips that the deck does not use (regenerate with scripts/make_candidates.py)
+emotion_recognition/presentation/assets/audio_candidates/
+emotion_recognition/presentation/scripts/__pycache__/
