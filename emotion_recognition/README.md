@@ -62,7 +62,8 @@ emotion_recognition/
 │   ├── models_survey.md        # open-source emotion recognition model survey (English: models_survey_en.md)
 │   ├── emotion2vec_plus_large.md             # the model explained: architecture, size, training (+ _en.md)
 │   ├── finetuning_emotion2vec_plus_large.md  # what fine-tuning would need: data, GPUs, which layers (+ _en.md)
-│   └── figures/                # the architecture diagram (PowerPoint and PNG)
+│   ├── data_preparation_call_centre_audio.md # how to cut call recordings into segments for labelling and training
+│   └── figures/                # the architecture diagram (PowerPoint and PNG), data-preparation figures and their script
 ├── models/
 │   ├── README.md               # every model's files, size and licence; how to get, split and add models
 │   ├── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
