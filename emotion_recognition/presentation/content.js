@@ -125,7 +125,7 @@ module.exports = function (L, { manifest, stats }) {
       [{ text: "B", bold: true }, { text: "ECAPA + pooling + MLP + heads (as in the original recipe)", bold: true }, { text: "6.1M", bold: true }, "cache encoder output once (3 MB per clip): minutes per run"],
       ["C", "B + LoRA r8 on encoder q/k/v", "7.3M", "≈ 2.3 TFLOP per clip · 0.2–0.3 H100-h per 10k clips × 10 epochs"],
       ["D", "everything (except the fixed positions)", "311.8M", "≈ 3.4 TFLOP per clip · 0.3–0.5 H100-h per 10k clips × 10 epochs"],
-      [{ text: "E′", bold: true, options: { color: "8E4EC6" } }, "B or C on pseudo-labelled call audio (confident, agreeing predictions of both models)", "as B / C", "one inference pass over the unlabelled pool"],
+      [{ text: "E′", bold: true, options: { color: "8E4EC6" } }, "Self-training — B or C on pseudo-labelled call audio (confident, agreeing predictions of both models)", "as B / C", "one inference pass over the unlabelled pool"],
     ], { y: 4.4, w: 8.3, colW: [0.8, 3.4, 1.0, 3.1], fontSize: 11, rowH: 0.4 });
     L.bullets(s, [
       "B mirrors how MERaLiON itself was trained: encoder frozen, head trained",

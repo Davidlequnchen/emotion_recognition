@@ -43,6 +43,43 @@ module.exports = function (L, A) {
     So the realistic expectation is the unseen-corpus accuracy or lower. A cheap first experiment is to pass the benchmark through a simulated G.711 telephone channel, which we already implemented for the anti-deepfake evaluation, to measure the channel effect alone.`);
   }
 
+  // ---- Problem formulation
+  {
+    const s = L.slide(SEC, "Problem Formulation");
+    s.addShape(p.ShapeType.rect, { x: MX, y: 1.4, w: W - 2 * MX, h: 0.6, fill: { color: C.ink }, line: { color: C.ink, width: 0 } });
+    L.text(s, "Semi-supervised domain adaptation with active learning", MX, 1.4, W - 2 * MX, 0.6, { fontSize: 22, bold: true, color: C.white, align: "center", valign: "middle" });
+    // source -> target
+    L.box(s, MX, 2.25, 4.2, 1.45, "Source domain: public corpora\nacted speech · studio 16–48 kHz\nintended (acted) labels · balanced classes", { fill: "EEF4FA", line: C.accent, lw: 1.5, fontSize: 13 });
+    L.arrow(s, MX + 4.25, 2.97, MX + 5.55, 2.97, { width: 2.25 });
+    L.text(s, "adaptation", MX + 4.25, 2.6, 1.3, 0.3, { fontSize: 12, italic: true, color: C.muted, align: "center" });
+    L.box(s, MX + 5.6, 2.25, 4.2, 1.45, "Target domain: call-centre audio\nspontaneous speech · telephone 8 kHz\nperceived labels (few) · mostly neutral", { fill: "FCE9D9", line: C.accent2, lw: 1.5, fontSize: 13 });
+    L.box(s, MX + 10.0, 2.25, W - 2 * MX - 10.0, 1.45, "+ abundant unlabelled target audio", { fill: "EEE6F7", line: "8E4EC6", lw: 1.5, fontSize: 12, color: "5B2C83" });
+    // three shifts
+    L.text(s, "Three kinds of shift between the domains", MX, 3.9, 8, 0.3, { fontSize: 14, bold: true, color: C.ink });
+    const sh = [
+      ["Covariate shift", "input distribution: channel, accent, speaking style, noise"],
+      ["Label shift", "class proportions: balanced in the corpora, mostly neutral in calls"],
+      ["Annotation shift", "label meaning: intended emotion of an actor vs emotion perceived by listeners"],
+    ];
+    sh.forEach(([t, d], i) => {
+      const x = MX + i * 4.1;
+      s.addShape(p.ShapeType.rect, { x, y: 4.25, w: 3.9, h: 1.0, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
+      L.text(s, t, x + 0.15, 4.3, 3.6, 0.32, { fontSize: 14, bold: true, color: C.accent });
+      L.text(s, d, x + 0.15, 4.62, 3.6, 0.6, { fontSize: 12, color: C.text });
+    });
+    // components
+    const rows = [
+      ["Supervised fine-tuning (A–D)", "few human-labelled target clips", "adapt the head, then more of the encoder"],
+      ["Domain-adaptive pre-training (E)", "unlabelled target audio", "adapt the encoder to telephone speech without labels"],
+      ["Self-training (E′)", "pseudo-labelled target audio", "add confident, agreeing model predictions as training data"],
+      ["Active learning", "selection of clips for annotation", "spend listener time on the most informative clips"],
+    ];
+    L.table(s, ["Component", "Uses", "Purpose"], rows.map((r) => [{ text: r[0], bold: true }, r[1], r[2]]), { y: 5.4, colW: [3.4, 3.4, 5.33], fontSize: 11, rowH: 0.29 });
+    L.notes(s, `In machine-learning terms, our plan is semi-supervised domain adaptation with active learning. The source domain is the public acted corpora on which the models were trained; the target domain is our call-centre audio, for which we will have only a limited number of labels, but plenty of unlabelled recordings.
+    The two domains differ in three ways. Covariate shift: the input itself differs, telephone channel, accents, spontaneous speaking style and noise. Label shift: the class proportions differ, balanced in the corpora and dominated by neutral in calls. Annotation shift: the meaning of the label differs, the emotion an actor intended versus the emotion a listener perceives.
+    The plan combines four standard components: supervised fine-tuning with the few labelled clips, options A to D; domain-adaptive pre-training on unlabelled call audio, option E; self-training with pseudo-labels, E prime; and active learning, which decides which clips our listeners should label.`);
+  }
+
   // ---- Fine-tuning strategies: overview diagram
   {
     const s = L.slide(SEC, "Retraining / Fine-tuning Strategy: Overview");
@@ -50,17 +87,18 @@ module.exports = function (L, A) {
     const layers = ["Pooling + head", "Encoder: upper blocks", "Encoder: lower blocks", "CNN / front end"];
     const opts = [
       ["A", "New linear head", [TR, FR, FR, FR], ["linear layer", "frozen", "frozen", "frozen"], "0.5k–5k", true],
-      ["B", "Layer mix + small MLP", [TR, FR, FR, FR], ["layer weights + MLP", "frozen", "frozen", "frozen"], "1k–5k", true],
+      ["B", "Layer mix + MLP", [TR, FR, FR, FR], ["layer weights + MLP", "frozen", "frozen", "frozen"], "1k–5k", true],
       ["C", "LoRA / top blocks", [TR, LO, FR, FR], ["trained", "LoRA or unfrozen", "frozen", "frozen"], "≥ 5k", true],
       ["D", "Full fine-tuning", [TR, TR, TR, FR], ["trained", "trained", "trained", "frozen"], "≥ 10k", true],
       ["E", "Continued pre-training", [["F4F6F9", C.line], SS, SS, SS], ["then A, B or C", "self-supervised", "self-supervised", "self-supervised"], "none (unlabelled audio)", true],
     ];
-    L.text(s, "", MX, 1.4, 1, 0.3);
+    const TERM = { A: "linear probing", B: "layer-weighted probing", C: "parameter-efficient fine-tuning (PEFT)", D: "full fine-tuning", E: "domain-adaptive pre-training (DAPT)" };
     layers.forEach((t, j) => L.text(s, t, MX, 2.05 + j * 0.62, 1.75, 0.55, { fontSize: 12, color: C.muted, valign: "middle", align: "right" }));
     const cw = 1.95, gap = 0.18, x0 = MX + 1.9;
     opts.forEach(([k, name, cols, labs, need, ok], i) => {
       const x = x0 + i * (cw + gap);
-      L.text(s, `${k}  ${name}`, x, 1.5, cw, 0.45, { fontSize: 14, bold: true, color: ok ? C.ink : C.faint, align: "center", valign: "middle" });
+      L.text(s, `${k}  ${name}`, x, 1.36, cw, 0.32, { fontSize: 14, bold: true, color: C.ink, align: "center", valign: "middle" });
+      L.text(s, TERM[k], x, 1.67, cw, 0.34, { fontSize: 10, italic: true, color: C.accent, align: "center", valign: "top" });
       cols.forEach((c, j) => L.box(s, x, 2.05 + j * 0.62, cw, 0.55, labs[j], { fill: c[0], line: c[1], lw: 1.25, fontSize: 11, color: ok ? C.ink : C.faint }));
       L.text(s, "Human-labelled clips", x, 4.6, cw, 0.25, { fontSize: 10, color: C.muted, align: "center" });
       L.text(s, need, x, 4.83, cw, 0.32, { fontSize: 13, bold: true, color: C.ink, align: "center" });
@@ -80,11 +118,11 @@ module.exports = function (L, A) {
   {
     const s = L.slide(SEC, "Retraining / Fine-tuning Strategy: Details and Feasibility");
     const rows = [
-      ["A", "Keep the whole model fixed; compute one 1,024-d clip embedding per labelled clip once; train only a new linear layer (logistic regression) on these embeddings", "≈ 9k", "0.5k–5k", "minutes on a CPU", "feasible · baseline"],
-      ["B", "Encoder fixed; keep the outputs of all 12 Transformer layers (lower layers carry acoustic and prosodic detail, upper layers more abstract information), learn 12 mixing weights, then a small 2-layer neural network (MLP 1024 → 256 → K) classifies", "≈ 0.26M", "1k–5k", "minutes (features cached once)", "feasible · recommended start"],
-      ["C", "Add small trainable low-rank matrices (LoRA) to the attention layers, or unfreeze only the top 2–4 blocks; the encoder itself adapts to call audio", "0.6–1.6M (LoRA); 25–50M (top blocks)", "≥ 5k", "0.1–0.2 A100-h ≈ 0.03–0.1 H100-h per 10k clips × 10 epochs", "feasible once ≈ 5k clips exist"],
-      ["D", "Train all layers except the CNN, with a low learning rate and layer-wise decay", "158M", "≥ 10k, better 20k–100k", "0.2–0.4 A100-h ≈ 0.07–0.2 H100-h per 10k clips × 10 epochs", "feasible on 4 × H100 once ≥ 10k clips exist"],
-      ["E", "Continue the label-free pre-training objective (data2vec: predict the model's own representations of masked audio) on unlabelled call audio; then apply A, B or C", "162M (no labels)", "none; 10–1,000 h of unlabelled audio", "5–10 A100-h ≈ 2–5 H100-h (10–20 h of audio); 600 A100-h ≈ 200–300 H100-h (1,000 h)", "feasible: abundant unlabelled audio"],
+      ["A", "Linear probing — keep the whole model fixed; compute one 1,024-d clip embedding per labelled clip once; train only a new linear layer (logistic regression) on these embeddings", "≈ 9k", "0.5k–5k", "minutes on a CPU", "feasible · baseline"],
+      ["B", "Layer-weighted probing — encoder fixed; keep the outputs of all 12 Transformer layers (lower layers carry acoustic and prosodic detail, upper layers more abstract information), learn 12 mixing weights, then a small 2-layer neural network (MLP 1024 → 256 → K) classifies", "≈ 0.26M", "1k–5k", "minutes (features cached once)", "feasible · recommended start"],
+      ["C", "Parameter-efficient fine-tuning (PEFT) — add small trainable low-rank matrices (LoRA) to the attention layers, or unfreeze only the top 2–4 blocks; the encoder itself adapts to call audio", "0.6–1.6M (LoRA); 25–50M (top blocks)", "≥ 5k", "0.1–0.2 A100-h ≈ 0.03–0.1 H100-h per 10k clips × 10 epochs", "feasible once ≈ 5k clips exist"],
+      ["D", "Full fine-tuning — train all layers except the CNN, with a low learning rate and layer-wise decay", "158M", "≥ 10k, better 20k–100k", "0.2–0.4 A100-h ≈ 0.07–0.2 H100-h per 10k clips × 10 epochs", "feasible on 4 × H100 once ≥ 10k clips exist"],
+      ["E", "Domain-adaptive pre-training (DAPT) — continue the label-free pre-training objective (data2vec: predict the model's own representations of masked audio) on unlabelled call audio; then apply A, B or C", "162M (no labels)", "none; 10–1,000 h of unlabelled audio", "5–10 A100-h ≈ 2–5 H100-h (10–20 h of audio); 600 A100-h ≈ 200–300 H100-h (1,000 h)", "feasible: abundant unlabelled audio"],
     ];
     L.table(s, ["", "What is done", "Trainable parameters (emotion2vec+)", "Human-labelled clips", "Compute (one GPU; H100 ≈ 2–3 × A100)", "Feasibility"], rows.map((r, i) => r.map((c, j) => ({ text: c, bold: j === 0 || j === 5, options: { color: j === 5 ? (i === 1 ? C.accent2 : C.good) : C.ink, valign: "middle" } }))),
       { y: 1.35, colW: [0.4, 5.0, 1.65, 1.5, 1.95, 1.63], fontSize: 10, rowH: [0.4, 0.6, 0.8, 0.6, 0.6, 0.8] });
@@ -212,6 +250,37 @@ module.exports = function (L, A) {
     The main risks concern data quality rather than quantity: too few distinct callers, too few angry clips, label noise from listener disagreement, and forgetting of other classes or languages. Each has a mitigation listed in the table.
     A complementary route is to add pseudo-labels: clips from the unlabelled pool on which both models agree with high confidence. emotion2vec+ and MERaLiON were themselves trained this way. Pseudo-labels reinforce model biases, so the test set must remain purely human-labelled.
     Decision: at about five thousand labelled clips we compare learning curves of C and D. D is adopted only if C has plateaued while D keeps improving with more data.`);
+  }
+
+  // ---- Main challenges of adaptation
+  {
+    const s = L.slide(SEC, "Main Challenges in Adapting to Call-Centre Audio");
+    const cards = [
+      ["Low inter-rater agreement", "Natural speech is more ambiguous than acted speech; agreement between listeners sets the ceiling for any model.",
+        ["Measure κ in the seed round before scaling up", "Keep vote distributions as soft labels", "Merge rare or confusable classes if κ stays low"], C.accent2],
+      ["Class imbalance", "Most call segments are neutral; angry segments, the most important ones, may be only a few percent.",
+        ["Active learning targets clips predicted as rare emotions", "Class-weighted loss or balanced sampling", "Report unweighted accuracy and macro-F1, not accuracy"], C.accent],
+      ["Lexical content carries emotion", "The benchmark removed lexical cues on purpose; in real calls the words (\"this is ridiculous\") are informative, and acoustic models ignore them.",
+        ["Fuse the acoustic model with a text-emotion model on ASR transcripts", "Start with late fusion of the two probability vectors"], C.good],
+      ["Telephone channel (8 kHz)", "Both models were trained on 16 kHz wideband speech; telephone audio has no content above 4 kHz.",
+        ["Re-run the benchmark through a simulated G.711 channel to measure the drop", "Option E and fine-tuning on telephone audio", "Same resampling in training and inference"], C.accent],
+    ];
+    const cw = 2.88, gap = 0.2;
+    cards.forEach(([t, why, mit, col], i) => {
+      const x = MX + i * (cw + gap), y = 1.45, h = 5.45;
+      s.addShape(p.ShapeType.rect, { x, y, w: cw, h, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
+      s.addShape(p.ShapeType.rect, { x, y, w: cw, h: 0.09, fill: { color: col }, line: { color: col, width: 0 } });
+      L.text(s, t, x + 0.2, y + 0.25, cw - 0.4, 0.7, { fontSize: 17, bold: true, color: C.ink });
+      L.text(s, why, x + 0.2, y + 1.0, cw - 0.4, 1.6, { fontSize: 12.5, color: C.text });
+      s.addShape(p.ShapeType.line, { x: x + 0.2, y: y + 2.7, w: cw - 0.4, h: 0, line: { color: C.line, width: 1 } });
+      L.text(s, i === 2 ? "Opportunity" : "Mitigation", x + 0.2, y + 2.8, cw - 0.4, 0.3, { fontSize: 12, bold: true, color: col });
+      L.bullets(s, mit, { x: x + 0.15, y: y + 3.12, w: cw - 0.3, h: 2.25, fontSize: 12, gap: 5 });
+    });
+    L.notes(s, `Four challenges stand out.
+    First, inter-rater agreement. Natural speech is far more ambiguous than acted speech, and agreement between listeners sets the ceiling for any model. We measure it in the seed round before scaling up, keep vote distributions as soft labels, and merge classes if agreement stays low.
+    Second, class imbalance. Most segments are neutral, and angry segments, which matter most, may be only a few percent. Active learning deliberately looks for them, the loss is class-weighted, and we report unweighted accuracy and macro-F1 rather than plain accuracy.
+    Third, words matter in real calls. Our benchmark removed lexical cues on purpose, but customers often say what they feel, and purely acoustic models ignore it. Fusing the acoustic model with a text-emotion model on ASR transcripts is a clear opportunity; the LISTEN finding that LLMs rely on words becomes an asset here.
+    Fourth, the telephone channel. Both models were trained on 16 kHz speech; telephone audio has nothing above 4 kHz. We first measure the drop by re-running the benchmark through a simulated G.711 channel, then address it with continued pre-training and fine-tuning on telephone audio.`);
   }
 
   // ---- Labelling protocol
