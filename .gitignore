@@ -60,3 +60,7 @@ outputs/
 emotion_recognition/outputs/*.html
 emotion_recognition/outputs/*.log
 emotion_recognition/outputs/**/esd_*
+
+# labeling_tool: labels written by the tool (company data folders live outside this repository)
+labeling_tool/**/annotations/*
+!labeling_tool/**/annotations/.gitkeep

@@ -1,0 +1,24 @@
+{
+  "version": "emotion8-v1",
+  "language": "en",
+  "listeners": ["listener1", "listener2", "listener3", "listener4"],
+  "randomize": true,
+  "autoplay": true,
+  "auto_advance": true,
+  "audio_folder": "audio",
+  "annotations_folder": "annotations",
+  "predictions_folder": "predictions",
+  "predictions_mode": "show",
+  "models": [],
+  "labels": [
+    {"id": "angry",     "en": "Angry",           "zh": "生气",      "emoji": "😠", "color": "#e5484d", "key": "1"},
+    {"id": "disgusted", "en": "Disgusted",       "zh": "厌恶",      "emoji": "🤢", "color": "#46a758", "key": "2"},
+    {"id": "fearful",   "en": "Fearful",         "zh": "恐惧",      "emoji": "😨", "color": "#8e4ec6", "key": "3"},
+    {"id": "happy",     "en": "Happy",           "zh": "开心",      "emoji": "😄", "color": "#f5a524", "key": "4"},
+    {"id": "neutral",   "en": "Neutral",         "zh": "中性",      "emoji": "😐", "color": "#8b8d98", "key": "5"},
+    {"id": "sad",       "en": "Sad",             "zh": "难过",      "emoji": "😢", "color": "#3e63dd", "key": "6"},
+    {"id": "surprised", "en": "Surprised",       "zh": "吃惊",      "emoji": "😲", "color": "#12a594", "key": "7"},
+    {"id": "unknown",   "en": "Unknown / Other", "zh": "未知 / 其他", "emoji": "❓", "color": "#6f6e77", "key": "8"}
+  ],
+  "bad_clip": {"id": "bad_clip", "en": "Bad clip — skip", "zh": "坏数据（不标注）", "emoji": "🚫", "key": "0"}
+}

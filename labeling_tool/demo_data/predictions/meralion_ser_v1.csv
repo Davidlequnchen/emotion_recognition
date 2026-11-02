@@ -1,0 +1,7 @@
+file,label,score
+clip_0001.wav,angry,0.893
+clip_0002.wav,disgusted,0.928
+clip_0003.mp3,fearful,0.916
+clip_0004.wav,happy,0.361
+clip_0005.mp3,neutral,0.882
+clip_0006.wav,disgusted,0.722
