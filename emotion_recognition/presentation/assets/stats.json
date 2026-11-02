@@ -1,0 +1,465 @@
+{
+  "datasets": {
+    "crema_d": {
+      "name": "CREMA-D",
+      "clips_evaluated": 7442,
+      "speakers": 91,
+      "emotions": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "per_emotion_counts": {
+        "angry": 1271,
+        "disgusted": 1271,
+        "fearful": 1271,
+        "happy": 1271,
+        "neutral": 1087,
+        "sad": 1271
+      },
+      "sentence_count": 12,
+      "sample_rate_hz": {
+        "16000": 7442
+      },
+      "mean_duration_s": 2.5429,
+      "total_duration_h": 5.26
+    },
+    "mcae_spps": {
+      "name": "MCAE-SPPS",
+      "clips_evaluated": 6675,
+      "speakers": 6,
+      "emotions": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "per_emotion_counts": {
+        "angry": 1129,
+        "disgusted": 738,
+        "fearful": 671,
+        "happy": 785,
+        "neutral": 1196,
+        "sad": 1187,
+        "surprised": 969
+      },
+      "sentence_count": 200,
+      "sample_rate_hz": {
+        "48000": 6675
+      },
+      "mean_duration_s": 1.2388,
+      "total_duration_h": 2.3
+    },
+    "mess": {
+      "name": "MESS",
+      "clips_evaluated": 1800,
+      "speakers": 6,
+      "emotions": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "per_emotion_counts": {
+        "angry": 450,
+        "happy": 450,
+        "neutral": 450,
+        "sad": 450
+      },
+      "sentence_count": 90,
+      "sample_rate_hz": {
+        "24414": 1800
+      },
+      "mean_duration_s": 2.6571,
+      "total_duration_h": 1.33,
+      "note": "No transcripts; sentence ids (V/T/M + number) from file names. Every clip is RMS-normalised to about -26.9 dBFS, so loudness carries no emotion cue."
+    },
+    "ravdess": {
+      "name": "RAVDESS",
+      "clips_evaluated": 1440,
+      "speakers": 24,
+      "emotions": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "per_emotion_counts": {
+        "angry": 192,
+        "disgusted": 192,
+        "fearful": 192,
+        "happy": 192,
+        "neutral": 288,
+        "sad": 192,
+        "surprised": 192
+      },
+      "sentence_count": 2,
+      "sample_rate_hz": {
+        "48000": 1440
+      },
+      "mean_duration_s": 3.7007,
+      "total_duration_h": 1.48
+    },
+    "tess": {
+      "name": "TESS",
+      "clips_evaluated": 2800,
+      "speakers": 2,
+      "emotions": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "per_emotion_counts": {
+        "angry": 400,
+        "disgusted": 400,
+        "fearful": 400,
+        "happy": 400,
+        "neutral": 400,
+        "sad": 400,
+        "surprised": 400
+      },
+      "sentence_count": 200,
+      "sample_rate_hz": {
+        "24414": 2799,
+        "96000": 1
+      },
+      "mean_duration_s": 2.0551,
+      "total_duration_h": 1.6,
+      "note": "Sentence = carrier phrase 'Say the word ___'; count is the number of target words."
+    },
+    "jl_corpus": {
+      "name": "JL-Corpus",
+      "clips_evaluated": 1200,
+      "speakers": 4,
+      "emotions": [
+        "angry",
+        "excited",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "per_emotion_counts": {
+        "angry": 240,
+        "excited": 240,
+        "happy": 240,
+        "neutral": 240,
+        "sad": 240
+      },
+      "sentence_count": 15,
+      "sample_rate_hz": {
+        "44100": 1200
+      },
+      "mean_duration_s": 2.0943,
+      "total_duration_h": 0.7,
+      "note": "Only the 5 primary emotions (1,200 clips) are evaluated; excited counts as correct when predicted happy or surprised."
+    }
+  },
+  "models": {
+    "emotion2vec_plus_large": {
+      "name": "emotion2vec+ large",
+      "accuracy": {
+        "crema_d": 0.8646,
+        "mcae_spps": 0.6135,
+        "mess": 0.4078,
+        "ravdess": 0.9208,
+        "tess": 0.8554,
+        "jl_corpus": 0.925
+      },
+      "unweighted_accuracy": {
+        "crema_d": 0.8654,
+        "mcae_spps": 0.542,
+        "mess": 0.4078,
+        "ravdess": 0.9229,
+        "tess": 0.8554,
+        "jl_corpus": 0.925
+      },
+      "datasets_in_training_data": [
+        "crema_d",
+        "ravdess",
+        "tess",
+        "jl_corpus"
+      ],
+      "mean_accuracy_in_training_data": 0.8915,
+      "mean_accuracy_not_in_training_data": 0.5107
+    },
+    "meralion_ser_v1": {
+      "name": "MERaLiON-SER-v1",
+      "accuracy": {
+        "crema_d": 0.8468,
+        "mcae_spps": 0.649,
+        "mess": 0.745,
+        "ravdess": 0.5931,
+        "tess": 0.4925,
+        "jl_corpus": 0.7592
+      },
+      "unweighted_accuracy": {
+        "crema_d": 0.8487,
+        "mcae_spps": 0.5779,
+        "mess": 0.745,
+        "ravdess": 0.6126,
+        "tess": 0.4925,
+        "jl_corpus": 0.7592
+      },
+      "datasets_in_training_data": [
+        "crema_d"
+      ],
+      "mean_accuracy_in_training_data": 0.8468,
+      "mean_accuracy_not_in_training_data": 0.6478
+    },
+    "melati_emotion": {
+      "name": "Melati",
+      "accuracy": {
+        "crema_d": 0.5137,
+        "mcae_spps": 0.4884,
+        "mess": 0.4044,
+        "ravdess": 0.484,
+        "tess": 0.5043,
+        "jl_corpus": 0.995
+      },
+      "unweighted_accuracy": {
+        "crema_d": 0.5245,
+        "mcae_spps": 0.4805,
+        "mess": 0.4044,
+        "ravdess": 0.4933,
+        "tess": 0.5043,
+        "jl_corpus": 0.995
+      },
+      "datasets_in_training_data": [
+        "jl_corpus"
+      ],
+      "mean_accuracy_in_training_data": 0.995,
+      "mean_accuracy_not_in_training_data": 0.479
+    },
+    "vox_profile_whisper": {
+      "name": "Vox-Profile Whisper",
+      "accuracy": {
+        "crema_d": 0.3366,
+        "mcae_spps": 0.4598,
+        "mess": 0.3639,
+        "ravdess": 0.5076,
+        "tess": 0.3011,
+        "jl_corpus": 0.4508
+      },
+      "unweighted_accuracy": {
+        "crema_d": 0.352,
+        "mcae_spps": 0.4094,
+        "mess": 0.3639,
+        "ravdess": 0.4933,
+        "tess": 0.3011,
+        "jl_corpus": 0.4508
+      },
+      "datasets_in_training_data": [],
+      "mean_accuracy_in_training_data": null,
+      "mean_accuracy_not_in_training_data": 0.4033
+    },
+    "vox_profile_wavlm": {
+      "name": "Vox-Profile WavLM",
+      "accuracy": {
+        "crema_d": 0.3074,
+        "mcae_spps": 0.3961,
+        "mess": 0.3633,
+        "ravdess": 0.4465,
+        "tess": 0.4014,
+        "jl_corpus": 0.4833
+      },
+      "unweighted_accuracy": {
+        "crema_d": 0.3209,
+        "mcae_spps": 0.367,
+        "mess": 0.3633,
+        "ravdess": 0.4241,
+        "tess": 0.4014,
+        "jl_corpus": 0.4833
+      },
+      "datasets_in_training_data": [],
+      "mean_accuracy_in_training_data": null,
+      "mean_accuracy_not_in_training_data": 0.3997
+    }
+  },
+  "crema_d_listeners": {
+    "clips": 7442,
+    "raters_per_clip_mean": 9.2137,
+    "raters_per_clip_range": [
+      4,
+      12
+    ],
+    "listener_majority_equals_acted": 0.4164,
+    "listener_majority_equals_acted_or_in_tie": 0.4788,
+    "majority_is_tie": 0.0865,
+    "per_acted_emotion": {
+      "angry": {
+        "clips": 1271,
+        "listener_majority_equals_acted": 0.6058,
+        "tie": 0.0881,
+        "most_common_listener_label": "angry"
+      },
+      "disgusted": {
+        "clips": 1271,
+        "listener_majority_equals_acted": 0.2699,
+        "tie": 0.1062,
+        "most_common_listener_label": "neutral"
+      },
+      "fearful": {
+        "clips": 1271,
+        "listener_majority_equals_acted": 0.3202,
+        "tie": 0.0968,
+        "most_common_listener_label": "neutral"
+      },
+      "happy": {
+        "clips": 1271,
+        "listener_majority_equals_acted": 0.2596,
+        "tie": 0.1023,
+        "most_common_listener_label": "neutral"
+      },
+      "neutral": {
+        "clips": 1087,
+        "listener_majority_equals_acted": 0.9568,
+        "tie": 0.0193,
+        "most_common_listener_label": "neutral"
+      },
+      "sad": {
+        "clips": 1271,
+        "listener_majority_equals_acted": 0.1644,
+        "tie": 0.0968,
+        "most_common_listener_label": "neutral"
+      }
+    },
+    "zero_listeners_chose_acted": 0.1477,
+    "mean_share_of_votes_for_acted": 0.3968,
+    "acted_vs_perceived_matrix": {
+      "rows_acted": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "cols_perceived": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "tie"
+      ],
+      "counts": [
+        [
+          770,
+          137,
+          31,
+          7,
+          214,
+          0,
+          112
+        ],
+        [
+          100,
+          343,
+          62,
+          8,
+          572,
+          51,
+          135
+        ],
+        [
+          51,
+          16,
+          407,
+          8,
+          569,
+          97,
+          123
+        ],
+        [
+          54,
+          26,
+          67,
+          330,
+          655,
+          9,
+          130
+        ],
+        [
+          8,
+          7,
+          7,
+          0,
+          1040,
+          4,
+          21
+        ],
+        [
+          3,
+          18,
+          71,
+          0,
+          847,
+          209,
+          123
+        ]
+      ]
+    },
+    "when_listeners_disagree_with_actor": {
+      "clips": 3699,
+      "models": {
+        "emotion2vec_plus_large": {
+          "predicts_acted": 0.8194,
+          "predicts_listener_majority": 0.0481
+        },
+        "meralion_ser_v1": {
+          "predicts_acted": 0.7729,
+          "predicts_listener_majority": 0.0657
+        },
+        "melati_emotion": {
+          "predicts_acted": 0.3114,
+          "predicts_listener_majority": 0.4528
+        },
+        "vox_profile_whisper": {
+          "predicts_acted": 0.1195,
+          "predicts_listener_majority": 0.6502
+        },
+        "vox_profile_wavlm": {
+          "predicts_acted": 0.1225,
+          "predicts_listener_majority": 0.6215
+        }
+      }
+    }
+  },
+  "mcae_spps_listeners": {
+    "raters_per_clip": 40,
+    "recognition_rate": {
+      "mean": 0.7631,
+      "min": 0.475,
+      "q1": 0.65,
+      "median": 0.775,
+      "q3": 0.875,
+      "max": 1.0
+    },
+    "per_emotion_mean": {
+      "angry": 0.7935,
+      "disgusted": 0.6342,
+      "fearful": 0.6471,
+      "happy": 0.687,
+      "neutral": 0.886,
+      "sad": 0.8238,
+      "surprised": 0.7418
+    },
+    "clips_with_rate_1.0": 36,
+    "clips_with_rate_le_0.5": 314,
+    "note": "The corpus kept only clips whose intended emotion was the listeners' most frequent choice (min 47.5%)."
+  }
+}

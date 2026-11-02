@@ -1,0 +1,1859 @@
+{
+ "audio": [
+  {
+   "path": "audio/crema_d__1089_IOM_NEU_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1089_IOM_NEU_XX.wav",
+   "speaker": "1089 (female, 24)",
+   "sentence": "I'm on my way to the meeting.",
+   "sentence_id": "IOM",
+   "acted_label": "neutral",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): neutral 7 · sad 3 → majority neutral",
+   "listener_votes": {
+    "neutral": 7,
+    "sad": 3
+   },
+   "listener_majority": "neutral",
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "neutral",
+     0.878
+    ],
+    "Melati": [
+     "neutral",
+     0.995
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.473
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.493
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "dataset_example",
+   "subgroup": "crema_d",
+   "why_interesting": "Same actress (1089), same sentence, four emotions; the listener majority matches the acted label on all four (70-100% of raters); both top models are right on all four (18 of 20 predictions right).",
+   "duration_s": 2.2
+  },
+  {
+   "path": "audio/crema_d__1089_IOM_ANG_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1089_IOM_ANG_XX.wav",
+   "speaker": "1089 (female, 24)",
+   "sentence": "I'm on my way to the meeting.",
+   "sentence_id": "IOM",
+   "acted_label": "angry",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): angry 9 · neutral 1 → majority angry",
+   "listener_votes": {
+    "angry": 9,
+    "neutral": 1
+   },
+   "listener_majority": "angry",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.887
+    ],
+    "Melati": [
+     "angry",
+     0.998
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.483
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.868
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "dataset_example",
+   "subgroup": "crema_d",
+   "why_interesting": "Same actress (1089), same sentence, four emotions; the listener majority matches the acted label on all four (70-100% of raters); both top models are right on all four (18 of 20 predictions right).",
+   "duration_s": 2.58
+  },
+  {
+   "path": "audio/crema_d__1089_IOM_HAP_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1089_IOM_HAP_XX.wav",
+   "speaker": "1089 (female, 24)",
+   "sentence": "I'm on my way to the meeting.",
+   "sentence_id": "IOM",
+   "acted_label": "happy",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): happy 10 → majority happy",
+   "listener_votes": {
+    "happy": 10
+   },
+   "listener_majority": "happy",
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.877
+    ],
+    "Melati": [
+     "happy",
+     0.902
+    ],
+    "Vox-Profile Whisper": [
+     "happy",
+     0.248
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.306
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "dataset_example",
+   "subgroup": "crema_d",
+   "why_interesting": "Same actress (1089), same sentence, four emotions; the listener majority matches the acted label on all four (70-100% of raters); both top models are right on all four (18 of 20 predictions right).",
+   "duration_s": 2.74
+  },
+  {
+   "path": "audio/crema_d__1089_IOM_SAD_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1089_IOM_SAD_XX.wav",
+   "speaker": "1089 (female, 24)",
+   "sentence": "I'm on my way to the meeting.",
+   "sentence_id": "IOM",
+   "acted_label": "sad",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): sad 7 · neutral 3 → majority sad",
+   "listener_votes": {
+    "sad": 7,
+    "neutral": 3
+   },
+   "listener_majority": "sad",
+   "predictions": {
+    "emotion2vec+ large": [
+     "sad",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.802
+    ],
+    "Melati": [
+     "neutral",
+     0.851
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.362
+    ],
+    "Vox-Profile WavLM": [
+     "sad",
+     0.469
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "dataset_example",
+   "subgroup": "crema_d",
+   "why_interesting": "Same actress (1089), same sentence, four emotions; the listener majority matches the acted label on all four (70-100% of raters); both top models are right on all four (18 of 20 predictions right).",
+   "duration_s": 2.04
+  },
+  {
+   "path": "audio/mcae_spps__61195.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/neutral/61195.wav",
+   "speaker": "6 (female)",
+   "sentence": "他们听了一个讲座 (They attended a lecture.)",
+   "sentence_id": "195",
+   "acted_label": "neutral",
+   "listener_info": "Listeners (n=40): neutral 38 · sad 1 · disgusted 1 (recognition rate 95.0%)",
+   "listener_votes": {
+    "neutral": 38,
+    "sad": 1,
+    "disgusted": 1
+   },
+   "listener_majority": "neutral",
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "neutral",
+     0.674
+    ],
+    "Melati": [
+     "angry",
+     0.903
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.373
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.28
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Same actress, same Mandarin sentence, four emotions; 88-95% of 40 listeners chose the intended emotion; both top models are right on all four.",
+   "duration_s": 1.46
+  },
+  {
+   "path": "audio/mcae_spps__63195.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/anger/63195.wav",
+   "speaker": "6 (female)",
+   "sentence": "他们听了一个讲座 (They attended a lecture.)",
+   "sentence_id": "195",
+   "acted_label": "angry",
+   "listener_info": "Listeners (n=40): angry 36 · neutral 2 · fearful 1 · sad 1 (recognition rate 90.0%)",
+   "listener_votes": {
+    "angry": 36,
+    "neutral": 2,
+    "fearful": 1,
+    "sad": 1
+   },
+   "listener_majority": "angry",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.894
+    ],
+    "Melati": [
+     "angry",
+     0.988
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.505
+    ],
+    "Vox-Profile WavLM": [
+     "fearful",
+     0.219
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Same actress, same Mandarin sentence, four emotions; 88-95% of 40 listeners chose the intended emotion; both top models are right on all four.",
+   "duration_s": 1.12
+  },
+  {
+   "path": "audio/mcae_spps__62195.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/happiness/62195.wav",
+   "speaker": "6 (female)",
+   "sentence": "他们听了一个讲座 (They attended a lecture.)",
+   "sentence_id": "195",
+   "acted_label": "happy",
+   "listener_info": "Listeners (n=40): happy 35 · neutral 3 · angry 1 · sad 1 (recognition rate 87.5%)",
+   "listener_votes": {
+    "happy": 35,
+    "neutral": 3,
+    "angry": 1,
+    "sad": 1
+   },
+   "listener_majority": "happy",
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     0.996
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.888
+    ],
+    "Melati": [
+     "happy",
+     0.992
+    ],
+    "Vox-Profile Whisper": [
+     "surprised",
+     0.203
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.323
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Same actress, same Mandarin sentence, four emotions; 88-95% of 40 listeners chose the intended emotion; both top models are right on all four.",
+   "duration_s": 1.47
+  },
+  {
+   "path": "audio/mcae_spps__65195.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/sadness/65195.wav",
+   "speaker": "6 (female)",
+   "sentence": "他们听了一个讲座 (They attended a lecture.)",
+   "sentence_id": "195",
+   "acted_label": "sad",
+   "listener_info": "Listeners (n=40): sad 36 · neutral 2 · fearful 1 · surprised 1 (recognition rate 90.0%)",
+   "listener_votes": {
+    "sad": 36,
+    "neutral": 2,
+    "fearful": 1,
+    "surprised": 1
+   },
+   "listener_majority": "sad",
+   "predictions": {
+    "emotion2vec+ large": [
+     "sad",
+     0.983
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.899
+    ],
+    "Melati": [
+     "sad",
+     0.848
+    ],
+    "Vox-Profile Whisper": [
+     "fearful",
+     0.232
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.293
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Same actress, same Mandarin sentence, four emotions; 88-95% of 40 listeners chose the intended emotion; both top models are right on all four.",
+   "duration_s": 1.7
+  },
+  {
+   "path": "audio/mess__CF3V12_SCR.mp3",
+   "dataset": "MESS",
+   "original_path": "data/mess/audio/CF3V12_SCR.wav",
+   "speaker": "F3 (female)",
+   "sentence": null,
+   "sentence_id": "V12",
+   "acted_label": "neutral",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     0.934
+    ],
+    "MERaLiON-SER-v1": [
+     "neutral",
+     0.886
+    ],
+    "Melati": [
+     "neutral",
+     0.968
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.464
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.505
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mess",
+   "why_interesting": "Same actress, same sentence, four emotions (calm counts as neutral). MERaLiON gets all four; emotion2vec+ calls the angry and sad clips neutral. MESS clips are RMS-normalised, so loudness gives no cue.",
+   "duration_s": 2.65
+  },
+  {
+   "path": "audio/mess__AF3V12_SCR.mp3",
+   "dataset": "MESS",
+   "original_path": "data/mess/audio/AF3V12_SCR.wav",
+   "speaker": "F3 (female)",
+   "sentence": null,
+   "sentence_id": "V12",
+   "acted_label": "angry",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     0.958
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.893
+    ],
+    "Melati": [
+     "angry",
+     0.569
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.161
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.245
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mess",
+   "why_interesting": "Same actress, same sentence, four emotions (calm counts as neutral). MERaLiON gets all four; emotion2vec+ calls the angry and sad clips neutral. MESS clips are RMS-normalised, so loudness gives no cue.",
+   "duration_s": 2.39
+  },
+  {
+   "path": "audio/mess__HF3V12_SCR.mp3",
+   "dataset": "MESS",
+   "original_path": "data/mess/audio/HF3V12_SCR.wav",
+   "speaker": "F3 (female)",
+   "sentence": null,
+   "sentence_id": "V12",
+   "acted_label": "happy",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     0.893
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.888
+    ],
+    "Melati": [
+     "neutral",
+     0.808
+    ],
+    "Vox-Profile Whisper": [
+     "happy",
+     0.245
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.254
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mess",
+   "why_interesting": "Same actress, same sentence, four emotions (calm counts as neutral). MERaLiON gets all four; emotion2vec+ calls the angry and sad clips neutral. MESS clips are RMS-normalised, so loudness gives no cue.",
+   "duration_s": 2.27
+  },
+  {
+   "path": "audio/mess__SF3V12_SCR.mp3",
+   "dataset": "MESS",
+   "original_path": "data/mess/audio/SF3V12_SCR.wav",
+   "speaker": "F3 (female)",
+   "sentence": null,
+   "sentence_id": "V12",
+   "acted_label": "sad",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.894
+    ],
+    "Melati": [
+     "neutral",
+     0.927
+    ],
+    "Vox-Profile Whisper": [
+     "sad",
+     0.384
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.221
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "dataset_example",
+   "subgroup": "mess",
+   "why_interesting": "Same actress, same sentence, four emotions (calm counts as neutral). MERaLiON gets all four; emotion2vec+ calls the angry and sad clips neutral. MESS clips are RMS-normalised, so loudness gives no cue.",
+   "duration_s": 2.24
+  },
+  {
+   "path": "audio/ravdess__03-01-01-01-01-01-02.mp3",
+   "dataset": "RAVDESS",
+   "original_path": "data/ravdess/audio/Actor_02/03-01-01-01-01-01-02.wav",
+   "speaker": "Actor 02 (female)",
+   "sentence": "Kids are talking by the door.",
+   "sentence_id": "01",
+   "acted_label": "neutral",
+   "acted_intensity": "normal",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "neutral",
+     0.893
+    ],
+    "Melati": [
+     "neutral",
+     0.884
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.342
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.336
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "ravdess",
+   "why_interesting": "Same actress, same sentence and repetition, strong intensity (neutral has only normal); all five models are right on all four.",
+   "duration_s": 1.88
+  },
+  {
+   "path": "audio/ravdess__03-01-05-02-01-01-02.mp3",
+   "dataset": "RAVDESS",
+   "original_path": "data/ravdess/audio/Actor_02/03-01-05-02-01-01-02.wav",
+   "speaker": "Actor 02 (female)",
+   "sentence": "Kids are talking by the door.",
+   "sentence_id": "01",
+   "acted_label": "angry",
+   "acted_intensity": "strong",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.892
+    ],
+    "Melati": [
+     "angry",
+     1.0
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.463
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.63
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "ravdess",
+   "why_interesting": "Same actress, same sentence and repetition, strong intensity (neutral has only normal); all five models are right on all four.",
+   "duration_s": 2.08
+  },
+  {
+   "path": "audio/ravdess__03-01-03-02-01-01-02.mp3",
+   "dataset": "RAVDESS",
+   "original_path": "data/ravdess/audio/Actor_02/03-01-03-02-01-01-02.wav",
+   "speaker": "Actor 02 (female)",
+   "sentence": "Kids are talking by the door.",
+   "sentence_id": "01",
+   "acted_label": "happy",
+   "acted_intensity": "strong",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.889
+    ],
+    "Melati": [
+     "happy",
+     0.975
+    ],
+    "Vox-Profile Whisper": [
+     "happy",
+     0.175
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.338
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "ravdess",
+   "why_interesting": "Same actress, same sentence and repetition, strong intensity (neutral has only normal); all five models are right on all four.",
+   "duration_s": 2.04
+  },
+  {
+   "path": "audio/ravdess__03-01-04-02-01-01-02.mp3",
+   "dataset": "RAVDESS",
+   "original_path": "data/ravdess/audio/Actor_02/03-01-04-02-01-01-02.wav",
+   "speaker": "Actor 02 (female)",
+   "sentence": "Kids are talking by the door.",
+   "sentence_id": "01",
+   "acted_label": "sad",
+   "acted_intensity": "strong",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "sad",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.902
+    ],
+    "Melati": [
+     "sad",
+     0.923
+    ],
+    "Vox-Profile Whisper": [
+     "sad",
+     0.266
+    ],
+    "Vox-Profile WavLM": [
+     "sad",
+     0.428
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "ravdess",
+   "why_interesting": "Same actress, same sentence and repetition, strong intensity (neutral has only normal); all five models are right on all four.",
+   "duration_s": 1.94
+  },
+  {
+   "path": "audio/tess__YAF_bar_neutral.mp3",
+   "dataset": "TESS",
+   "original_path": "data/tess/YAF_bar_neutral.wav",
+   "speaker": "YAF (female, 26)",
+   "sentence": "\"Say the word bar.\"",
+   "sentence_id": "bar",
+   "acted_label": "neutral",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.901
+    ],
+    "Melati": [
+     "neutral",
+     0.588
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.47
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.18
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "tess",
+   "why_interesting": "Same speaker (YAF, aged 26), same carrier phrase and target word, four emotions; emotion2vec+ (trained on TESS) gets all four, MERaLiON calls the neutral clip sad.",
+   "duration_s": 1.99
+  },
+  {
+   "path": "audio/tess__YAF_bar_angry.mp3",
+   "dataset": "TESS",
+   "original_path": "data/tess/YAF_bar_angry.wav",
+   "speaker": "YAF (female, 26)",
+   "sentence": "\"Say the word bar.\"",
+   "sentence_id": "bar",
+   "acted_label": "angry",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.895
+    ],
+    "Melati": [
+     "angry",
+     0.944
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.496
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.633
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "tess",
+   "why_interesting": "Same speaker (YAF, aged 26), same carrier phrase and target word, four emotions; emotion2vec+ (trained on TESS) gets all four, MERaLiON calls the neutral clip sad.",
+   "duration_s": 2.11
+  },
+  {
+   "path": "audio/tess__YAF_bar_happy.mp3",
+   "dataset": "TESS",
+   "original_path": "data/tess/YAF_bar_happy.wav",
+   "speaker": "YAF (female, 26)",
+   "sentence": "\"Say the word bar.\"",
+   "sentence_id": "bar",
+   "acted_label": "happy",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.889
+    ],
+    "Melati": [
+     "happy",
+     0.95
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.247
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.264
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "tess",
+   "why_interesting": "Same speaker (YAF, aged 26), same carrier phrase and target word, four emotions; emotion2vec+ (trained on TESS) gets all four, MERaLiON calls the neutral clip sad.",
+   "duration_s": 1.95
+  },
+  {
+   "path": "audio/tess__YAF_bar_sad.mp3",
+   "dataset": "TESS",
+   "original_path": "data/tess/YAF_bar_sad.wav",
+   "speaker": "YAF (female, 26)",
+   "sentence": "\"Say the word bar.\"",
+   "sentence_id": "bar",
+   "acted_label": "sad",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "sad",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.896
+    ],
+    "Melati": [
+     "sad",
+     0.99
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.429
+    ],
+    "Vox-Profile WavLM": [
+     "sad",
+     0.334
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "dataset_example",
+   "subgroup": "tess",
+   "why_interesting": "Same speaker (YAF, aged 26), same carrier phrase and target word, four emotions; emotion2vec+ (trained on TESS) gets all four, MERaLiON calls the neutral clip sad.",
+   "duration_s": 2.19
+  },
+  {
+   "path": "audio/jl_corpus__female2_neutral_1a_2.mp3",
+   "dataset": "JL-Corpus",
+   "original_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/female2_neutral_1a_2.wav",
+   "speaker": "female2 (female)",
+   "sentence": "Tom beats that farmer.",
+   "sentence_id": "1",
+   "acted_label": "neutral",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "neutral",
+     0.885
+    ],
+    "Melati": [
+     "neutral",
+     0.989
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.437
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.193
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "Melati"
+   ],
+   "group": "dataset_example",
+   "subgroup": "jl_corpus",
+   "why_interesting": "Same speaker (female2), same sentence, four emotions; all five models are right on all four.",
+   "duration_s": 1.7
+  },
+  {
+   "path": "audio/jl_corpus__female2_angry_1b_2.mp3",
+   "dataset": "JL-Corpus",
+   "original_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/female2_angry_1b_2.wav",
+   "speaker": "female2 (female)",
+   "sentence": "Tom beats that farmer.",
+   "sentence_id": "1",
+   "acted_label": "angry",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.855
+    ],
+    "Melati": [
+     "angry",
+     0.974
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.428
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.366
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "Melati"
+   ],
+   "group": "dataset_example",
+   "subgroup": "jl_corpus",
+   "why_interesting": "Same speaker (female2), same sentence, four emotions; all five models are right on all four.",
+   "duration_s": 1.72
+  },
+  {
+   "path": "audio/jl_corpus__female2_happy_1a_1.mp3",
+   "dataset": "JL-Corpus",
+   "original_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/female2_happy_1a_1.wav",
+   "speaker": "female2 (female)",
+   "sentence": "Tom beats that farmer.",
+   "sentence_id": "1",
+   "acted_label": "happy",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.878
+    ],
+    "Melati": [
+     "happy",
+     0.999
+    ],
+    "Vox-Profile Whisper": [
+     "happy",
+     0.233
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.313
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "Melati"
+   ],
+   "group": "dataset_example",
+   "subgroup": "jl_corpus",
+   "why_interesting": "Same speaker (female2), same sentence, four emotions; all five models are right on all four.",
+   "duration_s": 1.6
+  },
+  {
+   "path": "audio/jl_corpus__female2_sad_1b_2.mp3",
+   "dataset": "JL-Corpus",
+   "original_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/female2_sad_1b_2.wav",
+   "speaker": "female2 (female)",
+   "sentence": "Tom beats that farmer.",
+   "sentence_id": "1",
+   "acted_label": "sad",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "sad",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.869
+    ],
+    "Melati": [
+     "sad",
+     0.987
+    ],
+    "Vox-Profile Whisper": [
+     "sad",
+     0.409
+    ],
+    "Vox-Profile WavLM": [
+     "sad",
+     0.345
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "Melati"
+   ],
+   "group": "dataset_example",
+   "subgroup": "jl_corpus",
+   "why_interesting": "Same speaker (female2), same sentence, four emotions; all five models are right on all four.",
+   "duration_s": 2.0
+  },
+  {
+   "path": "audio/crema_d__1014_WSI_HAP_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1014_WSI_HAP_XX.wav",
+   "speaker": "1014 (male, 24)",
+   "sentence": "We'll stop in a couple of minutes.",
+   "sentence_id": "WSI",
+   "acted_label": "happy",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): angry 10 → majority angry",
+   "listener_votes": {
+    "angry": 10
+   },
+   "listener_majority": "angry",
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     0.998
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.723
+    ],
+    "Melati": [
+     "angry",
+     0.975
+    ],
+    "Vox-Profile Whisper": [
+     "fearful",
+     0.208
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.193
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "subjectivity",
+   "subgroup": "crema_d",
+   "why_interesting": "Acted happy, yet all 10 listeners heard angry. MERaLiON follows the listeners; emotion2vec+ (trained on CREMA-D's acted labels) says happy.",
+   "duration_s": 2.17
+  },
+  {
+   "path": "audio/crema_d__1089_TAI_FEA_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1089_TAI_FEA_XX.wav",
+   "speaker": "1089 (female, 24)",
+   "sentence": "The airplane is almost full.",
+   "sentence_id": "TAI",
+   "acted_label": "fearful",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): sad 10 → majority sad",
+   "listener_votes": {
+    "sad": 10
+   },
+   "listener_majority": "sad",
+   "predictions": {
+    "emotion2vec+ large": [
+     "fearful",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "fearful",
+     0.827
+    ],
+    "Melati": [
+     "fearful",
+     0.678
+    ],
+    "Vox-Profile Whisper": [
+     "sad",
+     0.355
+    ],
+    "Vox-Profile WavLM": [
+     "sad",
+     0.348
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "subjectivity",
+   "subgroup": "crema_d",
+   "why_interesting": "Acted fearful, all 10 listeners heard sad; the top two models still say fearful (CREMA-D is in their training data).",
+   "duration_s": 2.9
+  },
+  {
+   "path": "audio/crema_d__1029_IEO_DIS_HI.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1029_IEO_DIS_HI.wav",
+   "speaker": "1029 (female, 33)",
+   "sentence": "It's eleven o'clock.",
+   "sentence_id": "IEO",
+   "acted_label": "disgusted",
+   "acted_intensity": "high",
+   "listener_info": "Listeners (voice only, n=10): angry 9 · disgusted 1 → majority angry",
+   "listener_votes": {
+    "angry": 9,
+    "disgusted": 1
+   },
+   "listener_majority": "angry",
+   "predictions": {
+    "emotion2vec+ large": [
+     "disgusted",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "disgusted",
+     0.696
+    ],
+    "Melati": [
+     "angry",
+     0.996
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.198
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.159
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "subjectivity",
+   "subgroup": "crema_d",
+   "why_interesting": "Acted disgusted at high intensity, 9 of 10 listeners heard angry.",
+   "duration_s": 2.07
+  },
+  {
+   "path": "audio/crema_d__1082_TAI_SAD_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1082_TAI_SAD_XX.wav",
+   "speaker": "1082 (female, 20)",
+   "sentence": "The airplane is almost full.",
+   "sentence_id": "TAI",
+   "acted_label": "sad",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): neutral 10 → majority neutral",
+   "listener_votes": {
+    "neutral": 10
+   },
+   "listener_majority": "neutral",
+   "predictions": {
+    "emotion2vec+ large": [
+     "sad",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.301
+    ],
+    "Melati": [
+     "neutral",
+     0.916
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.395
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.529
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "subjectivity",
+   "subgroup": "crema_d",
+   "why_interesting": "Acted sad, all 10 listeners heard neutral: the most common CREMA-D mismatch (67% of acted-sad clips get a neutral majority).",
+   "duration_s": 2.27
+  },
+  {
+   "path": "audio/mcae_spps__37166.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/surprise/37166.wav",
+   "speaker": "3 (male)",
+   "sentence": "他去看看 (He goes to take a look.)",
+   "sentence_id": "166",
+   "acted_label": "surprised",
+   "listener_info": "Listeners (n=40): surprised 19 · neutral 13 · happy 6 · angry 1 · sad 1 (recognition rate 47.5%)",
+   "listener_votes": {
+    "surprised": 19,
+    "neutral": 13,
+    "happy": 6,
+    "angry": 1,
+    "sad": 1
+   },
+   "listener_majority": "surprised",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     0.703
+    ],
+    "MERaLiON-SER-v1": [
+     "surprised",
+     0.435
+    ],
+    "Melati": [
+     "happy",
+     0.76
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.439
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.221
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "subjectivity",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Only 47.5% of listeners recognised the intended surprise; a third heard neutral.",
+   "duration_s": 0.8
+  },
+  {
+   "path": "audio/mcae_spps__42139.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/happiness/42139.wav",
+   "speaker": "4 (female)",
+   "sentence": "你们看过这本书 (You (plural) have read this book.)",
+   "sentence_id": "139",
+   "acted_label": "happy",
+   "listener_info": "Listeners (n=40): happy 19 · surprised 13 · neutral 6 · fearful 2 (recognition rate 47.5%)",
+   "listener_votes": {
+    "happy": 19,
+    "surprised": 13,
+    "neutral": 6,
+    "fearful": 2
+   },
+   "listener_majority": "happy",
+   "predictions": {
+    "emotion2vec+ large": [
+     "happy",
+     0.766
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.431
+    ],
+    "Melati": [
+     "happy",
+     0.979
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.281
+    ],
+    "Vox-Profile WavLM": [
+     "happy",
+     0.222
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "subjectivity",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Only 47.5% recognised happy; 13 of 40 heard surprised.",
+   "duration_s": 1.17
+  },
+  {
+   "path": "audio/mcae_spps__23035.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/anger/23035.wav",
+   "speaker": "2 (male)",
+   "sentence": "我看着远处 (I look into the distance.)",
+   "sentence_id": "035",
+   "acted_label": "angry",
+   "listener_info": "Listeners (n=40): angry 40 (recognition rate 100.0%)",
+   "listener_votes": {
+    "angry": 40
+   },
+   "listener_majority": "angry",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.889
+    ],
+    "Melati": [
+     "angry",
+     0.999
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.73
+    ],
+    "Vox-Profile WavLM": [
+     "angry",
+     0.572
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "subjectivity",
+   "subgroup": "mcae_spps",
+   "why_interesting": "Contrast: 40 of 40 listeners agree on angry, and all five models are right.",
+   "duration_s": 1.35
+  },
+  {
+   "path": "audio/crema_d__1068_IEO_HAP_HI.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1068_IEO_HAP_HI.wav",
+   "speaker": "1068 (male, 34)",
+   "sentence": "It's eleven o'clock.",
+   "sentence_id": "IEO",
+   "acted_label": "happy",
+   "acted_intensity": "high",
+   "listener_info": "Listeners (voice only, n=10): angry 9 · disgusted 1 → majority angry",
+   "listener_votes": {
+    "angry": 9,
+    "disgusted": 1
+   },
+   "listener_majority": "angry",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     0.668
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.817
+    ],
+    "Melati": [
+     "angry",
+     0.957
+    ],
+    "Vox-Profile Whisper": [
+     "happy",
+     0.239
+    ],
+    "Vox-Profile WavLM": [
+     "fearful",
+     0.141
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "failure",
+   "subgroup": "i_models_side_with_listeners",
+   "why_interesting": "Acted happy (high intensity), 9 of 10 listeners heard angry, and both top models say angry: is the model wrong or the label?",
+   "duration_s": 2.37
+  },
+  {
+   "path": "audio/crema_d__1066_ITS_ANG_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1066_ITS_ANG_XX.wav",
+   "speaker": "1066 (male, 25)",
+   "sentence": "I think I've seen this before.",
+   "sentence_id": "ITS",
+   "acted_label": "angry",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): disgusted 8 · neutral 2 → majority disgusted",
+   "listener_votes": {
+    "disgusted": 8,
+    "neutral": 2
+   },
+   "listener_majority": "disgusted",
+   "predictions": {
+    "emotion2vec+ large": [
+     "disgusted",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "disgusted",
+     0.916
+    ],
+    "Melati": [
+     "happy",
+     0.34
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.248
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.28
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "failure",
+   "subgroup": "i_models_side_with_listeners",
+   "why_interesting": "Acted angry, 8 of 10 listeners heard disgusted; both top models say disgusted (emotion2vec+ at 100%).",
+   "duration_s": 2.54
+  },
+  {
+   "path": "audio/mess__AM2V15_SCR.mp3",
+   "dataset": "MESS",
+   "original_path": "data/mess/audio/AM2V15_SCR.wav",
+   "speaker": "M2 (male)",
+   "sentence": null,
+   "sentence_id": "V15",
+   "acted_label": "angry",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "neutral",
+     0.882
+    ],
+    "Melati": [
+     "neutral",
+     0.956
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.4
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.431
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "failure",
+   "subgroup": "ii_confident_on_unseen_data",
+   "why_interesting": "Acted angry on unseen MESS; all five models say neutral, emotion2vec+ at 100%. emotion2vec+ calls 81% of MESS clips neutral.",
+   "duration_s": 2.75
+  },
+  {
+   "path": "audio/mcae_spps__57175.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/surprise/57175.wav",
+   "speaker": "5 (female)",
+   "sentence": "他听了一个讲座 (He attended a lecture.)",
+   "sentence_id": "175",
+   "acted_label": "surprised",
+   "listener_info": "Listeners (n=40): surprised 38 · happy 1 · angry 1 (recognition rate 95.0%)",
+   "listener_votes": {
+    "surprised": 38,
+    "happy": 1,
+    "angry": 1
+   },
+   "listener_majority": "surprised",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     0.876
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.824
+    ],
+    "Melati": [
+     "angry",
+     0.98
+    ],
+    "Vox-Profile Whisper": [
+     "surprised",
+     0.578
+    ],
+    "Vox-Profile WavLM": [
+     "fearful",
+     0.244
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "failure",
+   "subgroup": "ii_confident_on_unseen_data",
+   "why_interesting": "38 of 40 listeners heard surprise, yet emotion2vec+, MERaLiON and Melati say angry. Mandarin surprise is heard as angry by models (MERaLiON: 46% of surprised clips).",
+   "duration_s": 1.13
+  },
+  {
+   "path": "audio/tess__YAF_read_neutral.mp3",
+   "dataset": "TESS",
+   "original_path": "data/tess/YAF_read_neutral.wav",
+   "speaker": "YAF (female, 26)",
+   "sentence": "\"Say the word read.\"",
+   "sentence_id": "read",
+   "acted_label": "neutral",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.908
+    ],
+    "Melati": [
+     "neutral",
+     0.685
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.464
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.432
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "failure",
+   "subgroup": "ii_confident_on_unseen_data",
+   "why_interesting": "Neutral on TESS (unseen for MERaLiON): MERaLiON says sad at 0.91, as it does for all 400 TESS neutral clips; emotion2vec+ (trained on TESS) is right.",
+   "duration_s": 2.12
+  },
+  {
+   "path": "audio/ravdess__03-01-08-02-02-01-17.mp3",
+   "dataset": "RAVDESS",
+   "original_path": "data/ravdess/audio/Actor_17/03-01-08-02-02-01-17.wav",
+   "speaker": "Actor 17 (male)",
+   "sentence": "Dogs are sitting by the door.",
+   "sentence_id": "02",
+   "acted_label": "surprised",
+   "acted_intensity": "strong",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "surprised",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "fearful",
+     0.907
+    ],
+    "Melati": [
+     "angry",
+     0.648
+    ],
+    "Vox-Profile Whisper": [
+     "surprised",
+     0.466
+    ],
+    "Vox-Profile WavLM": [
+     "surprised",
+     0.237
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large"
+   ],
+   "group": "failure",
+   "subgroup": "ii_confident_on_unseen_data",
+   "why_interesting": "Surprised (strong) on RAVDESS: emotion2vec+ (trained on RAVDESS) says surprised at 100%, MERaLiON says fearful at 0.91.",
+   "duration_s": 2.36
+  },
+  {
+   "path": "audio/mess__SF3T02_SCR.mp3",
+   "dataset": "MESS",
+   "original_path": "data/mess/audio/SF3T02_SCR.wav",
+   "speaker": "F3 (female)",
+   "sentence": null,
+   "sentence_id": "T02",
+   "acted_label": "sad",
+   "listener_info": "No per-clip listener ratings for this dataset",
+   "listener_votes": null,
+   "listener_majority": null,
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     1.0
+    ],
+    "MERaLiON-SER-v1": [
+     "sad",
+     0.902
+    ],
+    "Melati": [
+     "sad",
+     0.506
+    ],
+    "Vox-Profile Whisper": [
+     "sad",
+     0.509
+    ],
+    "Vox-Profile WavLM": [
+     "sad",
+     0.253
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "failure",
+   "subgroup": "iii_models_disagree",
+   "why_interesting": "Acted sad: four models say sad, but emotion2vec+ says neutral at 100%; a confident outlier.",
+   "duration_s": 2.47
+  },
+  {
+   "path": "audio/mcae_spps__62191.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/happiness/62191.wav",
+   "speaker": "6 (female)",
+   "sentence": "他们有个计划 (They have a plan.)",
+   "sentence_id": "191",
+   "acted_label": "happy",
+   "listener_info": "Listeners (n=40): happy 22 · neutral 17 · surprised 1 (recognition rate 55.0%)",
+   "listener_votes": {
+    "happy": 22,
+    "neutral": 17,
+    "surprised": 1
+   },
+   "listener_majority": "happy",
+   "predictions": {
+    "emotion2vec+ large": [
+     "neutral",
+     0.824
+    ],
+    "MERaLiON-SER-v1": [
+     "happy",
+     0.867
+    ],
+    "Melati": [
+     "happy",
+     0.995
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.329
+    ],
+    "Vox-Profile WavLM": [
+     "surprised",
+     0.295
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "failure",
+   "subgroup": "iii_models_disagree",
+   "why_interesting": "The models split exactly as the listeners do: 22 of 40 heard happy, 17 neutral; MERaLiON says happy, emotion2vec+ neutral.",
+   "duration_s": 1.28
+  },
+  {
+   "path": "audio/mcae_spps__12007.mp3",
+   "dataset": "MCAE-SPPS",
+   "original_path": "data/mcae_spps/audio/happiness/12007.wav",
+   "speaker": "1 (male)",
+   "sentence": "我去买菜 (I go to buy groceries.)",
+   "sentence_id": "007",
+   "acted_label": "happy",
+   "listener_info": "Listeners (n=40): happy 19 · angry 14 · neutral 3 · fearful 1 · sad 1 · disgusted 1 · surprised 1 (recognition rate 47.5%)",
+   "listener_votes": {
+    "happy": 19,
+    "angry": 14,
+    "neutral": 3,
+    "fearful": 1,
+    "sad": 1,
+    "disgusted": 1,
+    "surprised": 1
+   },
+   "listener_majority": "happy",
+   "predictions": {
+    "emotion2vec+ large": [
+     "angry",
+     0.824
+    ],
+    "MERaLiON-SER-v1": [
+     "angry",
+     0.637
+    ],
+    "Melati": [
+     "happy",
+     0.969
+    ],
+    "Vox-Profile Whisper": [
+     "angry",
+     0.855
+    ],
+    "Vox-Profile WavLM": [
+     "surprised",
+     0.256
+    ]
+   },
+   "models_in_training_data": [],
+   "group": "failure",
+   "subgroup": "iv_questionable_ground_truth",
+   "why_interesting": "Listeners barely chose the intended happy (19 vs 14 angry of 40); both top models say angry. Scored as wrong, but a third of humans agree with them.",
+   "duration_s": 0.79
+  },
+  {
+   "path": "audio/crema_d__1030_WSI_FEA_XX.mp3",
+   "dataset": "CREMA-D",
+   "original_path": "data/crema_d/AudioWAV/1030_WSI_FEA_XX.wav",
+   "speaker": "1030 (female, 42)",
+   "sentence": "We'll stop in a couple of minutes.",
+   "sentence_id": "WSI",
+   "acted_label": "fearful",
+   "acted_intensity": "unspecified",
+   "listener_info": "Listeners (voice only, n=10): neutral 3 · angry 2 · disgusted 2 · sad 2 · happy 1 → majority neutral",
+   "listener_votes": {
+    "neutral": 3,
+    "angry": 2,
+    "disgusted": 2,
+    "sad": 2,
+    "happy": 1
+   },
+   "listener_majority": "neutral",
+   "predictions": {
+    "emotion2vec+ large": [
+     "disgusted",
+     0.773
+    ],
+    "MERaLiON-SER-v1": [
+     "fearful",
+     0.879
+    ],
+    "Melati": [
+     "angry",
+     0.8
+    ],
+    "Vox-Profile Whisper": [
+     "neutral",
+     0.329
+    ],
+    "Vox-Profile WavLM": [
+     "neutral",
+     0.295
+    ]
+   },
+   "models_in_training_data": [
+    "emotion2vec+ large",
+    "MERaLiON-SER-v1"
+   ],
+   "group": "failure",
+   "subgroup": "iv_questionable_ground_truth",
+   "why_interesting": "Acted fearful, but none of 10 listeners chose fear and votes are spread over five emotions; any prediction is defensible (15% of CREMA-D clips get no vote for the acted emotion).",
+   "duration_s": 2.94
+  }
+ ],
+ "figures": [
+  {
+   "path": "fig/cm_emotion2vec_plus_large_crema_d.png",
+   "caption": "emotion2vec+ large on CREMA-D (in its training data), accuracy 86.5%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_meralion_ser_v1_crema_d.png",
+   "caption": "MERaLiON-SER-v1 on CREMA-D (in its training data), accuracy 84.7%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_pair_crema_d.png",
+   "caption": "CREMA-D: emotion2vec+ large vs MERaLiON-SER-v1, row-normalised confusion matrices with shared colour scale."
+  },
+  {
+   "path": "fig/cm_emotion2vec_plus_large_mcae_spps.png",
+   "caption": "emotion2vec+ large on MCAE-SPPS (not in its training data), accuracy 61.4%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_meralion_ser_v1_mcae_spps.png",
+   "caption": "MERaLiON-SER-v1 on MCAE-SPPS (not in its training data), accuracy 64.9%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_pair_mcae_spps.png",
+   "caption": "MCAE-SPPS: emotion2vec+ large vs MERaLiON-SER-v1, row-normalised confusion matrices with shared colour scale."
+  },
+  {
+   "path": "fig/cm_emotion2vec_plus_large_mess.png",
+   "caption": "emotion2vec+ large on MESS (not in its training data), accuracy 40.8%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_meralion_ser_v1_mess.png",
+   "caption": "MERaLiON-SER-v1 on MESS (not in its training data), accuracy 74.5%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_pair_mess.png",
+   "caption": "MESS: emotion2vec+ large vs MERaLiON-SER-v1, row-normalised confusion matrices with shared colour scale."
+  },
+  {
+   "path": "fig/cm_emotion2vec_plus_large_ravdess.png",
+   "caption": "emotion2vec+ large on RAVDESS (in its training data), accuracy 92.1%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_meralion_ser_v1_ravdess.png",
+   "caption": "MERaLiON-SER-v1 on RAVDESS (not in its training data), accuracy 59.3%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_pair_ravdess.png",
+   "caption": "RAVDESS: emotion2vec+ large vs MERaLiON-SER-v1, row-normalised confusion matrices with shared colour scale."
+  },
+  {
+   "path": "fig/cm_emotion2vec_plus_large_tess.png",
+   "caption": "emotion2vec+ large on TESS (in its training data), accuracy 85.5%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_meralion_ser_v1_tess.png",
+   "caption": "MERaLiON-SER-v1 on TESS (not in its training data), accuracy 49.2%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_pair_tess.png",
+   "caption": "TESS: emotion2vec+ large vs MERaLiON-SER-v1, row-normalised confusion matrices with shared colour scale."
+  },
+  {
+   "path": "fig/cm_emotion2vec_plus_large_jl_corpus.png",
+   "caption": "emotion2vec+ large on JL-Corpus (in its training data), accuracy 92.5%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_meralion_ser_v1_jl_corpus.png",
+   "caption": "MERaLiON-SER-v1 on JL-Corpus (not in its training data), accuracy 75.9%: rows = acted emotion, columns = prediction, % of each row."
+  },
+  {
+   "path": "fig/cm_pair_jl_corpus.png",
+   "caption": "JL-Corpus: emotion2vec+ large vs MERaLiON-SER-v1, row-normalised confusion matrices with shared colour scale."
+  },
+  {
+   "path": "fig/crema_acted_vs_listener.png",
+   "caption": "CREMA-D: acted emotion vs voice-only listener majority (about 9 raters per clip). Majority matches the actor on only 41.6% of clips; most mismatches are heard as neutral."
+  },
+  {
+   "path": "fig/mcae_recognition_hist.png",
+   "caption": "MCAE-SPPS: share of 40 listeners who chose the intended emotion, per clip (mean 76.3%, median 77.5%; the corpus kept only clips with a plurality for the intended emotion)."
+  },
+  {
+   "path": "fig/seen_vs_unseen.png",
+   "caption": "Mean accuracy on datasets inside vs outside each model's training data (the Vox-Profile models saw none of the six)."
+  },
+  {
+   "path": "fig/emotion_counts.png",
+   "caption": "Evaluated clips per acted emotion in each of the six datasets."
+  }
+ ],
+ "notes": {
+  "audio_processing": "Leading/trailing silence trimmed (35 dB below the loudest 20 ms frame, 0.12 s padding); loudest clip of each quartet at about -18 dBFS RMS, quieter emotions keep half of their level difference (at most 8 dB) so relative loudness is still audible; single clips at about -18 dBFS RMS; peaks at most -1 dBFS; 16 kHz mono MP3 at 64 kbps.",
+  "predictions": "Label = the most probable of the dataset's emotions (as in the evaluation); probability = that model's own softmax probability for the label.",
+  "licences": "CREMA-D ODbL (contents DbCL); MCAE-SPPS CC BY-NC 4.0; MESS CC BY; RAVDESS CC BY-NC-SA 4.0; TESS CC BY-NC 4.0; JL-Corpus CC0."
+ }
+}
