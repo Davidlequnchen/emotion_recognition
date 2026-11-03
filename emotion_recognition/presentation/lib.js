@@ -94,8 +94,14 @@ function text(s, t, x, y, w, h, o = {}) {
 }
 
 // Small grey source line at the bottom
-function source(s, t) {
-  s.addText(t, { x: MX, y: H - 0.45, w: W - 2 * MX - 0.8, h: 0.32, fontFace: FONT, fontSize: 9, color: C.faint, margin: 0, valign: "bottom", fit: "shrink" });
+// links: [[label, url], ...] appended as clickable references
+function source(s, t, links = []) {
+  const runs = [{ text: t || "", options: { color: C.faint } }];
+  links.forEach(([label, url], i) => {
+    runs.push({ text: i ? "  ·  " : (t ? "  " : ""), options: { color: C.faint } });
+    runs.push({ text: label, options: { color: C.accent, hyperlink: { url } } });
+  });
+  s.addText(runs, { x: MX, y: H - 0.5, w: W - 2 * MX - 0.8, h: 0.4, fontFace: FONT, fontSize: 9, margin: 0, valign: "bottom", fit: "shrink" });
 }
 
 function notes(s, t) { s.addNotes(t.replace(/^\s+/gm, "").trim()); }

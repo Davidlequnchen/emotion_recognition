@@ -24,6 +24,7 @@ module.exports = function (L, A) {
       "Selection: downloadable weights + runnable code, English supported, output classes close to our 7; the whole emotion2vec family considered",
       "Dedicated SER models: 0.16–0.64B parameters; open audio LLMs: 5.5–35B; closed LLMs: size not published",
     ], { y: 5.6, h: 1.3, fontSize: 15 });
+    L.source(s, "Papers and model cards:", [["emotion2vec (Ma et al., ACL Findings 2024)", "https://arxiv.org/abs/2312.15185"], ["MERaLiON-SER (arXiv 2511.04914)", "https://arxiv.org/abs/2511.04914"], ["Melati model card", "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3"], ["Vox-Profile (Feng et al., arXiv 2505.14648)", "https://arxiv.org/abs/2505.14648"], ["GPT Realtime (OpenAI)", "https://developers.openai.com/api/docs/models/gpt-realtime"], ["Gemini models (Google)", "https://ai.google.dev/gemini-api/docs/models"]]);
     L.notes(s, `The seven models. Five open models that we run locally, from 162 million to 640 million parameters, and two closed audio LLMs through their APIs.
     Note the licence column: only emotion2vec+ and MERaLiON allow commercial use. And note the training data: that is where the daggers in the results come from.`);
   }
@@ -96,7 +97,7 @@ module.exports = function (L, A) {
       { runs: [{ text: "Mean over time and linear head: ", options: { bold: true } }, { text: "the frames are averaged into one 1,024-d clip embedding; one linear layer maps it to 9 class probabilities" }] },
       { runs: [{ text: "Input length: ", options: { bold: true } }, { text: "variable, no fixed window and no padding; memory grows with the square of the length; the authors recommend VAD-segmented utterances (training crops ≤ 20 s)" }] },
     ], { y: 3.5, h: 3.45, fontSize: 14, gap: 4 });
-    L.source(s, "Measured from the released model.pt and FunASR 1.4.16. Detailed diagram with tensor shapes: Appendix A3.");
+    L.source(s, "Measured from the released model.pt and FunASR 1.4.16; detailed diagram: Appendix A3.", [["emotion2vec (Ma et al., ACL Findings 2024)", "https://arxiv.org/abs/2312.15185"], ["emotion2vec / emotion2vec+ code", "https://github.com/ddlBoJack/emotion2vec"], ["emotion2vec+ large model card", "https://huggingface.co/emotion2vec/emotion2vec_plus_large"]]);
     L.notes(s, `emotion2vec+ large maps onto the three-stage structure as follows: the pre-trained encoder is everything from the CNN to the Transformer; pooling is a plain mean over time; the head is a single linear layer.
     The CNN feature extractor is seven one-dimensional convolution layers applied to the raw waveform. Think of it as a learned spectrogram: it slides over the audio and produces one 512-number summary every 20 milliseconds, about 50 per second.
     The projection widens each of these vectors to 1,024 numbers. Transformers have no built-in notion of order, so the convolutional positional encoding mixes every frame with its neighbours within about 0.9 seconds on either side; the model thus knows which frames are adjacent. Because this is relative rather than a fixed table of positions, there is no maximum input length.
@@ -131,6 +132,7 @@ module.exports = function (L, A) {
       "EmoBox includes CREMA-D, RAVDESS, TESS and JL-Corpus → the † on these corpora",
       "Sources of the 42.5k h pseudo-labelled data and the training code are not published",
     ], { x: MX, y: 6.5, h: 0.6, fontSize: 13, noBullet: false });
+    L.source(s, "", [["emotion2vec (Ma et al., ACL Findings 2024)", "https://arxiv.org/abs/2312.15185"], ["EmoBox (Ma et al., Interspeech 2024)", "https://arxiv.org/abs/2406.07162"], ["emotion2vec+ large model card", "https://huggingface.co/emotion2vec/emotion2vec_plus_large"]]);
     L.notes(s, `How emotion2vec+ was trained, and why it matters for fine-tuning. First, self-supervised pre-training on 262 hours of unlabelled emotional speech. Then three generations: seed was fine-tuned on about 200 hours of academic labelled data from EmoBox; base and large were trained on pseudo-labelled data, 4.8 thousand and 42.5 thousand hours.
     Two consequences: the model has already seen four of our six corpora, and its features are already emotion features, which is why freezing it and training a small head is a strong first step.`);
   }
@@ -155,6 +157,7 @@ module.exports = function (L, A) {
       { runs: [{ text: "Cost: ", options: { bold: true } }, { text: "a 2 s clip costs a full 30 s (or 15 s) window for Whisper-based models; emotion2vec+ and WavLM compute only the real length" }] },
       { runs: [{ text: "Call-centre audio: ", options: { bold: true } }, { text: "long turns must be segmented (VAD) into pieces shorter than the window, and the segment predictions combined" }] },
     ], { y: 5.55, h: 1.4, fontSize: 13, gap: 3 });
+    L.source(s, "", [["emotion2vec (Ma et al., ACL Findings 2024)", "https://arxiv.org/abs/2312.15185"], ["MERaLiON-SER (arXiv 2511.04914)", "https://arxiv.org/abs/2511.04914"], ["Melati model card", "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3"], ["Vox-Profile (Feng et al., arXiv 2505.14648)", "https://arxiv.org/abs/2505.14648"], ["Whisper (Radford et al., ICML 2023)", "https://arxiv.org/abs/2212.04356"], ["WavLM (Chen et al., IEEE JSTSP 2022)", "https://arxiv.org/abs/2110.13900"]]);
     L.notes(s, `This table maps all five open models onto the same three stages, encoder, pooling and head, and summarises how each handles input length.
     Two models, emotion2vec+ and Vox-Profile WavLM, process the real length of the clip. The three Whisper-based models, MERaLiON, Melati and Vox-Profile Whisper, always process a fixed window, 30 or 15 seconds. Shorter clips are padded with zeros, which is digital silence rather than white noise; longer audio is cut, and only the first window is used.
     MERaLiON includes the padded silence in its pooling, so for a 4-second clip, 26 of the 30 seconds the head sees are silence. Melati pools only over the real frames. Since all clips in our corpora are at most about 5 seconds long, no clip was ever cut, but every clip was padded for the Whisper-based models.
@@ -183,6 +186,7 @@ module.exports = function (L, A) {
       "Answers parsed leniently (\"Anger.\" → angry); invalid answers asked again once",
       "Data went to cloud APIs: only public corpora were sent",
     ], { x: 8.5, y: 2.9, w: 4.25, h: 3.9, fontSize: 15 });
+    L.source(s, "", [["GPT Realtime (OpenAI)", "https://developers.openai.com/api/docs/models/gpt-realtime"], ["Gemini models (Google)", "https://ai.google.dev/gemini-api/docs/models"]]);
     L.notes(s, `For the LLMs we built a forced-choice protocol. The audio goes in with a system prompt that explains the task and explicitly says the words are neutral, so judge the voice. The model must answer with exactly one of the seven words. We parse leniently and retry once if the answer is not a label.
     This is a favourable setup for the LLMs. Only public corpora were sent to the APIs; no company audio.`);
   }

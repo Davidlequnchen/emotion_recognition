@@ -140,6 +140,71 @@ module.exports = function (L, A) {
     Option E uses no labels: we continue the self-supervised pre-training objective on our own unlabelled call audio, which we have in abundance, so the encoder learns what telephone speech sounds like. Afterwards we apply A, B or C. The caveat is that the original pre-training code is not public and must be rebuilt from fairseq. For MERaLiON, whose Whisper encoder was trained on transcripts rather than self-supervised, unlabelled audio is used through pseudo-labelling instead.`);
   }
 
+  // ---- Continued pre-training (E): how it works
+  {
+    const s = L.slide(SEC, "Continued Pre-training (Option E): How It Works");
+    const PUR = "8E4EC6", sq = 0.22, sg = 0.035, nF = 8, mask = [0, 1, 1, 0, 0, 1, 1, 0];
+    const yT = 2.05, yS = 4.55, ex = 3.1, ew = 1.9, dx = 5.3, dw = 0.85, ox = 6.45;
+    const frames = (x0, yc, kind) => {
+      for (let i = 0; i < nF; i++) {
+        const x = x0 + i * (sq + sg), y = yc - sq / 2;
+        let fill = "9CC3E6", line = "0072B2", t = "";
+        if (kind === "masked" && mask[i]) { fill = "C9CED6"; line = "8C99AA"; t = "?"; }
+        if (kind === "target") { fill = "D9C7EE"; line = PUR; }
+        if (kind === "pred") { if (mask[i]) { fill = "F6C9A8"; line = C.accent2; } else { fill = C.white; line = C.line; } }
+        s.addText(t, { x, y, w: sq, h: sq, shape: p.ShapeType.rect, fill: { color: fill }, line: { color: line, width: 1 }, fontFace: FONT, fontSize: 10, bold: true, color: C.muted, align: "center", valign: "middle", margin: 0 });
+      }
+      return x0 + nF * (sq + sg) - sg;
+    };
+    // teacher row
+    L.text(s, "Teacher sees the full clip", MX, yT - 0.62, 4, 0.3, { fontSize: 12, bold: true, color: PUR });
+    const fe = frames(MX, yT, "full");
+    L.arrow(s, fe + 0.04, yT, ex - 0.04, yT, { width: 1.5 });
+    L.box(s, ex, yT - 0.48, ew, 0.95, "Teacher encoder\n(no gradient)", { fill: "F4EEFB", line: PUR, lw: 1.5, dash: "dash", fontSize: 12 });
+    L.arrow(s, ex + ew + 0.04, yT, ox - 0.04, yT, { width: 1.5 });
+    const te = frames(ox, yT, "target");
+    L.text(s, "targets: one per 20 ms frame\n(average of the top 8 layers, normalised)", ox, yT - 0.72, te - ox + 0.3, 0.5, { fontSize: 10.5, color: PUR, valign: "bottom" });
+    // student row
+    L.text(s, "Student sees the same clip,\n≈ half of the frames masked", MX, yS - 0.78, 2.4, 0.55, { fontSize: 12, bold: true, color: C.accent2, valign: "bottom" });
+    const fs2 = frames(MX, yS, "masked");
+    L.arrow(s, fs2 + 0.04, yS, ex - 0.04, yS, { width: 1.5 });
+    L.box(s, ex, yS - 0.48, ew, 0.95, "Student encoder\n(trained)", { fill: "FCE9D9", line: C.accent2, lw: 1.5, fontSize: 12, bold: true });
+    L.arrow(s, ex + ew + 0.04, yS, dx - 0.04, yS, { width: 1.5 });
+    L.box(s, dx, yS - 0.35, dw, 0.7, "small\ndecoder", { fill: C.panel, line: C.line, fontSize: 11 });
+    L.arrow(s, dx + dw + 0.04, yS, ox - 0.04, yS, { width: 1.5 });
+    const pe = frames(ox, yS, "pred");
+    L.text(s, "predictions for the masked frames", ox, yS + 0.2, pe - ox + 0.3, 0.3, { fontSize: 10.5, color: C.accent2 });
+    // loss between the two rows, under the frame columns
+    const lx = ox, lw = pe - ox, ly = 3.0;
+    L.box(s, lx, ly, lw, 0.6, "L2 loss on the masked frames", { fill: C.ink, line: C.ink, color: C.white, bold: true, fontSize: 12 });
+    L.arrow(s, lx + lw / 2, yT + sq / 2 + 0.04, lx + lw / 2, ly - 0.03, { width: 1.5, color: PUR });
+    L.arrow(s, lx + lw / 2, yS - sq / 2 - 0.04, lx + lw / 2, ly + 0.63, { width: 1.5, color: C.accent2 });
+    // EMA link
+    L.arrow(s, ex + ew / 2, yS - 0.5, ex + ew / 2, yT + 0.5, { width: 1.5, dash: "dash", color: PUR });
+    L.text(s, "EMA: teacher weights = slow running\naverage of the student weights", MX, 2.95, 2.45, 0.7, { fontSize: 11, color: PUR, align: "right" });
+    L.text(s, "+ utterance-level loss: the 10 extra tokens predict the teacher's average over the whole clip (emotion2vec)", MX, 5.15, 8.4, 0.3, { fontSize: 11, color: C.text, italic: true });
+    s.addShape(p.ShapeType.rect, { x: MX, y: 5.6, w: 8.45, h: 0.75, fill: { color: "EEE6F7" }, line: { color: PUR, width: 0.75 } });
+    L.text(s, "Data: unlabelled customer speech (5–30 s VAD segments, random crops). After training, the teacher and the decoder are discarded; the adapted student encoder replaces the original one in options A–D.", MX + 0.15, 5.63, 8.2, 0.7, { fontSize: 12, color: C.ink, valign: "middle" });
+    // intuition column
+    L.bullets(s, [
+      { t: "Intuition: fill in the blanks", b: true, sub: ["Hide parts of the audio and ask the model what was there", "The answer is not the waveform but the teacher's interpretation of it, so details such as noise and phase do not matter"] },
+      { t: "What is learned", b: true, sub: ["To fill the gaps from context, the encoder must model voice, prosody (pitch, rhythm, energy) and phonetic content", "On call audio: the 8 kHz channel, line noise, accents and spontaneous speaking style"] },
+      { t: "Cautions", b: true, sub: ["May dilute the emotion-specific features of emotion2vec+: small learning rate, few epochs, mix in public emotional speech, re-run the benchmark", "No official training code: teacher copied from the student, a new small decoder, objective from fairseq data2vec 2.0"] },
+    ], { x: 9.05, y: 1.4, w: 3.7, h: 5.0, fontSize: 13, gap: 4 });
+    L.source(s, "Method:", [
+      ["data2vec (Baevski et al., ICML 2022)", "https://arxiv.org/abs/2202.03555"],
+      ["data2vec 2.0 (Baevski et al., ICML 2023)", "https://arxiv.org/abs/2212.07525"],
+      ["emotion2vec (Ma et al., ACL Findings 2024)", "https://arxiv.org/abs/2312.15185"],
+      ["DAPT (Gururangan et al., ACL 2020)", "https://arxiv.org/abs/2004.10964"],
+      ["TAPT for SER (Chen & Rudnicky, 2021)", "https://arxiv.org/abs/2110.06309"],
+    ]);
+    L.notes(s, `How continued pre-training works. It is self-supervised: the training signal comes from the audio itself, with no emotion labels.
+    There are two copies of the encoder. The teacher sees the complete clip and produces, for every 20-millisecond frame, a target vector: the average of its top eight Transformer layers, normalised. The student sees the same clip with about half of the frames masked out, in short contiguous blocks, and has to predict the teacher's vectors for the masked frames. The loss is the squared distance between prediction and target, counted only on the masked frames. emotion2vec adds a second, utterance-level loss: its ten extra tokens must predict the teacher's average over the whole clip, which pushes the model to capture the overall state of the utterance, where emotion lives.
+    The teacher is not trained by gradients. Its weights are an exponential moving average of the student's weights, a slowly moving version of the student. This, together with the normalised targets, prevents the trivial solution of both networks outputting a constant.
+    Intuitively it is a fill-in-the-blank exercise, but the student must reproduce the teacher's interpretation of the hidden audio rather than the raw waveform. To do that from context, it has to model the speaker's voice, the pitch and rhythm, and what is being said. Continued on our call audio, the encoder adapts to the telephone channel, line noise, accents and spontaneous speech, without any labels. Afterwards the teacher and decoder are discarded and the adapted encoder is used for options A to D.
+    The method was introduced as data2vec by Baevski and colleagues at ICML 2022, made efficient as data2vec 2.0 at ICML 2023, and adapted to emotion by emotion2vec. Continuing pre-training on in-domain data is known as domain-adaptive pre-training, after Gururangan et al. 2020, and was applied to speech emotion recognition by Chen and Rudnicky.`);
+  }
+
   // ---- emotion2vec+ freeze diagram
   {
     const s = L.slide(SEC, "Fine-tuning emotion2vec+ large: Frozen and Trainable Layers");
