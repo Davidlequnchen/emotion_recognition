@@ -22,38 +22,48 @@ module.exports = function (L, A) {
 
   // ---- Limitations of audio LLMs (literature)
   {
-    const s = L.slide(SEC, "Error Analysis: Limitations of Audio LLMs");
+    const s = L.slide(SEC, "Error Analysis: Why Audio LLMs Fall Short");
     const p = L.pptx;
-    L.text(s, "Our result: GPT Realtime is below chance on 4 of 6 corpora; Gemini 3.5 Flash is 31–64 points behind the best dedicated model. Published studies point to six causes:", MX, 1.38, W - 2 * MX, 0.5, { fontSize: 14, color: C.ink });
+    L.text(s, "Our benchmark: GPT Realtime is below chance on 4 of 6 corpora; Gemini 3.5 Flash is 31–64 points behind the dedicated models. Published studies explain why:", MX, 1.38, W - 2 * MX, 0.55, { fontSize: 15, color: C.ink });
     const cards = [
-      ["1  Words over voice", "Neutral words, audio only: 16.5–34.9% accuracy for six audio LLMs; models default to \"neutral\". With misleading transcripts Audio Flamingo 3 drops to 17.4%.", "LISTEN (EACL 2026) · VoxParadox (ICML 2026)"],
-      ["2  Bias towards \"neutral\"", "On lexically ambiguous acted speech, 45% of all outputs are neutral; gpt-realtime-2 answers neutral 70% of the time (27.9% accuracy, gemini-3.5-flash 44.3%).", "VocalAffectBench (2026)"],
-      ["3  Inconsistent and prompt-sensitive", "Generative outputs are stochastic: prompt wording moves macro-F1 by > 20 points and answer order by up to 24%, changing model rankings. Outputs across prompts spread like the votes of disagreeing listeners.", "VoxEmo (2026) · Hearing the Order (Interspeech 2026)"],
-      ["4  Demonstrations teach format, not emotion", "1–8 audio examples improve answer formatting but not accuracy; with shuffled example labels SER accuracy is unchanged.", "When Demonstrations Fail (SLT 2026)"],
-      ["5  Heard but not used", "Speaking style is well encoded inside the audio encoder but lost before the output; hallucinated or irrelevant answers are common.", "Heard but Not Heeded (2026) · C²SER (TASLP)"],
-      ["6  No calibrated probabilities", "Only a label is returned, no class probabilities: no thresholds, no confidence for review queues; closed models change versions and run in the cloud.", "ASOM (ICASSP 2027) · our evaluation"],
+      ["1. Audio LLMs rely on words rather than voice", "16–35% accuracy", "when the words carry no emotion", "LISTEN, EACL 2026"],
+      ["2. Strong bias towards \"neutral\"", "70% of answers", "from gpt-realtime-2 are \"neutral\"", "VocalAffectBench, 2026"],
+      ["3. Results depend on the prompt", "> 20 points", "macro-F1 difference from prompt wording alone", "VoxEmo, 2026"],
+      ["4. Few-shot examples do not improve accuracy", "no gain", "1–8 audio examples fix the output format only", "When Demonstrations Fail, SLT 2026"],
+      ["5. Voice cues are encoded but not used", "lost before the answer", "speaking style is present inside the audio encoder", "Heard but Not Heeded, 2026"],
+      ["6. No confidence scores", "label only", "no probabilities or thresholds; cloud-only", "ASOM, ICASSP 2027"],
     ];
-    const cw = 3.95, ch = 2.35, gx = 0.14, gy = 0.15;
-    cards.forEach(([t, d, src], i) => {
-      const x = MX + (i % 3) * (cw + gx), y = 1.98 + Math.floor(i / 3) * (ch + gy);
-      s.addShape(p.ShapeType.rect, { x, y, w: cw, h: ch, fill: { color: C.panel }, line: { color: C.panel, width: 0 } });
-      s.addShape(p.ShapeType.rect, { x, y, w: 0.07, h: ch, fill: { color: C.accent2 }, line: { color: C.accent2, width: 0 } });
-      L.text(s, t, x + 0.22, y + 0.12, cw - 0.35, 0.4, { fontSize: 15, bold: true, color: C.ink });
-      L.text(s, d, x + 0.22, y + 0.55, cw - 0.35, 1.35, { fontSize: 12, color: C.text });
-      L.text(s, src, x + 0.22, y + ch - 0.4, cw - 0.35, 0.3, { fontSize: 10.5, italic: true, color: C.accent });
+    const cw = 3.95, ch = 2.25, gx = 0.14, gy = 0.14;
+    cards.forEach(([t, num, d, src], i) => {
+      const x = MX + (i % 3) * (cw + gx), y = 2.05 + Math.floor(i / 3) * (ch + gy);
+      s.addShape(p.ShapeType.rect, { x, y, w: cw, h: ch, fill: { color: C.panel }, line: { color: C.line, width: 0.75 } });
+      L.text(s, t, x + 0.22, y + 0.15, cw - 0.4, 0.62, { fontSize: 15, bold: true, color: C.ink, valign: "middle" });
+      L.text(s, num, x + 0.22, y + 0.85, cw - 0.4, 0.45, { fontSize: 20, bold: true, color: C.ink });
+      L.text(s, d, x + 0.22, y + 1.3, cw - 0.4, 0.5, { fontSize: 13, color: C.text });
+      L.text(s, src, x + 0.22, y + ch - 0.36, cw - 0.4, 0.28, { fontSize: 10.5, italic: true, color: C.muted });
     });
     L.source(s, "Papers:", [
       ["LISTEN", "https://arxiv.org/abs/2510.10444"], ["VoxParadox", "https://arxiv.org/abs/2605.27772"], ["VocalAffectBench", "https://arxiv.org/abs/2608.28932"],
       ["VoxEmo", "https://arxiv.org/abs/2603.08936"], ["Hearing the Order", "https://arxiv.org/abs/2510.00628"], ["When Demonstrations Fail", "https://arxiv.org/abs/2603.20433"],
       ["Heard but Not Heeded", "https://arxiv.org/abs/2609.00727"], ["C²SER", "https://arxiv.org/abs/2502.18186"], ["ASOM", "https://arxiv.org/abs/2610.22401"],
     ]);
-    L.notes(s, `Before listening to individual errors, why do the audio LLMs perform so poorly? Our numbers are consistent with a growing body of work.
-    First, they rely on words rather than voice. LISTEN, at EACL 2026, shows that with emotionally neutral words and audio only, six audio LLMs reach 16 to 35 percent and default to neutral; VoxParadox, at ICML 2026, shows Audio Flamingo 3 collapsing to 17 percent when the transcript is misleading.
+    L.notes(s, `Before listening to individual errors: why do audio LLMs perform so poorly? Our numbers are consistent with a growing body of work.
+    First, audio LLMs rely on words rather than voice. LISTEN, at EACL 2026, shows that with emotionally neutral words and audio only, six audio LLMs reach 16 to 35 percent and default to neutral; VoxParadox, at ICML 2026, shows Audio Flamingo 3 collapsing to 17 percent when the transcript is misleading.
     Second, a strong bias towards neutral: VocalAffectBench, a 2026 study on acted speech, finds that 45 percent of all model outputs are neutral, and gpt-realtime-2 answers neutral 70 percent of the time, with the lowest accuracy, 28 percent, against 44 percent for gemini-3.5-flash. This matches what we see.
     Third, inconsistency and prompt sensitivity. Generative outputs are stochastic; VoxEmo finds more than 20 points of macro-F1 difference between prompt wordings, and "Hearing the Order", at Interspeech 2026, finds that just shuffling the answer options changes accuracy by up to 24 percent and reorders the models. VoxEmo also observes that the spread of outputs across prompts resembles the disagreement among human listeners. How often the label flips when exactly the same request is repeated has not been measured systematically yet; this is one of our candidate research questions.
     Fourth, few-shot examples do not help: at SLT 2026, adding one to eight audio examples improved answer formatting but not accuracy, and shuffling the example labels changed nothing, so the models do not learn the audio-to-emotion mapping from examples.
     Fifth, the information is encoded but not used: speaking style is present inside the audio encoder but lost before the answer, and hallucinated answers are common.
-    Sixth, practical: only a label comes back, no calibrated probabilities, and the closed models change version and run in the cloud.`);
+    Sixth, practical: only a label comes back, no calibrated probabilities, and the closed models change version and run in the cloud.
+    References:
+    1. LISTEN: Chen et al., "Do Audio LLMs Really LISTEN, or Just Transcribe? Measuring Lexical vs. Acoustic Emotion Cues Reliance", EACL 2026. https://arxiv.org/abs/2510.10444
+    1. VoxParadox: Pang, Chaubey and Soleymani, ICML 2026. https://arxiv.org/abs/2605.27772
+    2. VocalAffectBench: Debaupte et al., arXiv 2026. https://arxiv.org/abs/2608.28932
+    3. VoxEmo: Zhang, Chou, Narayanan and Hain, "VoxEmo: Benchmarking Speech Emotion Recognition with Speech LLMs", submitted to Interspeech 2026. https://arxiv.org/abs/2603.08936
+    3. Hearing the Order: Lin et al., Interspeech 2026. https://arxiv.org/abs/2510.00628
+    4. When Demonstrations Fail: Piao et al., IEEE SLT 2026. https://arxiv.org/abs/2603.20433
+    5. Heard but Not Heeded: Koduru et al., arXiv 2026. https://arxiv.org/abs/2609.00727
+    5. C2SER: Zhao et al., IEEE/ACM TASLP. https://arxiv.org/abs/2502.18186
+    6. ASOM: Bellver-Soler et al., ICASSP 2027. https://arxiv.org/abs/2610.22401`);
   }
 
   const groups = [
