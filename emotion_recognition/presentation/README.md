@@ -1,6 +1,6 @@
 # Presentation: SER evaluation and next steps
 
-`SER_evaluation.pptx` (61 slides, about 35–40 minutes, speaker notes on every slide): the task, the six datasets with
+`SER_evaluation.pptx` (62 slides, about 35–40 minutes, speaker notes on every slide): the task, the six datasets with
 playable audio examples and listener votes, the seven models and their architectures, the results, ten error cases to
 listen to, and the plan for fine-tuning emotion2vec+ large and MERaLiON-SER-v1 and labelling our own calls.
 

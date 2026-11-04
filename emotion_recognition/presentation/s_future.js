@@ -212,6 +212,62 @@ module.exports = function (L, A) {
     Code for the objective: fairseq data2vec. https://github.com/facebookresearch/fairseq/tree/main/examples/data2vec`);
   }
 
+  // ---- Why a weak teacher is enough (bootstrapping)
+  {
+    const s = L.slide(SEC, "Continued Pre-training: Why a Weak Teacher Is Enough");
+    const PUR = "8E4EC6";
+    L.text(s, "There is no correct answer to match, only consistency: what the student infers from part of the clip must agree with what the teacher computes from the whole clip.", MX, 1.38, W - 2 * MX, 0.55, { fontSize: 15, color: C.ink });
+    // loop of four stages
+    const st = [
+      ["1  Teacher starts weak", "even a random network turns the hidden audio into a fixed \"fingerprint\": meaningless, but it depends on what was said and how"],
+      ["2  Student learns structure", "to predict the fingerprint of a hidden frame, the student must infer that frame from its context: pitch, voice, sounds"],
+      ["3  Teacher follows (EMA)", "the teacher's weights are a slow average of the student's, so it inherits what the student has learned"],
+      ["4  Targets get richer", "a better teacher produces more informative targets (speaker, intonation over the clip), so the student must learn more"],
+    ];
+    const bw = 3.0, bh = 1.55, x1 = MX, x2 = MX + bw + 1.0, y1 = 2.15, y2 = 4.35;
+    const pos = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
+    st.forEach(([t, d], i) => {
+      const [x, y] = pos[i];
+      s.addShape(L.pptx.ShapeType.rect, { x, y, w: bw, h: bh, fill: { color: i === 0 ? C.panel : "EEF4FA" }, line: { color: i === 2 ? PUR : C.accent, width: 1.25 } });
+      L.text(s, t, x + 0.15, y + 0.1, bw - 0.3, 0.35, { fontSize: 14, bold: true, color: C.ink });
+      L.text(s, d, x + 0.15, y + 0.48, bw - 0.3, bh - 0.55, { fontSize: 11.5, color: C.text });
+    });
+    // arrows clockwise: 1 -> 2 -> 3 -> 4 -> 2 (the loop repeats between 2, 3, 4)
+    L.arrow(s, x1 + bw + 0.03, y1 + bh / 2, x2 - 0.03, y1 + bh / 2, { width: 1.75 });
+    L.arrow(s, x2 + bw / 2, y1 + bh + 0.03, x2 + bw / 2, y2 - 0.03, { width: 1.75 });
+    L.arrow(s, x2 - 0.03, y2 + bh / 2, x1 + bw + 0.03, y2 + bh / 2, { width: 1.75 });
+    const ym = (y1 + bh + y2) / 2, xr = x2 + 0.45;
+    L.arrow(s, x1 + bw * 0.75, y2 - 0.03, x1 + bw * 0.75, ym, { width: 1.25, noHead: true, dash: "dash" });
+    L.arrow(s, x1 + bw * 0.75, ym, xr, ym, { width: 1.25, noHead: true, dash: "dash" });
+    L.arrow(s, xr, ym, xr, y1 + bh + 0.03, { width: 1.25, dash: "dash" });
+    L.text(s, "repeat", x1 + bw * 0.75 + 0.1, ym - 0.3, 0.9, 0.28, { fontSize: 11, italic: true, color: C.muted });
+    // right column
+    L.bullets(s, [
+      { t: "The information comes from the audio", b: true, sub: ["The teacher saw the hidden frame; the student did not. Matching the teacher means recovering what is in the audio"] },
+      { t: "No trivial solution", b: true, sub: ["Both networks could output a constant; a slowly moving teacher and normalised targets prevent this (shown empirically in BYOL and data2vec)"] },
+      { t: "On call audio", b: true, sub: ["The teacher need not know telephone speech in advance: features that cannot be predicted from narrowband context are pushed out, and the teacher is pulled along with the student"] },
+      { t: "Still to verify", b: true, sub: ["Better telephone representations do not guarantee better emotion features: compare B with and without E"] },
+    ], { x: 8.0, y: 2.05, w: 4.75, h: 4.9, fontSize: 15, gap: 5 });
+    L.source(s, "Method:", [
+      ["BYOL (Grill et al., NeurIPS 2020)", "https://arxiv.org/abs/2006.07733"],
+      ["data2vec (Baevski et al., ICML 2022)", "https://arxiv.org/abs/2202.03555"],
+      ["data2vec 2.0 (Baevski et al., ICML 2023)", "https://arxiv.org/abs/2212.07525"],
+      ["emotion2vec (Ma et al., ACL Findings 2024)", "https://arxiv.org/abs/2312.15185"],
+    ]);
+    L.notes(s, `A natural question: if the teacher is not good, how can matching it teach the student anything? The answer is that the objective is not correctness but consistency, a principle called bootstrapping.
+    Step one: at the start the teacher may be a random network. Even so, its output for a frame depends on the actual audio of that frame and its neighbours, like a fixed fingerprint. The teacher saw the hidden frame; the student did not.
+    Step two: to predict the fingerprint of a hidden frame, the student has to infer what was in that frame from the context: how the pitch continues, whose voice it is, which sound is being produced. So it learns the structure of speech, even though the targets themselves are meaningless at first.
+    Step three: the teacher's weights are a slow moving average of the student's, so the teacher inherits what the student has learned.
+    Step four: a better teacher produces richer targets, for example information about the speaker or the intonation across the clip, and the student has to learn more to match them. Steps two to four repeat, and both networks improve together.
+    The trivial solution, both networks outputting the same constant, is prevented by the slowly moving teacher and by normalising the targets; this was shown to work empirically in BYOL and data2vec.
+    For continued pre-training on our calls, the teacher does not need to understand telephone speech beforehand. Features that cannot be predicted from narrowband context produce large errors and are pushed out, and the teacher follows the student into the new domain. Whether the adapted representation is also better for emotion must be checked experimentally, by comparing option B with and without option E.
+    References:
+    BYOL: Grill et al., "Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning", NeurIPS 2020. https://arxiv.org/abs/2006.07733
+    data2vec: Baevski et al., "data2vec: A General Framework for Self-supervised Learning in Speech, Vision and Language", ICML 2022. https://arxiv.org/abs/2202.03555
+    data2vec 2.0: Baevski et al., "Efficient Self-supervised Learning with Contextualized Target Representations for Vision, Speech and Language", ICML 2023. https://arxiv.org/abs/2212.07525
+    emotion2vec: Ma et al., "emotion2vec: Self-Supervised Pre-Training for Speech Emotion Representation", Findings of ACL 2024. https://arxiv.org/abs/2312.15185`);
+  }
+
   // ---- emotion2vec+ freeze diagram
   {
     const s = L.slide(SEC, "Fine-tuning emotion2vec+ large: Frozen and Trainable Layers");
