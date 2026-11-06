@@ -2,7 +2,9 @@
 
 The audio LLMs run through `scripts/evaluation/evaluate.py`, like the speech emotion models, through their loaders
 `scripts/models/gpt_realtime.py` (GPT Realtime, over WebSocket) and `scripts/models/gemini.py` (Gemini, a placeholder
-for now); how to run them: section 8 of the [README](../../README.md#8-audio-llms). They get the same clips and labels
+for now), and the open-weight ones that run here (Qwen2.5-Omni, Qwen2-Audio, Gemma 4) through
+`scripts/models/audio_llm.py` with the same prompts and parser; how to run them: section 8 of the
+[README](../../README.md#8-audio-llms). They get the same clips and labels
 as the other models. This folder has the parts they share, which call no API. Run every command from the
 `emotion_recognition/` folder.
 
@@ -24,8 +26,8 @@ The clips are the ones the model evaluation uses for the same limit: `sample(ds,
 `scripts/common/eval_datasets.py` takes clips at even intervals within each ground-truth label. The labels and the
 classes that count as correct also come from there (`accepted(ds, label)`), so the label decisions are the same for
 both kinds of model: RAVDESS's and MESS's *calm* count as *neutral*, TESS's *pleasant surprise* as *surprised*, and
-for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the limit of 200, the six
-datasets give 1,200 clips and 48 minutes of audio per model.
+for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the limit of 200, the eight
+datasets give 1,600 clips and 75 minutes of audio per model.
 
 ## Prompts
 
@@ -45,7 +47,7 @@ fearful, happy, neutral, sad, surprised. `{labels}` in a prompt becomes this lis
 The system prompt becomes the Realtime session's `instructions` (which replace its default instructions) and Gemini's
 system instruction. It says that the words carry no emotion, because audio LLMs tend to judge what is said, and that
 the clip is not addressed to the model, because the Realtime models are voice assistants that might otherwise reply
-to the speaker. The datasets are in English, Mandarin and Polish, hence "any language". The user prompt repeats the
+to the speaker. The datasets are in English, Mandarin, Thai and Polish, hence "any language". The user prompt repeats the
 answer format, because the Realtime API has no structured outputs.
 
 ## Preview
@@ -62,9 +64,7 @@ source and the prepared audio (sampling rate, length in samples and seconds) and
 the output on the M4 Max:
 
 ```
-  datasets    : crema_d, mcae_spps, mess, ravdess, tess, jl_corpus
-  left out    : thai_ser (exclude in config/llm.yaml)
-  left out    : nemo (exclude in config/llm.yaml)
+  datasets    : crema_d, mcae_spps, thai_ser, nemo, mess, ravdess, tess, jl_corpus
   left out    : esd (exclude in config/llm.yaml)
   limit       : 200 clips of each dataset, sampled as in the evaluation
   audio       : pcm16_24k (24,000 Hz, mono, 16-bit, sent as base64)
@@ -82,7 +82,7 @@ Step 4/4 | JL-Corpus: clips and the first 2 item(s)
       prepared   : 24,000 Hz, 1 ch, 66,000 samples, 2.75 s
       payload    : 176,000 base64 characters = 132,000 bytes (raw PCM), starts BgALAAkACgAIAAoA...
 ...
-Done: 6 dataset(s), 1,200 clips, 47.5 min of audio would be sent. Nothing was sent to any API.
+Done: 8 dataset(s), 1,600 clips, 74.5 min of audio would be sent. Nothing was sent to any API.
 ```
 
 ## The data loader
@@ -118,7 +118,7 @@ counts as an invalid answer (asked again once, then the class `invalid`).
 ## Data sent to the APIs
 
 Each request gives the clip to OpenAI or Google. The loader never uses a dataset whose licence does not allow giving
-its audio to others (`public_audio` in `SOURCES` of `eval_datasets.py`), even when it is not in `exclude`: ESD's
+its audio to others (`api_audio` in `SOURCES` of `eval_datasets.py`), even when it is not in `exclude`: ESD's
 licence forbids it. Use Gemini on a paid plan: on the free tier Google may use what is sent to improve its products.
 
 ## How a run uses them

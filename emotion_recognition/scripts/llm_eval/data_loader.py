@@ -73,9 +73,9 @@ def select_datasets(settings):
                  f"{', '.join(LOADERS)} or all")
     left_out = {k: "exclude in config/llm.yaml" for k in keys if k in exclude}
     # Every request gives the clip to OpenAI or Google, so a dataset whose licence does not allow giving its audio to
-    # others is never used (public_audio in SOURCES of eval_datasets.py; ESD's licence forbids it)
+    # others is never used (api_audio in SOURCES of eval_datasets.py; ESD's licence forbids it)
     left_out |= {k: "its licence does not allow giving its audio to others" for k in keys
-                 if k not in left_out and not SOURCES.get(k, {}).get("public_audio")}
+                 if k not in left_out and not SOURCES.get(k, {}).get("api_audio")}
     keys = [k for k in keys if k not in left_out]
     missing = [k for k in keys if not (ROOT / "data" / k).is_dir()]
     if missing:

@@ -193,7 +193,7 @@ class Predictor:
         rel = path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path)
         parts = rel.split("/")
         if parts[0] == "data" and len(parts) > 1 and (parts[1] == "esd"
-                                                 or not SOURCES.get(parts[1], {}).get("public_audio", True)):
+                                                 or not SOURCES.get(parts[1], {}).get("api_audio", True)):
             raise RuntimeError(f"{rel}: the licence of {parts[1]} does not allow giving its audio to others, so it is "
                                "never sent to an API")
         record = self.cache.get(rel)

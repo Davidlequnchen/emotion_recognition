@@ -158,7 +158,8 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
             ax.bar(x, 100 * value, width=width * 0.92, color=colours[m], edgecolor=INK, linewidth=1.1, hatch=hatch,
                    zorder=3)
     first = {key: next(results[m][key] for m in models if key in results.get(m, {})) for key in datasets}
-    ax.set_xticks(range(len(datasets)), [first[key]["dataset"] for key in datasets])
+    # A name with a subset in brackets, e.g. "THAI-SER (high-agreement subset)", on two lines so the names do not touch
+    ax.set_xticks(range(len(datasets)), [first[key]["dataset"].replace(" (", "\n(") for key in datasets])
     ax.set_ylim(0, 100)
     ax.set_ylabel(f"{METRIC_NAMES.get(metric, metric)} (%)")
     ax.yaxis.grid(True, color=GRID, linewidth=0.8, zorder=0)

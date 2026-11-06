@@ -158,6 +158,10 @@ class EmotionModel(nn.Module):
 def build(model_dir, device):
     """The model from model_dir only, in eval mode on `device`."""
     cfg, base = settings(model_dir)
+    # Import the transformers model code before entering the meta device: importing it for the first time inside it
+    # fails with PyTorch 2.7 (a circular import: "WavLMModel" not found) when this is the first model of the process
+    import transformers.models.wavlm.modeling_wavlm  # noqa: F401
+    import transformers.models.whisper.modeling_whisper  # noqa: F401
     with torch.device("meta"):  # no random initialisation: every weight comes from the checkpoint
         model = EmotionModel(cfg, base)
     path = model_dir / SLIM if (model_dir / SLIM).exists() else model_dir / "model.safetensors"

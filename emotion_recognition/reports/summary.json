@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-29",
+  "date": "2026-11-06",
   "models": [
     {
       "model": "emotion2vec_plus_large",
@@ -10,7 +10,12 @@
         "ravdess",
         "tess",
         "jl_corpus",
-        "esd"
+        "esd",
+        "mead",
+        "meld",
+        "emovo",
+        "emozionalmente",
+        "savee"
       ],
       "summary": "emotion2vec_plus_large/summary.md"
     },
@@ -20,7 +25,8 @@
       "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
       "training_data": [
         "crema_d",
-        "esd"
+        "esd",
+        "meld"
       ],
       "summary": "meralion_ser_v1/summary.md"
     },
@@ -29,7 +35,8 @@
       "name": "Melati",
       "training_source": "nine acted corpora, JL-Corpus among them",
       "training_data": [
-        "jl_corpus"
+        "jl_corpus",
+        "emozionalmente"
       ],
       "summary": "melati_emotion/summary.md"
     },
@@ -60,6 +67,18 @@
       "dataset": "MCAE-SPPS",
       "language": "Mandarin",
       "chance": 0.142857
+    },
+    {
+      "key": "thai_ser",
+      "dataset": "THAI-SER (high-agreement subset)",
+      "language": "Thai",
+      "chance": 0.25
+    },
+    {
+      "key": "nemo",
+      "dataset": "nEMO",
+      "language": "Polish",
+      "chance": 0.166667
     },
     {
       "key": "mess",
@@ -117,6 +136,30 @@
         "shared_clips": 4297,
         "shared_accuracy": 0.877822,
         "shared_unweighted_accuracy": 0.85327
+      },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.705942,
+        "unweighted_accuracy": 0.687908,
+        "macro_f1": 0.696642,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.705942,
+        "shared_unweighted_accuracy": 0.687908
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.519527,
+        "unweighted_accuracy": 0.505879,
+        "macro_f1": 0.473726,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.678153,
+        "shared_unweighted_accuracy": 0.673508
       },
       "mess": {
         "clips": 1800,

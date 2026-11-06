@@ -1,7 +1,7 @@
 {
   "model": "emotion2vec_plus_large",
   "name": "emotion2vec+ large",
-  "date": "2026-10-29",
+  "date": "2026-11-06",
   "training_source": "EmoBox (through emotion2vec+ seed)",
   "datasets": [
     {
@@ -111,6 +111,31 @@
       }
     },
     {
+      "dataset": "THAI-SER (high-agreement subset)",
+      "key": "thai_ser",
+      "language": "Thai",
+      "clips": 11848,
+      "total_clips": 11848,
+      "emotions": 4,
+      "labels": [
+        "neutral",
+        "angry",
+        "happy",
+        "sad"
+      ],
+      "chance": 0.25,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.705942,
+        "unweighted_accuracy": 0.687908,
+        "macro_f1": 0.696642,
+        "accuracy_all_classes": 0.64897,
+        "accuracy_acted_or_listener": 0.750422,
+        "listeners_vs_acted": 0.772282,
+        "model_vs_listeners": 0.659183
+      }
+    },
+    {
       "dataset": "MCAE-SPPS",
       "key": "mcae_spps",
       "language": "Mandarin",
@@ -136,6 +161,30 @@
         "accuracy_acted_or_listener": 0.613483,
         "listeners_vs_acted": 1.0,
         "model_vs_listeners": 0.613483
+      }
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 4481,
+      "total_clips": 4481,
+      "emotions": 6,
+      "labels": [
+        "angry",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.166667,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.519527,
+        "unweighted_accuracy": 0.505879,
+        "macro_f1": 0.473726,
+        "accuracy_all_classes": 0.467306
       }
     },
     {
@@ -168,7 +217,9 @@
     "MESS",
     "RAVDESS",
     "TESS",
-    "JL-Corpus"
+    "JL-Corpus",
+    "THAI-SER (high-agreement subset)",
+    "nEMO"
   ],
   "acted_or_listener": [
     "CREMA-D"
@@ -228,6 +279,26 @@
       "sample": false,
       "accuracy": 0.877822,
       "unweighted_accuracy": 0.85327,
+      "in_training_data": false
+    },
+    {
+      "dataset": "THAI-SER (high-agreement subset)",
+      "key": "thai_ser",
+      "language": "Thai",
+      "clips": 11848,
+      "sample": false,
+      "accuracy": 0.705942,
+      "unweighted_accuracy": 0.687908,
+      "in_training_data": false
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 3076,
+      "sample": false,
+      "accuracy": 0.678153,
+      "unweighted_accuracy": 0.673508,
       "in_training_data": false
     },
     {

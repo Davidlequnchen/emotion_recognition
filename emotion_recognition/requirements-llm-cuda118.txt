@@ -1,0 +1,8 @@
+# PyTorch for the audio-LLM environment (emotion_recognition_llm) on the Linux server with NVIDIA GPU(s): Gemma 4's
+# audio needs PyTorch >= 2.6, and the newest PyTorch with CUDA 12.1 wheels is 2.5.1. The CUDA 11.8 build of 2.7.1 runs
+# with any driver that runs CUDA 12.1 (Linux driver >= 520), so the server needs no new driver; the same version as
+# requirements-llm-mac.txt. Install this instead of requirements-cuda121.txt, then requirements.txt.
+--index-url https://download.pytorch.org/whl/cu118
+torch==2.7.1+cu118
+torchaudio==2.7.1+cu118
+torchvision==0.22.1+cu118

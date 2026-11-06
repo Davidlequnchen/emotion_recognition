@@ -28,7 +28,9 @@ their API for every clip (paid), so they run only with `api_models: true` in con
 weights, the loader's ready() is checked (e.g. that there is a key). They return a one-hot vector of their answer, so
 an answer that is none of the dataset's emotions (or no readable answer) gives a probability of 0 for every one of
 them: such a clip counts as wrong and gets its own last column, "other answer", in the confusion matrices. Datasets
-whose licence does not allow giving their audio to others (ESD) are never sent to an API.
+whose licence does not allow giving their audio to others (ESD) are never sent to an API. The open-weight audio LLMs
+(`llm: true` in the registry: Qwen2.5-Omni, Qwen2-Audio, Gemma 4) run here like the other local models, from their
+folders in models/, and are scored like the API models.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/evaluation/evaluate.py
@@ -38,6 +40,13 @@ the models are registered in config/models.yaml. A model and dataset whose resul
 already in outputs/<model>/ are skipped, unless `overwrite` is true; a model whose folder has no weights yet is skipped
 with a message. The summaries cover every result in outputs/; datasets listed in `exclude` are never evaluated and
 left out of the summaries.
+
+Reuse of finished results (never run a finished evaluation again): when an earlier finished run of the same model on
+the same dataset, in outputs/<model>/ or outputs/archive/<model>/, holds every clip to evaluate (e.g. the archived
+full THAI-SER run of a model, now that only its high-agreement subset is evaluated; `subsets` in
+config/evaluation.yaml), the probabilities of those clips are taken from its predictions CSV instead of running the
+model, and the report says so. A model whose every dataset to evaluate can be reused is not even loaded. With
+`overwrite: true` nothing is reused.
 
 reports/summary.json (fractions, rounded to 6 decimals):
     date             the day it was written
@@ -81,7 +90,7 @@ CONFIG = ROOT / "config" / "evaluation.yaml"     # this script's settings
 MODELS_CONFIG = ROOT / "config" / "models.yaml"  # the model registry
 sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, imported by name (`loader` in the registry)
-from eval_datasets import LOADERS, SOURCES, accepted, sample, truth_labels
+from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, sample, truth_labels
 
 # What the script reads of config/evaluation.yaml, and of each model in config/models.yaml
 SETTINGS = ["mode", "models", "datasets", "exclude", "limit", "overwrite", "devices", "summary_figure"]
@@ -121,11 +130,17 @@ def unbracketed(text):
     return re.sub(r"\s*\(([^()]*)\)", r", \1", text)
 
 
+def is_llm(entry):
+    """True for an audio LLM (`api: true` or `llm: true` in the registry): it answers with one label, so an answer that
+    is none of the dataset's emotions counts as wrong, and its training data is not published."""
+    return bool(entry.get("api") or entry.get("llm"))
+
+
 def training_caveat(key, entry, note):
     """Whether the dataset is in the model's training data (training_data and training_source in the registry), as
     the first caveat of a report; note: the loader's TRAINING_NOTE, if it has one."""
     source = unbracketed(entry["training_source"])
-    if entry.get("api") and key not in entry["training_data"]:  # an API model whose training data is not published
+    if is_llm(entry) and key not in entry["training_data"]:  # an audio LLM whose training data is not published
         text = f"**{entry['name']}'s training data**: {entry['training_source']}."
     elif key in entry["training_data"]:
         text = (f"**In {entry['name']}'s training data** ({source}), so the model has probably seen these clips; "
@@ -148,7 +163,8 @@ def loader_note(entry):
 
 def not_ready(entry):
     """Why a model cannot run yet (no loader, or no weights in its folder; for an API model: what its loader's ready()
-    reports, e.g. no key), or None when it can."""
+    reports, e.g. no key; for a local model whose loader has a ready(): what it reports, e.g. that the installed PyTorch
+    is too old), or None when it can."""
     loader = ROOT / "scripts" / "models" / f"{entry['loader']}.py"
     if not loader.exists():
         return f"its loader {loader.relative_to(ROOT)} does not exist yet"
@@ -162,7 +178,11 @@ def not_ready(entry):
     files = [p for p in folder.rglob("*") if not any(part.startswith(".") for part in p.relative_to(folder).parts)
              ] if folder.is_dir() else []  # hidden folders such as .cache/ do not count
     if any(p.suffix in WEIGHTS for p in files):
-        return None
+        try:
+            module = importlib.import_module(entry["loader"])
+        except ImportError as e:
+            return f"its loader {loader.relative_to(ROOT)} could not be imported ({e})"
+        return module.ready() if hasattr(module, "ready") else None
     if any(p.suffix == ".part000" for p in files):
         return f"its weights in {entry['dir']}/ are still in parts: run python scripts/common/join_parts.py"
     return (f"no weights in {entry['dir']}/ yet: run python scripts/common/download_model.py (or "
@@ -173,6 +193,70 @@ def not_ready(entry):
 def dataset(key):
     """The EvalSet of a dataset (scripts/common/eval_datasets.py), read once and reused for every model."""
     return LOADERS[key]()
+
+
+@functools.cache
+def earlier_run(model, key, limit):
+    """Reuse of finished results: an earlier finished run of the model on this dataset (its predictions JSON in
+    outputs/<model>/ or outputs/archive/<model>/) whose predictions CSV holds every clip that a run with this limit
+    evaluates now, as {"csv": its path, "meta": its JSON, "scores": clips x model classes}, or None. The probabilities
+    in the CSV have 4 decimals, so two classes can tie there; the class that the earlier run predicted (columns
+    prediction and prediction_all_classes) gets a tiny extra 1e-9 so that the most probable class stays the one it
+    predicted, and the reused run gives exactly its predictions."""
+    folders = [ROOT / "outputs" / model, ROOT / "outputs" / "archive" / model]
+    candidates = [p for folder in folders for p in sorted(folder.glob(f"{key}*_predictions.json"))]
+    if not candidates:
+        return None
+    clips = sample(dataset(key), limit)
+    wanted = [c["audio"].relative_to(ROOT).as_posix() for c in clips]
+    for path in candidates:
+        meta = json.loads(path.read_text(encoding="utf-8"))
+        if meta.get("key") != key or "model_classes" not in meta or not path.with_suffix(".csv").exists():
+            continue
+        with open(path.with_suffix(".csv"), newline="", encoding="utf-8") as fh:
+            rows = {r["audio_path"]: r for r in csv.DictReader(fh)}
+        if any(w not in rows for w in wanted):
+            continue
+        labels = meta["model_classes"]
+        columns = [f"p_{lab.strip('<>')}" for lab in labels]
+        scores = np.array([[float(rows[w][c]) for c in columns] for w in wanted])
+        for i, w in enumerate(wanted):  # keep the earlier predictions when the rounded probabilities tie
+            scores[i, labels.index(rows[w]["prediction_all_classes"])] += 2e-9
+            if rows[w]["prediction"] in labels:  # not for OTHER (an audio LLM's answer that is none of the emotions)
+                scores[i, labels.index(rows[w]["prediction"])] += 1e-9
+        return {"csv": path.with_suffix(".csv"), "meta": meta, "scores": scores}
+    return None
+
+
+class Reused:
+    """Stands in for a model's predictor when the predictions of every dataset to evaluate come from earlier runs
+    (earlier_run), so the model is not loaded: its classes, and the library versions and notes if that run saved
+    them, come from the earlier run's JSON. It never runs the model."""
+
+    def __init__(self, meta):
+        self.labels = meta["model_classes"]
+        self.versions = meta.get("versions", {})
+        self.notes = meta.get("notes", [])
+        self.on_cpu = 0
+
+    def __call__(self, path):
+        raise RuntimeError("the model was not loaded: every dataset reuses the predictions of an earlier run")
+
+
+def reused_line(reuse, n, reports):
+    """The report's line on reused predictions (in place of the hardware and the inference time), with a link to the
+    earlier run's report (from reports/, the folder of the new report) when it exists."""
+    earlier, source = reuse["meta"], reuse["csv"]
+    stem = source.name.removesuffix("_predictions.csv")
+    report = ROOT / "reports" / source.parent.relative_to(ROOT / "outputs") / f"{stem}.md"
+    before = earlier.get("runtime")  # older predictions files have no runtime
+    return (f"- **Predictions reused, the model was not run again**: the probabilities of all {n:,} clips come from an "
+            f"earlier finished run of the same model, `{source.relative_to(ROOT).as_posix()}` ({earlier['date']}, "
+            f"{earlier['clips']:,} clips"
+            + (f"; its report: [{report.relative_to(ROOT).as_posix()}]({os.path.relpath(report, reports)})"
+               if report.exists() else "") + ")"
+            + (f", which ran on {before['hardware']}, device `{before['device']}`, at {before['ms_per_clip']:.0f} ms "
+               "per clip." if before else "."))
 
 
 def columns_of(ds, other=False):
@@ -293,8 +377,10 @@ def stitch(paths, path, columns=3, col_gap=110, row_gap=80, margin=50):
     grid.save(path, optimize=True)
 
 
-def evaluate(ds, predict, model, entry, note, device, limit):
-    """Steps 4-6 for one model and dataset: load the dataset, run the model on every clip, write the outputs."""
+def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
+    """Steps 4-6 for one model and dataset: load the dataset, run the model on every clip, write the outputs.
+    reuse: an earlier run that holds every clip (earlier_run); its probabilities are taken instead of running the
+    model."""
     name, labels = entry["name"], list(predict.labels)
     # ------------------------------------------------------------------
     # Step 4: Load the dataset (scripts/common/eval_datasets.py) and its labels
@@ -324,24 +410,35 @@ def evaluate(ds, predict, model, entry, note, device, limit):
               f"{'it' if len(absent) == 1 else 'them'}")
 
     # ------------------------------------------------------------------
-    # Step 5: Run the model on every clip (one probability per model class)
+    # Step 5: Run the model on every clip (one probability per model class), or reuse an earlier run's probabilities
     # ------------------------------------------------------------------
-    step(f"Step 5/8 | {name}: run inference on {len(clips):,} {ds.name} clips")
-    first = np.asarray(predict(str(clips[0]["audio"])))  # warm-up, and a check of what the loader returns
-    if first.shape != (len(labels),):
-        sys.exit(f"ERROR: scripts/models/{entry['loader']}.py returned probabilities of shape {first.shape} for "
-                 f"{len(labels)} labels; it must return one probability per label.")
-    scores = np.zeros((len(clips), len(labels)))
-    t0, on_cpu = time.perf_counter(), predict.on_cpu
-    for i, clip in enumerate(clips, 1):
-        scores[i - 1] = predict(str(clip["audio"]))
-        if i % 500 == 0 or i == len(clips):
-            elapsed = time.perf_counter() - t0
-            print(f"  {i:>6,}/{len(clips):,} clips | {elapsed / i * 1000:.0f} ms per clip | "
-                  f"about {elapsed / i * (len(clips) - i) / 60:.1f} min left")
-    runtime, on_cpu = time.perf_counter() - t0, predict.on_cpu - on_cpu
-    if on_cpu:
-        print(f"  {on_cpu:,} clips ran on the CPU, because {device} could not run them")
+    if reuse:
+        # Every clip is in the predictions CSV of an earlier finished run of this model: take its probabilities
+        step(f"Step 5/8 | {name}: reuse the predictions of an earlier run for {len(clips):,} {ds.name} clips")
+        earlier = reuse["meta"]
+        scores, on_cpu = reuse["scores"], 0
+        before = earlier.get("runtime", {})  # older predictions files have no runtime
+        runtime = before.get("ms_per_clip", 0) * len(clips) / 1000  # what running them took in the earlier run
+        print(f"  reused      : {reuse['csv'].relative_to(ROOT)} ({earlier['date']}, {earlier['clips']:,} clips); "
+              "the model is not run")
+        print(f"  clips       : all {len(clips):,} clips to evaluate are in it")
+    else:
+        step(f"Step 5/8 | {name}: run inference on {len(clips):,} {ds.name} clips")
+        first = np.asarray(predict(str(clips[0]["audio"])))  # warm-up, and a check of what the loader returns
+        if first.shape != (len(labels),):
+            sys.exit(f"ERROR: scripts/models/{entry['loader']}.py returned probabilities of shape {first.shape} for "
+                     f"{len(labels)} labels; it must return one probability per label.")
+        scores = np.zeros((len(clips), len(labels)))
+        t0, on_cpu = time.perf_counter(), predict.on_cpu
+        for i, clip in enumerate(clips, 1):
+            scores[i - 1] = predict(str(clip["audio"]))
+            if i % 500 == 0 or i == len(clips):
+                elapsed = time.perf_counter() - t0
+                print(f"  {i:>6,}/{len(clips):,} clips | {elapsed / i * 1000:.0f} ms per clip | "
+                      f"about {elapsed / i * (len(clips) - i) / 60:.1f} min left")
+        runtime, on_cpu = time.perf_counter() - t0, predict.on_cpu - on_cpu
+        if on_cpu:
+            print(f"  {on_cpu:,} clips ran on the CPU, because {device} could not run them")
 
     # ------------------------------------------------------------------
     # Step 6: Compare with the labels and write the outputs
@@ -350,12 +447,12 @@ def evaluate(ds, predict, model, entry, note, device, limit):
     names, n_cls, n_all = ds.classes, len(ds.classes), len(labels)  # the classes a prediction is chosen from
     # The model's probability of each of the dataset's emotions (0 for an emotion it has no class for)
     probs = np.column_stack([scores[:, labels.index(n)] if n in labels else np.zeros(len(clips)) for n in names])
-    # An API model (audio LLM) whose probability is 0 for every one of the dataset's emotions answered an emotion the
+    # An audio LLM (API or local) whose probability is 0 for every one of the dataset's emotions answered an emotion the
     # dataset does not have, or gave no readable answer (its one-hot vector is elsewhere). Such a clip counts as wrong
     # and gets the last column of the confusion matrices, OTHER, which exists only when there are such clips. Local
     # models keep the most probable of the dataset's emotions, even when all of them are close to 0 (emotion2vec+
     # on TESS with almost all of its probability on `other`), so their results stay exactly as before
-    other = ~(probs > 0).any(1) if entry.get("api") else np.zeros(len(clips), dtype=bool)
+    other = ~(probs > 0).any(1) if is_llm(entry) else np.zeros(len(clips), dtype=bool)
     has_other = bool(other.any())
     cols = columns_of(ds, has_other)                      # the columns of the confusion matrices
     truth = np.array([rows.index(a) for a in acted])      # each clip's row: its acted emotion
@@ -457,6 +554,8 @@ def evaluate(ds, predict, model, entry, note, device, limit):
         "chance": round(float(chance), 6),
         "in_training_data": in_training, "training_source": entry["training_source"],  # from the model registry
         "model_classes": labels,  # the model's classes, in the order of the p_ columns
+        # Library versions and notes of the model's loader, so that a later run can reuse these predictions
+        "versions": predict.versions, "notes": predict.notes,
         "metrics": {k: round(float(v), 6) for k, v in metrics.items() if v is not None},
         "ground_truth": "acted_emotion",
         # Correctness columns and what the prediction is compared with (the viewer can switch between them)
@@ -466,6 +565,11 @@ def evaluate(ds, predict, model, entry, note, device, limit):
         "runtime": {"device": str(device), "hardware": hardware(device), "seconds": round(runtime, 1),
                     "ms_per_clip": round(runtime / len(clips) * 1000, 1), "on_cpu": on_cpu},
     }
+    if ds.subset:  # a fixed subset of the dataset (`subsets` in config/evaluation.yaml)
+        meta["subset"] = ds.subset
+    if reuse:  # the probabilities come from an earlier run: where from, and its runtime (if it saved one)
+        meta["reused_from"] = reuse["csv"].relative_to(ROOT).as_posix()
+        meta["runtime"] = {"reused": True, "date": reuse["meta"]["date"]} | reuse["meta"].get("runtime", {})
 
     # Confusion-matrix figures and the Markdown report
     reports = ROOT / "reports" / model
@@ -558,7 +662,7 @@ def evaluate(ds, predict, model, entry, note, device, limit):
         *[f"- {n}" for n in ds.notes],
         (f"- **{n_cls} emotions**: the prediction is the model's answer when it is one of the {n_cls} emotions in "
          f"this dataset ({', '.join(names)}); any other answer ({', '.join(f'`{lab}`' for lab in extra)}) counts as "
-         f"wrong, so the accuracy is the same with all {n_all} model classes." if entry.get("api") else
+         f"wrong, so the accuracy is the same with all {n_all} model classes." if is_llm(entry) else
          f"- **{n_cls} emotions**: the prediction is the most probable of the {n_cls} emotions in this dataset "
          f"({', '.join(names)})"
          + (f"; the model's other classes ({', '.join(f'`{lab}`' for lab in extra)}) are ignored." if extra
@@ -581,12 +685,14 @@ def evaluate(ds, predict, model, entry, note, device, limit):
         *(["- **Two ways to count a prediction as correct.** *Acted emotion*: it must match the acted emotion. *Acted "
            "emotion or listeners' vote*: it also counts when it matches the listeners' majority vote (for a tied vote, "
            "any of the tied emotions). Both are reported."] if has_listener else []),
-        (f"- **API**: one request at a time from {hardware(device)}. The run took "
+        (reused_line(reuse, len(clips), reports) if reuse else
+         f"- **API**: one request at a time from {hardware(device)}. The run took "
          f"{f'{runtime:.0f} s' if runtime < 60 else f'{runtime / 60:.1f} min'} ({runtime / len(clips) * 1000:.0f} ms "
          "per clip; answers saved by an earlier run take no time)." if entry.get("api") else
          f"- **Hardware**: {hardware(device)}, device `{device}`, PyTorch {torch.__version__}. "
          f"Inference took {f'{runtime:.0f} s' if runtime < 60 else f'{runtime / 60:.1f} min'} "
-         f"({runtime / len(clips) * 1000:.0f} ms per clip)."
+         f"({runtime / len(clips) * 1000:.0f} ms per clip"
+         + ("; answers saved by an earlier run take no time)." if entry.get("llm") else ").")
          + (f" {on_cpu:,} clips ran on the CPU, because `{device}` could not process them." if on_cpu else "")),
         f"- **Per-clip predictions**: `{predictions.relative_to(ROOT)}` (in git, so the results can be checked clip by clip). "
         "The JSON file next to it describes the columns.",
@@ -712,7 +818,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     pct = lambda x: f"{100 * x:.1f}%" if x is not None else "–"
     clips = lambda r: f"{r['clips']:,}" + (f" of {r['total_clips']:,} (sample)" if r in sampled else "")
     chance = lambda r: r.get("chance", 1 / len(r["classes"]))  # older predictions files have no "chance"
-    yes_no = lambda r: "yes" if r["key"] in trained else "not known" if entry.get("api") else "no"
+    yes_no = lambda r: "yes" if r["key"] in trained else "not known" if is_llm(entry) else "no"
     # The datasets in the model's training data first, then the others, each group by accuracy (best first)
     ranked = sorted(runs, key=lambda r: (r["key"] not in trained, -r["metrics"]["accuracy"]))
 
@@ -748,7 +854,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
            "emotions."] if composite else []),
         f"- **{column}**: *yes* means that the dataset is part of the data the model was trained on "
         f"({unbracketed(entry['training_source'])}), so the model has probably seen these clips and the result is "
-        "optimistic. " + ("*not known*: the training data is not published." if entry.get("api") else "*no*: it is not.")
+        "optimistic. " + ("*not known*: the training data is not published." if is_llm(entry) else "*no*: it is not.")
         + (f" {note}" if note else ""),
         "- **Accuracy: acted emotion** compares the prediction with the emotion the speaker was asked to portray. "
         "The prediction is the most probable of the emotions that the dataset has, so chance level depends on how "
@@ -758,6 +864,9 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         *(["- **(sample)**: evaluated on clips taken at even intervals within each emotion (`limit` in "
            "config/evaluation.yaml), not on every clip."]
           if sampled else []),
+        *([f"- **Subsets**: {', '.join(r['dataset'] for r in runs if r.get('subset'))}: a fixed subset of the dataset "
+           "(`subsets` in config/evaluation.yaml), the same for every model; each report says how it is chosen."]
+          if any(r.get("subset") for r in runs) else []),
         "",
     ]
     # Every dataset's confusion matrix (the figures of the reports) stitched into one figure
@@ -888,6 +997,9 @@ def write_comparison(registry, exclude=()):
         "- **Bold**: the best model on the dataset.",
         *(["- **(N clips)**: a sample of the dataset (`limit` in config/evaluation.yaml), not every clip."]
           if samples else []),
+        *([f"- **Subsets**: {', '.join(facts[k]['dataset'] for k in keys if facts[k].get('subset'))}: a fixed subset "
+           "of the dataset (`subsets` in config/evaluation.yaml), the same for every model; each report says how it "
+           "is chosen."] if any(facts[k].get("subset") for k in keys) else []),
         "",
         "## Accuracy: prediction matches the acted emotion",
         "",
@@ -927,7 +1039,7 @@ def write_comparison(registry, exclude=()):
         *[f"- [{registry[m]['name']}]({m}/summary.md): {registry[m]['training_source']}. "
           + (f"In its training data: {', '.join(facts[k]['dataset'] for k in keys if trained(m, k))}."
              if any(trained(m, k) for k in keys) else "Whether these datasets are in its training data is not known."
-             if registry[m].get("api") else "None of these datasets is in its training data.")
+             if is_llm(registry[m]) else "None of these datasets is in its training data.")
           for m in models],
         "",
     ]
@@ -959,6 +1071,15 @@ def finished_run(model, key, limit):
     out = ROOT / "outputs" / model
     sample = out / f"{key}_sample{limit}_predictions.json"
     full = out / f"{key}_predictions.json"
+    found = sample if limit and sample.exists() else full if full.exists() else None
+    # A run on another subset of the dataset (`subsets` in config/evaluation.yaml) would be replaced by this one:
+    # stop, so that no finished result is lost; move it to outputs/archive/<model>/ first (its report and figures to
+    # reports/archive/<model>/), under another name such as <key>_full_predictions.*
+    if found and json.loads(found.read_text(encoding="utf-8")).get("subset", "") != (SUBSETS.get(key) or ""):
+        sys.exit(f"ERROR: {found.relative_to(ROOT)} holds a run on another subset of {key} than `subsets` in "
+                 "config/evaluation.yaml sets. Move it (CSV and JSON) to outputs/archive/<model>/ under another name, "
+                 "e.g. <key>_full_predictions.*, and its report to reports/archive/<model>/; the new run then reuses "
+                 "its predictions of the clips it holds.")
     if limit and sample.exists():
         return sample
     # A full run also counts when the limit is at least the size of the dataset (then there is no sample)
@@ -1049,7 +1170,7 @@ def main():
     done = {m: {k: run for k in keys if not overwrite and (run := finished_run(m, k, limits[m]))} for m in models}
     todo = {m: [k for k in keys if k not in done[m]] for m in models}
     # An API model is never given a dataset whose licence does not allow giving its audio to others (ESD)
-    private = {m: [k for k in todo[m] if not SOURCES.get(k, {}).get("public_audio")]
+    private = {m: [k for k in todo[m] if not SOURCES.get(k, {}).get("api_audio")]
                for m in models if registry[m].get("api")}
     todo = {m: [k for k in ks if k not in private.get(m, [])] for m, ks in todo.items()}
     waiting = {m: reason for m in models if todo[m] and (reason := not_ready(registry[m]))}
@@ -1084,6 +1205,14 @@ def main():
         print(f"  not ready   : {m}: {reason}")
     for m, ks in todo.items():
         print(f"  to evaluate : {m} on {', '.join(ks)}")
+    # Reuse of finished results: datasets whose clips are all in an earlier finished run of the same model
+    # (outputs/<model>/ or outputs/archive/<model>/) take its predictions instead of running the model; never with
+    # overwrite (then the model runs again)
+    reuse = {m: {k: run for k in ks if not overwrite and (run := earlier_run(m, k, limits[m]))} for m, ks in todo.items()}
+    for m, runs in reuse.items():
+        for k, run in runs.items():
+            print(f"  reuse       : {m} on {k}: every clip is in {run['csv'].relative_to(ROOT)} ({run['meta']['date']}), "
+                  "so the model is not run on it")
     if not todo:
         print("\nNothing to evaluate, so only the summaries are written. To evaluate again, set "
               "`overwrite: true` in config/evaluation.yaml.")
@@ -1115,8 +1244,12 @@ def main():
         loader = importlib.import_module(entry["loader"])
         t0 = time.perf_counter()
         folder = ROOT / entry["dir"] if "dir" in entry else None  # an API model has no folder
+        if all(k in reuse[m] for k in ks):
+            # Every dataset reuses an earlier run's predictions: the model itself is not needed
+            predict = Reused(reuse[m][ks[0]]["meta"])
+            print("  not loaded  : every dataset to evaluate reuses the predictions of an earlier run")
         # A loader that takes `entry` gets the model's registry entry, with its key (API models: api_model, cache)
-        if "entry" in inspect.signature(loader.load).parameters:
+        elif "entry" in inspect.signature(loader.load).parameters:
             predict = loader.load(folder, devices[m], entry=entry | {"key": m})
         else:
             predict = loader.load(folder, devices[m])
@@ -1135,7 +1268,13 @@ def main():
         note = getattr(loader, "TRAINING_NOTE", "")
         # Steps 4-6 for every dataset to evaluate
         for key in ks:
-            evaluate(dataset(key), predict, m, entry, note, devices[m], limits[m])
+            run = reuse[m].get(key)
+            if run and run["meta"]["model_classes"] != labels:  # the model's classes changed since: run it again
+                print(f"  no reuse    : {key}: the classes of the earlier run differ from the model's")
+                run = None
+            if run is None and isinstance(predict, Reused):  # cannot happen: then the model would have been loaded
+                sys.exit(f"ERROR: {m} was not loaded, but {key} cannot reuse an earlier run.")
+            evaluate(dataset(key), predict, m, entry, note, devices[m], limits[m], run)
         # ------------------------------------------------------------------
         # Step 7: The model's summary: every dataset with results in outputs/<model>/
         # ------------------------------------------------------------------

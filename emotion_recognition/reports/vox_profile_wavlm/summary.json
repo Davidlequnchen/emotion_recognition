@@ -1,7 +1,7 @@
 {
   "model": "vox_profile_wavlm",
   "name": "Vox-Profile WavLM",
-  "date": "2026-10-29",
+  "date": "2026-11-06",
   "training_source": "MSP-Podcast",
   "datasets": [
     {

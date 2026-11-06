@@ -11,6 +11,12 @@
 #   training_source : what its training data was, in a few words (shown next to training_data)
 #   mac_device      : (optional) its device on the Mac, when it differs from devices.mac in config/evaluation.yaml
 #   limit           : (optional) N clips of each dataset for this model; overrides `limit` in config/evaluation.yaml
+#   skip            : (optional) files of the repository that download_model.py leaves out (not needed here)
+#   licence         : (optional) the licence of the weights, from the model card
+# Open-weight audio LLMs, run here like the other local models (free; on the Mac and on CUDA), answering in text:
+#   llm             : true: scored like the API models (an answer that is none of the dataset's emotions, or no
+#                     readable answer, counts as wrong; training data "not known"), with the prompts of
+#                     scripts/llm_eval/prompts.yaml (config/llm.yaml)
 # Audio LLMs, called through their APIs (paid; they run only with `api_models: true` in config/evaluation.yaml):
 #   api             : true: the model is called through an API, so it has no folder (no dir) and nothing to download
 #   api_model       : the model name sent to the API
@@ -21,7 +27,7 @@ emotion2vec_plus_large:
   dir: models/emotion2vec_plus_large
   hf_repo: emotion2vec/emotion2vec_plus_large
   ms_repo: iic/emotion2vec_plus_large
-  training_data: [crema_d, ravdess, tess, jl_corpus, esd]
+  training_data: [crema_d, ravdess, tess, jl_corpus, esd, mead, meld, emovo, emozionalmente, savee]
   training_source: EmoBox (through emotion2vec+ seed)
   mac_device: cpu   # MPS compiles new kernels for every new clip length, so the CPU is faster
 meralion_ser_v1:
@@ -29,14 +35,14 @@ meralion_ser_v1:
   loader: meralion_ser
   dir: models/meralion_ser_v1
   hf_repo: MERaLiON/MERaLiON-SER-v1
-  training_data: [crema_d, esd]
+  training_data: [crema_d, esd, meld]
   training_source: CREMA-D, ESD, MELD, M3ED and Singaporean speech
 melati_emotion:
   name: Melati
   loader: melati
   dir: models/melati_emotion
   hf_repo: Scicom-intl/Melati-Emotion-Whisper-Large-V3
-  training_data: [jl_corpus]
+  training_data: [jl_corpus, emozionalmente]
   training_source: nine acted corpora, JL-Corpus among them
 vox_profile_whisper:
   name: Vox-Profile Whisper
@@ -52,12 +58,42 @@ vox_profile_wavlm:
   hf_repo: tiantiaf/wavlm-large-categorical-emotion
   training_data: []
   training_source: MSP-Podcast
+qwen2_5_omni_7b:
+  name: Qwen2.5-Omni 7B
+  loader: qwen2_5_omni  # its Thinker only (text output), 8.93B parameters; bfloat16
+  dir: models/qwen2_5_omni_7b
+  hf_repo: Qwen/Qwen2.5-Omni-7B
+  ms_repo: Qwen/Qwen2.5-Omni-7B
+  licence: Apache-2.0
+  llm: true
+  skip: [spk_dict.pt]   # the Talker's voices (speech output is not used)
+  training_data: []
+  training_source: not published (Alibaba)
+qwen2_audio_7b:
+  name: Qwen2-Audio 7B Instruct
+  loader: qwen2_audio   # 8.40B parameters; bfloat16
+  dir: models/qwen2_audio_7b
+  hf_repo: Qwen/Qwen2-Audio-7B-Instruct
+  ms_repo: Qwen/Qwen2-Audio-7B-Instruct
+  licence: Apache-2.0
+  llm: true
+  training_data: []
+  training_source: not published (Alibaba)
+gemma4_e4b:
+  name: Gemma 4 E4B
+  loader: gemma4_audio  # 8.00B parameters (4.5B effective); bfloat16; needs PyTorch >= 2.6
+  dir: models/gemma4_e4b
+  hf_repo: google/gemma-4-E4B-it
+  ms_repo: google/gemma-4-E4B-it
+  licence: Apache-2.0
+  llm: true
+  training_data: []
+  training_source: not published (Google)
 gpt_realtime:
   name: GPT Realtime
   loader: gpt_realtime
   api: true
   api_model: gpt-realtime
-  limit: 200        # 200 clips of each dataset, to keep the cost low
   training_data: []
   training_source: not published (OpenAI)
 gemini:
@@ -65,6 +101,5 @@ gemini:
   loader: gemini    # a placeholder for now: skipped with a message
   api: true
   api_model: gemini-2.5-flash  # placeholder: check the current Gemini audio model before the first run
-  limit: 200
   training_data: []
   training_source: not published (Google)

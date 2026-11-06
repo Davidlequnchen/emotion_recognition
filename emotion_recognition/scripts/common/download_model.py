@@ -5,7 +5,8 @@ Usage (from the emotion_recognition/ folder):
 Settings are in config/download_model.yaml:
     models: all   every model registered in config/models.yaml (except API models), or a list such as [meralion_ser_v1]
     hub: hf       Hugging Face; ms = ModelScope (faster in mainland China; only for models with an ms_repo)
-Each model's repository is downloaded into its `dir`. Then, if the model's loader (scripts/models/<loader>.py) has a
+Each model's repository is downloaded into its `dir`, without the files in its `skip` list (files this project does not
+use, e.g. the speech-output voices of Qwen2.5-Omni). Then, if the model's loader (scripts/models/<loader>.py) has a
 prepare() function, it runs: it fetches the small extra files the model needs to load offline (e.g. a base model's
 config.json) or derives a smaller weights file. Files that are already complete are not downloaded again, so the script
 can simply be re-run.
@@ -68,7 +69,8 @@ def main():
     print(f"  hub         : {'Hugging Face' if hub == 'hf' else 'ModelScope'}")
     for key in keys:
         entry = registry[key]
-        print(f"  {key:<22}: {entry['hf_repo' if hub == 'hf' else 'ms_repo']} -> {entry['dir']}/")
+        print(f"  {key:<22}: {entry['hf_repo' if hub == 'hf' else 'ms_repo']} -> {entry['dir']}/"
+              + (f" (without {', '.join(entry['skip'])})" if entry.get("skip") else ""))
 
     # ------------------------------------------------------------------
     # Step 2: Check the software stack
@@ -98,10 +100,11 @@ def main():
             # Pin the latest commit, so that every file comes from the same version of the repository
             info = HfApi().model_info(entry["hf_repo"], files_metadata=True)
             print(f"  commit      : {info.sha}")
-            snapshot_download(repo_id=entry["hf_repo"], revision=info.sha, local_dir=target, ignore_patterns=IGNORE)
+            snapshot_download(repo_id=entry["hf_repo"], revision=info.sha, local_dir=target,
+                              ignore_patterns=IGNORE + entry.get("skip", []))
             expected |= {target / s.rfilename: s.size for s in info.siblings}
         else:
-            snapshot_download(entry["ms_repo"], local_dir=str(target), ignore_patterns=IGNORE)
+            snapshot_download(entry["ms_repo"], local_dir=str(target), ignore_patterns=IGNORE + entry.get("skip", []))
         print(f"  downloaded  : {time.perf_counter() - t0:.0f} s")
         if (target / ".gitattributes").exists():  # left by an earlier download (see IGNORE)
             (target / ".gitattributes").unlink()

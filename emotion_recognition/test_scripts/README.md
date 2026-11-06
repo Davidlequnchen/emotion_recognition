@@ -8,8 +8,19 @@ the `.env` file at the repository root (git-ignored), and never print it.
 |---|---|---|
 | `check_openai.py` | Lists the models the key can use (free), then sends one test clip to an audio model (`gpt-audio-mini`) through Chat Completions | one request, a fraction of a cent |
 | `check_openai_realtime.py` | Sends the same clip to each Realtime model (`gpt-realtime`, `gpt-realtime-2.1`) over WebSocket, as 24 kHz 16-bit mono PCM, and prints the answer and token usage | one request per model, a fraction of a cent each |
+| `check_local_audio_llms.py` | Loads one open-weight audio LLM (`MODEL` at the top: Qwen2.5-Omni, Qwen2-Audio or Gemma 4) through its loader and runs it on 18 clips (CREMA-D, MCAE-SPPS, TESS): the filled chat template, each answer, ms per clip, device memory, invalid answers. Answers go to a temporary folder, never to `outputs/` | free (local) |
+| `check_existing_models.py` | After a change of the environment: loads each of the five speech emotion models and compares its predictions on 3 CREMA-D clips with the stored `outputs/<model>/crema_d_predictions.csv` | free (local) |
+| `time_models.py` | Times each local model (the five speech emotion models and the three audio LLMs, loaded as `evaluate.py` loads them) on 16 clips of each dataset, the first 2 as warm-up: median and mean seconds per clip and the mean clip duration, to plan a full evaluation. Waits while the machine is busy; the LLM answers go to a temporary folder, never to `outputs/` | free (local) |
+| `time_steady.py` | Steady-state speed of the models whose speed on MPS depends on the input length (the three audio LLMs and Vox-Profile WavLM): one process per model runs 400 clips in a row (200 of THAI-SER, then 200 of MEAD), logs per clip the seconds, the duration and whether its input length is new (a one-time compile), and prints the mean seconds per clip in four windows. Waits while the machine is busy; the LLM answers go to a temporary folder, never to `outputs/` | free (local) |
 
 Results on 2026-10-27 with `data/samples/1001_DFA_ANG_XX.wav` (acted emotion: angry): `gpt-audio-mini`,
 `gpt-realtime` and `gpt-realtime-2.1` all answered `neutral`. The clip took 22 audio tokens (about 10 per second).
 A Realtime session adds about 110 text tokens of default instructions unless the session sets its own, and
 `gpt-realtime-2.1` used 44 output tokens for a one-word answer (its reasoning is counted as output).
+
+Results on 2026-11-05 (M4 Max, MPS, bfloat16, `check_local_audio_llms.py`, 18 clips, the machine shared with other
+jobs): Qwen2-Audio 13 of 18 correct, Qwen2.5-Omni 7, Gemma 4 E4B 4 (mostly `neutral`), no invalid answer; about
+0.6–0.9 s per clip after the warm-up, 16–19 GB of GPU memory. Qwen2-Audio gave the same 18 answers in float16 and
+bfloat16, and in both environments (PyTorch 2.5.1 and 2.7.1); Qwen2.5-Omni differed on one clip between them. Gemma 4
+transcribes the clips correctly, so it hears them; it judges the words more than the voice. `check_existing_models.py`:
+all five models match the stored predictions (largest difference 5e-5, the CSV's rounding) in both environments.
