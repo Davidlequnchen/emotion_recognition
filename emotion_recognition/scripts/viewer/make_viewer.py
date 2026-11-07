@@ -29,6 +29,7 @@ config/evaluation.yaml) of a dataset, the page uses the one with the most clips.
                      when picking examples, and the page can switch between them
     <ground truth>   the column named by "ground_truth" in the JSON file next to the CSV
     p_<class>        (optional) the model's probability for each class
+    token_...        (optional, local audio LLMs) first-token label probabilities; not shown
 Any other column (e.g. listener_vote) is shown as an extra label of the clip. The JSON file next to the CSV gives
 "dataset", "key", "model", "ground_truth" and, optionally, "in_training_data", "correct_columns" (a display name for
 each correct... column), "columns" (a description of each column) and "accept" (composite labels, e.g.
@@ -194,7 +195,7 @@ def make_clip(path, runs):
         "path": audio,  # becomes the audio source in write_page
         "duration": round(sf.info(audio).duration, 1),
         "labels": {k: v for k, v in first.items()
-                   if k != "audio_path" and not k.startswith(("prediction", "correct", "p_"))},
+                   if k != "audio_path" and not k.startswith(("prediction", "correct", "p_", "token_"))},
         "models": {model: {
             "predictions": {k: v for k, v in r.items() if k.startswith("prediction")},
             "correct": {c: r[c] == "True" for c in runs[model]["checks"]},

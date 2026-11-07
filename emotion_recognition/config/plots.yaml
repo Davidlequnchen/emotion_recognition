@@ -9,6 +9,6 @@ metrics: [accuracy, unweighted_accuracy, macro_f1]  # one figure per metric (key
                                                      # also possible: accuracy_all_classes, accuracy_acted_or_listener
 models: all       # all = every folder in outputs/ with results (local models and API models alike), or a list of keys
 datasets: all     # all datasets with results, or a list such as [crema_d, mess]
-exclude: [esd]    # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
+exclude: [esd]        # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
 out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .pdf, plus overview_<metric>.*
 columns: 3        # panels per row in the per-dataset figures (13 datasets: 3 = four full rows and one panel)

@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-06",
+  "date": "2026-11-07",
   "models": [
     {
       "model": "emotion2vec_plus_large",
@@ -103,6 +103,36 @@
       "dataset": "JL-Corpus",
       "language": "English (New Zealand)",
       "chance": 0.24
+    },
+    {
+      "key": "mead",
+      "dataset": "MEAD (8,000-clip subset)",
+      "language": "English",
+      "chance": 0.142857
+    },
+    {
+      "key": "meld",
+      "dataset": "MELD",
+      "language": "English",
+      "chance": 0.142857
+    },
+    {
+      "key": "emovo",
+      "dataset": "EMOVO",
+      "language": "Italian",
+      "chance": 0.142857
+    },
+    {
+      "key": "emozionalmente",
+      "dataset": "Emozionalmente",
+      "language": "Italian",
+      "chance": 0.142857
+    },
+    {
+      "key": "savee",
+      "dataset": "SAVEE",
+      "language": "English (British)",
+      "chance": 0.142857
     }
   ],
   "shared_emotions": [
@@ -208,6 +238,66 @@
         "shared_clips": 960,
         "shared_accuracy": 0.946875,
         "shared_unweighted_accuracy": 0.946875
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.900875,
+        "unweighted_accuracy": 0.89681,
+        "macro_f1": 0.890151,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.953037,
+        "shared_unweighted_accuracy": 0.944009
+      },
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.455905,
+        "unweighted_accuracy": 0.298381,
+        "macro_f1": 0.284932,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.525339,
+        "shared_unweighted_accuracy": 0.460437
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.87585,
+        "unweighted_accuracy": 0.87585,
+        "macro_f1": 0.876219,
+        "shared_clips": 336,
+        "shared_accuracy": 0.958333,
+        "shared_unweighted_accuracy": 0.958333
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.869458,
+        "unweighted_accuracy": 0.869458,
+        "macro_f1": 0.869253,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.925203,
+        "shared_unweighted_accuracy": 0.925203
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.933333,
+        "unweighted_accuracy": 0.925,
+        "macro_f1": 0.928172,
+        "shared_clips": 300,
+        "shared_accuracy": 0.97,
+        "shared_unweighted_accuracy": 0.964583
       }
     },
     "meralion_ser_v1": {
@@ -234,6 +324,30 @@
         "shared_clips": 4297,
         "shared_accuracy": 0.884338,
         "shared_unweighted_accuracy": 0.864542
+      },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.470459,
+        "unweighted_accuracy": 0.474735,
+        "macro_f1": 0.474074,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.470459,
+        "shared_unweighted_accuracy": 0.474735
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.551439,
+        "unweighted_accuracy": 0.537699,
+        "macro_f1": 0.480564,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.770481,
+        "shared_unweighted_accuracy": 0.767972
       },
       "mess": {
         "clips": 1800,
@@ -282,6 +396,66 @@
         "shared_clips": 960,
         "shared_accuracy": 0.745833,
         "shared_unweighted_accuracy": 0.745833
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.28325,
+        "unweighted_accuracy": 0.322761,
+        "macro_f1": 0.250345,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.490187,
+        "shared_unweighted_accuracy": 0.531456
+      },
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.300613,
+        "unweighted_accuracy": 0.383758,
+        "macro_f1": 0.27999,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.336199,
+        "shared_unweighted_accuracy": 0.501145
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.528912,
+        "unweighted_accuracy": 0.528912,
+        "macro_f1": 0.468719,
+        "shared_clips": 336,
+        "shared_accuracy": 0.77381,
+        "shared_unweighted_accuracy": 0.77381
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.474355,
+        "unweighted_accuracy": 0.474355,
+        "macro_f1": 0.417475,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.74645,
+        "shared_unweighted_accuracy": 0.74645
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.577083,
+        "unweighted_accuracy": 0.546429,
+        "macro_f1": 0.483262,
+        "shared_clips": 300,
+        "shared_accuracy": 0.823333,
+        "shared_unweighted_accuracy": 0.83125
       }
     },
     "melati_emotion": {
@@ -308,6 +482,30 @@
         "shared_clips": 4297,
         "shared_accuracy": 0.662323,
         "shared_unweighted_accuracy": 0.687002
+      },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.727043,
+        "unweighted_accuracy": 0.717556,
+        "macro_f1": 0.72154,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.727043,
+        "shared_unweighted_accuracy": 0.717556
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.636911,
+        "unweighted_accuracy": 0.625128,
+        "macro_f1": 0.595246,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.817945,
+        "shared_unweighted_accuracy": 0.819766
       },
       "mess": {
         "clips": 1800,
@@ -356,6 +554,66 @@
         "shared_clips": 960,
         "shared_accuracy": 0.996875,
         "shared_unweighted_accuracy": 0.996875
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.306875,
+        "unweighted_accuracy": 0.349443,
+        "macro_f1": 0.275936,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.511215,
+        "shared_unweighted_accuracy": 0.559158
+      },
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.287577,
+        "unweighted_accuracy": 0.230016,
+        "macro_f1": 0.18684,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.356561,
+        "shared_unweighted_accuracy": 0.397641
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.559524,
+        "unweighted_accuracy": 0.559524,
+        "macro_f1": 0.537645,
+        "shared_clips": 336,
+        "shared_accuracy": 0.678571,
+        "shared_unweighted_accuracy": 0.678571
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": true,
+        "accuracy": 0.850188,
+        "unweighted_accuracy": 0.850188,
+        "macro_f1": 0.850221,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.928245,
+        "shared_unweighted_accuracy": 0.928245
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.6125,
+        "unweighted_accuracy": 0.564286,
+        "macro_f1": 0.532112,
+        "shared_clips": 300,
+        "shared_accuracy": 0.88,
+        "shared_unweighted_accuracy": 0.8625
       }
     },
     "vox_profile_whisper": {
@@ -382,6 +640,30 @@
         "shared_clips": 4297,
         "shared_accuracy": 0.586688,
         "shared_unweighted_accuracy": 0.543384
+      },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.69286,
+        "unweighted_accuracy": 0.700601,
+        "macro_f1": 0.693023,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.69286,
+        "shared_unweighted_accuracy": 0.700601
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.327829,
+        "unweighted_accuracy": 0.319992,
+        "macro_f1": 0.287864,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.438882,
+        "shared_unweighted_accuracy": 0.434312
       },
       "mess": {
         "clips": 1800,
@@ -430,6 +712,66 @@
         "shared_clips": 960,
         "shared_accuracy": 0.426042,
         "shared_unweighted_accuracy": 0.426042
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.191875,
+        "unweighted_accuracy": 0.22891,
+        "macro_f1": 0.172989,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.342991,
+        "shared_unweighted_accuracy": 0.389591
+      },
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.33819,
+        "unweighted_accuracy": 0.296001,
+        "macro_f1": 0.261093,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.410407,
+        "shared_unweighted_accuracy": 0.440535
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.358844,
+        "unweighted_accuracy": 0.358844,
+        "macro_f1": 0.313627,
+        "shared_clips": 336,
+        "shared_accuracy": 0.571429,
+        "shared_unweighted_accuracy": 0.571429
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.369313,
+        "unweighted_accuracy": 0.369313,
+        "macro_f1": 0.319599,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.5786,
+        "shared_unweighted_accuracy": 0.5786
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.372917,
+        "unweighted_accuracy": 0.315476,
+        "macro_f1": 0.293572,
+        "shared_clips": 300,
+        "shared_accuracy": 0.546667,
+        "shared_unweighted_accuracy": 0.4875
       }
     },
     "vox_profile_wavlm": {
@@ -456,6 +798,30 @@
         "shared_clips": 4297,
         "shared_accuracy": 0.570863,
         "shared_unweighted_accuracy": 0.555164
+      },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.573599,
+        "unweighted_accuracy": 0.546096,
+        "macro_f1": 0.521601,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.573599,
+        "shared_unweighted_accuracy": 0.546096
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.284088,
+        "unweighted_accuracy": 0.269846,
+        "macro_f1": 0.215033,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.39857,
+        "shared_unweighted_accuracy": 0.387106
       },
       "mess": {
         "clips": 1800,
@@ -504,6 +870,66 @@
         "shared_clips": 960,
         "shared_accuracy": 0.482292,
         "shared_unweighted_accuracy": 0.482292
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.193875,
+        "unweighted_accuracy": 0.230536,
+        "macro_f1": 0.182348,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.330607,
+        "shared_unweighted_accuracy": 0.380642
+      },
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.348543,
+        "unweighted_accuracy": 0.294204,
+        "macro_f1": 0.267992,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.445701,
+        "shared_unweighted_accuracy": 0.47181
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.292517,
+        "unweighted_accuracy": 0.292517,
+        "macro_f1": 0.225029,
+        "shared_clips": 336,
+        "shared_accuracy": 0.482143,
+        "shared_unweighted_accuracy": 0.482143
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.278325,
+        "unweighted_accuracy": 0.278325,
+        "macro_f1": 0.237179,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.447769,
+        "shared_unweighted_accuracy": 0.447769
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": false,
+        "accuracy": 0.3375,
+        "unweighted_accuracy": 0.290476,
+        "macro_f1": 0.286691,
+        "shared_clips": 300,
+        "shared_accuracy": 0.53,
+        "shared_unweighted_accuracy": 0.475
       }
     }
   }

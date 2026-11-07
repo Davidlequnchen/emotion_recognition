@@ -100,6 +100,6 @@ gemini:
   name: Gemini
   loader: gemini    # a placeholder for now: skipped with a message
   api: true
-  api_model: gemini-2.5-flash  # placeholder: check the current Gemini audio model before the first run
+  api_model: gemini-3.8-flash  # the Gemini model used for the paper (confirmed by the user, 2026-11-06)
   training_data: []
   training_source: not published (Google)

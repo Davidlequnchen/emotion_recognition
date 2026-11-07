@@ -1,0 +1,80 @@
+{
+  "dataset": "Emozionalmente",
+  "key": "emozionalmente",
+  "language": "Italian",
+  "model": "emotion2vec_plus_large",
+  "model_name": "emotion2vec+ large",
+  "date": "2026-11-06",
+  "clips": 6902,
+  "total_clips": 6902,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": true,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ],
+  "versions": {
+    "FunASR": "1.4.16"
+  },
+  "notes": [
+    "One prediction per clip (FunASR, granularity utterance); FunASR averages stereo channels and resamples the audio to 16 kHz."
+  ],
+  "metrics": {
+    "accuracy": 0.869458,
+    "unweighted_accuracy": 0.869458,
+    "macro_f1": 0.869253,
+    "accuracy_all_classes": 0.869313,
+    "accuracy_acted_or_listener": 0.909881,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.77485
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker meant to express (`emotion_expressed` in `metadata/samples.csv`)",
+    "listener_vote": "the majority vote of the 5 crowd-sourced listeners who rated each clip (`metadata/evaluations.csv`, `emotion_recognized`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "cpu",
+    "hardware": "Apple M4 Max",
+    "seconds": 748.2,
+    "ms_per_clip": 108.4,
+    "on_cpu": 0
+  }
+}

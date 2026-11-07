@@ -10,7 +10,9 @@
 #   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
 mode: auto
 
-models: all       # all registered models, or a list such as [emotion2vec_plus_large, meralion_ser_v1]
+models: [gemma4_e4b]
+                  # phase 1: the SER models; phase 2: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b];
+                  # all = every registered model, or any list of keys from config/models.yaml
 api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
                   # requests, key in the .env file at the repository root); false: skip them, also when listed
                   # in `models`
@@ -24,7 +26,7 @@ subsets:          # fixed subsets of two large datasets, to save compute (decide
                             # the crowd raters who chose the majority label): 11,848 of 22,584 clips
   mead: stratified_8000     # 8,000 of 27,514 clips at even intervals over the clips sorted by actor, emotion,
                             # intensity level and sentence: each actor/emotion/level cell keeps its share
-exclude: [esd]    # never evaluated, even with `all`, and left out of the summaries (old results: reports/archive/);
+exclude: [esd]        # never evaluated, even with `all`, and left out of the summaries (old results: reports/archive/);
                   # their data stays in data/. ESD: its licence forbids sharing any part of the data
 limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
                   # sample); null = every clip. A model's own `limit` in config/models.yaml wins (none set now)

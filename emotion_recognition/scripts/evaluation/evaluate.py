@@ -30,7 +30,9 @@ an answer that is none of the dataset's emotions (or no readable answer) gives a
 them: such a clip counts as wrong and gets its own last column, "other answer", in the confusion matrices. Datasets
 whose licence does not allow giving their audio to others (ESD) are never sent to an API. The open-weight audio LLMs
 (`llm: true` in the registry: Qwen2.5-Omni, Qwen2-Audio, Gemma 4) run here like the other local models, from their
-folders in models/, and are scored like the API models.
+folders in models/, and are scored like the API models; their predictions CSV also has token_p_<label> and
+token_mass columns (the label probabilities at the first generated token, scripts/models/audio_llm.py), while the
+prediction stays their answer.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/evaluation/evaluate.py
@@ -416,7 +418,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
         # Every clip is in the predictions CSV of an earlier finished run of this model: take its probabilities
         step(f"Step 5/8 | {name}: reuse the predictions of an earlier run for {len(clips):,} {ds.name} clips")
         earlier = reuse["meta"]
-        scores, on_cpu = reuse["scores"], 0
+        scores, on_cpu, gave_up = reuse["scores"], 0, 0
         before = earlier.get("runtime", {})  # older predictions files have no runtime
         runtime = before.get("ms_per_clip", 0) * len(clips) / 1000  # what running them took in the earlier run
         print(f"  reused      : {reuse['csv'].relative_to(ROOT)} ({earlier['date']}, {earlier['clips']:,} clips); "
@@ -424,6 +426,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
         print(f"  clips       : all {len(clips):,} clips to evaluate are in it")
     else:
         step(f"Step 5/8 | {name}: run inference on {len(clips):,} {ds.name} clips")
+        gave_up = len(getattr(predict, "gave_up", []))  # local audio LLMs: clips given up after NaN logits
         first = np.asarray(predict(str(clips[0]["audio"])))  # warm-up, and a check of what the loader returns
         if first.shape != (len(labels),):
             sys.exit(f"ERROR: scripts/models/{entry['loader']}.py returned probabilities of shape {first.shape} for "
@@ -439,6 +442,9 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
         runtime, on_cpu = time.perf_counter() - t0, predict.on_cpu - on_cpu
         if on_cpu:
             print(f"  {on_cpu:,} clips ran on the CPU, because {device} could not run them")
+        gave_up = len(getattr(predict, "gave_up", [])) - gave_up
+        if gave_up:
+            print(f"  WARNING     : {gave_up:,} clip(s) given up after NaN logits in every retry; counted as invalid")
 
     # ------------------------------------------------------------------
     # Step 6: Compare with the labels and write the outputs
@@ -519,15 +525,20 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     predictions = ROOT / "outputs" / model / f"{stem}_predictions.csv"
     predictions.parent.mkdir(parents=True, exist_ok=True)
     prob_columns = [f"p_{lab.strip('<>')}" for lab in labels]  # "<unk>" -> "p_unk"
+    # Extra columns that a loader may give per clip (the local audio LLMs: token_p_<label> and token_mass, their
+    # first-token probabilities; audio_llm.py), after the p_ columns; empty for a clip without them
+    extra = [predict.extra(str(clip["audio"])) for clip in clips] if hasattr(predict, "extra") and not reuse else []
+    extra_columns = list(dict.fromkeys(k for e in extra for k in e))
     with open(predictions, "w", newline="") as fh:
         writer = csv.writer(fh)
         writer.writerow(["audio_path", "acted_emotion"] + ["listener_vote"] * has_listener
                         + ["prediction", "prediction_all_classes", "correct"]
-                        + ["correct_acted_or_listener"] * has_listener + prob_columns)
+                        + ["correct_acted_or_listener"] * has_listener + prob_columns + extra_columns)
         for i, clip in enumerate(clips):
             writer.writerow([clip["audio"].relative_to(ROOT).as_posix(), acted[i]] + [listener[i]] * has_listener
                             + [cols[pred[i]], labels[pred_all[i]], bool(strict[i])] + [bool(lenient[i])] * has_listener
-                            + [f"{p:.4f}" for p in scores[i]])
+                            + [f"{p:.4f}" for p in scores[i]]
+                            + [f"{extra[i][k]:.6f}" if k in extra[i] else "" for k in extra_columns])
     metrics = {"accuracy": acc, "unweighted_accuracy": recall.mean(), "macro_f1": macro_f1,
                "accuracy_all_classes": acc_all}
     if has_listener:
@@ -544,7 +555,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
         "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)"
                                      + (" or is accepted for acted_emotion" if composite else ""),
         "p_*": f"model probability of each of its {n_all} classes (they add up to 1)",
-    }
+    } | (getattr(predict, "extra_doc", {}) if extra_columns else {})
     in_training = ds.key in entry["training_data"]
     meta = {
         "dataset": ds.name, "key": ds.key, "language": ds.language, "model": model, "model_name": name,
@@ -563,7 +574,8 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
                                                            if has_listener else {}),
         "columns": {k: v for k, v in columns_doc.items() if has_listener or "listener" not in k},
         "runtime": {"device": str(device), "hardware": hardware(device), "seconds": round(runtime, 1),
-                    "ms_per_clip": round(runtime / len(clips) * 1000, 1), "on_cpu": on_cpu},
+                    "ms_per_clip": round(runtime / len(clips) * 1000, 1), "on_cpu": on_cpu}
+                   | ({"nan_gave_up": gave_up} if gave_up else {}),
     }
     if ds.subset:  # a fixed subset of the dataset (`subsets` in config/evaluation.yaml)
         meta["subset"] = ds.subset
@@ -693,7 +705,9 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
          f"Inference took {f'{runtime:.0f} s' if runtime < 60 else f'{runtime / 60:.1f} min'} "
          f"({runtime / len(clips) * 1000:.0f} ms per clip"
          + ("; answers saved by an earlier run take no time)." if entry.get("llm") else ").")
-         + (f" {on_cpu:,} clips ran on the CPU, because `{device}` could not process them." if on_cpu else "")),
+         + (f" {on_cpu:,} clips ran on the CPU, because `{device}` could not process them." if on_cpu else "")
+         + (f" {gave_up:,} clip(s) gave not-a-number logits in every retry (scripts/models/audio_llm.py) and count "
+            "as invalid." if gave_up else "")),
         f"- **Per-clip predictions**: `{predictions.relative_to(ROOT)}` (in git, so the results can be checked clip by clip). "
         "The JSON file next to it describes the columns.",
         "",

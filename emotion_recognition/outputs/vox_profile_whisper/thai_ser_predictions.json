@@ -1,0 +1,76 @@
+{
+  "dataset": "THAI-SER (high-agreement subset)",
+  "key": "thai_ser",
+  "language": "Thai",
+  "model": "vox_profile_whisper",
+  "model_name": "Vox-Profile Whisper",
+  "date": "2026-11-06",
+  "clips": 11848,
+  "total_clips": 11848,
+  "classes": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "labels": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.25,
+  "in_training_data": false,
+  "training_source": "MSP-Podcast",
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Each clip (at most 15 s) becomes Whisper log-mel features padded with silence to 15 s, the model's fixed input; the encoder output is averaged over the clip's own frames only, as in the official code. float32 on every device.",
+    "The model card warns that clips shorter than 3 s give unreliable predictions (it was trained on clips of 3-15 s); clips are used as they are, not padded to 3 s."
+  ],
+  "metrics": {
+    "accuracy": 0.69286,
+    "unweighted_accuracy": 0.700601,
+    "macro_f1": 0.693023,
+    "accuracy_all_classes": 0.612255,
+    "accuracy_acted_or_listener": 0.751772,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.652684
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion assigned to the actor for the scene (`assigned_emo`)",
+    "listener_vote": "the crowd-sourced majority label (`majority_emo`); clips without a majority have none; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 4 emotions evaluated (neutral, angry, happy, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 2566.4,
+    "ms_per_clip": 216.6,
+    "on_cpu": 0
+  },
+  "subset": "high_agreement"
+}

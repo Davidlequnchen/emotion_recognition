@@ -1,0 +1,75 @@
+{
+  "dataset": "MEAD (8,000-clip subset)",
+  "key": "mead",
+  "language": "English",
+  "model": "emotion2vec_plus_large",
+  "model_name": "emotion2vec+ large",
+  "date": "2026-11-06",
+  "clips": 8000,
+  "total_clips": 8000,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": true,
+  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "other",
+    "sad",
+    "surprised",
+    "<unk>"
+  ],
+  "versions": {
+    "FunASR": "1.4.16"
+  },
+  "notes": [
+    "One prediction per clip (FunASR, granularity utterance); FunASR averages stereo channels and resamples the audio to 16 kHz."
+  ],
+  "metrics": {
+    "accuracy": 0.900875,
+    "unweighted_accuracy": 0.89681,
+    "macro_f1": 0.890151,
+    "accuracy_all_classes": 0.892625
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the folder name (`angry`, `disgusted`, `fear`, `happy`, `neutral`, `sad`, `surprised`)",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "cpu",
+    "hardware": "Apple M4 Max",
+    "seconds": 1221.5,
+    "ms_per_clip": 152.7,
+    "on_cpu": 0
+  },
+  "subset": "stratified_8000"
+}

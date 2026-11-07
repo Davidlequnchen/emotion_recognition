@@ -14,6 +14,18 @@ retries_invalid: 1  # an answer that is not exactly one of the labels is asked a
 timeout_s: 60       # seconds to wait for each message from the API before the request counts as failed
 max_new_tokens: 24  # local audio LLMs only: the longest answer they may write (greedy decoding, so asking again gives
                     # the same answer: retries_invalid follows up in the same conversation instead, see audio_llm.py)
+nan_retries: 3      # local audio LLMs only: a clip whose logits are not numbers (NaN, seen with Gemma 4 on MPS) is run
+                    # again up to this many times (1st: empty the memory cache; then: reload the weights); still NaN:
+                    # it gets `invalid` with an "error" in responses.jsonl, and a later run tries it again
+# Local audio LLMs only: by-products of the same generate() call as the first answer (no extra model run; for clips
+# run from now on, not for answers already in the cache). See scripts/models/audio_llm.py and README section 8.1.
+save_label_probs: true    # "label_probs" (each label's probability at the first generated token, renormalised over
+                          # the 7 labels) and "label_mass" (their share of the whole vocabulary) in responses.jsonl;
+                          # evaluate.py adds them as token_p_<label> / token_mass columns (prediction = the answer)
+save_hidden_states: true  # prefill hidden states averaged over the audio tokens, float16, in
+                          # features/<model>/<dataset>/ (git-ignored; about 20-33 kB per clip)
+hidden_layers: 4          # language-model layers to save: N evenly spaced ones ending with the last (4 of 28 ->
+                          # 7, 14, 21, 28), or a list of layer numbers such as [8, 16, 24, 32]
 
 # Only for the preview, python scripts/llm_eval/data_loader.py (no API is called). The evaluation takes the
 # datasets from config/evaluation.yaml, the number of clips from the model's `limit` in config/models.yaml, and each
@@ -21,7 +33,7 @@ max_new_tokens: 24  # local audio LLMs only: the longest answer they may write (
 datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess] (the same names as in
                   # config/evaluation.yaml); THAI-SER and MEAD always give the fixed subsets set in `subsets` of
                   # config/evaluation.yaml, as for every model
-exclude: [esd]    # never shown, even with `all` (default: the same as `exclude` in config/evaluation.yaml). A
+exclude: [esd]        # never shown, even with `all` (default: the same as `exclude` in config/evaluation.yaml). A
                   # dataset whose licence forbids giving its audio to others (ESD) is never sent anyway
 limit: 200        # N clips of each dataset, sampled as with `limit` in config/evaluation.yaml (even intervals
                   # within each emotion); null = every clip

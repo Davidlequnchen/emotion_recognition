@@ -1,7 +1,7 @@
 {
   "model": "melati_emotion",
   "name": "Melati",
-  "date": "2026-11-06",
+  "date": "2026-11-07",
   "training_source": "nine acted corpora, JL-Corpus among them",
   "datasets": [
     {
@@ -31,6 +31,133 @@
         "unweighted_accuracy": 0.995,
         "macro_f1": 0.994802,
         "accuracy_all_classes": 0.993333
+      }
+    },
+    {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 6902,
+      "total_clips": 6902,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "metrics": {
+        "accuracy": 0.850188,
+        "unweighted_accuracy": 0.850188,
+        "macro_f1": 0.850221,
+        "accuracy_all_classes": 0.850188,
+        "accuracy_acted_or_listener": 0.904376,
+        "listeners_vs_acted": 0.812187,
+        "model_vs_listeners": 0.781801
+      }
+    },
+    {
+      "dataset": "THAI-SER (high-agreement subset)",
+      "key": "thai_ser",
+      "language": "Thai",
+      "clips": 11848,
+      "total_clips": 11848,
+      "emotions": 4,
+      "labels": [
+        "neutral",
+        "angry",
+        "happy",
+        "sad"
+      ],
+      "chance": 0.25,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.727043,
+        "unweighted_accuracy": 0.717556,
+        "macro_f1": 0.72154,
+        "accuracy_all_classes": 0.702481,
+        "accuracy_acted_or_listener": 0.757343,
+        "listeners_vs_acted": 0.772282,
+        "model_vs_listeners": 0.633778
+      }
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 4481,
+      "total_clips": 4481,
+      "emotions": 6,
+      "labels": [
+        "angry",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.166667,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.636911,
+        "unweighted_accuracy": 0.625128,
+        "macro_f1": 0.595246,
+        "accuracy_all_classes": 0.583129
+      }
+    },
+    {
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 480,
+      "total_clips": 480,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.6125,
+        "unweighted_accuracy": 0.564286,
+        "macro_f1": 0.532112,
+        "accuracy_all_classes": 0.6125
+      }
+    },
+    {
+      "dataset": "EMOVO",
+      "key": "emovo",
+      "language": "Italian",
+      "clips": 588,
+      "total_clips": 588,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.559524,
+        "unweighted_accuracy": 0.559524,
+        "macro_f1": 0.537645,
+        "accuracy_all_classes": 0.559524
       }
     },
     {
@@ -159,6 +286,56 @@
         "macro_f1": 0.375449,
         "accuracy_all_classes": 0.400556
       }
+    },
+    {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
+      "language": "English",
+      "clips": 8000,
+      "total_clips": 8000,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.306875,
+        "unweighted_accuracy": 0.349443,
+        "macro_f1": 0.275936,
+        "accuracy_all_classes": 0.306875
+      }
+    },
+    {
+      "dataset": "MELD",
+      "key": "meld",
+      "language": "English",
+      "clips": 2608,
+      "total_clips": 2608,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.287577,
+        "unweighted_accuracy": 0.230016,
+        "macro_f1": 0.18684,
+        "accuracy_all_classes": 0.287577
+      }
     }
   ],
   "figure": "figures/summary_confusion.png",
@@ -168,7 +345,14 @@
     "MESS",
     "RAVDESS",
     "TESS",
-    "JL-Corpus"
+    "JL-Corpus",
+    "THAI-SER (high-agreement subset)",
+    "nEMO",
+    "MEAD (8,000-clip subset)",
+    "MELD",
+    "EMOVO",
+    "Emozionalmente",
+    "SAVEE"
   ],
   "acted_or_listener": [
     "CREMA-D"
@@ -191,6 +375,36 @@
       "in_training_data": true
     },
     {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 3944,
+      "sample": false,
+      "accuracy": 0.928245,
+      "unweighted_accuracy": 0.928245,
+      "in_training_data": true
+    },
+    {
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 300,
+      "sample": false,
+      "accuracy": 0.88,
+      "unweighted_accuracy": 0.8625,
+      "in_training_data": false
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 3076,
+      "sample": false,
+      "accuracy": 0.817945,
+      "unweighted_accuracy": 0.819766,
+      "in_training_data": false
+    },
+    {
       "dataset": "TESS",
       "key": "tess",
       "language": "English",
@@ -198,6 +412,26 @@
       "sample": false,
       "accuracy": 0.75375,
       "unweighted_accuracy": 0.75375,
+      "in_training_data": false
+    },
+    {
+      "dataset": "THAI-SER (high-agreement subset)",
+      "key": "thai_ser",
+      "language": "Thai",
+      "clips": 11848,
+      "sample": false,
+      "accuracy": 0.727043,
+      "unweighted_accuracy": 0.717556,
+      "in_training_data": false
+    },
+    {
+      "dataset": "EMOVO",
+      "key": "emovo",
+      "language": "Italian",
+      "clips": 336,
+      "sample": false,
+      "accuracy": 0.678571,
+      "unweighted_accuracy": 0.678571,
       "in_training_data": false
     },
     {
@@ -231,6 +465,16 @@
       "in_training_data": false
     },
     {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
+      "language": "English",
+      "clips": 4280,
+      "sample": false,
+      "accuracy": 0.511215,
+      "unweighted_accuracy": 0.559158,
+      "in_training_data": false
+    },
+    {
       "dataset": "MESS",
       "key": "mess",
       "language": "English",
@@ -238,6 +482,16 @@
       "sample": false,
       "accuracy": 0.404444,
       "unweighted_accuracy": 0.404444,
+      "in_training_data": false
+    },
+    {
+      "dataset": "MELD",
+      "key": "meld",
+      "language": "English",
+      "clips": 2210,
+      "sample": false,
+      "accuracy": 0.356561,
+      "unweighted_accuracy": 0.397641,
       "in_training_data": false
     }
   ]

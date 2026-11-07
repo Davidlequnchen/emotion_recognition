@@ -1,0 +1,74 @@
+{
+  "dataset": "THAI-SER (high-agreement subset)",
+  "key": "thai_ser",
+  "language": "Thai",
+  "model": "melati_emotion",
+  "model_name": "Melati",
+  "date": "2026-11-06",
+  "clips": 11848,
+  "total_clips": 11848,
+  "classes": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "labels": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.25,
+  "in_training_data": false,
+  "training_source": "nine acted corpora, JL-Corpus among them",
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "surprised",
+    "fearful",
+    "disgusted"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Each clip (at most 30 s) becomes Whisper-large-v3 log-mel features padded to 30 s; the encoder layers are averaged over the clip's own frames only (50 per second), as in the official melati_emotion.py. Precision: float16 encoder, float32 head.",
+    "The prediction is the most probable of the raw probabilities. The official thresholds (melati_emotion.py, label()) are not applied: they were set for precise tagging of podcasts, would turn most clips into neutral, and never return disgusted."
+  ],
+  "metrics": {
+    "accuracy": 0.727043,
+    "unweighted_accuracy": 0.717556,
+    "macro_f1": 0.72154,
+    "accuracy_all_classes": 0.702481,
+    "accuracy_acted_or_listener": 0.757343,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.633778
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion assigned to the actor for the scene (`assigned_emo`)",
+    "listener_vote": "the crowd-sourced majority label (`majority_emo`); clips without a majority have none; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 4 emotions evaluated (neutral, angry, happy, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 3588.9,
+    "ms_per_clip": 302.9,
+    "on_cpu": 0
+  },
+  "subset": "high_agreement"
+}

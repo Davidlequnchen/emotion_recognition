@@ -39,6 +39,8 @@ antideepfake/third_party/
 # emotion_recognition/data/samples/ are committed.
 emotion_recognition/data/*
 !emotion_recognition/data/samples/
+# Hidden states of the local audio LLMs (features/<model>/<dataset>/, a few GB; scripts/models/audio_llm.py)
+emotion_recognition/features/
 # antideepfake: only the synthetic call-centre texts are committed; voice recordings (references) stay local.
 antideepfake/data/*
 !antideepfake/data/voice_clone/

@@ -67,6 +67,7 @@ emotion_recognition/
 │   ├── finetuning_emotion2vec_plus_large.md  # what fine-tuning would need: data, GPUs, which layers (+ _en.md)
 │   ├── data_preparation_call_centre_audio.md # how to cut call recordings into segments for labelling and training
 │   └── figures/                # the architecture diagram (PowerPoint and PNG), data-preparation figures and their script
+├── features/                   # local audio LLMs' pooled hidden states, features/<model>/<dataset>/ (not in git)
 ├── models/
 │   ├── README.md               # every model's files, size and licence; how to get, split and add models
 │   ├── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
@@ -876,6 +877,30 @@ dataset's emotions counts as wrong; training data "not known").
   this list ..."), once (`retries_invalid`); then the clip counts as `invalid`.
 - **Cache**: every answer goes at once into `outputs/<model>/responses.jsonl` (raw answers, label, device, dtype), so a
   stopped run continues where it stopped; changing the prompts starts a new set of answers.
+- **Label probabilities and hidden states** (`save_label_probs`, `save_hidden_states`, `hidden_layers` in
+  `config/llm.yaml`, on by default): taken from the same `generate()` call as the first answer, so no extra model run.
+  Each clip's line in `responses.jsonl` gets `label_probs` (each label's probability at the first generated token:
+  the summed probability of the first tokens of "angry", "Angry", " angry", " Angry" and of one-token words that the
+  parser reads as that label, such as "anger" or " fear", renormalised over the 7 labels)
+  and `label_mass` (the share of the whole vocabulary these tokens get); the predictions CSV adds them as
+  `token_p_<label>` and `token_mass` columns, while the prediction stays the parsed answer. The labels' first tokens
+  differ for all three models, so no label needs whole-sequence scoring. The prefill hidden states of 4 evenly spaced
+  layers of the language model (the last included), averaged over the positions of the audio tokens, go as float16
+  to `features/<model>/<dataset>/` (git-ignored): `hidden.f16` (one row of layers x hidden size per clip),
+  `index.jsonl` (row -> audio_path, pooling, number of audio tokens) and `meta.json` (layers, shape). They are
+  written clip by clip before the answer, so a stopped run resumes cleanly; read them with `load_features(folder)`
+  in `scripts/models/audio_llm.py`. About 20–33 kB per clip, about 4.6 GB for the 55,784 clips of the 3 models. Both
+  come only from the first request (not from a follow-up) and only for clips run from now on, not for answers
+  already in the cache. Check: `test_scripts/check_llm_extras.py` (2026-11-06, 19 clips per model: the same answers
+  with and without them, about 0–8% more time per clip, `label_mass` 0.96–1.0).
+- **NaN retries**: in one test Gemma 4 on MPS suddenly gave not-a-number logits (empty answers) for every clip until the
+  process was restarted; a rerun of the same clips was fine. Every request now checks the first-step logits: on NaN
+  the clip runs again, up to `nan_retries` (3) times, first after emptying the MPS memory cache, then after reloading
+  the weights in the same process. Still NaN: the clip gets `invalid` with `"error": "nan after 3 retries"` in
+  `responses.jsonl` (no label probabilities, no features), the run goes on, and the report says how many clips were
+  given up; a later run tries such clips again (check: `test_scripts/check_llm_nan_retry.py`). Gemma 4 on MPS is also
+  not exactly reproducible: clips whose two best labels are almost tied (e.g. 0.53 vs 0.47) can flip between runs,
+  and the first one or two clips after a model load get slightly different probabilities.
 - **Clips**: every clip, like every other model (they run only on the Mac).
 - **Speed and memory on the M4 Max** (MPS, bfloat16, 18 test clips, `test_scripts/check_local_audio_llms.py`, while
   other jobs shared the machine): about 0.6–0.9 s per clip for each model after a warm-up of 3–7 s, 10–30 s to load,

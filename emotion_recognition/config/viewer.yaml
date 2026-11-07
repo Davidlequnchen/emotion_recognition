@@ -12,4 +12,4 @@ link_audio: false # false = embed each clip as 16 kHz mono MP3; true = link to t
                   # page, works only in this repo; the public page always embeds)
 out: outputs/viewer.html  # the page for this machine (not in git)
 site: site/index.html     # the public page for GitHub Pages (only clips whose licence allows it); null = none
-exclude: [esd]    # datasets left out of both pages: no results, no clips
+exclude: [esd]        # datasets left out of both pages: no results, no clips

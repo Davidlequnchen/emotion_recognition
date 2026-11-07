@@ -1,0 +1,78 @@
+{
+  "dataset": "Emozionalmente",
+  "key": "emozionalmente",
+  "language": "Italian",
+  "model": "meralion_ser_v1",
+  "model_name": "MERaLiON-SER-v1",
+  "date": "2026-11-06",
+  "clips": 6902,
+  "total_clips": 6902,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Each clip becomes Whisper log-mel features padded with silence to 30 s (as in the model card); the model ignores attention masks and pools over the whole 30 s window, padding included, which is its official behaviour. float32 on every device, as released."
+  ],
+  "metrics": {
+    "accuracy": 0.474355,
+    "unweighted_accuracy": 0.474355,
+    "macro_f1": 0.417475,
+    "accuracy_all_classes": 0.474355,
+    "accuracy_acted_or_listener": 0.580411,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.52578
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker meant to express (`emotion_expressed` in `metadata/samples.csv`)",
+    "listener_vote": "the majority vote of the 5 crowd-sourced listeners who rated each clip (`metadata/evaluations.csv`, `emotion_recognized`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 1504.7,
+    "ms_per_clip": 218.0,
+    "on_cpu": 0
+  }
+}
