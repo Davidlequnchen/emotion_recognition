@@ -1,7 +1,7 @@
-"""Cut large dataset files into 90 MiB parts for legacy ordinary-Git transfer (currently nEMO Parquet).
+"""Optional legacy 90 MiB transfer utility; no files are configured by default.
 
-New model weights belong in the models repository's GitHub Releases, not in Git file parts; restore them with
-scripts/common/setup_models.py. This utility only maintains the existing dataset-transfer format.
+Current datasets and models belong in their submodule repositories' Releases; restore them with
+setup_datasets.py and setup_models.py. This utility remains for manually configured historical transfer files.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/common/split_parts.py
@@ -13,10 +13,9 @@ When to run it: after downloading or changing one of these files, before committ
 already there and match its SHA-256 is skipped, the old parts of a changed file are replaced, and a file that does
 not exist yet is skipped with a message, so the script can simply be re-run.
 
-Then commit the dataset parts and the .sha256 files, never the whole file. git ignores data/, so add them with
-`git add -f`, and push in batches of at most about 1.5 GB (GitHub refuses a push over 2 GB). On the other machine,
-`git pull` and then `python scripts/common/join_parts.py` puts each file back together and checks its SHA-256
-(see data/README.md).
+For a historical transfer only, join_parts.py reconstructs these files and verifies SHA-256 on the other
+machine. New datasets and weights must use the Release workflow documented by their submodules; do not add
+new binary transfer parts to the main repository.
 """
 import hashlib
 import sys
@@ -25,10 +24,7 @@ from pathlib import Path
 # ======================================================================
 # Settings (paths are relative to the emotion_recognition/ folder)
 # ======================================================================
-FILES = [  # the files to cut, each into <file>.part000, .part001, ... and <file>.sha256
-    "data/nemo/data/train-00000-of-00002.parquet",
-    "data/nemo/data/train-00001-of-00002.parquet",
-]
+FILES = []  # Optional historical files only; each becomes <file>.partNNN plus <file>.sha256.
 PART_MIB = 90  # size of each part, in MiB (GitHub refuses files over 100 MB)
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
@@ -108,10 +104,11 @@ def main():
           f"{sum(nbytes for _, _, nbytes in done) / 1e9:>6.2f} GB")
     if missing:
         print(f"  not there yet: {', '.join(missing)}")
-    print("\nCommit the dataset parts and the .sha256 files, never the whole files (git ignores data/: use")
-    print(f"`git add -f`). GitHub limits: each file under 100 MB (a part is {size / 1e6:.1f} MB), each push under 2 GB,")
-    print(f"so push in batches of at most about 1.5 GB ({int(1.5e9 // size)} parts). On the other machine: git pull, then")
-    print("python scripts/common/join_parts.py.")
+    if not FILES:
+        print("No legacy files configured. Use setup_datasets.py or setup_models.py for current Releases.")
+    else:
+        print("Legacy parts written; do not add new dataset or model blobs to the main repository. "
+              "Current assets belong in the submodule repositories' Releases.")
 
 
 if __name__ == "__main__":

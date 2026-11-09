@@ -27,9 +27,9 @@ pip install -r requirements-mac.txt            # NVIDIA server: pip install -r r
 pip install -r requirements.txt
 python scripts/common/download_model.py        # default hub: github; all eight local models -> models/<key>/
 python scripts/emotion2vec/inference.py        # the six test clips, on the GPU it finds (section 5)
-# optional (first set `dataset: all` in config/download_data.yaml): the evaluation datasets -> data/,
-# every model's accuracy on each -> reports/, and a web page with the results and examples -> outputs/viewer.html
-python scripts/common/download_data.py
+# optional: restore the nine mirrored datasets; external sources are described in section 3
+python3 scripts/common/setup_datasets.py
+# every model's accuracy on each -> reports/, and a web page with results -> outputs/viewer.html
 python scripts/evaluation/evaluate.py
 python scripts/viewer/make_viewer.py
 ```
@@ -53,12 +53,12 @@ emotion_recognition/
 │   ├── download_model.yaml     # download_model.py: which models, from which hub
 │   ├── download_data.yaml      # download_data.py: which dataset
 │   └── llm.yaml                # audio LLMs: prompts, retries, timeout (and the settings of the data loader preview)
-├── data/
-│   ├── samples/                # six CREMA-D test clips (in git, 0.4 MB)
-│   ├── crema_d/                # the full CREMA-D dataset (optional download, not in git)
-│   ├── mcae_spps/ mess/ ravdess/ tess/ jl_corpus/ thai_ser/ nemo/   # the other evaluated datasets (optional
-│   ├── mead/ meld/ emovo/ emozionalmente/ savee/                    # downloads, section 3.4)
-│   └── esd/                    # optional download too, never evaluated (its licence; section 6)
+├── data/                       # pinned emotion_recognition_datasets submodule; metadata and tiny samples in Git
+│   ├── README.md               # sources, licences, exact dataset scopes and restore instructions
+│   ├── manifest.json           # nine Release mirrors + four external sources; sizes and SHA-256
+│   ├── download.py             # safe archive restore, resumable downloads and per-file verification
+│   ├── samples/                # six CREMA-D test clips (0.4 MB, included in the submodule)
+│   └── <dataset>/              # data restored here; local external/archived datasets stay local
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   ├── datasets_survey.md      # emotion recognition public dataset survey (in Chinese)
@@ -82,10 +82,11 @@ emotion_recognition/
 │   └── archive/                # reports of the datasets that are no longer evaluated (ESD)
 ├── scripts/
 │   ├── common/                 # shared by the pipelines
-│   │   ├── download_data.py    # downloads CREMA-D (test clips or full) and eight more datasets, checks every file
+│   │   ├── download_data.py    # mirrored dataset setup or explicit original-source downloads
+│   │   ├── setup_datasets.py   # initializes data submodule, reuses local files, restores Release archives
 │   │   ├── download_model.py   # downloads the models into models/<key>/, ready to load without the network
 │   │   ├── setup_models.py     # initializes models submodule, preserves/reuses old weights, restores Release files
-│   │   ├── split_parts.py      # maintains nEMO dataset's legacy 90 MiB Git transfer parts
+│   │   ├── split_parts.py      # optional legacy dataset transfer utility; new data comes from Releases
 │   │   ├── join_parts.py       # joins legacy parts (nEMO and older model checkouts), checks their SHA-256
 │   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> the project's classes)
 │   ├── models/                 # one loader per model: emotion2vec.py, meralion_ser.py, melati.py, vox_profile.py
@@ -113,13 +114,13 @@ emotion_recognition/
 Git tracks the code, configuration, documentation and the six small test clips. The `models/` submodule pins a
 small model repository; its weights are GitHub Release attachments and are restored by `setup_models.py` (section 2).
 The old SER weight parts remain in existing main-repository history, but new weights are not added to that history.
-Datasets stay ignored by default, with selected copies force-added for machines that cannot reach their source hosts:
-MCAE-SPPS, TESS, the JL-Corpus recordings (`JL(wav+txt)/`; not the rest of its zip), nEMO, EMOVO, THAI-SER, MEAD,
-MELD and SAVEE. [data/README.md](data/README.md) lists their exact scope, checksums and sources; THAI-SER contains
-the four evaluated emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS,
-RAVDESS and Emozionalmente can be downloaded separately from Zenodo.
-The nEMO Parquet files are committed in 90 MiB parts; after `git pull`, `python scripts/common/join_parts.py` joins
-and checks them. The five newly committed audio copies need no join step.
+The `data/` submodule similarly pins metadata and a Release restore tool. MCAE-SPPS, TESS, the selected
+JL-Corpus recordings, nEMO, EMOVO, THAI-SER, MEAD, MELD and SAVEE are mirrored as Release archives, not Git blobs.
+[data/README.md](data/README.md) records scope, checksums and source terms; THAI-SER contains the four evaluated
+emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS, RAVDESS and
+Emozionalmente retain their original/external download sources. ESD stays local and excluded.
+The old dataset blobs and nEMO transfer parts remain in main-repository history. New nEMO restores use its two
+original Parquet files directly; no join step is required. Neither submodule uses Git LFS.
 
 ## 1. Set up the environment
 
@@ -254,13 +255,59 @@ options require their respective libraries and the model environment. Every file
 same `models/<key>/` directory; the evaluation remains offline. [models/README.md](models/README.md) documents the
 model repository, Release version, original licences and maintenance workflow.
 
-## 3. Download the data (CREMA-D)
+### Company-managed HTTPS certificates
+
+Personal computers need no extra TLS configuration. If the setup command reports
+`CERTIFICATE_VERIFY_FAILED: self-signed certificate in certificate chain` on a company laptop, install
+`truststore` once in the same Conda/Python environment (Python 3.10+) and rerun the command:
 
 ```bash
-python scripts/common/download_data.py
+python -m pip install truststore
+python scripts/common/setup_models.py
 ```
 
-`config/download_data.yaml` chooses what to get. With `dataset: crema_d` (the default),
+The downloader automatically uses the OS certificate store when `truststore` is installed, while keeping
+certificate and hostname verification enabled. Existing verified models and resumable parts are reused.
+Alternatively, supply an IT-provided CA PEM bundle using `--ca-bundle "/path/to/company-ca.pem"` or
+`SSL_CERT_FILE`; Python 3.9 can use this CA-bundle option. See [the model repository certificate instructions](https://github.com/Davidlequnchen/emotion_recognition_models#company-certificates).
+
+## 3. Download the data
+
+**Restore the nine pinned dataset mirrors** with Python 3.9+ and Git:
+
+```bash
+python3 scripts/common/setup_datasets.py                  # all nine Release mirrors
+python3 scripts/common/setup_datasets.py tess meld        # selected mirrors only
+python3 scripts/common/setup_datasets.py --list           # all 13 registered sources and scopes
+python3 scripts/common/setup_datasets.py --verify-only    # check local mirrored files without downloading
+```
+
+The setup initializes only the data submodule, safely restores its Release archives and verifies every file's
+SHA-256. It preserves old `data/` content as `data.before-submodule-<timestamp>/`, reuses matching files, and
+keeps existing external/archived datasets accessible at their old paths. Pulling the migration can remove WAVs
+that were tracked in the old main repository. Setup recovers those files from old Git objects already present
+locally, restoring only manifest-listed regular files whose size and SHA-256 match. It also rebuilds nEMO's
+original Parquet files from consecutive old Git parts. This uses no remote history fetch; a shallow clone simply
+uses Releases. Other unknown materials remain in the backup. Configurations and the six small samples arrive
+through Git; the audio archives require setup. Certificate
+handling is automatic when optional `truststore` is installed; `--ca-bundle` is available for IT-provided CA PEMs.
+New nEMO installations restore the two original Parquet files and extract audio when evaluated.
+
+**The four external datasets** are not uploaded again. Use the original downloader explicitly:
+
+```bash
+python scripts/common/download_data.py --dataset mess --source
+python scripts/common/download_data.py --dataset ravdess --source
+python scripts/common/download_data.py --dataset emozionalmente --source
+# For full CREMA-D, set crema_d: full in config/download_data.yaml, then:
+python scripts/common/download_data.py --dataset crema_d --source
+```
+
+`provider: github` in `config/download_data.yaml` routes mirrored names (or `dataset: mirrors`) through the same
+setup. `--source` or `provider: source` selects the original publisher. `--dataset all --source` downloads the 13
+evaluated datasets and excludes ESD; only an explicit `--dataset esd --source` fetches the archived corpus.
+`python scripts/common/download_data.py` still defaults to the six CREMA-D samples and does not fetch a large
+archive. With `dataset: crema_d` (the default),
 `crema_d: samples` gets the 6 test clips into `data/samples/` (0.4 MB) and `crema_d: full` the whole dataset into
 `data/crema_d/` (606 MB). Both come from **CREMA-D** (Crowd-sourced Emotional Multimodal Actors Dataset), an open dataset for
 emotion recognition research: 7,442 clips from 91 actors (48 male, 43 female, aged 20 to 74), each saying one of
@@ -274,8 +321,8 @@ perceived) and every column of the label files such as `summaryTable.csv`.
 `data/samples/` gets six clips: actor 1001 saying "Don't forget a jacket" (`DFA`) with each emotion, so only the
 emotion changes between files. `scripts/emotion2vec/inference.py` uses them by default. Names follow
 `<actor>_<sentence>_<emotion>_<level>.wav`, where `XX` means the intensity level was not specified. Each file is
-16 kHz mono WAV, about 2 s and 70 kB. The six clips are committed to the repository, so they are already there
-after `git clone`; the command above restores any that are missing and checks their SHA-256.
+16 kHz mono WAV, about 2 s and 70 kB. The six clips are committed in the data submodule, so they are already there
+after a recursive clone; the default download command initializes that submodule if needed and checks SHA-256.
 
 | File | Acted emotion |
 |---|---|
@@ -330,10 +377,9 @@ curl -L -o data/samples/1001_DFA_ANG_XX.wav \
   https://media.githubusercontent.com/media/CheyneyComputerScience/CREMA-D/master/AudioWAV/1001_DFA_ANG_XX.wav
 ```
 
-The script downloads only the WAV audio and the label files. The repository also holds MP3 copies, the videos
-and the raw listener responses (about 7.5 GB in total). To get everything, clone it with [git-lfs](https://git-lfs.com):
-`git lfs install && git clone https://github.com/CheyneyComputerScience/CREMA-D.git`. A plain ZIP download from
-GitHub contains only small LFS pointer files instead of the media.
+The original-source script downloads only the WAV audio and label files through normal HTTPS requests; no Git
+LFS client is used. The upstream repository also holds MP3 copies, videos and raw listener responses (about
+7.5 GB in total), which are outside the files needed by this project.
 
 License: CREMA-D is available under the [Open Database License](http://opendatacommons.org/licenses/odbl/1.0/);
 its individual contents are licensed under the [Database Contents License](http://opendatacommons.org/licenses/dbcl/1.0/).
@@ -348,15 +394,14 @@ emotions; MELD is the exception (in-the-wild utterances from a TV series). They 
 which has links, sizes and caveats for many more.
 
 ```bash
-python scripts/common/download_data.py   # with `dataset: mcae_spps` in config/download_data.yaml (or thai_ser,
-                                         # nemo, mess, esd, ravdess, tess, jl_corpus, mead, meld, emovo,
-                                         # emozionalmente, savee; all = everything)
+python3 scripts/common/setup_datasets.py mcae_spps  # pinned mirror; omit the key for all nine mirrors
+python scripts/common/download_data.py --dataset mcae_spps --source  # optional original publisher instead
 ```
 
 | `dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
 |---|---|---|---|---|---|---|
 | `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC 4.0 |
-| `thai_ser` | Thai | 27,854 (200 actors); evaluated: the high-agreement subset, 11,848 clips ([subsets](#subsets)) | 12.7 GB (source) | Git copy: 22,584 FLACs for the four evaluated emotions and `labels.csv` (all 27,854 rows); source Parquet has up to 4 microphones per clip | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
+| `thai_ser` | Thai | 27,854 (200 actors); evaluated: the high-agreement subset, 11,848 clips ([subsets](#subsets)) | 12.7 GB (source) | Release copy: 22,584 FLACs for the four evaluated emotions and `labels.csv` (all 27,854 rows); source Parquet has up to 4 microphones per clip | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
 | `nemo` | Polish | 4,481 (9 speakers, 90 sentences) | 0.53 GB | Parquet with the audio inside | 6 emotions (acted, checked by listeners) | CC BY-NC-SA 4.0 |
 | `mess` | English | 1,800 (6 speakers) | 0.19 GB | WAV 24.4 kHz in `audio/`; emotion in the file name (`A`ngry, `C`alm, `H`appy, `S`ad) | 4 emotions (acted); listener ratings only on request | CC BY 4.0 |
 | `esd` | English, Mandarin | 35,000 (20 speakers, 350 sentences) | 2.45 GB | WAV 16 kHz in `audio/Emotion Speech Dataset/<speaker>/<emotion>/`; text and emotion per clip in `<speaker>/<speaker>.txt` | 5 emotions (acted; no listener test) | research only, licence form (see below) |
@@ -380,8 +425,8 @@ Zip files are unpacked into `audio/` and then deleted, so only the extracted fil
 `unpacked.json` lists the files of its unpacked zips, and a later run downloads a zip again only when one of them is
 missing. The source Parquet files of THAI-SER and nEMO hold the audio and labels together (reading them needs
 `pyarrow`). THAI-SER's downloader extracts the four evaluated emotions into `audio/` and metadata into
-`labels.csv`, then deletes the Parquet files; the Git copy already contains those extracted files. nEMO's loader
-in `scripts/common/eval_datasets.py` extracts its audio the first time the evaluation reads its joined Parquet files.
+`labels.csv`, then deletes the Parquet files; the pinned Release copy already contains those extracted files. nEMO's loader
+in `scripts/common/eval_datasets.py` extracts its audio the first time the evaluation reads the original Parquet files.
 ESD is for research only: before using it, complete the licence form on its
 [GitHub page](https://github.com/HLTSingapore/Emotional-Speech-Data) and email it to the authors.
 SAVEE is free for research after registering on its [official page](http://kahlan.eps.surrey.ac.uk/savee/), and its
@@ -390,8 +435,8 @@ licence forbids redistribution; the files used here come from an unofficial
 embed its clips (`public_audio: False` in `SOURCES`); like every dataset except ESD, they are sent to the API models
 for this research evaluation (`api_audio`). The repository owner confirmed separate permission to upload the local
 copy on 2026-11-09; see [data/savee/README.md](data/savee/README.md).
-Several licences restrict commercial use or sharing copies. `data/` stays ignored by default; the selected Git
-copies and their source terms are documented in [data/README.md](data/README.md).
+Several licences restrict commercial use or sharing copies. The data submodule records the selected Release
+copies, external sources and their terms in [data/README.md](data/README.md); restored data stays outside Git.
 
 ## 4. Choose the hardware mode
 

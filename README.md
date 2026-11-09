@@ -18,6 +18,21 @@ The shallow-clone flags avoid downloading the old model-weight history; omit the
 For an existing clone, run `git pull` and the same setup command. Existing model files are preserved and valid
 weights are reused. Full environment instructions are in the project's README below.
 
+Datasets follow the same pattern at `emotion_recognition/data/`, through the pinned
+[emotion_recognition_datasets](https://github.com/Davidlequnchen/emotion_recognition_datasets) submodule:
+
+```bash
+python3 emotion_recognition/scripts/common/setup_datasets.py
+```
+
+This restores the nine mirrored datasets from Releases. CREMA-D, MESS, RAVDESS and Emozionalmente retain their
+original download sources; use `download_data.py --dataset NAME --source` as described in the project README.
+Existing data directories are preserved, verified files are reused, and local external datasets remain accessible.
+If pulling this migration removes files that used to be tracked by the main repository, setup recovers matching
+files from old Git objects already on that computer, including nEMO's old Parquet parts. Shallow clones do not
+fetch old history for this recovery; missing files use Releases.
+Neither model nor dataset setup uses Git LFS.
+
 | Folder | Project |
 |---|---|
 | [`emotion_recognition/`](emotion_recognition/README.md) | **Speech emotion recognition** (the main project): five open-source models (emotion2vec+ large, MERaLiON-SER-v1, Melati and two Vox-Profile models), run with PyTorch on an Apple Silicon Mac (MPS) or an NVIDIA server (CUDA 12.1) and evaluated by one script on emotional speech datasets in English and Mandarin, with a results page in the browser. |

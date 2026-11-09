@@ -6,6 +6,7 @@ the `.env` file at the repository root (git-ignored), and never print it.
 
 | Script | What it does | Cost |
 |---|---|---|
+| `test_dataset_setup.py` | Tests data-submodule initialization, verified reuse of old files, preservation of external/archived local data, failed setup recovery, path boundaries and original-source/Release dispatch. Uses temporary local Git repositories and tiny files | free (local; no inference or remote downloads) |
 | `test_model_setup.py` | Tests model submodule initialization, safe preservation and reuse of existing weights, failed initialization recovery, path boundaries and GitHub download dispatch. Uses temporary local Git repositories and tiny fixtures | free (local; no inference or remote downloads) |
 | `test_dataset_label_choices.py` | Offline regression tests for dataset-specific choices, retries, cache/protocol isolation, result reuse, and consistent summary/viewer/plot selection. Uses fake models and API calls plus temporary files; no weights, keys or existing outputs are needed | free (no inference or network) |
 | `check_openai.py` | Lists the models the key can use (free), then sends one test clip to an audio model (`gpt-audio-mini`) through Chat Completions | one request, a fraction of a cent |
@@ -47,4 +48,10 @@ Run the model setup tests with Python 3.9+ and Git (no model environment needed)
 
 ```bash
 python3 -m unittest discover -s test_scripts -p 'test_model_setup.py' -v
+```
+
+Run the dataset setup tests with Python 3.9+ and Git:
+
+```bash
+python3 -m unittest discover -s test_scripts -p 'test_dataset_setup.py' -v
 ```

@@ -31,11 +31,9 @@ antideepfake/third_party/
 *.onnx
 *.bin
 
-# Data stays ignored by default. Selected local datasets are force-added for machines that cannot reach their
-# hosts; see emotion_recognition/data/README.md for their scope and sources. Zenodo-hosted datasets are downloaded
-# with emotion_recognition/scripts/common/download_data.py instead. ESD stays local.
-emotion_recognition/data/*
-!emotion_recognition/data/samples/
+# Data is a pinned submodule: small metadata in Git, nine dataset mirrors in GitHub Releases.
+# setup_datasets.py preserves old local folders here before initializing it.
+emotion_recognition/data.before-submodule-*/
 # Hidden states of the local audio LLMs (features/<model>/<dataset>/, a few GB; scripts/models/audio_llm.py)
 emotion_recognition/features/
 # antideepfake: only the synthetic call-centre texts are committed; voice recordings (references) stay local.

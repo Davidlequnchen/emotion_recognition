@@ -2,14 +2,15 @@
 
 Usage (from the emotion_recognition/ folder), after `git pull`:
     python scripts/common/join_parts.py
-GitHub refuses files over 100 MB, so nEMO's Parquet files are committed in 90 MiB parts. For example:
+Older main-repository commits stored nEMO's Parquet files in 90 MiB parts. For example:
     data/nemo/data/train-00000-of-00002.parquet.part000, .part001, ...
     data/nemo/data/train-00000-of-00002.parquet.sha256
 This script finds every such set under data/ and models/, excluding hidden download caches, writes the whole file
 next to its parts and checks it.
 Files that are already there with the right checksum are skipped, so it can simply be re-run.
-Searching models/ remains supported for older checkouts. New model weights are downloaded from GitHub Releases
-by scripts/common/setup_models.py; do not split or commit those weights into the main repository.
+Searching models/ remains supported for older checkouts. Current datasets are restored by setup_datasets.py
+and models by setup_models.py from pinned Releases; neither requires this join step. Hidden Release download
+caches are excluded from discovery. Do not commit new datasets or weights into main-repository history.
 """
 import hashlib
 import sys
@@ -29,8 +30,9 @@ def main():
     firsts = sorted(p for folder in FOLDERS if folder.is_dir() for p in folder.rglob("*.part000")
                     if not any(part.startswith(".") for part in p.relative_to(folder).parts))
     if not firsts:
-        sys.exit(f"ERROR: no split files (*.part000) under {' or '.join(f.name + '/' for f in FOLDERS)}; "
-                 "run git pull first")
+        print("No legacy Git parts found. Current dataset/model Releases are restored by setup_datasets.py "
+              "and setup_models.py; no legacy join is needed.")
+        return
     print(f"Found {len(firsts)} split file(s) under {' and '.join(f.name + '/' for f in FOLDERS)}")
 
     failed = 0

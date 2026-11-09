@@ -3,8 +3,14 @@
 # Run it from the emotion_recognition/ folder: python scripts/common/download_data.py
 # Paths are relative to that folder.
 # =====================================================================
-dataset: crema_d  # what download_data.py gets: crema_d | mcae_spps | thai_ser | nemo | mess | esd
+provider: github  # github: pinned data submodule + Release archives; source: original publishers
+dataset: crema_d  # default: the six small samples already tracked in the data submodule
+                  # mirrors = the nine Release mirrors (or run scripts/common/setup_datasets.py directly)
+                  # source dataset keys: crema_d | mcae_spps | thai_ser | nemo | mess | esd
                   # | ravdess | tess | jl_corpus | mead | meld | emovo | emozionalmente | savee | all
 crema_d: samples  # CREMA-D only: samples (the 6 test clips) | full (all 7,442 clips and label files)
 workers: 8        # parallel downloads (MEAD and EMOVO use at most 4)
 convert_workers: 4  # MEAD and MELD: ffmpeg processes at a time that convert the clips to 16 kHz mono WAV
+
+# CLI overrides: --dataset NAME --source; --dataset all --source gets the 13 evaluated datasets, excluding ESD.
+# Zenodo/external datasets are not mirrored: crema_d, mess, ravdess, emozionalmente.

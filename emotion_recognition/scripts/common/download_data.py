@@ -5,8 +5,12 @@ Usage (from the emotion_recognition/ folder):
 Settings are in config/download_data.yaml:
     dataset: crema_d   with  crema_d: samples   -> the 6 CREMA-D test clips in data/samples/ (default)
     dataset: crema_d   with  crema_d: full      -> all 7,442 CREMA-D clips and label files in data/crema_d/
-    dataset: nemo                               -> another dataset in data/nemo/ (list below)
-    dataset: all                                -> every dataset (CREMA-D in full)
+    provider: github  and dataset: mirrors      -> the nine pinned Release mirrors through setup_datasets.py
+    provider: source  and dataset: nemo          -> the original publisher's data/nemo/ (list below)
+    dataset: all with --source                   -> all 13 evaluated datasets (CREMA-D full; ESD excluded)
+
+Use --dataset NAME --source for a particular original source without editing YAML. The default CREMA-D samples
+remain the six small clips tracked in the data submodule; no Release archive is downloaded for that mode.
 
 Datasets: like CREMA-D, most record the same sentences in different emotions (MELD: utterances from a TV series;
 see docs/datasets_survey.md).
@@ -39,21 +43,25 @@ MEAD (AAC in .m4a) and MELD (video in .mp4) are converted to 16 kHz mono WAV in 
 which must be installed (brew install ffmpeg / apt install ffmpeg). MEAD deletes each actor's tar after unpacking and
 the .m4a files (data/mead/m4a/) once every actor is converted; MELD deletes the 10.88 GB archive and the videos once
 every test clip is converted (a later run downloads again only what has no WAV yet).
-Several licences forbid commercial use or sharing modified copies: use the data for research only and
-never commit it (data/ is git-ignored, except the CREMA-D test clips).
+Selected research copies of nine datasets are versioned as Release archives in the data submodule's repository,
+with source terms and scope recorded in data/README.md. Four external/Zenodo datasets retain their original
+sources, and ESD remains local and excluded. No dataset archive is committed as a Git or Git LFS object.
 
 Every file is checked against the checksum its host publishes, and files that are already correct are
 skipped, so an interrupted download can simply be re-run. Google Drive and Kaggle publish no checksum: their
 single zip is checked with its own CRCs and a SHA-256 pinned in this script. MEAD's tars (Google Drive) are only
 checked by unpacking them, and EMOVO's 588 files (DagsHub) by one SHA-256 over all of them pinned in this script.
 """
+import argparse
 import hashlib
+import importlib.util
 import http.client
 import io
 import json
 import csv
 import re
 import shutil
+import ssl
 import subprocess
 import sys
 import tarfile
@@ -68,6 +76,31 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "download_data.yaml"  # this script's settings
 DATA = ROOT / "data"
+
+_HTTPS_OPENER = None
+
+
+def configure_https(ca_bundle=None):
+    """Use the shared optional system trust store without changing global SSL behavior."""
+    global _HTTPS_OPENER
+    context = None
+    for file in (DATA / "tls.py", ROOT / "models" / "tls.py"):
+        if file.is_file():
+            spec = importlib.util.spec_from_file_location("dataset_source_tls", file)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            context = module.create_ssl_context(ca_bundle)
+            break
+    if context is None:
+        context = ssl.create_default_context()
+        if ca_bundle is not None:
+            context.load_verify_locations(cafile=str(ca_bundle))
+    _HTTPS_OPENER = urllib.request.build_opener(urllib.request.HTTPSHandler(context=context))
+
+
+def urlopen(*args, **kwargs):
+    return (_HTTPS_OPENER.open if _HTTPS_OPENER is not None else urllib.request.urlopen)(*args, **kwargs)
+
 
 # CREMA-D: hosted on GitHub with its audio in Git LFS (served from media.githubusercontent.com)
 REPO = "https://github.com/CheyneyComputerScience/CREMA-D"
@@ -137,7 +170,7 @@ def digest(path, algo):
 
 
 def get_json(url):
-    with urllib.request.urlopen(url, timeout=60) as response:
+    with urlopen(url, timeout=60) as response:
         return json.load(response)
 
 
@@ -148,7 +181,7 @@ def fetch(url, dest, checksum, algo):
         if attempt:
             time.sleep(2 ** attempt)  # wait 2 s, then 4 s, before retrying
         try:
-            data = urllib.request.urlopen(url, timeout=300).read()
+            data = urlopen(url, timeout=300).read()
             if checksum is None or hashlib.new(algo, data).hexdigest() == checksum:
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 dest.write_bytes(data)
@@ -209,7 +242,7 @@ def unzip(path, out):
 def crema_d_files(out):
     """Read the CREMA-D repository archive (~25 MB): save the metadata files and return
     {"AudioWAV/<clip>.wav": SHA-256} taken from the Git LFS pointer of every audio file."""
-    archive = zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(f"{REPO}/archive/{COMMIT}.zip", timeout=300).read()))
+    archive = zipfile.ZipFile(io.BytesIO(urlopen(f"{REPO}/archive/{COMMIT}.zip", timeout=300).read()))
     files = {}
     for entry in archive.namelist():
         rel = entry.split("/", 1)[1]  # drop the top-level "CREMA-D-<commit>/" folder
@@ -309,7 +342,7 @@ def download_zip(url, dest, checksum):
         return
     part = dest.with_name(dest.name + ".part")
     dest.parent.mkdir(parents=True, exist_ok=True)
-    with urllib.request.urlopen(url, timeout=300) as response, open(part, "wb") as fh:
+    with urlopen(url, timeout=300) as response, open(part, "wb") as fh:
         total, done, shown = int(response.headers.get("Content-Length", 0)), 0, 0
         while chunk := response.read(1 << 20):
             fh.write(chunk)
@@ -369,7 +402,7 @@ def download_stream(url, dest, checksum=None):
     dest.parent.mkdir(parents=True, exist_ok=True)
     done = part.stat().st_size if part.exists() else 0
     request = urllib.request.Request(url, headers={"Range": f"bytes={done}-"} if done else {})
-    with urllib.request.urlopen(request, timeout=300) as response:
+    with urlopen(request, timeout=300) as response:
         if response.headers.get_content_type() == "text/html":
             return False
         if done and response.status != 206:  # the host ignored the range: start again
@@ -391,7 +424,7 @@ def download_stream(url, dest, checksum=None):
 
 def gdrive_folder(folder):
     """The entries of a public Google Drive folder as {name: file or folder id}, read from its embedded view."""
-    html = urllib.request.urlopen(f"https://drive.google.com/embeddedfolderview?id={folder}", timeout=60).read().decode()
+    html = urlopen(f"https://drive.google.com/embeddedfolderview?id={folder}", timeout=60).read().decode()
     return {name: ident for ident, name in
             re.findall(r'id="entry-([\w-]+)".*?class="flip-entry-title">([^<]+)<', html, re.S)}
 
@@ -565,20 +598,46 @@ def download_dataset(name, workers, converters):
     print(f"Done: {size / 1e9:.2f} GB in {out}")
 
 
-def main():
-    sys.stdout.reconfigure(line_buffering=True)  # show progress immediately, also when redirected to a log
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Restore mirrored datasets or download from original sources.")
+    parser.add_argument("--dataset", help="override dataset in config/download_data.yaml; mirrors selects the nine Release mirrors")
+    parser.add_argument("--source", action="store_true", help="download from the original publisher instead of the pinned GitHub mirror")
+    parser.add_argument("--provider", choices=("github", "source"), help="override the configured provider")
+    parser.add_argument("--ca-bundle", type=Path, help="company/custom CA PEM bundle for HTTPS downloads")
+    args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(line_buffering=True)
     settings = yaml.safe_load(CONFIG.read_text())
-    dataset, workers, converters = settings["dataset"], settings["workers"], settings.get("convert_workers", 4)
-    if dataset not in ["crema_d", *DATASETS, "all"]:
-        sys.exit(f"ERROR: unknown `dataset: {dataset}` in config/download_data.yaml; "
-                 f"use one of: crema_d, {', '.join(DATASETS)}, all")
-
-    for name in (["crema_d", *DATASETS] if dataset == "all" else [dataset]):
+    dataset = args.dataset or settings["dataset"]
+    provider = "source" if args.source else (args.provider or settings.get("provider", "github"))
+    workers, converters = settings["workers"], settings.get("convert_workers", 4)
+    if provider not in ("github", "source"):
+        parser.error("provider must be github or source")
+    if dataset not in ["crema_d", *DATASETS, "all", "mirrors"]:
+        parser.error(f"unknown dataset {dataset!r}; use crema_d, {', '.join(DATASETS)}, mirrors or all")
+    if provider == "github" and not (dataset == "crema_d" and settings.get("crema_d", "samples") == "samples"):
+        command = [sys.executable, str(ROOT / "scripts" / "common" / "setup_datasets.py"), dataset,
+                   "--workers", str(workers)]
+        if args.ca_bundle is not None:
+            command.extend(["--ca-bundle", str(args.ca_bundle)])
+        return subprocess.call(command)
+    if provider == "github":
+        # The six small test clips are tracked in the data submodule; initialize it without fetching any archives.
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from setup_datasets import ensure_submodule
+        ensure_submodule()
+    if dataset == "mirrors":
+        parser.error("mirrors requires provider github; choose one original dataset or all with --source")
+    configure_https(args.ca_bundle)
+    # ESD is excluded from the 13-dataset evaluation; only an explicit --dataset esd fetches it.
+    names = ["crema_d", *(name for name in DATASETS if name != "esd")] if dataset == "all" else [dataset]
+    for name in names:
         if name == "crema_d":
             download_crema_d("full" if dataset == "all" else settings["crema_d"], workers)
         else:
             download_dataset(name, workers, converters)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
