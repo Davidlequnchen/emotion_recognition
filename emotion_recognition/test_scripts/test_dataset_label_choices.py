@@ -649,15 +649,17 @@ class EvaluationReuseTests(Fixture):
         self.assertNotEqual(plot_results.results_fingerprint(results[0]), plot_results.results_fingerprint(results[1]))
         self.assertEqual(path.read_bytes(), before)
 
-    def test_chart_artists_use_four_patterns_and_markers_not_legacy_booleans(self):
+    def test_training_patterns_are_unified_and_pending_models_have_no_score(self):
         statuses = list(EXPOSURE_LEVELS)
-        models = [f"model{i}" for i in range(4)]
+        existing = [f"model{i}" for i in range(4)]
+        models = existing + ["gpt_realtime", "gemini"]
         names = {model: model for model in models}
         colours = dict(zip(models, plot_results.COLOURS))
         results = {model: {"fixture": {"key": "fixture", "dataset": "Fixture", "classes": FOUR,
                     "clips": 2, "metrics": {"accuracy": .5}, "training_status": status,
                     "in_training_data": status == "not_established"}}
-                   for model, status in zip(models, statuses)}
+                   for model, status in zip(existing, statuses)}
+        before = json.dumps(results, sort_keys=True)
         plt = plot_results.setup_matplotlib()
         captured = []
         def capture(figure, _plt, stem):
@@ -670,21 +672,48 @@ class EvaluationReuseTests(Fixture):
                 plot_results.overview_figure(plt, "accuracy", results, models, names, colours,
                                             ["fixture"], self.root)
             panels, overview = captured
-            for i, status in enumerate(statuses):
-                patches = [p for p in panels.axes[0].patches if round(p.get_x() + p.get_width() / 2) == i]
-                self.assertIn(training_hatch(status), [p.get_hatch() or "" for p in patches])
+            patches = panels.axes[0].patches
+            self.assertEqual(len(patches), 4)  # no dummy zero bars for reserved model slots
+            self.assertEqual([p.get_hatch() or "" for p in patches], ["///", "///", "", ""])
+            self.assertEqual([p.get_height() for p in patches], [50.0] * 4)
+            self.assertLess(patches[1].get_x() - (patches[0].get_x() + patches[0].get_width()), .1)
+            labels = [t.get_text() for t in panels.legends[0].texts]
+            self.assertEqual(labels.count(plot_results.TRAINING_LABEL), 1)
+            self.assertIn("gpt_realtime (pending)", labels)
+            self.assertIn("gemini (pending)", labels)
+            self.assertFalse(any("upstream" in label.lower() or "possible" in label.lower() for label in labels))
+            self.assertEqual(len(panels.texts), 1)  # title only; no explanatory footer
             texts = [t.get_text() for t in overview.axes[0].texts]
-            for status in statuses:
-                self.assertIn("50.0" + EXPOSURE_LEVELS[status]["marker"], texts)
+            self.assertEqual(texts.count("50.0†"), 2)
+            self.assertEqual(texts.count("50.0"), 2)
+            self.assertEqual(texts.count("—"), 2)
+            self.assertFalse(any("0.0" == value for value in texts))
+            self.assertEqual(json.dumps(results, sort_keys=True), before)
             panels.canvas.draw()
             renderer = panels.canvas.get_renderer()
-            note = panels.texts[-1].get_window_extent(renderer)
-            legend = panels.legends[0].get_window_extent(renderer)
-            self.assertLess(note.y1, legend.y0)
-            self.assertGreaterEqual(overview.subplotpars.bottom * overview.get_figheight(), 1.10 - 1e-6)
+            numbers = [t for t in panels.axes[0].texts if t.get_text() == "50"]
+            self.assertEqual(len(numbers), 4)  # panel display rounds percentages, without rounding bar heights
+            for first, second in zip(numbers, numbers[1:]):
+                self.assertFalse(first.get_window_extent(renderer).overlaps(second.get_window_extent(renderer)))
+            overview.canvas.draw()
         finally:
             for figure in captured:
                 plt.close(figure)
+
+    def test_placeholder_order_stays_fixed_when_results_arrive_without_fabricating_records(self):
+        registry = {"ser": {"name": "SER"}, "gpt_realtime": {"name": "GPT Realtime"},
+                    "gemini": {"name": "Gemini"}}
+        placeholders = {"gpt_realtime": "GPT Realtime", "gemini": "Gemini 3.8 Flash"}
+        results = {"ser": {"fixture": {"model_name": "SER", "metrics": {"accuracy": .5}}}}
+        before = json.dumps(results, sort_keys=True)
+        models, names = plot_results.chart_models(results, registry, placeholders=placeholders)
+        self.assertEqual(models, list(registry))
+        self.assertEqual(names["gemini"], "Gemini 3.8 Flash")
+        self.assertEqual(json.dumps(results, sort_keys=True), before)
+        results["gemini"] = {"fixture": {"model_name": "Gemini 3.8 Flash", "metrics": {"accuracy": .6}}}
+        self.assertEqual(plot_results.chart_models(results, registry, placeholders=placeholders)[0], models)
+        self.assertEqual(plot_results.chart_models(results, registry, wanted=["ser"],
+                                                    placeholders=placeholders)[0], ["ser"])
 
 
 if __name__ == "__main__":

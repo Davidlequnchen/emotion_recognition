@@ -523,15 +523,100 @@ def savee():
                  "SAVEE is in EmoBox, so it is in the training data of emotion2vec+."])
 
 
+def _dialogue_evalset(key, split, subset, primary_only):
+    from collections import Counter
+    from dialogue_datasets import CLASSES, load_dialogue_records, select_records
+
+    records = select_records(load_dialogue_records(key, split, primary_only=primary_only, data_root=DATA), subset)
+    if not records:
+        raise ValueError(f"{key}: no audio in split={split!r}, subset={subset!r}")
+    scope = ", ".join(sorted({record["split"] for record in records}))
+    counts = Counter(record["gold"] for record in records)
+    clips = [{"audio": record["audio"], "acted": record["gold"], "listener": ""} for record in records]
+    title, language = ("EmotionTalk", "Mandarin") if key == "emotiontalk" else ("DailyTalk", "English")
+    notes = [f"Selected split(s): {scope}; {len(records):,} clips. Explicit clip-ID subsets are applied after split "
+             "selection. Nondefault split/subset experiments must use distinct output folders or stems.",
+             "Seven candidate labels: " + ", ".join(CLASSES) + ". Per-class support in this selection: "
+             + ", ".join(f"{label}={counts[label]}" for label in CLASSES) + ".",
+             "Dialogue/speaker/transcript metadata is available through scripts/common/dialogue_datasets.py; "
+             "this loader evaluates each target separately, without adding history or labels to its model input."]
+    if key == "emotiontalk":
+        ground = "the published audio-perception gold `emotion_result` in original Audio/json files"
+        notes += ["The default official test split has 1,929 clips. Train/validation/test contain "
+                  "15,413/1,908/1,929 clips; no training audio is mixed into the default evaluation.",
+                  "The legacy EvalSet `acted` field carries published audio gold here, not actor intention. "
+                  "Gold is retained as released, rather than replaced with the majority of the five rater votes."]
+        caveats = ["Audio raters could replay previous turns: these are not isolated-target human judgments. "
+                   "No separate human no-history/with-history labels are provided.",
+                   "Eight released dialogues contain only one speaker. They remain in the default official split; "
+                   "primary_only=True excludes them for primary dyadic analyses. completed_history uses "
+                   "end <= target start exactly, without the audited index's 1ms tolerance.",
+                   "Validation/test share published speaker IDs; do not describe the three official splits as "
+                   "mutually speaker-disjoint. Original audio formats vary; downmix/resample only at model input."]
+    else:
+        ground = ("the pinned public ECSS category; unassigned original clips, only in split='all'/'unassigned', "
+                  "retain the original DailyTalk category")
+        notes += ["The default ECSS validation split has 1,197 clips; public ECSS train has 22,562. "
+                  "There is no published ECSS test split. split='all' includes the 14 original clips without ECSS rows.",
+                  "Label mapping: none/no emotion=neutral, anger=angry, disgust=disgusted, fear=fearful, "
+                  "happiness=happy, sadness=sad, surprise=surprised."]
+        caveats = ["Public ECSS categories equal the inherited DailyDialog categories on every matched clip; "
+                   "they are not a second independent voice-perception gold set. Intensity is an additional field.",
+                   "Only two actors and strongly imbalanced categories. In the 1,197-clip validation split, fear "
+                   "has 1 clip, disgust 3 and anger 4; report class supports and treat UAR/macro-F1 uncertainty carefully.",
+                   "DailyTalk provides numeric turn order, not session timestamps. Context helpers do not invent "
+                   "start/end times. primary_only=True excludes the documented d175/d1451 irregularities."]
+    return EvalSet(key, f"{title} ({scope})", language, list(CLASSES), clips, ground_truth=ground,
+                   notes=notes, caveats=caveats, subset=f"split:{scope}" + (";clip_ids" if subset is not None else ""))
+
+
+def emotiontalk(split="test", subset=None, *, primary_only=False):
+    """Official test by default; split=train/validation/test/all, subset=explicit clip IDs."""
+    return _dialogue_evalset("emotiontalk", split, subset, primary_only)
+
+
+def dailytalk(split="validation", subset=None, *, primary_only=False):
+    """Pinned ECSS validation by default; no invented test split. subset selects explicit clip IDs."""
+    return _dialogue_evalset("dailytalk", split, subset, primary_only)
+
+
+def multidialog(splits=("test_freq", "test_rare"), cohort="gold_both", subset=None):
+    """Lazy MultiDialog wrapper: the default cohort keeps complete dialogues with both actors in the gold list."""
+    from dialogue_datasets import CLASSES, canonical_emotion, select_records
+    from multidialog_dataset import load_multidialog_records
+
+    raw = load_multidialog_records(DATA / "multidialog", splits=splits, cohort=cohort)
+    records = [record | {"id": record.get("id") or record.get("clip_id") or record["audio_path"]} for record in raw]
+    records = select_records(records, subset)
+    if not records:
+        raise FileNotFoundError("No MultiDialog clips in the selected cohort; restore/audit data/multidialog first")
+    clips = [{"audio": Path(record["path"]), "acted": canonical_emotion(record["emotion"]), "listener": ""}
+             for record in records]
+    return EvalSet(
+        "multidialog", f"MultiDialog ({cohort})", "English", list(CLASSES), clips,
+        ground_truth="the emotion prescribed for the performed TopicalChat utterance, under the project's canonical labels",
+        notes=[f"Selected split(s): {splits}; cohort={cohort}; {len(clips):,} clips. "
+               "Default gold_both uses complete dialogues whose two actors are both in the released gold actor list, "
+               "with the provider module's audited baseline_eligible segmentation QC.",
+               "Released Curious is mapped to neutral, following the paper's evaluation convention; the original "
+               "category is retained in the audited metadata. Explicit subsets select clip IDs after cohort filtering."],
+        caveats=["The gold actor cohort is a conservative released-data selection, not an independent proof that "
+                 "all utterance emotions were validated by listeners. Keep cohort and split explicit when comparing results."],
+        subset=f"cohort:{cohort}" + (";clip_ids" if subset is not None else ""))
+
+
 LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd,
            "ravdess": ravdess, "tess": tess, "jl_corpus": jl_corpus, "mead": mead, "meld": meld, "emovo": emovo,
-           "emozionalmente": emozionalmente, "savee": savee}
+           "emozionalmente": emozionalmente, "savee": savee, "emotiontalk": emotiontalk, "dailytalk": dailytalk,
+           "multidialog": multidialog}
 
 # Source, licence and credit of each dataset, shown on the viewer page (scripts/viewer/make_viewer.py). public_audio:
 # the licence allows putting its clips on a public web page. api_audio: its clips may be sent to the API models (GPT
 # Realtime, Gemini) for this research evaluation; only a licence that forbids giving the data to anyone else (ESD)
 # rules this out (decided 2026-11-06; LISTEN and other benchmark papers sent such corpora to Gemini as well). A dataset
 # that is not listed here counts as not allowed for both.
+# New dialogue additions are disabled for public/API audio by project default; this is not a claim that their
+# licences categorically prohibit those uses. Enabling them is a separate, explicit project decision.
 CC = "https://creativecommons.org/licenses/"
 SOURCES = {
     "crema_d": {"url": "https://github.com/CheyneyComputerScience/CREMA-D", "public_audio": True, "api_audio": True,
@@ -601,4 +686,17 @@ SOURCES = {
               "credit": "Haq, Jackson. Speaker-Dependent Audio-Visual Emotion Recognition. AVSP 2009. The files used "
                         "here come from an unofficial Kaggle mirror "
                         "(kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee)."},
+    "emotiontalk": {"url": "https://huggingface.co/datasets/BAAI/Emotiontalk", "public_audio": False,
+                    "api_audio": False, "licence": "CC BY-NC-SA 4.0", "licence_url": CC + "by-nc-sa/4.0/",
+                    "credit": "EmotionTalk authors. EmotionTalk. Findings of ACL, 2026. Official Audio release; "
+                              "published audio-perception gold retained."},
+    "dailytalk": {"url": "https://github.com/keonlee9420/DailyTalk", "public_audio": False, "api_audio": False,
+                  "licence": "Audio/data CC BY-SA 4.0; ECSS files retain upstream MIT notices",
+                  "licence_url": CC + "by-sa/4.0/",
+                  "credit": "DailyTalk authors. DailyTalk. ICASSP 2023. ECSS supplemental annotations, AAAI 2024; "
+                            "public categories preserve the inherited DailyDialog labels."},
+    "multidialog": {"url": "https://huggingface.co/datasets/IVLLab/MultiDialog", "public_audio": False,
+                    "api_audio": False, "licence": "CC BY-NC 4.0", "licence_url": CC + "by-nc/4.0/",
+                    "credit": "Park et al. Let's Go Real Talk: Spoken Dialogue Model for Face-to-Face Conversation. "
+                              "ACL 2024. doi:10.18653/v1/2024.acl-long.860."},
 }

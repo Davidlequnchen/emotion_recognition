@@ -4,5 +4,22 @@
     "accuracy",
     "unweighted_accuracy",
     "macro_f1"
-  ]
+  ],
+  "models": [
+    "emotion2vec_plus_large",
+    "meralion_ser_v1",
+    "melati_emotion",
+    "vox_profile_whisper",
+    "vox_profile_wavlm",
+    "qwen2_5_omni_7b",
+    "qwen2_audio_7b",
+    "gemma4_e4b",
+    "gpt_realtime",
+    "gemini"
+  ],
+  "pending_models": [
+    "gpt_realtime",
+    "gemini"
+  ],
+  "style": "compact_single_training_hatch_v1"
 }

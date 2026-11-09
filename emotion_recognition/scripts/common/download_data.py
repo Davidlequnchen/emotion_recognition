@@ -5,7 +5,7 @@ Usage (from the emotion_recognition/ folder):
 Settings are in config/download_data.yaml:
     dataset: crema_d   with  crema_d: samples   -> the 6 CREMA-D test clips in data/samples/ (default)
     dataset: crema_d   with  crema_d: full      -> all 7,442 CREMA-D clips and label files in data/crema_d/
-    provider: github  and dataset: mirrors      -> the nine pinned Release mirrors through setup_datasets.py
+    provider: github  and dataset: mirrors      -> all pinned Release mirrors through setup_datasets.py
     provider: source  and dataset: nemo          -> the original publisher's data/nemo/ (list below)
     dataset: all with --source                   -> all 13 evaluated datasets (CREMA-D full; ESD excluded)
 
@@ -600,7 +600,7 @@ def download_dataset(name, workers, converters):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Restore mirrored datasets or download from original sources.")
-    parser.add_argument("--dataset", help="override dataset in config/download_data.yaml; mirrors selects the nine Release mirrors")
+    parser.add_argument("--dataset", help="override dataset in config/download_data.yaml; mirrors selects all pinned Release mirrors")
     parser.add_argument("--source", action="store_true", help="download from the original publisher instead of the pinned GitHub mirror")
     parser.add_argument("--provider", choices=("github", "source"), help="override the configured provider")
     parser.add_argument("--ca-bundle", type=Path, help="company/custom CA PEM bundle for HTTPS downloads")
@@ -613,7 +613,9 @@ def main(argv=None):
     workers, converters = settings["workers"], settings.get("convert_workers", 4)
     if provider not in ("github", "source"):
         parser.error("provider must be github or source")
-    if dataset not in ["crema_d", *DATASETS, "all", "mirrors"]:
+    # Release candidates are registered by the pinned manifest, not this older
+    # publisher-download registry. Let setup_datasets validate GitHub selections.
+    if provider == "source" and dataset not in ["crema_d", *DATASETS, "all", "mirrors"]:
         parser.error(f"unknown dataset {dataset!r}; use crema_d, {', '.join(DATASETS)}, mirrors or all")
     if provider == "github" and not (dataset == "crema_d" and settings.get("crema_d", "samples") == "samples"):
         command = [sys.executable, str(ROOT / "scripts" / "common" / "setup_datasets.py"), dataset,

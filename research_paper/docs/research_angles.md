@@ -6,7 +6,7 @@ which question deserves further work. Chinese version: [research_angles_zh.md](r
 [venues.md](venues.md). [experimental_design.md](experimental_design.md) retains the older design; check the new
 scope here before implementing it.
 
-The project adopts 15 datasets: the original 13 have SER baselines; audited DailyTalk and EmotionTalk await baselines. There are five dedicated SER models. The three open-weight audio LLMs are
+The project adopts 16 datasets: the original 13 have SER baselines; audited DailyTalk, EmotionTalk and MultiDialog have loaders ready and await baselines. There are five dedicated SER models. The three open-weight audio LLMs are
 Gemma 4 E4B, Qwen2.5-Omni 7B and Qwen2-Audio 7B. API models are possible later checks. Use public research data
 permitted for each experiment, without company data.
 
@@ -44,7 +44,7 @@ The zero-shot benchmark is the starting point. C/D support reliability; E/G help
 | Direction | Role now | Status |
 |---|---|---|
 | **A1: Speaker references** | One candidate core question | Pilot design; reference inputs not implemented |
-| **A2: Real dialogue history** | One candidate core question; start with MELD | Three-model MELD single-utterance baseline complete; context conditions not implemented |
+| **A2: Real dialogue history** | One candidate core question; start with MELD | MELD baselines complete; Omni H0–H3 prepared on 240 EmotionTalk train targets, inference deferred |
 | **B: GEPA and feedback** | Improvement experiment after a clear finding | Keep the question; defer the large grid |
 | **0: 13-corpus benchmark** | Existing foundation | Five SER models complete; audio LLM evaluation in progress |
 | **C: Training provenance** | Necessary background stratification | Check public sources; performance alone does not establish contamination |
@@ -177,8 +177,7 @@ from interference. Labels also do not reveal an unobservable true psychological 
 
 **Implementation status (2026-11-09).** `config/evaluation.yaml` selects local MELD and three open LLMs, with
 `limit: null`, run sequentially. Existing `evaluate.py` still sends **one independent clip at a time**, without
-demonstrations or dialogue history. H1–H3/S1–S3 input construction, cache identities and result alignment are not
-implemented. Running that configuration does not complete the context pilot. New conditions need separate
+demonstrations or dialogue history. EmotionTalk H0–H3 input construction, cache identities and paired analysis are implemented in the separate `scripts/evaluation/context_pilot.py`; 240 train targets from 197 dialogues are prepared only, without inference. S1–S3 remains unimplemented. See [the implementation guide](../../emotion_recognition/docs/context_pilot.md). Running that configuration does not complete the context pilot. New conditions need separate
 experiment identities to avoid overwriting or reusing the baseline incorrectly.
 
 Use this run and multiple-audio smoke tests for timing; the old full-grid few-shot estimates are no longer a
@@ -201,7 +200,7 @@ EmotionTalk validation/test share some speaker IDs, so use train for speaker-ind
 
 **Scale and time.** This Mac's MELD inference took Gemma 27.3, Omni 31.0 and Qwen2-Audio 43.8 minutes. Separate extrapolations by clip count/audio duration give roughly 28–33 hours for all three models over both complete corpora; EmotionTalk test roughly 1.3–1.8 hours, DailyTalk validation 47–48 minutes. These are neither confidence intervals nor guarantees. Measure actual development-subset throughput first.
 
-**Validate inputs first.** New evaluation loaders and H1–H3 are not connected yet. For the first pilot use one fully completed past turn, `history.end <= target.start`, ordered by start time, always preserving the complete target. EmotionTalk's existing three-turn CSV lists use end-time order and some histories overlap; do not blindly concatenate them as start-ordered non-overlapping speech. On test, 135/1,830 three-turn-plus-target combinations exceed 30 seconds. Gemma/Qwen2-Audio truncate, so reserve the complete target first and reduce older history using a common rule across models.
+**Validate inputs first.** The three new loaders and EmotionTalk Omni H0–H3 are implemented and have lightweight integrity checks; actual model execution is still deferred. For the first pilot use one fully completed past turn, `history.end <= target.start`, ordered by start time, always preserving the complete target. EmotionTalk's existing three-turn CSV lists use end-time order and some histories overlap; do not blindly concatenate them as start-ordered non-overlapping speech. On test, 135/1,830 three-turn-plus-target combinations exceed 30 seconds. Gemma/Qwen2-Audio truncate, so reserve the complete target first and reduce older history using a common rule across models.
 
 Freeze target/history IDs, anonymous speakers, target boundaries, transcript cleaning, order and length budgets. Include them plus condition/seed in cache identities. Supply no history emotion/intensity, captions or target gold. A target-transcript-only check can supplement development. Once interfaces/prompts are frozen, run new-corpus baselines and compare context on common targets; then replicate useful findings across models and independent dialogues. No new inference was launched in this review.
 
@@ -347,3 +346,6 @@ The old grid-hour estimates are not commitments.
 See [venues.md](venues.md) for target venues and checked deadlines.
 Choose a venue after assessing the evidence; account for publication processes, author-service requirements and
 data access when scheduling.
+
+
+Implementation update, 2026-11-10: 240 EmotionTalk train targets, 34–35 per class; H3 matches the published history speaker ID and duration in another train dialogue. H2 strips ASCII/full-width bracketed acoustic annotations. No new model results exist and no background inference is scheduled. MultiDialog defaults to 7,672 clips after both-gold-actor and whole-dialogue segmentation QC; actor screening is not utterance-level perceptual gold.

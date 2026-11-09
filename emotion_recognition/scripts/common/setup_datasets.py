@@ -1,8 +1,8 @@
-"""Initialize the pinned data submodule and restore its nine mirrored datasets.
+"""Initialize the pinned data submodule and restore its mirrored datasets.
 
 Run from the project folder: python3 scripts/common/setup_datasets.py [DATASET ...]
-Python 3.9+ and Git are sufficient. Omit DATASET (or use mirrors) for the nine
-Release mirrors. External sources remain available through download_data.py.
+Python 3.9+ and Git are sufficient. Omit DATASET (or use mirrors) for all
+Release mirrors in the pinned manifest. External sources remain available through download_data.py.
 """
 import argparse
 from datetime import datetime, timezone
@@ -379,7 +379,7 @@ def preserve_external_files(data):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("datasets", nargs="*", metavar="DATASET", help="dataset keys; omit for the nine Release mirrors")
+    parser.add_argument("datasets", nargs="*", metavar="DATASET", help="dataset keys; omit for all pinned Release mirrors")
     parser.add_argument("--list", action="store_true", help="list all registered datasets without downloading")
     parser.add_argument("--verify-only", action="store_true", help="verify mirrored files without downloading them")
     parser.add_argument("--workers", type=int, default=2, help="parallel Release downloads (default: 2)")

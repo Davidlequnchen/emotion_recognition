@@ -1,8 +1,8 @@
 # Emotion Recognition Open-Source Model Survey
 
-Training-source review, 2026-11-09: papers, technical reports, cards and author statements count as evidence. Distinct patterns show directly documented, indirectly supported and possible associations. Unmarked means no corpus-specific evidence, not verified unseen. See the [eight-model×15-corpus audit and calibration exceptions](training_provenance.md).
+Training-source review, 2026-11-10: figures use one hatch for Part of the training process, counting direct and upstream use alike. Sources and stages remain in the [eight-model×16-corpus audit](training_provenance.md), without separate figure grades.
 
-Use the broad training-involvement policy: direct and upstream use, including seed/teacher pseudo-label lineage, both count as used/seen. C/I are both seen; patterns distinguish the mechanism.
+Use the broad training-involvement policy: direct and upstream use, including seed/teacher pseudo-label lineage, both count as used/seen. Both count as seen and share one hatch; the route is recorded only in the source notes.
 
 English translation of [models_survey.md](models_survey.md) (Chinese); the two have the same content. The dataset survey is in [datasets_survey_en.md](datasets_survey_en.md).
 

@@ -4,9 +4,11 @@ Dataset panels and compact score matrices for comparing models, for papers and s
 Reads the results that the evaluations left in outputs/ and draws, for each metric in config/plots.yaml:
     reports/figures/<metric>_by_dataset.png (300 dpi) and .pdf   one panel per dataset, one bar per model
     reports/figures/overview_<metric>.png and .pdf                dataset-by-model annotated score matrix
-Bar patterns distinguish directly documented, indirectly supported and possible training-source evidence.
-Unhatched means no corpus-specific evidence, not verified unseen; source links do not prove test-clip leakage.
+One hatch marks all documented training involvement, including upstream teacher use.
+The detailed source/stage evidence stays in the registry and reports rather than the figure.
 The dashed line in each panel: chance level. A value marked * comes from a sample, not every clip.
+Panel labels are rounded to whole percentage points for print legibility; overview matrices keep one decimal.
+This is display rounding only: saved predictions, metric values and bar heights retain their precision.
 
 Which results it reads: every outputs/<model>/<dataset>[_sample<N>]_predictions.json that has `metrics` (for a model
 and dataset with several compatible runs, the one with the most clips). Registered audio LLMs require the current
@@ -40,15 +42,36 @@ sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS
 from prompts import configured_protocol
-from training_provenance import (EXPOSURE_LABEL, EXPOSURE_LEVELS, EXPOSURE_NOTE, training_hatch,
-                                 training_marker, with_training_provenance)
+from training_provenance import with_training_provenance
 
 # One colour per model, in this order (Okabe-Ito: distinguishable with colour-vision deficiencies and in grey print)
-COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
+COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999",
+           "#332288", "#AA4499"]
 METRIC_NAMES = {"accuracy": "Accuracy", "unweighted_accuracy": "UAR",
                 "macro_f1": "Macro F1", "accuracy_all_classes": "Accuracy (all model classes)",
                 "accuracy_acted_or_listener": "Accuracy (acted emotion or listeners' vote)"}
 INK, INK_2, GRID = "#111111", "#444444", "#d9d9d9"
+TRAINING_HATCH, TRAINING_LABEL = "///", "Part of the training process"
+
+
+def part_of_training(run):
+    """Both direct and supported upstream use count; possible/unknown do not assert use."""
+    status = run.get("training_status")
+    if status:
+        return status in ("confirmed_exposure", "probable_exposure")
+    return bool(run.get("in_training_data"))  # external records without registry metadata
+
+
+def chart_models(results, registry, wanted="all", placeholders=None):
+    """Reserve configured model slots without fabricating a result or a zero-valued bar."""
+    placeholders = placeholders or {}
+    allowed = None if wanted == "all" else set(as_list(wanted))
+    keys = {m for m in results if allowed is None or m in allowed}
+    keys |= {m for m in placeholders if allowed is None or m in allowed}
+    models = [m for m in registry if m in keys] + sorted(keys - set(registry))
+    names = {m: placeholders.get(m) or registry.get(m, {}).get("name") or
+             next(iter(results.get(m, {}).values()), {}).get("model_name", m) for m in models}
+    return models, names
 
 
 def step(title):
@@ -99,21 +122,20 @@ def setup_matplotlib():
     fonts = {f.name for f in font_manager.fontManager.ttflist}
     plt.rcParams.update({
         "font.family": next((f for f in ("Helvetica Neue", "Helvetica", "Arial") if f in fonts), "DejaVu Sans"),
-        "font.size": 14, "axes.titlesize": 16, "axes.labelsize": 17, "xtick.labelsize": 14, "ytick.labelsize": 13,
-        "legend.fontsize": 13, "axes.edgecolor": INK_2, "axes.linewidth": 1.0, "axes.titleweight": "bold",
+        "font.size": 15, "axes.titlesize": 17, "axes.labelsize": 19, "xtick.labelsize": 14, "ytick.labelsize": 14,
+        "legend.fontsize": 14, "axes.edgecolor": INK_2, "axes.linewidth": 1.0, "axes.titleweight": "bold",
         "pdf.fonttype": 42, "ps.fonttype": 42,  # embed real fonts (journals ask for it)
     })
     return plt
 
 
-def legend_handles(plt, names, colours, chance=True):
+def legend_handles(plt, names, colours, chance=True, pending=()):
     from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
-    handles = [Patch(facecolor=colours[m], edgecolor=INK, linewidth=1.2, label=names[m]) for m in names]
-    for status, level in EXPOSURE_LEVELS.items():
-        handles.append(Patch(facecolor="white", edgecolor="#9a9fa6" if status == "possible_exposure" else INK,
-                             hatch=training_hatch(status), linewidth=1.0,
-                             label=level["label"] + (" (no hatch)" if not level["hatch"] else "")))
+    handles = [Patch(facecolor="white" if m in pending else colours[m], edgecolor=colours[m] if m in pending else INK,
+                     linewidth=1.2, label=names[m] + (" (pending)" if m in pending else "")) for m in names]
+    handles.append(Patch(facecolor="white", edgecolor=INK, hatch=TRAINING_HATCH, linewidth=1.0,
+                         label=TRAINING_LABEL))
     if chance:  # macro F1 has no chance line
         handles.append(Line2D([0], [0], color=INK_2, linestyle="--", linewidth=1.6, label="chance level"))
     return handles
@@ -125,63 +147,69 @@ def chance_of(run):
 
 
 def bar_label(ax, x, value, run):
-    text = f"{100 * value:.1f}" + ("*" if run["clips"] < run.get("total_clips", run["clips"]) else "")
-    ax.text(x, 100 * value + 1.5, text, ha="center", va="bottom", fontsize=12, color=INK)
+    text = f"{100 * value:.0f}" + ("*" if run["clips"] < run.get("total_clips", run["clips"]) else "")
+    ax.text(x, 100 * value + 1.4, text, ha="center", va="bottom", fontsize=15.5, color=INK)
 
 
 def per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out):
     """One panel per dataset, one bar per model."""
     rows = math.ceil(len(datasets) / columns)
-    legend_count = len(models) + len(EXPOSURE_LEVELS) + int(metric != "macro_f1")
+    legend_count = len(models) + 1 + int(metric != "macro_f1")
     legend_columns = min(4, legend_count)
-    # Use physical margins: a percentage of a tall canvas used to leave several inches below the panels.
+    # Reuse the last row's empty panels instead of adding another strip of white canvas.
+    empty = rows * columns - len(datasets)
+    inset_legend = empty >= 2
+    pending = {m for m in models if not results.get(m)}
     legend_rows = math.ceil(legend_count / legend_columns)
-    legend_height = 0.32 * legend_rows + 0.64
-    height = 4.0 * rows + legend_height + 1.0
-    fig, axes = plt.subplots(rows, columns, figsize=(5.6 * columns, height), squeeze=False)
+    legend_height = 0 if inset_legend else 0.31 * legend_rows + 0.12
+    height = 2.85 * rows + legend_height + 0.90
+    fig, axes = plt.subplots(rows, columns, figsize=(4.4 * columns, height), squeeze=False)
+    positions = [i * 0.78 for i in range(len(models))]
     for k, key in enumerate(datasets):
         ax = axes[k // columns][k % columns]
         runs = [results.get(m, {}).get(key) for m in models]
         first = next(r for r in runs if r)
         for i, (m, run) in enumerate(zip(models, runs)):
             if run is None or metric not in run["metrics"]:
-                ax.text(i, 2, "n/a", ha="center", va="bottom", fontsize=11, color=INK_2)
+                ax.text(positions[i], 0.025, "—" if m in pending else "n/a", transform=ax.get_xaxis_transform(),
+                        ha="center", va="bottom", fontsize=11, color=colours[m] if m in pending else INK_2)
                 continue
             value = run["metrics"][metric]
-            status = run.get("training_status", "not_established")
-            hatch = training_hatch(status)
-            ax.bar(i, 100 * value, width=0.72, color=colours[m], edgecolor=INK, linewidth=1.2,
-                   hatch=hatch if status != "possible_exposure" else None, zorder=3)
-            if status == "possible_exposure":
-                # A light cross-pattern is a possible association, not a confirmed-exposure hatch.
-                ax.bar(i, 100 * value, width=0.72, facecolor="none", edgecolor="#9a9fa6", linewidth=0,
-                       hatch=hatch, zorder=3.1)
-            bar_label(ax, i, value, run)
+            ax.bar(positions[i], 100 * value, width=0.72, color=colours[m], edgecolor=INK, linewidth=1.0,
+                   hatch=TRAINING_HATCH if part_of_training(run) else None, zorder=3)
+            bar_label(ax, positions[i], value, run)
         chance = chance_of(first)
         if chance and metric != "macro_f1":
             ax.axhline(100 * chance, color=INK_2, linestyle="--", linewidth=1.6, zorder=4)
-        title = textwrap.fill(first["dataset"], width=37)
+        title = textwrap.fill(first["dataset"], width=32)
         if first.get("language"):
             title += "\n" + first["language"]
-        ax.set_title(title, pad=8, linespacing=1.05)
+        ax.set_title(title, pad=6, linespacing=1.0)
         ax.set_xticks([])
-        ax.set_xlim(-0.6, len(models) - 0.4)
+        ax.set_xlim(-0.48, positions[-1] + 0.48)
         ax.set_ylim(0, 108)
         ax.set_yticks(range(0, 101, 20))
-        ax.yaxis.grid(True, color=GRID, linewidth=0.8, zorder=0)
+        ax.yaxis.grid(True, color=GRID, linewidth=0.7, zorder=0)
         ax.spines[["top", "right"]].set_visible(False)
         if k % columns == 0:
             ax.set_ylabel(f"{METRIC_NAMES.get(metric, metric)} (%)")
     for k in range(len(datasets), rows * columns):
         axes[k // columns][k % columns].axis("off")
-    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=21,
-                 fontweight="bold", color=INK, y=1 - 0.10 / height)
-    fig.legend(handles=legend_handles(plt, names, colours, metric != "macro_f1"), loc="lower center",
-               ncol=legend_columns, frameon=False, bbox_to_anchor=(0.5, 0.54 / height), borderaxespad=0,
-               columnspacing=1.7, handletextpad=0.6, labelspacing=0.55)
-    fig.text(0.5, 0.08 / height, EXPOSURE_NOTE, ha="center", va="bottom", fontsize=10.5, color=INK_2)
-    fig.subplots_adjust(left=0.045, right=0.992, top=1 - 1.28 / height,
-                        bottom=(legend_height + 0.16) / height, wspace=0.19, hspace=0.34)
+    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=22,
+                 fontweight="bold", color=INK, y=1 - 0.04 / height)
+    fig.subplots_adjust(left=0.052, right=0.995, top=1 - 1.20 / height,
+                        bottom=(legend_height + 0.22) / height, wspace=0.17, hspace=0.44)
+    handles = legend_handles(plt, names, colours, metric != "macro_f1", pending)
+    if inset_legend:
+        first_empty = axes[-1][columns - empty].get_position()
+        last_empty = axes[-1][-1].get_position()
+        fig.legend(handles=handles, loc="center", ncol=min(empty, legend_columns), frameon=False,
+                   bbox_to_anchor=((first_empty.x0 + last_empty.x1) / 2, (first_empty.y0 + first_empty.y1) / 2),
+                   borderaxespad=0, columnspacing=1.4, handletextpad=0.5, labelspacing=0.9)
+    else:
+        fig.legend(handles=handles, loc="lower center", ncol=legend_columns, frameon=False,
+                   bbox_to_anchor=(0.5, 0.035 / height), borderaxespad=0,
+                   columnspacing=1.4, handletextpad=0.5, labelspacing=0.45)
     return save(fig, plt, out / f"{metric}_by_dataset")
 
 
@@ -201,21 +229,24 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
             if run is not None and metric in run["metrics"]:
                 values[row, col] = 100 * run["metrics"][metric]
 
-    width, height = max(11.5, 1.60 * ncols + 3.6), max(5.0, 0.55 * len(datasets) + 1.65)
+    width, height = max(11.5, 1.23 * ncols + 3.5), max(5.0, 0.44 * len(datasets) + 1.15)
     fig, ax = plt.subplots(figsize=(width, height))
-    cmap = plt.get_cmap("cividis").copy()
-    cmap.set_bad("#f1f2f4")
+    cmap = plt.get_cmap("cividis").with_extremes(bad="#f1f2f4")
     plotted = ax.imshow(np.ma.masked_invalid(values), cmap=cmap, vmin=0, vmax=100, aspect="auto")
     headers = [names[m].replace("emotion2vec+ ", "emotion2vec+\n")
                .replace("MERaLiON-", "MERaLiON\n").replace("Vox-Profile ", "Vox-Profile\n")
                for m in models]
-    headers = ["\n".join(textwrap.fill(line, width=15) for line in name.splitlines()) for name in headers]
+    headers = ["\n".join(textwrap.fill(line, width=12) for line in name.splitlines()) for name in headers]
+    short_headers = {"qwen2_5_omni_7b": "Qwen2.5-\nOmni 7B", "qwen2_audio_7b": "Qwen2-Audio\n7B Instruct",
+                     "gemma4_e4b": "Gemma 4\nE4B", "gpt_realtime": "GPT\nRealtime",
+                     "gemini": "Gemini 3.8\nFlash"}
+    headers = [short_headers.get(model, header) for model, header in zip(models, headers)]
     if has_chance:
         headers.append("Chance\nreference")
-    ax.set_xticks(range(ncols), headers, fontsize=12.5)
-    ax.tick_params(axis="x", top=True, labeltop=True, bottom=False, labelbottom=False, length=0, pad=11)
+    ax.set_xticks(range(ncols), headers, fontsize=13)
+    ax.tick_params(axis="x", top=True, labeltop=True, bottom=False, labelbottom=False, length=0, pad=9)
     ax.set_yticks(range(len(datasets)), [first[key]["dataset"].replace(" (", "\n(") for key in datasets],
-                  fontsize=12.5)
+                  fontsize=14)
     ax.tick_params(axis="y", length=0, pad=8)
     ax.set_xticks(np.arange(-0.5, ncols, 1), minor=True)
     ax.set_yticks(np.arange(-0.5, len(datasets), 1), minor=True)
@@ -234,28 +265,33 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
             else:
                 is_sample = run["clips"] < run.get("total_clips", run["clips"])
                 sampled |= is_sample
-                text = f"{value:.1f}" + training_marker(run) + ("*" if is_sample else "")
+                text = f"{value:.1f}" + ("†" if part_of_training(run) else "") + ("*" if is_sample else "")
                 r, g, b, _ = cmap(value / 100)
                 colour = "white" if 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.49 else INK
-            ax.text(col, row, text, ha="center", va="center", fontsize=13, color=colour)
+            ax.text(col, row, text, ha="center", va="center", fontsize=14, color=colour)
         if has_chance:
             chance = chance_of(first[key])
             ax.text(len(models), row, f"{100 * chance:.1f}" if chance is not None else "—",
-                    ha="center", va="center", fontsize=12.5, color=INK_2)
+                    ha="center", va="center", fontsize=14, color=INK_2)
     if has_chance:
         ax.axvline(len(models) - 0.5, color="#c8ccd1", linewidth=1.5)
     colourbar = fig.colorbar(plotted, ax=ax, fraction=0.026, pad=0.025, shrink=0.94)
-    colourbar.set_label(f"{METRIC_NAMES.get(metric, metric)} (%)", fontsize=17, labelpad=11)
-    colourbar.ax.tick_params(labelsize=12)
-    notes = [f"{level['marker']} {level['label']}" for level in EXPOSURE_LEVELS.values() if level["marker"]]
-    notes += ["* Sampled evaluation"] if sampled else []
-    notes.append("— No compatible result")
-    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} across models and datasets", fontsize=20,
+    colourbar.set_label(f"{METRIC_NAMES.get(metric, metric)} (%)", fontsize=19, labelpad=9)
+    colourbar.ax.tick_params(labelsize=13)
+    from matplotlib.lines import Line2D
+    handles = [Line2D([], [], color=INK, linestyle="none", marker=r"$\dagger$", markersize=14,
+                      label=TRAINING_LABEL),
+               Line2D([], [], color="#858b94", linestyle="none", marker="_", markersize=13,
+                      label="Result pending / unavailable")]
+    if sampled:
+        handles.append(Line2D([], [], color=INK, linestyle="none", marker=r"$*$", markersize=13,
+                              label="Sampled evaluation"))
+    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} across models and datasets", fontsize=21,
                  fontweight="bold", color=INK, y=0.985)
-    fig.text(0.5, 0.025, "    ".join(notes) + "\n" + EXPOSURE_NOTE,
-             ha="center", va="bottom", fontsize=11.5, color=INK_2)
-    fig.subplots_adjust(left=3.15 / width, right=1 - 0.85 / width,
-                        top=1 - 1.0 / height, bottom=1.10 / height)
+    fig.legend(handles=handles, loc="lower center", ncol=len(handles), frameon=False,
+               bbox_to_anchor=(0.5, 0.005), borderaxespad=0, fontsize=14, columnspacing=1.8, handletextpad=0.3)
+    fig.subplots_adjust(left=2.75 / width, right=1 - 0.70 / width,
+                        top=1 - 1.18 / height, bottom=0.40 / height)
     return save(fig, plt, out / f"overview_{metric}")
 
 
@@ -293,15 +329,16 @@ def main():
     results = load_results(wanted_models, wanted_datasets, exclude, registry)
     if not results:
         sys.exit("ERROR: no results in outputs/<model>/ yet; run scripts/evaluation/evaluate.py first.")
-    models = [m for m in registry if m in results] + sorted(m for m in results if m not in registry)
-    datasets = [k for k in LOADERS if any(k in results[m] for m in models)]
-    datasets += sorted({k for m in models for k in results[m]} - set(datasets))
-    names = {m: next(iter(results[m].values())).get("model_name", m) for m in models}
+    placeholders = settings.get("placeholders") or {}
+    models, names = chart_models(results, registry, wanted_models, placeholders)
+    datasets = [k for k in LOADERS if any(k in results.get(m, {}) for m in models)]
+    datasets += sorted({k for m in models for k in results.get(m, {})} - set(datasets))
     colours = {m: COLOURS[i % len(COLOURS)] for i, m in enumerate(models)}
     for m in models:
-        sampled = [k for k, r in results[m].items() if r["clips"] < r.get("total_clips", r["clips"])]
-        print(f"  {names[m]:<22}: {len(results[m])} dataset(s)" + (f" ({', '.join(sampled)} on a sample)" if sampled
-                                                                     else ""))
+        sampled = [k for k, r in results.get(m, {}).items() if r["clips"] < r.get("total_clips", r["clips"])]
+        print(f"  {names[m]:<22}: {len(results.get(m, {}))} dataset(s)" +
+              (" (reserved; results pending)" if not results.get(m) else "") +
+              (f" ({', '.join(sampled)} on a sample)" if sampled else ""))
     print(f"  datasets    : {', '.join(datasets)}")
 
     # ------------------------------------------------------------------
@@ -311,7 +348,7 @@ def main():
     plt = setup_matplotlib()
     rendered = []
     for metric in metrics:
-        if not any(metric in r["metrics"] for m in models for r in results[m].values()):
+        if not any(metric in r["metrics"] for m in models for r in results.get(m, {}).values()):
             print(f"  {metric}: no result has this metric, skipped")
             continue
         for stem in (per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out),
@@ -320,7 +357,9 @@ def main():
         rendered.append(metric)
     out.mkdir(parents=True, exist_ok=True)
     (out / "results_manifest.json").write_text(json.dumps({"fingerprint": results_fingerprint(results),
-                                                         "metrics": rendered}, indent=2), encoding="utf-8")
+                                                         "metrics": rendered, "models": models,
+                                                         "pending_models": [m for m in models if not results.get(m)],
+                                                         "style": "compact_single_training_hatch_v1"}, indent=2), encoding="utf-8")
     print("Done.")
 
 

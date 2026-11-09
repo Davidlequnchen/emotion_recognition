@@ -55,7 +55,7 @@ emotion_recognition/
 │   └── llm.yaml                # audio LLMs: prompts, retries, timeout (and the settings of the data loader preview)
 ├── data/                       # pinned emotion_recognition_datasets submodule; metadata and tiny samples in Git
 │   ├── README.md               # sources, licences, exact dataset scopes and restore instructions
-│   ├── manifest.json           # eleven Release mirrors + four external sources; sizes and SHA-256
+│   ├── manifest.json           # twelve Release mirrors + four external sources; sizes and SHA-256
 │   ├── download.py             # safe archive restore, resumable downloads and per-file verification
 │   ├── samples/                # six CREMA-D test clips (0.4 MB, included in the submodule)
 │   └── <dataset>/              # data restored here; local external/archived datasets stay local
@@ -117,9 +117,9 @@ Historical data/model directory contents were removed from the main repository's
 2026-11-09; existing clones should read the [history migration notes](docs/git_history_cleanup.md).
 The `data/` submodule similarly pins metadata and a Release restore tool. MCAE-SPPS, TESS, the selected
 JL-Corpus recordings, nEMO, EMOVO, THAI-SER, MEAD, MELD and SAVEE are mirrored as Release archives, not Git blobs.
-The adopted collection contains 15 datasets: 13 have completed SER baselines, while DailyTalk and EmotionTalk
-are downloaded and verified, with baselines pending. Their evaluation loaders and context inputs are not yet registered;
-adoption does not mean an experiment has run. See the [dataset survey](docs/datasets_survey_en.md).
+The adopted collection contains 16 datasets: 13 have completed SER baselines; DailyTalk, EmotionTalk and
+MultiDialog are downloaded and verified, with loaders ready and baselines pending. The EmotionTalk context
+pilot is prepared only; adoption does not mean a new experiment has run. See the [dataset survey](docs/datasets_survey_en.md).
 [data/README.md](data/README.md) records scope, checksums and source terms; THAI-SER contains the four evaluated
 emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS, RAVDESS and
 Emozionalmente retain their original/external download sources. ESD stays local and excluded.
@@ -276,13 +276,13 @@ Alternatively, supply an IT-provided CA PEM bundle using `--ca-bundle "/path/to/
 
 ## 3. Download the data
 
-**Restore the eleven pinned dataset mirrors** with Python 3.9+ and Git:
+**Restore the twelve pinned dataset mirrors** with Python 3.9+ and Git:
 
 ```bash
-python3 scripts/common/setup_datasets.py                  # all eleven Release mirrors, including the two adopted additions
+python3 scripts/common/setup_datasets.py                  # all twelve Release mirrors, including the three adopted additions
 python3 scripts/common/setup_datasets.py tess meld        # selected mirrors only
-python3 scripts/common/setup_datasets.py dailytalk emotiontalk  # adopted context additions only
-python3 scripts/common/setup_datasets.py --list           # all 15 registered sources and scopes; evaluation remains 13
+python3 scripts/common/setup_datasets.py dailytalk emotiontalk multidialog  # adopted dialogue additions
+python3 scripts/common/setup_datasets.py --list           # all 16 registered sources and scopes; completed SER baselines remain 13
 python3 scripts/common/setup_datasets.py --verify-only    # check local mirrored files without downloading
 ```
 
@@ -639,8 +639,8 @@ The models are registered in `config/models.yaml`: display name, loader, folder,
 `training_data` for corpora counted as used/seen anywhere in the training pipeline (direct or upstream) and
 optional per-corpus `training_exposure` for mechanism/evidence details
 (pre-training, backbone or fine-tuning). Papers, technical reports, cards and author statements count as evidence.
-† / diagonal hatches mean direct use; ‡ / dots mean upstream use; both count as used/seen. ? / cross hatches mean possible
-association (including explicitly scoped teacher/development links). Unmarked means no corpus-specific evidence,
+Paper figures use one hatch style for all corpora counted as part of the training process;
+the source/route remains in metadata for audit. Unmarked means no corpus-specific evidence,
 not verified unseen. Corpus exposure does not prove that test clips leaked. See [the audit](docs/training_provenance.md). Reports, plots and the viewer resolve these markers
 from the **current registry**, overriding historical prediction-JSON booleans without changing scores or inference
 protocols. emotion2vec+ large also has `mac_device: cpu` (faster for it, see the speeds below). Each model runs through its loader in
@@ -1079,3 +1079,22 @@ cache) loads and runs all four.
 | `ERROR: ... file(s) failed` from `download_data.py` | A network error, or GitHub sent an error page instead of the audio (for example a temporary LFS bandwidth limit). Run the same command again: correct files are skipped. |
 | Download from Hugging Face is slow or blocked | Use the default `hub: github`, or run `python3 scripts/common/setup_models.py <model-key>`. `hub: ms` is another option for emotion2vec+ large and the three audio LLMs (section 2). |
 | `Notice: ffmpeg is not installed ...` | Printed by FunASR on machines without ffmpeg. Harmless: wav, flac, mp3 and ogg are read without it. To silence it: `conda install -c conda-forge ffmpeg`. |
+
+
+### Dialogue loaders and the prepared context pilot (2026-11-10)
+
+EmotionTalk, DailyTalk and MultiDialog now have loaders in the ordinary evaluation registry. Default baselines use
+EmotionTalk official test, DailyTalk ECSS validation (there is no official ECSS test), and MultiDialog's complete
+gold-actor dialogues after segmentation QC. Source labels and split limitations are documented in the dataset survey.
+`config/evaluation_dialogue_baselines.yaml` is a separate, ready-to-run three-LLM baseline configuration; select it
+with `python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml`. No new inference has run.
+
+The first context pilot is Omni on 240 fixed EmotionTalk train targets, with target-only / true audio history /
+text history / unrelated audio history. It is currently **prepared only** while local memory is occupied.
+See [the Chinese explanation and commands](docs/context_pilot.md). `context_pilot.py prepare` never imports model
+libraries; only its explicit `run` command loads weights. Inputs, condition identities, resumable responses and
+CSV/JSON analysis are isolated from the existing single-utterance evaluation outputs; hidden-state extraction is off.
+
+Paper plots keep four columns, one training-process hatch, and reserved GPT Realtime/Gemini 3.8 Flash positions.
+Panel value labels round percentages to integers for readability; bar heights and saved metrics are unchanged,
+and overview matrices retain one decimal. The explanatory provenance footnote is omitted from the figures.

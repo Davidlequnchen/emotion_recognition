@@ -1,0 +1,18 @@
+# READY BUT NOT RUN. Execute only when memory/compute is available:
+# python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml
+# This does not change the existing MELD evaluation configuration.
+mode: auto
+models: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b]
+api_models: false
+datasets: [emotiontalk, dailytalk, multidialog]
+subsets: {}
+exclude: [esd]
+limit: null
+overwrite: false
+plots: false
+devices:
+  mac: mps
+  cuda: cuda:0
+summary_figure:
+  order: [emotiontalk, dailytalk, multidialog]
+  acted_or_listener: []

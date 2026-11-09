@@ -1,8 +1,8 @@
 # 情绪识别开源模型调研（Emotion Recognition Open-Source Model Survey）
 
-2026-11-09 训练来源复核：论文、技术报告、模型卡及作者说明均可作证。图表用不同纹理区分直接有据、间接支持与可能关联；无纹理只表示暂无语料对应证据，不代表未使用，也不等于测试片段泄漏。八模型×十五语料及校准例外见 [training_provenance.md](training_provenance.md)。
+2026-11-10 训练来源复核：图表仅用一种斜线表示 Part of the training process；直接和上游间接使用均计入。来源和具体阶段保留在[八模型×十六语料审核](training_provenance.md)，不在图中细分等级。
 
-训练使用采用宽口径：直接或间接、上游预训练或 seed/教师伪标签链均计为“用过／见过”；C/I 都为已见，纹理仅区分方式。
+训练使用采用宽口径：直接或间接、上游预训练或 seed/教师伪标签链均计为“用过／见过”；均计为已见，图中纹理相同，具体方式只在来源记录中说明。
 
 英文版：[models_survey_en.md](models_survey_en.md)（内容相同）。数据集调研见 [datasets_survey.md](datasets_survey.md)。
 

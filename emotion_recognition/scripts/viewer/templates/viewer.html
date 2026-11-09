@@ -598,9 +598,7 @@
     };
     $("plots-body").replaceChildren(
       el("h2", { textContent: "Bar plots" }),
-      el("p", { className: "sub", textContent: "Every model on every dataset, drawn by scripts/viewer/plot_results.py (PNG and PDF in reports/figures/). Patterns: "
-        + Object.values(EVIDENCE_LEVELS).map((level) => `${level.hatch || "none"}: ${level.label}`).join("; ")
-        + ". " + evidenceNote + " Indirect support is not confirmed raw-corpus training. Dashed line: chance level. Click a figure to enlarge it." }),
+      el("p", { className: "sub", textContent: "Hatched bars: part of the training process. Reserved API-model positions are pending, not zero scores. Dashed line: chance level. Click a figure to enlarge it." }),
       el("div", { className: "toolbar" }, el("div", { className: "control" }, "Metric ", switcher)),
       el("h3", { textContent: `${plot.name}: one panel per dataset` }), zoomable(plot.by_dataset, `${plot.name} of every model, one panel per dataset`),
       ...(plot.overview ? [el("h3", { textContent: `${plot.name}: every dataset side by side` }), zoomable(plot.overview, `${plot.name} of every model on every dataset`)] : []));

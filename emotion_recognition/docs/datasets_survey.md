@@ -5,57 +5,58 @@
 调研日期：2026-10-23。目标：调研能用于评估情绪识别模型（emotion2vec+）和音频大模型（audio LLM）的公开情感语音数据集。
 早期筛选重视“同一句话用不同情绪表达”，用于减少语义线索；现在也采用有说话人、转写和真实轮次顺序的对话语料，研究历史上下文怎样影响判断。两类设计分开比较，并核实标签质量、规模及许可。
 
-2026-11-09 更新：本项目现已采用并保留 **15 个数据集**，包括新增的 **DailyTalk、EmotionTalk**。原 13 个数据集已有五个 SER 模型的基线结果；新增两集已下载、核验并通过数据仓库 Release 发布，**基线尚待运行**。IEMOCAP 和 MSP-Conversation 仍只是未下载、未采用的后续候选（第 3a 节）。
+2026-11-10 更新：本项目现已采用并保留 **16 个数据集**，包括新增的 **DailyTalk、EmotionTalk、MultiDialog**。原 13 个数据集已有五个 SER 模型的基线结果；新增三集已下载、核验并通过数据仓库 Release 发布，**基线尚待运行**。MultiDialog 仅保留两个官方 test split，默认评测用双方 gold 演员且通过整对话 QC 的 7,672 条（第 3c 节）。IEMOCAP 和 MSP-Conversation 仍只是未下载、未采用的后续候选（第 3a 节）。
 
 方法：检索论文、官方项目页、GitHub、HuggingFace、Zenodo、OSF 等，汇总数据集信息。
 大小以十进制 GB 计，来自各平台 API 的文件列表或 HTTP 请求；标"约"的是推算值，标"未公开"的是平台没有给出大小。
 标"未核实"的数字没能从一手资料确认。已下载到本地的数据集（见第 6 节），条数、时长和采样率是我下载后实测的。
 
-**图例（全文通用）：** ✅ = 本项目已采用并保留的数据集（15 个，见第 0 节主表），**不代表已经完成评测**；原 13 个已完成 SER 基线，DailyTalk、EmotionTalk 待跑基线。🗄️ = 之前评估过、现已移出评估范围（只有 ESD）；没有标记 = 尚未采用。
+**图例（全文通用）：** ✅ = 本项目已采用并保留的数据集（16 个，见第 0 节主表），**不代表已经完成评测**；原 13 个已完成 SER 基线，DailyTalk、EmotionTalk、MultiDialog 待跑基线。🗄️ = 之前评估过、现已移出评估范围（只有 ESD）；没有标记 = 尚未采用。
 
 ## 0. 要点
 
 - **EmoBox 关联与当前 checkpoint 的确认训练分开记录。** CREMA-D、ESD、MEAD、RAVDESS、TESS、SAVEE、EmoDB、CASIA、Emozionalmente、SUBESCO、JL-Corpus、CaFE、EMOVO、EmoV-DB 等属于 EmoBox；这说明潜在家族／教师关联，不能直接证明当前 emotion2vec+ large 用过每个语料。
-- **emotion2vec 家族的来源边界：** seed 使用 201 h EmoBox 学术数据，未公开精确子集；base 使用 seed 产生的伪标签，large 使用 42,526 h 未公开的内部工业伪标签数据。原始 emotion2vec 的预训练包括 IEMOCAP、MELD、CMU-MOSEI、MEAD、MSP-Podcast，但当前 plus-large 的原始语料／权重继承链未被逐项证实。此前将 EmoBox 关系一概视为直接训练的规则，改为“间接支持”的独立纹理（指上游影响，未确认直接原始音频使用）；不再与完全无信息混用。
-- **未在 EmoBox 清单中找到的候选**：MCAE-SPPS、THAI-SER、MSP-IMPROV 的 target sentences、nEMO。这不是对所有模型、所有预训练来源都未见过的保证。[八模型×十五语料的来源审核](training_provenance.md)同时核对骨干预训练与微调；图例区分直接、间接、可能关联及暂无对应证据；不把缺少标记当作确定未见。
+- **emotion2vec 家族的来源边界：** seed 使用 201 h EmoBox 学术数据，未公开精确子集；base 使用 seed 产生的伪标签，large 使用 42,526 h 未公开的内部工业伪标签数据。原始 emotion2vec 的预训练包括 IEMOCAP、MELD、CMU-MOSEI、MEAD、MSP-Podcast。论文支持的教师／上游传播链按“训练流程已涉及”记录，但不能据此断言每个原始音频都直接进入当前 large 的训练；具体链条和证据边界保留在来源审核中。
+- **未在 EmoBox 清单中找到的候选**：MCAE-SPPS、THAI-SER、MSP-IMPROV 的 target sentences、nEMO。这不是对所有模型、所有预训练来源都未见过的保证。[八模型×十六语料的来源审核](training_provenance.md)同时核对骨干预训练与微调；图表统一标记有依据的训练流程涉及，不把缺少标记当作确定未见。
 - **英语**：没有找到同时满足"规模大、平行文本、有感知验证、不在 EmoBox"的数据集，只能把 MSP-IMPROV、MESS、Expresso 组合起来用。
-- **对话上下文数据**：已采用 **DailyTalk ✅（英语）与 EmotionTalk ✅（普通话）**，先建立基线，再研究同一目标音频加入过去轮次后的变化（第 3b 节）。IEMOCAP、MSP-Conversation 仍是需要申请的后续候选；前者有逐句类别及维度标签，后者以长对话的连续 V/A/D 标注为主，不能直接当作同一种七类分类任务（第 3a 节）。
+- **对话上下文数据**：已采用 **DailyTalk ✅（英语）、EmotionTalk ✅（普通话）、MultiDialog ✅（英语，限定 QC 队列）**，先建立基线，再研究同一目标音频加入过去轮次后的变化（第 3b、3c 节）。IEMOCAP、MSP-Conversation 仍是需要申请的后续候选；前者有逐句类别及维度标签，后者以长对话的连续 V/A/D 标注为主，不能直接当作同一种七类分类任务（第 3a 节）。
 - **支持这个思路的证据**：[LISTEN](https://arxiv.org/abs/2510.10444)（2025）用 CREMA-D、ESD、TESS、SAVEE、RAVDESS 里文本中性的句子测试音频大模型。
   只给音频时，准确率只有 16.5–34.9%（[Qwen2.5-Omni](https://arxiv.org/abs/2503.20215) 34.0%，[Gemini 2.5 Pro](https://arxiv.org/abs/2507.06261) 34.9%）；只给文本时则有 85–97%。
   这与模型较依赖文字语义的解释相容，但单凭这些任务分数，不能断言模型完全不用声音或确定其内部推理机制。
 
-**训练标记口径：** 直接训练、上游预训练、seed 微调、教师伪标签传播均算“用过／见过”；作者开发校准也单列计入。C/I 都是已见，不再仅因使用是间接的就排除；具体阶段与来源见[统一审核](training_provenance.md)。
+**训练标记口径：** 直接训练、上游预训练、seed 微调、教师伪标签传播均算“用过／见过”；作者开发校准也单列计入。有依据的上游传播也计为已见；主表只列模型名，不再分级显示；具体阶段与来源见[统一审核](training_provenance.md)。
 
-### 本项目采用的数据集（15 个，2026-11-09 核对）
+### 本项目采用的数据集（16 个，2026-11-10 核对）
 
-**采用范围与完成进度分开记录。** 原 13 个的“五个 SER 模型基线”已有结果；新增两集待跑，不计入已完成条数。此处更新研究范围，**不自动修改 `config/evaluation.yaml`、接入新 loader 或启动推理**。表中“本地可用音频”是当前保留的独立录音数；“SER 基线”是已经评测的子集或尚待固定的计划，两列不能混用。
+**采用范围与完成进度分开记录。** 原 13 个的“五个 SER 模型基线”已有结果；新增三集待跑，不计入已完成条数。新增语料使用独立基线配置；**下载、登记和加载索引不会启动模型推理**。表中“本地可用音频”是当前保留的独立录音数；“SER 基线”是已经评测的子集或尚待固定的计划，两列不能混用。
 
-| 数据集 | 语言 | 类型 | 本地可用音频 | SER 基线：完成条数 / 待跑计划 | 时长（注明范围） | 本地保留文件大小 | 许可 | 训练关联（C/I 均计已见；C 直接、I 上游） |
+| 数据集 | 语言 | 类型 | 本地可用音频 | SER 基线：完成条数 / 待跑计划 | 时长（注明范围） | 本地保留文件大小 | 许可 | 参与训练／开发流程的模型 |
 |---|---|---|---|---|---|---|---|---|
-| CREMA-D ✅ | 美式英语 | 表演 | 7,442 | 7,442 | 基线 5.26 h | 0.611 GB | ODbL | e2v+ large: I; MERaLiON: C |
+| CREMA-D ✅ | 美式英语 | 表演 | 7,442 | 7,442 | 基线 5.26 h | 0.611 GB | ODbL | e2v+ large; MERaLiON |
 | MCAE-SPPS ✅ | 普通话 | 表演 | 6,675 | 6,675 | 基线 2.30 h | 0.807 GB | CC BY-NC 4.0 | — |
 | MESS ✅ | 美式英语 | 表演 | 1,800 | 1,800 | 基线 1.33 h | 0.234 GB | CC BY 4.0 | — |
-| RAVDESS ✅ | 英语（北美） | 表演 | 1,440 | 1,440 | 基线 1.48 h | 0.590 GB | CC BY-NC-SA 4.0 | e2v+ large: I; MERaLiON: I |
-| TESS ✅ | 英语（加拿大） | 表演 | 2,800 | 2,800 | 基线 1.60 h | 0.281 GB | CC BY-NC 4.0 | e2v+ large: I; MERaLiON: I |
-| JL-Corpus ✅ | 新西兰英语 | 表演 | 2,400 | 1,200（5 种主要情绪） | 基线 0.70 h | 0.950 GB | CC0 | e2v+ large: I; MERaLiON: I; Melati: C |
+| RAVDESS ✅ | 英语（北美） | 表演 | 1,440 | 1,440 | 基线 1.48 h | 0.590 GB | CC BY-NC-SA 4.0 | e2v+ large; MERaLiON |
+| TESS ✅ | 英语（加拿大） | 表演 | 2,800 | 2,800 | 基线 1.60 h | 0.281 GB | CC BY-NC 4.0 | e2v+ large; MERaLiON |
+| JL-Corpus ✅ | 新西兰英语 | 表演 | 2,400 | 1,200（5 种主要情绪） | 基线 0.70 h | 0.950 GB | CC0 | e2v+ large; MERaLiON; Melati |
 | THAI-SER ✅ | 泰语 | 表演（脚本 + 即兴） | 22,584（四类） | 11,848（一致率 ≥0.71） | 基线 17.36 h；全四类 33.19 h | 4.640 GB（占盘约 4.69 GB） | CC BY-SA 4.0 | — |
-| nEMO ✅ | 波兰语 | 表演（9 人中 3 人是职业配音演员） | 4,481 | 4,481 | 基线 3.07 h | 1.594 GB | CC BY-NC-SA 4.0 | Melati: C (calibration) |
-| MEAD ✅ | 英语 | 表演 | 31,729（无 contempt：27,514） | 8,000（固定分层子集） | 基线 9.51 h；全量 37.3 h | 4.298 GB | 数据许可未公布 | e2v+ large: I; MERaLiON: I |
-| MELD ✅（只用测试集） | 英语 | 电视剧对白（*Friends*） | 2,610（test） | 2,608（去掉 2 条无效时间戳） | 基线 2.31 h | 0.284 GB | 仓库 GPL-3.0；片段来自有版权的电视剧 | e2v+ large: I; MERaLiON: C |
-| EMOVO ✅ | 意大利语 | 表演 | 588 | 588 | 基线 0.51 h | 0.352 GB | 许可未公布；官方站已失效，用的是非官方副本 | e2v+ large: I; MERaLiON: I |
-| Emozionalmente ✅ | 意大利语 | 众包，非专业说话人 | 6,902 | 6,902 | 基线 6.30 h | 0.732 GB | CC BY 4.0 | e2v+ large: I; MERaLiON: I; Melati: C |
-| SAVEE ✅ | 英式英语 | 表演（4 位男性说话人） | 480 | 480 | 基线 0.51 h | 0.163 GB | 注册后可免费用于研究，禁止再分发；用的是 Kaggle 上的非官方副本 | e2v+ large: I; MERaLiON: I |
-| DailyTalk ✅ | 英语 | 表演双人对话（2 名演员） | 23,773；2,541 段对话 | **待跑**；按对话划分及目标子集待固定 | 全量音频 21.674 h | 6.917 GB | 音频/数据 CC BY-SA 4.0；ECSS 文件保留上游 MIT 声明 | — |
+| nEMO ✅ | 波兰语 | 表演（9 人中 3 人是职业配音演员） | 4,481 | 4,481 | 基线 3.07 h | 1.594 GB | CC BY-NC-SA 4.0 | Melati（开发校准） |
+| MEAD ✅ | 英语 | 表演 | 31,729（无 contempt：27,514） | 8,000（固定分层子集） | 基线 9.51 h；全量 37.3 h | 4.298 GB | 数据许可未公布 | e2v+ large; MERaLiON |
+| MELD ✅（只用测试集） | 英语 | 电视剧对白（*Friends*） | 2,610（test） | 2,608（去掉 2 条无效时间戳） | 基线 2.31 h | 0.284 GB | 仓库 GPL-3.0；片段来自有版权的电视剧 | e2v+ large; MERaLiON |
+| EMOVO ✅ | 意大利语 | 表演 | 588 | 588 | 基线 0.51 h | 0.352 GB | 许可未公布；官方站已失效，用的是非官方副本 | e2v+ large; MERaLiON |
+| Emozionalmente ✅ | 意大利语 | 众包，非专业说话人 | 6,902 | 6,902 | 基线 6.30 h | 0.732 GB | CC BY 4.0 | e2v+ large; MERaLiON; Melati |
+| SAVEE ✅ | 英式英语 | 表演（4 位男性说话人） | 480 | 480 | 基线 0.51 h | 0.163 GB | 注册后可免费用于研究，禁止再分发；用的是 Kaggle 上的非官方副本 | e2v+ large; MERaLiON |
+| DailyTalk ✅ | 英语 | 表演双人对话（2 名演员） | 23,773；2,541 段对话 | **待跑：默认 ECSS validation 1,197**；无官方 test，正式 holdout 另定 | 全量音频 21.674 h | 6.917 GB | 音频/数据 CC BY-SA 4.0；ECSS 文件保留上游 MIT 声明 | — |
 | EmotionTalk ✅ | 普通话 | 情境对话（演员） | 19,250；742 段对话，其中 734 段双 speaker | **待跑**；官方 test 1,929；合格双人历史 test 目标 1,830 | 全量音频 23.6025 h | 14.793 GB | CC BY-NC-SA 4.0；HF 免费登录接受条件后获取 | — |
+| MultiDialog ✅（仅两个 test） | 英语 | 按 TopicalChat 剧本和情绪表演的双人对话 | **18,141；831 段**（原件全保留） | **待跑：7,672 / 353 段**（双方 gold 演员 + 整对话 QC）；历史目标 7,319 | 原件 **32.3997 h**；默认队列 **13.0958 h**；官方全集 339.71 h 未下载 | **3.758 GB** | CC BY-NC 4.0；public/ungated、免费 | — |
 | **原 13 个：SER 基线已完成** | | | 范围见各行 | **56,264**（取消 THAI/MEAD 子集后为 86,514，仍保留其他过滤） | **基线 52.2 h**（取消两子集后 91.3 h） | | | |
-| **新增 2 个：已采用、待基线** | | | **43,023**（全量可用音频） | **待跑，不计入 56,264** | **全量 45.2765 h** | **21.710 GB** | | |
+| **新增 3 个：已采用、待基线** | | | **61,164**（保留范围的原始音频） | **待跑，不计入 56,264** | **保留音频 77.6762 h**（默认队列另见各行） | **约 25.47 GB** | | |
 
 - **子集**（2026-11-06 决定，为了节省算力；`config/evaluation.yaml` 的 `subsets`）：两个数据集对所有模型都用同一个固定子集。THAI-SER：只用一致率 ≥ 0.71 的片段（一致率 = 选了多数票标签的众包评分者所占比例），即数据集作者推荐的子集，共 11,848 条（happy 3,665、neutral 2,999、angry 2,883、sad 2,301）。MEAD：把片段按演员、情绪、强度、句子编号排序后等间隔取 8,000 条，912 个演员/情绪/强度格子各自按比例保留（3–12 条）。时长按音频文件头测得。
-- **公开 SER 训练清单未列出的原 13 个语料**：MCAE-SPPS、MESS、THAI-SER、nEMO。EmoBox 和原始 emotion2vec 关系只记为当前 large 的潜在关联；公开清单未列出不等于排除骨干、伪标签或音频大模型暴露。nEMO 另有 Melati 作者阈值校准，按开发流程计为已见。DailyTalk、EmotionTalk 也不据此宣称为严格未见语料。
-- **大小口径**：主表为 2026-11-09 `data/<dataset>/` 中保留文件的字节数合计（十进制 GB，含本机已有缓存及旧副本），不是下载大小或文件系统分配块占用。新增两集与发布 manifest 一致；THAI-SER 当前只有四类镜像音频及元数据，文件约 **4.640 GB**、`du` 占盘约 **4.69 GB**，不再保留 12.71 GB 的完整原始 parquet。nEMO 的当前大小仍含 parquet、提取缓存和旧传输副本。
-- **新两集的基线计划**：DailyTalk 的划分/目标子集需先固定；EmotionTalk 保留全部 19,250 条，官方 test 有 1,929 条，其中可用完整过去轮次的双人历史目标为 1,830 条。这些是可用范围与候选分析范围，均不是已完成结果。
+- **公开 SER 训练清单未列出的原 13 个语料**：MCAE-SPPS、MESS、THAI-SER、nEMO。有依据的 EmoBox 和原始 emotion2vec 上游传播链按训练流程已涉及记录，不等于确认当前 large 直接使用过每个原件；公开清单未列出不等于排除骨干、伪标签或音频大模型暴露。nEMO 另有 Melati 作者阈值校准，按开发流程计为已见。DailyTalk、EmotionTalk、MultiDialog 也不据此宣称为严格未见语料。
+- **大小口径**：主表采用 2026-11-09 的保留文件快照，并补入 2026-11-10 的 MultiDialog；数字为 `data/<dataset>/` 中保留文件的字节数合计（十进制 GB，含本机已有缓存及旧副本），不是下载大小或文件系统分配块占用。新增三集与发布 manifest 一致；THAI-SER 当前只有四类镜像音频及元数据，文件约 **4.640 GB**、`du` 占盘约 **4.69 GB**，不再保留 12.71 GB 的完整原始 parquet。nEMO 的当前大小仍含 parquet、提取缓存和旧传输副本。
+- **新增三集的基线计划**：DailyTalk loader 默认 ECSS validation 1,197 条，正式 holdout 与目标子集需另定；EmotionTalk 保留全部 19,250 条，官方 test 有 1,929 条，其中可用完整过去轮次的双人历史目标为 1,830 条。MultiDialog 的默认范围是 7,672 条 / 353 段，经双方 gold 演员及整对话 QC；全部 18,141 个原件保留。上述是可用范围与分析范围，均不是已完成结果。
 - **ESD 🗄️ 已移出评估范围**：许可仅限研究，禁止向第三方转让任何部分，并把"测试商业系统"列为商业用途。数据还在本地，emotion2vec+ 的旧结果在 `reports/archive/`。
-- **SAVEE ✅ 用的是 Kaggle 上的非官方副本**：官方版注册后可免费用于研究，许可禁止再分发（第 2.2 条），所以 Kaggle 副本不是授权镜像。它的片段不放公开网页（`public_audio: False`）；原 13 个语料的 API 研究评测沿用既有设置；新增两集尚待基线，✅ 不表示已经运行或传输。
+- **SAVEE ✅ 用的是 Kaggle 上的非官方副本**：官方版注册后可免费用于研究，许可禁止再分发（第 2.2 条），所以 Kaggle 副本不是授权镜像。它的片段不放公开网页（`public_audio: False`）；原 13 个语料的 API 研究评测沿用既有设置；新增三集尚待基线，✅ 不表示已经运行或传输。
 - MELD 不是平行文本（电视剧对白），所以不在第 1–3 节的调研表里。
 
 ## 1. 高质量数据集（不在 EmoBox 中）
@@ -143,7 +144,7 @@
 
 ## 3a. 对话上下文候选（2026-11-09 新增，尚未加入评测）
 
-这两项补充服务于“给同一句话增加过去对话后，模型怎样判断情绪”的研究，不要求平行文本。这里单独按用途列出，不据此把数据集标为所有模型都没见过；它们不计入第 0 节已采用的 15 个数据集。
+这两项补充服务于“给同一句话增加过去对话后，模型怎样判断情绪”的研究，不要求平行文本。这里单独按用途列出，不据此把数据集标为所有模型都没见过；它们不计入第 0 节已采用的 16 个数据集。
 
 | # | 数据集（年份，语言） | 说话人 / 条数 / 时长 / **大小** | 情绪类别（英文）；维度 | 平行文本 / 会话结构 | 标签质量 | 音频；模态 | 许可；获取 | 链接 |
 |---|---|---|---|---|---|---|---|---|
@@ -176,7 +177,7 @@ IEMOCAP 的公开许可第 6 条还要求在计划评测、比较及公开报告
 
 ## 3b. 对话音频：已采用的数据与后续候选（2026-11-09 核对）
 
-本轮优先考虑无需机构签署或邮件审批的资源，MIT 是偏好，不将“有 GitHub”“仓库代码是 MIT”和“原音频也是 MIT”混为一谈。按用户选择，**DailyTalk ✅ 和 EmotionTalk ✅ 已采用，计入本项目的 15 个数据集**；两者均已下载、全量核验并发布，待建立基线。原 13 个的已完成评测范围不变；RESD 仍只核实元数据、暂不下载。
+本轮优先考虑无需机构签署或邮件审批的资源，MIT 是偏好，不将“有 GitHub”“仓库代码是 MIT”和“原音频也是 MIT”混为一谈。按用户选择，**DailyTalk ✅ 和 EmotionTalk ✅ 已采用，计入本项目的 16 个数据集**；两者均已下载、全量核验并发布，待建立基线。原 13 个的已完成评测范围不变；RESD 仍只核实元数据、暂不下载。
 
 | 数据集（年份，语言） | 规模 / **公开包大小** | 对话与标注 | 数据许可 / 获取 | 适合本项目的程度 | 一手来源 |
 |---|---|---|---|---|---|
@@ -193,26 +194,39 @@ ID 如 `5_1_d2136` 表示第 2136 段对话的第 5 轮、speaker 1，数字轮�
 
 **其他论文用什么。** [ECSS（AAAI 2024）](https://arxiv.org/pdf/2312.11947)直接用 DailyTalk 做情绪会话语音研究并补标；[EmotionTalk（Findings ACL 2026）](https://aclanthology.org/2026.findings-acl.440/)提供更丰富的音频感知标注。[情绪 M3ED（ACL 2022）](https://github.com/AIM3-RUC/RUCM3ED)也公开中文影视对话音频入口，但本轮未找到明确的数据 MIT/CC 条款，所以不因下载链接存在就认定许可宽松。不要与 `m3ed.io` 的同名机器人视觉数据集混淆。
 
-**本轮决定。** **DailyTalk ✅、EmotionTalk ✅ 已采用并保留**，分别用于英语与中文历史输入实验；项目采用范围为 15 个，但新增两集的基线仍待跑。完整来源、许可、索引和审计已随数据仓库 Release 发布，可在另一台机器恢复。**RESD 暂不下载**：官方字段只有 name/path/emotion/speech，未找到可验证的 dialogue ID、时间戳或轮次定义，不能凭文件名中的数字猜顺序。这不证明顺序绝对无法恢复，但目前不足以支持可靠的历史实验。
+**本轮决定。** **DailyTalk ✅、EmotionTalk ✅ 已采用并保留**，分别用于英语与中文历史输入实验；新增 MultiDialog 见第 3c 节，项目采用范围为 16 个，三集的基线仍待跑。完整来源、许可、索引和审计已随数据仓库 Release 发布，可在另一台机器恢复。**RESD 暂不下载**：官方字段只有 name/path/emotion/speech，未找到可验证的 dialogue ID、时间戳或轮次定义，不能凭文件名中的数字猜顺序。这不证明顺序绝对无法恢复，但目前不足以支持可靠的历史实验。
 
 核查日期：2026-11-09。DailyTalk 已下载并逐文件检查；EmotionTalk 只下载 Audio.tar 与必要小文件，不下载 Multimodal.tar；RESD、Dialogs 仍仅检查公开元数据。仓库总大小不等于需要下载的音频大小；数据包与代码许可分别记录。
 
-## 3c. 第十六个数据集候选：先看研究用途（2026-11-09 复查）
+## 3c. MultiDialog ✅：第十六集的限定采用范围（2026-11-10 实测）
 
-当前采用数仍为 **15**；以下没有下载音频，不标 ✅，也不为凑四乘四图格而自动加入。
+已获授权下载、核验并采用 MultiDialog 的两个官方 test split；**不下载 32.706 GB 全音频库或视频，baseline 待跑**。CaFE 仍为未下载、未采用的后续候选。
 
-| 候选 | 规模与获取 | 能回答什么 / 限制 |
+| 数据集 | 规模与获取 | 本项目范围 / 限制 |
 |---|---|---|
-| **MultiDialog（ACL 2024，英语）** | 8,733 段对话、187,859 句、339.71 h；官方音频包合计 **32.706 GB**。可单独取 test_freq / test_rare，合计 **3.294 GB、831 段、18,142 句、34.05 h**；HF public、ungated，当前 README/API 为 **CC BY-NC 4.0** | **A2 对话历史候选**：官方 JSONL 的 conversation/utterance IDs 和消息顺序明确，有 speaker 与七类评测标签（原始 `Curious to dive deeper` 需按论文映射 neutral）。TopicalChat 剧本由演员按指定情绪录制，仍是表演；所谓 gold subset 是按小规模感知测试筛演员，不是每句都有多人听感 gold。全量 test 也不算轻量，宜先小样本审计。 |
-| **CaFE（MMSys 2018，加拿大法语）** | 12 演员、936 句、七类情绪、六句平行文本、两强度；官方 **48 kHz ZIP 0.187 GB**，HTTP HEAD 已确认 200；**CC BY-NC-SA 4.0** | **A1 说话人参照的低成本候选**：类别与当前七类相符，neutral 可作同人参照；没有对话历史。EmoBox 家族关联另记潜在风险，当前模型是否见过仍须按来源逐项核对。 |
+| **MultiDialog ✅（ACL 2024，英语）** | 官方全集 **8,733 段、187,859 句、339.71 h**；HF 音频包合计 32.706 GB。本次两 test 包 **3.294 GB**，实际 **18,141 WAV / 831 对话 / 32.3997 h**，16 kHz mono PCM16；全部保留文件 **3.758 GB** | **默认 baseline：7,672 条 / 353 段 / 13.0958 h**；双方在官方 gold actor 名单且整对话通过 QC，有过去轮次的共同目标 **7,319**。TopicalChat 指定情绪由演员表演，不是逐句听众共识；通过的是结构/时长合理性检查，没有完成逐句听感或语义对齐验证。 |
+| **CaFE（MMSys 2018，加拿大法语，仍仅候选）** | 12 演员、936 句、七类、六句平行文本、两强度；48 kHz ZIP **0.187 GB**，HTTP HEAD 200；CC BY-NC-SA 4.0 | 低成本 A1 说话人参照候选，没有对话历史；EmoBox 关联按来源另记，不据此宣称严格未见。 |
 
-一手来源：[MultiDialog 当前数据卡](https://huggingface.co/datasets/IVLLab/MultiDialog)、[ACL 论文](https://aclanthology.org/2024.acl-long.860/)、[CaFE 官方 Zenodo](https://zenodo.org/records/1478765)。MultiDialog 当前固定核查 revision 为 `49a79605cf7f07c94f5d6f12ebddfed0be5e7986`；旧 Python loader 的 Apache 字符串不能覆盖音频数据卡的 CC BY-NC 4.0。其旧 `load_dataset` 脚本也不能假定兼容最新 datasets；如采用，优先明确下载指定 split 包与 JSONL。
+**实测与官方数字分开。** 固定版本 `49a79605cf7f07c94f5d6f12ebddfed0be5e7986` 的 test_freq 为 **9,810** 条、test_rare 为 **8,331** 条，均与 WAV 一一对应。README 写的 9,811 / 两 test 34.05 h 与本次包不同；339.71 h 仍只指未下载全集。原始八种情绪字符串中 `Curious to dive deeper` 按论文并入 neutral，再规范为当前七类。`from=human/gpt` 是角色字段，不表示一方为 GPT 合成音频。
+
+**QC 是透明的范围限定。** 全部 WAV 头、PCM payload、元数据配对、轮次连续性检查通过，但发现明显文本/音频分段疑点。在没有运行模型、没有看预测前，根据首轮源数据检查冻结两条规则：
+
+1. 词数 ≥6 且词/秒 >8。
+2. 音频 >30 秒且词/秒 <0.6。
+
+任一触发就排除整段对话；不删除、不裁剪原音频。共 27 条触发，排除 9 段。gold-both 候选从 7,801 条 / 359 段变为 **7,672 条 / 353 段**，保留 98.35% 的条数；最长 26.24 秒。规则不是下载前的盲预注册，也不能保证通过者逐句语义对齐。默认类别为 neutral 5,284、happy 1,064、surprised 1,113、sad 83、disgusted 67、angry 35、fearful 26，报告宏平均时应同时提供逐类样本数。
+
+**对话与标签边界。** `conv_id/utterance_id` 和文件名 speaker 字母能恢复发布顺序，无跨 test 对话 ID 重叠；没有发布 start/end 时间戳，不能据此断言物理无重叠。默认队列实际含 6 个 speaker IDs，a/b 合计仅 21 条，不是均衡覆盖 12 位演员的测试。官方 gold 名单是根据小规模感知测试筛演员，不等于每句多人 gold。H0/真实音频历史/文字历史/无关音频历史应使用相同的 QC 目标交集；提示搜索的开发集另行冻结，不用测试分数反复选提示。
+
+**许可与训练来源。** 当前 README/API 为 **CC BY-NC 4.0、public、ungated**；旧 loader 的 Apache 字符串不覆盖音频许可。八个所选 checkpoint 的公开训练来源、保留骨干和教师清单中均未建立 MultiDialog 的具体使用链，标记为**暂无对应证据**，不宣称 never-used。TopicalChat 文本熟悉度是另外的问题。旧 `load_dataset` 脚本不依赖执行；恢复使用已验证的两包及 JSONL、标准索引、冻结 cohort IDs 和逐文件 SHA。
+
+一手来源：[固定 HF 数据卡](https://huggingface.co/datasets/IVLLab/MultiDialog/tree/49a79605cf7f07c94f5d6f12ebddfed0be5e7986)、[ACL 论文](https://aclanthology.org/2024.acl-long.860/)、[本地完整审计与排除名单](../data/multidialog/README.md)、[CaFE 官方 Zenodo](https://zenodo.org/records/1478765)。
 
 **RESD / Dialogs 不是下载失败。** RESD 的 MIT/公开访问仍有效，但官方 `name/path/emotion/speech/text` 没有给出可验证的跨 speaker 时间线；不能把文件名数字直接认证为轮次。Dialogs 的文件名有 speaker-pair/part/index 线索，CSV 却仍无时间戳或正式跨 speaker 排序定义；其七种情绪与 poem/whisper 等风格还需分开。两者可以获取，但本轮仍不足以当作已核实的历史实验集。[RESD 官方说明](https://huggingface.co/datasets/Aniemore/resd_annotated)、[Dialogs 官方说明与免费许可](https://huggingface.co/datasets/langswap/dialogs-ru-emotional-conversations)。
 
 **其他排查。** Expresso 官方确实保留双声道对话时间流，CC BY-NC 4.0；但全包约 38 GB、标签混合多种风格，不能直接当七类听感情绪数据。OMG-Emotion 官方只提供 YouTube 链接，并另列不向第三方提供、用毕删除等条件，不适合本项目当前的 Release 镜像流程。[Expresso 官方](https://github.com/facebookresearch/textlesslib/tree/main/examples/expresso/dataset)、[OMG 官方](https://github.com/knowledgetechnologyuhh/OMGEmotionChallenge)。
 
-建议：主线若继续 A2，优先考察 **MultiDialog** 的小范围；若想低成本补充独立语言下的 A1 对照，**CaFE** 更方便。两者都不能替代 H0/H1 匹配的人类标注。
+本轮采用 MultiDialog 的 QC 限定 A2 范围；CaFE 留作后续低成本 A1 候选。两者都不能替代 H0/H1 匹配的人类标注。
 
 ## 4. 注意事项
 
@@ -256,11 +270,11 @@ ID 如 `5_1_d2136` 表示第 2136 段对话的第 5 轮、speaker 1，数字轮�
 - Expresso：https://speechbot.github.io/expresso/ 、https://arxiv.org/abs/2308.05725 ；EARS：https://github.com/facebookresearch/ears_dataset 、https://arxiv.org/abs/2406.06185 ；CSEMOTIONS：https://huggingface.co/datasets/ATH-MaaS/CSEMOTIONS ；BERSt：https://arxiv.org/abs/2505.00059 ；EmoTale：https://arxiv.org/abs/2508.14548 ；CAVES：https://pmc.ncbi.nlm.nih.gov/articles/PMC11289252/ ；KESDy18：https://nanum.etri.re.kr/share/kjnoh2/KESDy18?lang=En_us ；KazEmoTTS：https://arxiv.org/abs/2404.01033 ；EmoNet-Voice：https://arxiv.org/abs/2506.09827 ；mExpresso：https://github.com/facebookresearch/seamless_communication/blob/main/docs/expressive/README.md ；GEMEP：https://www.unige.ch/cisa/gemep ；Thorsten：https://openslr.org/110/
 - 音频大模型相关：LISTEN https://arxiv.org/abs/2510.10444 ；VoxEmo https://arxiv.org/abs/2603.08936 ；Kimi-Audio https://arxiv.org/abs/2504.18425 ；OSUM https://arxiv.org/abs/2501.13306 ；Qwen-Audio https://arxiv.org/abs/2311.07919 ；Qwen2-Audio https://arxiv.org/abs/2407.10759 ；Qwen2.5-Omni https://arxiv.org/abs/2503.20215 ；SALMONN https://arxiv.org/abs/2310.13289 ；Audio Flamingo https://arxiv.org/abs/2402.01831 ；AF2 https://arxiv.org/abs/2503.03983 ；AF3 https://arxiv.org/abs/2507.08128 ；SpiRit-LM https://arxiv.org/abs/2402.05755 ；Gemini 2.5 https://arxiv.org/abs/2507.06261
 
-## 6. 已下载到本地（2026-10-23；ESD 为 2026-10-26；RAVDESS、TESS、JL-Corpus 为 2026-10-27；MEAD、MELD、EMOVO、Emozionalmente 为 2026-11-05；SAVEE 为 2026-11-06；DailyTalk、EmotionTalk 为 2026-11-09）
+## 6. 已下载到本地（2026-10-23；ESD 为 2026-10-26；RAVDESS、TESS、JL-Corpus 为 2026-10-27；MEAD、MELD、EMOVO、Emozionalmente 为 2026-11-05；SAVEE 为 2026-11-06；DailyTalk、EmotionTalk 为 2026-11-09；MultiDialog 为 2026-11-10）
 
-在 `emotion_recognition/` 项目目录运行 `python3 scripts/common/setup_datasets.py`，可从固定版本数据子模块恢复 Release 镜像；只恢复新增两集可运行 `python3 scripts/common/setup_datasets.py dailytalk emotiontalk`。这只下载/校验数据，不启动评测。数据仓库发布提交 `df12b36` 的 manifest 有 **15 个条目：11 个 Release 镜像、4 个外部来源**。DailyTalk、EmotionTalk 已发布，基线待跑；不能把恢复完成当作 15 个数据集都已评测。
+在 `emotion_recognition/` 项目目录运行 `python3 scripts/common/setup_datasets.py`，可从固定版本数据子模块恢复 Release 镜像；只恢复新增三集可运行 `python3 scripts/common/setup_datasets.py dailytalk emotiontalk multidialog`。这只下载/校验数据，不启动评测。当前数据 manifest 有 **16 个条目：12 个 Release 镜像、4 个外部来源**。DailyTalk、EmotionTalk、MultiDialog 已发布，基线待跑；不能把恢复完成当作 16 个数据集都已评测。
 
-Git 保存来源、许可、索引、校验和及小样例，大音频归档不进入 Git 或 Git LFS。11 个镜像是 MCAE-SPPS、nEMO、TESS、JL-Corpus、EMOVO、THAI-SER、MEAD、MELD、SAVEE、DailyTalk、EmotionTalk；CREMA-D、MESS、RAVDESS、Emozionalmente 仍从各自外部原源取得。新的 nEMO 恢复使用原始 Parquet，不需要旧传输分片。[data/README.md](../data/README.md) 与 [发布清单](../data/manifest.json) 记录准确范围、文件 SHA-256 与条款；SAVEE 的原许可限制及仓库所有者于 2026-11-09 确认的额外上传授权分别保留。
+Git 保存来源、许可、索引、校验和及小样例，大音频归档不进入 Git 或 Git LFS。12 个镜像是 MCAE-SPPS、nEMO、TESS、JL-Corpus、EMOVO、THAI-SER、MEAD、MELD、SAVEE、DailyTalk、EmotionTalk、MultiDialog；CREMA-D、MESS、RAVDESS、Emozionalmente 仍从各自外部原源取得。新的 nEMO 恢复使用原始 Parquet，不需要旧传输分片。[data/README.md](../data/README.md) 与 [发布清单](../data/manifest.json) 记录准确范围、文件 SHA-256 与条款；SAVEE 的原许可限制及仓库所有者于 2026-11-09 确认的额外上传授权分别保留。
 
 以下也记录旧数据的原始下载流程：可用 `python3 scripts/common/download_data.py --source --dataset NAME`；`--source --dataset all` 不含 ESD。原源校验及断点规则仍按各数据源处理，单个 ZIP 中断可能需重下。表中的来源包范围不一定等于当前 Release 镜像，当前本地大小见第 0 节。
 
@@ -282,8 +296,9 @@ Git 保存来源、许可、索引、校验和及小样例，大音频归档不�
 | SAVEE ✅ | `savee` | `data/savee/` | Kaggle 上的非官方 zip（0.113 GB，解压后删除），解压在 `audio/ALL/`：480 个 WAV（44.1 kHz 单声道，1.6–7.1 秒，共 0.51 h，0.16 GB）；文件名为"说话人_情绪+句子编号"，如 `DC_a01.wav`：说话人 `DC`、`JE`、`JK`、`KL`（都是男性，各 120 条），情绪 `a` anger、`d` disgust、`f` fear、`h` happiness、`sa` sadness、`su` surprise（各 60 条，即 15 句）和 `n` neutral（120 条，30 句）。官方版需要注册，许可禁止再分发：这些文件不要转发 | Kaggle 不公布校验值：先用 zip 自带的 CRC 自检，再核对脚本里固定的 SHA-256 |
 | DailyTalk ✅ | `dailytalk` | `data/dailytalk/` | 23,773 对原始 WAV/TXT、2,541 段有序对话、21.674 h；另保留原 metadata、ECSS 补充文件、`utterances.csv`、`dialogues.csv` 和审计，全部文件 6.917 GB。严格 pilot 排除的两段仍保留原件；**基线待跑** | 全部 47,560 文件的大小/SHA-256 与 Release manifest 固定；音频审计、分片及本地 fresh restore 验证通过 |
 | EmotionTalk ✅ | `emotiontalk` | `data/emotiontalk/` | 官方 Audio.tar 的 19,250 对 WAV/音频 JSON、742 段对话（734 段双 speaker）、23.6025 h；附官方划分和有序索引/审计，共 14.793 GB。官方 test 1,929 条，主要双人历史候选 1,830；未下载 Multimodal.tar 或 36.108 GB 整库；**基线待跑** | 原 Audio.tar 按官方 LFS SHA-256 核对；全部音频及配对检查通过，保留文件和 Release 分片按 manifest 固定并核验 |
+| MultiDialog ✅ | `multidialog` | `data/multidialog/` | 官方 test_freq/test_rare 全部18,141原始WAV/831对话/32.3997h；保留源码JSONL、索引、QC排除名单和cohort IDs，共3.758GB。默认gold-both+整对话QC为7,672条/353段/13.0958h，历史目标7,319；**baseline待跑**，未下载全集或视频 | 两官方tar及JSONL按LFS SHA核对；全量WAV payload、逐文件 SHA、cohort/QC、Release分片和fresh restore均验证；原件含排除项一并保留 |
 
-2026-11-09 清理下载/打包临时文件后，整个 `data/` 实测约 **41.2 GB**，包括已保留的 DailyTalk / EmotionTalk（原文件约 **21.7 GB**）以及本地 ESD。旧下载布局在 2026-11-06 为约 30 GB，不能继续当作当前磁盘占用；Release 镜像的范围也不同于上表官方全集。已完整解压并核验的 ZIP 已清理；原始来源下载器通过 `unpacked.json` 记录解压文件，通常只有文件缺失才会重下。
+2026-11-09 的历史快照中，清理下载/打包临时文件后整个 `data/` 实测约 **41.2 GB**，包括已保留的 DailyTalk / EmotionTalk（原文件约 **21.7 GB**）以及本地 ESD。本次新增 MultiDialog 保留文件另为3.758GB；该历史数字和旧2026-11-06约30GB布局均不能当作当前实时占盘；Release 镜像的范围也不同于上表官方全集。已完整解压并核验的 ZIP 已清理；原始来源下载器通过 `unpacked.json` 记录解压文件，通常只有文件缺失才会重下。
 官方源下载路线中的 THAI-SER 和 nEMO 使用 parquet（需要 `pyarrow`），评估时缓存所需 WAV；THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音。当前 THAI-SER Release 镜像直接保留四个评估类别的选定 FLAC，不需保留完整原始 parquet；nEMO 镜像保留两个原始 parquet，评估时提取音频。以 [data/README.md](../data/README.md) 的逐项范围为准。
 MEAD 和 MELD 转换成 WAV 需要 ffmpeg。MELD 转换完成后再运行下载，只有缺少 WAV 时才会重新下载 10.88 GB 的压缩包。
 ESD 仅限研究使用：使用前要按它的 [GitHub 页面](https://github.com/HLTSingapore/Emotional-Speech-Data)的说明填写许可表，并发邮件给作者。

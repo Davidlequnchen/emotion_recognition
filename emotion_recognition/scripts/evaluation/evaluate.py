@@ -61,6 +61,7 @@ reports/summary.json (fractions, rounded to 6 decimals):
                      the run shown in the model's summary (the one with the most clips); the shared_* keys only when
                      there are shared emotions
 """
+import argparse
 import collections
 import csv
 import functools
@@ -1184,7 +1185,10 @@ def finished_run(model, key, limit, protocol=None):
     return None
 
 
-def main():
+def main(config_path=None):
+    global CONFIG
+    if config_path is not None:
+        CONFIG = Path(config_path).resolve()
     sys.stdout.reconfigure(line_buffering=True)  # keep prints in order, also when redirected to a log
 
     # ------------------------------------------------------------------
@@ -1192,6 +1196,9 @@ def main():
     # ------------------------------------------------------------------
     step("Step 1/8 | Load configuration")
     settings = yaml.safe_load(CONFIG.read_text()) or {}
+    # Keep the loader's shared fixed-subset dictionary aligned with an explicitly selected config.
+    SUBSETS.clear()
+    SUBSETS.update(settings.get("subsets") or {})
     registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
     missing = [k for k in SETTINGS if k not in settings]
     if missing:
@@ -1412,4 +1419,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Evaluate registered SER/audio models on downloaded datasets")
+    parser.add_argument("--config", type=Path, default=CONFIG,
+                        help="evaluation YAML; relative dataset/model paths remain relative to the project")
+    main(parser.parse_args().config)

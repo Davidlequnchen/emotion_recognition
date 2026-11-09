@@ -4,7 +4,7 @@
 英文版：[research_angles.md](research_angles.md)。另见 [datasets_survey.md](../../emotion_recognition/docs/datasets_survey.md)、
 [related_work.md](related_work.md)、[venues.md](venues.md)。[experimental_design.md](experimental_design.md) 保留了旧设计，执行前应核对本页的新范围。
 
-目前采用 15 个数据集：原 13 个已有 SER 基线，DailyTalk、EmotionTalk 已下载核验、待跑基线。有 5 个专用 SER 模型；三个开源音频 LLM 是 Gemma 4 E4B、Qwen2.5-Omni 7B、Qwen2-Audio 7B。
+目前采用 16 个数据集：原 13 个已有 SER 基线，DailyTalk、EmotionTalk、MultiDialog 已下载核验并接入 loader，待跑基线。有 5 个专用 SER 模型；三个开源音频 LLM 是 Gemma 4 E4B、Qwen2.5-Omni 7B、Qwen2-Audio 7B。
 API 模型属于后续可选验证。只使用获准用于相应实验的公开研究数据，不使用公司数据。
 
 ## 1. 我们现在真正想问什么？
@@ -38,7 +38,7 @@ API 模型属于后续可选验证。只使用获准用于相应实验的公开�
 | 方向 | 本轮定位 | 当前状态 |
 |---|---|---|
 | **A1：说话人参照** | 核心候选之一 | 设计 pilot；尚未实现参照输入 |
-| **A2：真实对话历史** | 核心候选之一；先从 MELD 开始 | 三模型的 MELD 单句基线已完成；上下文条件尚未实现 |
+| **A2：真实对话历史** | 核心候选之一；先从 MELD 开始 | 三模型 MELD 单句基线已完成；EmotionTalk train 的 Omni 240 条 H0–H3 已准备，暂缓推理 |
 | **B：GEPA 与反馈信息** | 有明确问题后再做的改善实验 | 保留方向，不先铺开大网格 |
 | **0：13 数据集基准** | 已有研究地基 | 5 个 SER 已完成；音频 LLM 评测进行中 |
 | **C：训练来源** | 必要的背景分层 | 核对公开来源；不能仅凭成绩认定污染 |
@@ -158,7 +158,7 @@ MELD 有一套基于视频和转写的情绪标签，没有同一目标在 H0 / 
 | 4 | 挑一个问题扩大，加入独立数据和不同模型验证 | 只有出现清楚失败模式，才优先考虑 B 的改善实验 |
 
 **当前实现状态（2026-11-09）。** `config/evaluation.yaml` 已限定本机 MELD＋三个开源 LLM，`limit: null`，依次运行。
-现有 `evaluate.py` 仍是**每条音频独立输入**，没有 demonstrations 或对话历史。H1–H3 / S1–S3 的输入构造、缓存隔离和结果对齐尚未实现。
+现有 `evaluate.py` 仍是**每条音频独立输入**。另有 `scripts/evaluation/context_pilot.py` 已实现 EmotionTalk train 的 H0–H3、多音频边界、独立缓存和逐目标配对分析；固定 240 条来自 197 段对话。按用户要求仅 prepare，尚未推理。S1–S3 说话人参照仍待实现。详见[运行与解释](../../emotion_recognition/docs/context_pilot.md)。
 运行单句配置并不等于完成上下文 pilot；新增条件应另设实验身份，避免覆盖或误复用基线。
 
 时间以本次运行和多音频试跑实测为准；旧的 few-shot 全网格时间估算不再作为排期依据。
@@ -180,7 +180,7 @@ EmotionTalk 的 validation/test 共享部分 speaker IDs；若要说话人独立
 
 **规模与时间。** 本机 MELD 推理为 Gemma 27.3、Omni 31.0、Qwen2-Audio 43.8 分钟。按条数/总时长两种方式外推，三模型两套全量 H0 约 28–33 小时；EmotionTalk test 约 1.3–1.8 小时，DailyTalk validation 约 47–48 分钟。这些不是置信区间或完成保证；先用开发小样本测实际吞吐。
 
-**实现先过关，再解释结果。** 两个 evaluation loaders 和 H1–H3 尚未接入，改数据集名字不能直接启动正确实验。第一轮先用最近一个完整过去轮次，`history.end <= target.start`，按开始时间排序，始终保留完整目标。EmotionTalk 当前 CSV 的三轮列表按结束时间排，部分历史互相重叠，不能直接作为开始顺序串接。其 test 中 135/1,830 组三轮历史＋目标超过 30 秒；Gemma/Qwen2-Audio 会截断，必须先给完整目标留预算，再缩减较旧历史，跨模型采用相同规则。
+**实现先过关，再解释结果。** 三个新 loader 和 EmotionTalk 的 Omni H0–H3 已接入，轻量边界/缓存检查通过；真实推理尚未运行，不能称实验验证完成。第一轮先用最近一个完整过去轮次，`history.end <= target.start`，按开始时间排序，始终保留完整目标。EmotionTalk 当前 CSV 的三轮列表按结束时间排，部分历史互相重叠，不能直接作为开始顺序串接。其 test 中 135/1,830 组三轮历史＋目标超过 30 秒；Gemma/Qwen2-Audio 会截断，必须先给完整目标留预算，再缩减较旧历史，跨模型采用相同规则。
 
 冻结目标/历史 IDs、匿名 speaker 标记、目标边界、转写清理、历史顺序和长度预算；将这些及 condition/seed 纳入缓存身份。不给 history emotion/intensity、caption 或目标 gold。可在开发小样本加“只给目标转写”作为辅助检查。接口和提示冻结后，先跑新语料单句基线，再在共同目标集比较上下文条件，有信号后扩展模型和独立对话。本轮没有启动新推理。
 
@@ -229,7 +229,7 @@ LLM 不是所有指标都同时领先或落后；MELD 的某个指标反转只�
 
 ### C. 训练来源：模型公开声明见过什么？
 
-本项目将直接训练和上游间接使用均计为“见过”：包括预训练、seed 微调、教师伪标签链与明确的开发校准。C/I 分别说明直接/上游方式，不将间接使用排除在已见组之外。
+本项目将直接训练和上游间接使用均计为“见过”：包括预训练、seed 微调、教师伪标签链与明确的开发校准。图中均用同一种训练斜线；具体方式只保留在来源记录中，不将间接使用排除在已见组之外。
 
 记录训练语料、版本、划分、骨干和伪标签来源，分清**直接训练使用**、**间接教师影响**、**可能开发关联**、**测试文件泄漏**和**暂无对应证据**，来源见
 [模型调研](../../emotion_recognition/docs/models_survey.md)与[分级来源审核](../../emotion_recognition/docs/training_provenance.md)。
@@ -306,3 +306,6 @@ JEV 式结构化输出、电话编码不纳入本轮；背景分别见 [jev_anal
 
 投稿目标与已核实截止日期见 [venues.md](venues.md)。先判断证据是否足够，再决定适合 ACL / EMNLP 还是语音领域会议；
 公司发表流程、作者服务要求和数据获取仍应在排期时核对。
+
+
+2026-11-10 实现状态：240 个 EmotionTalk train 目标，七类各 34–35 条；H3 按其他对话的相同发布 speaker ID 与时长配对。H2 已去除 ASCII/全角方括号内人工声学标记。当前无新模型结果，不自动开始后台运行。MultiDialog 以双方 gold actor＋整对话分段 QC 的 7,672 条作为默认基线，不将 actor筛选称逐句听感 gold。

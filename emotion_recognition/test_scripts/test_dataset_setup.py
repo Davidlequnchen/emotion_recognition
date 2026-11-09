@@ -349,6 +349,27 @@ class SourceDispatchTests(unittest.TestCase):
         configure.assert_called_once_with(None)
         run.assert_not_called()
 
+    def test_new_manifest_mirror_keys_do_not_require_a_publisher_downloader(self):
+        module, folder = self.load()
+        for name in ['dailytalk', 'emotiontalk', 'multidialog']:
+            with self.subTest(dataset=name), \
+                    mock.patch.object(module.subprocess, 'call', return_value=0) as run, \
+                    mock.patch.object(module, 'configure_https') as configure:
+                self.assertEqual(module.main(['--dataset', name]), 0)
+            self.assertEqual(run.call_args.args[0], [sys.executable, str(folder / 'scripts/common/setup_datasets.py'),
+                                                   name, '--workers', '4'])
+            configure.assert_not_called()
+
+    def test_source_mode_still_rejects_a_key_without_a_publisher_downloader(self):
+        module, _ = self.load()
+        with mock.patch.object(module.subprocess, 'call') as run, \
+                mock.patch.object(module, 'download_dataset') as download, \
+                self.assertRaises(SystemExit) as caught:
+            module.main(['--dataset', 'multidialog', '--source'])
+        self.assertEqual(caught.exception.code, 2)
+        run.assert_not_called()
+        download.assert_not_called()
+
     def test_all_original_sources_explicitly_excludes_esd(self):
         module, _ = self.load()
         with mock.patch.object(module, 'configure_https'), \
