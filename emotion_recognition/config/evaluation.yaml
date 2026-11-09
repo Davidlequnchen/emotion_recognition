@@ -8,15 +8,16 @@
 #   auto : cuda when PyTorch sees an NVIDIA GPU (torch.cuda.is_available()), otherwise mac
 #   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
 #   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
-mode: auto
+mode: mac         # local MELD baseline pilot (2026-11-09); use auto/cuda again on the company server
 
-models: [qwen2_5_omni_7b]
+models: [gemma4_e4b, qwen2_5_omni_7b, qwen2_audio_7b]
                   # phase 1: the SER models; phase 2: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b];
                   # all = every registered model, or any list of keys from config/models.yaml
 api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
                   # requests, key in the .env file at the repository root); false: skip them, also when listed
                   # in `models`
-datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess]
+datasets: [meld]  # single-utterance baseline only; dialogue history and ICL are separate future pilot conditions
+                  # all = all downloaded datasets, or a list such as [crema_d, ravdess]
                   # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus | mead | meld
                   # | emovo | emozionalmente | savee)
 subsets:          # fixed subsets of two large datasets, to save compute (decided 2026-11-06). Every model and every
@@ -30,10 +31,11 @@ exclude: [esd]        # never evaluated, even with `all`, and left out of the su
                   # their data stays in data/. ESD: its licence forbids sharing any part of the data
 limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
                   # sample); null = every clip. A model's own `limit` in config/models.yaml wins (none set now)
-overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/;
+overwrite: false  # false: skip matching finished results (same limit; LLM inference_protocol must also match);
                   # true: evaluate it again and replace them. The summaries show every result there,
                   # except those of excluded datasets
-plots: true       # true: at the end, draw the bar plots of every model on every dataset (scripts/viewer/plot_results.py,
+plots: false      # local pilot: keep global comparison plots unchanged; per-model reports are still written
+                  # true: at the end, draw the bar plots of every model on every dataset (scripts/viewer/plot_results.py,
                   # settings in config/plots.yaml); false: run that script by hand when you want the plots
 devices:          # device per mode; a model's mac_device (in config/models.yaml) overrides devices.mac
   mac: mps

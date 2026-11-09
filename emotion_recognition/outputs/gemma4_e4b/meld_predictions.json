@@ -4,7 +4,7 @@
   "language": "English",
   "model": "gemma4_e4b",
   "model_name": "Gemma 4 E4B",
-  "date": "2026-11-08",
+  "date": "2026-11-09",
   "clips": 2608,
   "total_clips": 2608,
   "classes": [
@@ -45,14 +45,14 @@
   "notes": [
     "Gemma 4 E4B (thinking off) gets one conversation per clip in its chat template: the system prompt, then one user turn with the user prompt first and the audio after it (as the model card advises), with the system and user prompts of `scripts/llm_eval/prompts.yaml` (the same as for GPT Realtime); the clip as 16 kHz mono (at most its first 30 s)",
     "Greedy decoding (do_sample=False, no repetition penalty), at most 24 new tokens, bfloat16 on `mps`, sdpa attention; so the answers are the same from run to run (up to rounding differences between devices)",
-    "The answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the 7 emotions plus `invalid`. An answer that is not exactly one label gets a follow-up in the same conversation (\"Answer with exactly one word from this list, in lowercase, and nothing else: angry, disgusted, fearful, happy, neutral, sad, surprised.\"), up to 1 time(s); then `invalid`",
+    "The answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the 7 configured emotions plus `invalid`. Allowed answers for this run: angry, disgusted, fearful, happy, neutral, sad, surprised. An answer that is not exactly one allowed label gets a follow-up in the same conversation (\"Answer with exactly one word from this list, in lowercase, and nothing else: angry, disgusted, fearful, happy, neutral, sad, surprised.\"), up to 1 time(s); then `invalid`",
     "An answer that is not one of the dataset's emotions counts as wrong (column *other answer* of the confusion matrices); the raw answers are in `outputs/gemma4_e4b/responses.jsonl`"
   ],
   "metrics": {
-    "accuracy": 0.448236,
-    "unweighted_accuracy": 0.323909,
-    "macro_f1": 0.32536,
-    "accuracy_all_classes": 0.448236
+    "accuracy": 0.478144,
+    "unweighted_accuracy": 0.296598,
+    "macro_f1": 0.308557,
+    "accuracy_all_classes": 0.478144
   },
   "ground_truth": "acted_emotion",
   "correct_columns": {
@@ -71,8 +71,22 @@
   "runtime": {
     "device": "mps",
     "hardware": "Apple M4 Max",
-    "seconds": 1417.6,
-    "ms_per_clip": 543.6,
+    "seconds": 1636.3,
+    "ms_per_clip": 627.4,
     "on_cpu": 0
+  },
+  "inference_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
   }
 }
