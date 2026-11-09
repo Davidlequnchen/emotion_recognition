@@ -34,9 +34,9 @@ antideepfake/third_party/
 *.onnx
 *.bin
 
-# Data: datasets are never committed (size, and several licences forbid sharing copies).
-# Download them with emotion_recognition/scripts/common/download_data.py. Only the six small CREMA-D test clips in
-# emotion_recognition/data/samples/ are committed.
+# Data stays ignored by default. Selected local datasets are force-added for machines that cannot reach their
+# hosts; see emotion_recognition/data/README.md for their scope and sources. Zenodo-hosted datasets are downloaded
+# with emotion_recognition/scripts/common/download_data.py instead. ESD stays local.
 emotion_recognition/data/*
 !emotion_recognition/data/samples/
 # Hidden states of the local audio LLMs (features/<model>/<dataset>/, a few GB; scripts/models/audio_llm.py)
