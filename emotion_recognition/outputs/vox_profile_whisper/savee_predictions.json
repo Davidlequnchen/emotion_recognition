@@ -28,7 +28,7 @@
   "accept": {},
   "chance": 0.142857,
   "in_training_data": false,
-  "training_source": "MSP-Podcast",
+  "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
   "model_classes": [
     "angry",
     "contempt",
@@ -71,5 +71,10 @@
     "seconds": 112.4,
     "ms_per_clip": 234.1,
     "on_cpu": 0
-  }
+  },
+  "training_status": "not_established",
+  "training_evidence": [
+    "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+    "https://huggingface.co/openai/whisper-large-v3#training-data"
+  ]
 }

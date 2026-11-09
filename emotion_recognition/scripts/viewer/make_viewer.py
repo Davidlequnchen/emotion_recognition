@@ -66,6 +66,8 @@ from PIL import Image, features
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
 from eval_datasets import SOURCES
+from training_provenance import (EXPOSURE_LEVELS, EXPOSURE_NOTE, training_marker,
+                                 training_metadata, with_training_provenance)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "llm_eval"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from prompts import configured_protocol
@@ -135,12 +137,13 @@ def load_plots():
     return plots
 
 
-def load_summary(path, exclude):
+def load_summary(path, exclude, entry=None):
     """reports/<model>/summary.json without the excluded datasets, its confusion-matrix figure embedded."""
     summary = read_json(path)
     hidden = {d["dataset"] for d in summary["datasets"] if d["key"] in exclude}  # display names, as in the figure
-    summary["datasets"] = [d for d in summary["datasets"] if d["key"] not in exclude]
-    summary["shared"] = [d for d in summary.get("shared", []) if d["key"] not in exclude]
+    summary["datasets"] = [with_training_provenance(d, entry) for d in summary["datasets"] if d["key"] not in exclude]
+    summary["shared"] = [with_training_provenance(d, entry) for d in summary.get("shared", []) if d["key"] not in exclude]
+    summary["training_source"] = (entry or {}).get("training_source", "")
     summary["acted_or_listener"] = [name for name in summary.get("acted_or_listener", []) if name not in hidden]
     figure = path.parent / summary["figure"] if summary.get("figure") else None
     if figure and hidden & set(summary.get("figure_datasets", [])):
@@ -174,13 +177,15 @@ def best_metadata(metas):
 
 def current_summary(model, chosen, entry):
     """Build a summary from selected prediction metadata/CSVs, including the current shared-subset scoring rule."""
-    ranked = sorted(chosen.items(), key=lambda item: (not item[1].get("in_training_data", False),
+    chosen = {path: with_training_provenance(meta, entry) for path, meta in chosen.items()}
+    evidence_order = {status: i for i, status in enumerate(EXPOSURE_LEVELS)}
+    ranked = sorted(chosen.items(), key=lambda item: (evidence_order[item[1]["training_status"]],
                                                       -item[1]["metrics"]["accuracy"]))
     datasets = [{"dataset": meta["dataset"], "key": meta["key"], "language": meta.get("language", ""),
                  "clips": meta["clips"], "total_clips": meta.get("total_clips", meta["clips"]),
                  "emotions": len(meta["classes"]), "labels": meta.get("labels", meta["classes"]),
                  "chance": meta.get("chance", 1 / len(meta["classes"])), "accept": meta.get("accept", {}),
-                 "in_training_data": meta.get("in_training_data", False), "metrics": meta["metrics"],
+                 **training_metadata(meta["key"], entry), "metrics": meta["metrics"],
                  **({"inference_protocol": meta["inference_protocol"]} if "inference_protocol" in meta else {})}
                 for _, meta in ranked]
     shared = sorted(set.intersection(*(set(meta["classes"]) for meta in chosen.values()))) if len(chosen) > 1 else []
@@ -197,7 +202,7 @@ def current_summary(model, chosen, entry):
                             "clips": len(rows), "sample": meta["clips"] < meta.get("total_clips", meta["clips"]),
                             "accuracy": sum(hits) / len(hits) if hits else None,
                             "unweighted_accuracy": sum(recalls) / len(recalls) if recalls else None,
-                            "in_training_data": meta.get("in_training_data", False)})
+                            **training_metadata(meta["key"], entry)})
     # Individual figures share the selected CSV's stem and are written before its completion metadata. Compose
     # them in memory rather than embedding a stale summary_confusion.png from a legacy seven-choice run.
     settings_path = ROOT / "config" / "evaluation.yaml"
@@ -376,6 +381,7 @@ def main():
             print(f"  skipped     : {rel(f)}, no finished .json next to it (a run in progress?)")
         elif meta["key"] not in exclude:
             meta = meta | {"model": meta.get("model") or f.parent.name}
+            meta = with_training_provenance(meta, registry.get(meta["model"]))
             if current_run(meta, registry):
                 metas[f] = meta
             else:
@@ -397,7 +403,7 @@ def main():
         if chosen:
             summary = current_summary(model, chosen, entry)
         else:
-            summary = load_summary(path, exclude) if path.is_file() else None
+            summary = load_summary(path, exclude, entry) if path.is_file() else None
             if summary:
                 # Without per-clip predictions, an old summary may use the former SER-only probability reselection.
                 # Keep its other information, but do not present incomparable shared-subset scores.
@@ -408,8 +414,9 @@ def main():
         page_models.append({"key": model, "name": name, "training_source": source, "summary": summary})
         if summary:
             order += [d["key"] for d in summary["datasets"] if d["key"] not in order]
-            trained = [d["dataset"] for d in summary["datasets"] if d.get("in_training_data")]
-            print(f"  {name:<20}: {len(summary['datasets'])} datasets; in its training data: {', '.join(trained) or 'none'}; "
+            marked = [f"{d['dataset']}{training_marker(d)} ({EXPOSURE_LEVELS[d['training_status']]['label']})"
+                      for d in summary["datasets"] if training_marker(d)]
+            print(f"  {name:<20}: {len(summary['datasets'])} datasets; training-source evidence: {', '.join(marked) or 'no corpus-specific evidence'}; "
                   f"confusion matrices: {'yes' if summary['figure'] else 'none'}")
         else:
             print(f"  {name:<20}: no summary yet (run python scripts/evaluation/evaluate.py), so example clips only")
@@ -437,7 +444,7 @@ def main():
             "key": key, "dataset": first["dataset"], "language": first.get("language", ""),
             "ground_truth": first["ground_truth"], "accept": first.get("accept") or {},
             "runs": {model: {"total": len(run["rows"]), "total_clips": run["meta"].get("total_clips") or len(run["rows"]),
-                             "criteria": run["criteria"], "in_training_data": run["meta"].get("in_training_data"),
+                             "criteria": run["criteria"], **training_metadata(key, registry.get(model)),
                              "columns": run["meta"].get("columns", {})} for model, run in runs[key].items()},
             "clips": clips,
         })
@@ -453,7 +460,7 @@ def main():
     plots = load_plots()  # the bar plots of plot_results.py, if they have been drawn
     print(f"  bar plots   : {', '.join(p['metric'] for p in plots) or 'none (run scripts/viewer/plot_results.py)'}")
     data = {"seed": seed, "picks": {"correct": n_correct, "wrong": n_wrong}, "models": page_models, "sources": sources,
-            "plots": plots}
+            "plots": plots, "training_evidence_levels": EXPOSURE_LEVELS, "training_evidence_note": EXPOSURE_NOTE}
     write_page(out, data, datasets, link_audio)
     if site:
         public = [d for d in datasets if SOURCES.get(d["key"], {}).get("public_audio")]

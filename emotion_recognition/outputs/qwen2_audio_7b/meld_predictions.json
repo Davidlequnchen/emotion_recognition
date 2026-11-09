@@ -28,7 +28,7 @@
   "accept": {},
   "chance": 0.142857,
   "in_training_data": false,
-  "training_source": "not published (Alibaba)",
+  "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
   "model_classes": [
     "angry",
     "disgusted",
@@ -88,5 +88,10 @@
     ],
     "prompt_hash": "aab2967fd07a",
     "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
-  }
+  },
+  "training_status": "not_established",
+  "training_evidence": [
+    "https://arxiv.org/html/2407.10759v1#S3.SS1",
+    "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+  ]
 }

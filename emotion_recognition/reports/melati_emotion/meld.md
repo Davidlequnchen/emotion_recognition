@@ -59,7 +59,7 @@ Most frequent confusions: disgusted predicted as happy (59.7%), surprised predic
 
 ## Caveats
 
-- **Not in Melati's training data** (nine acted corpora, JL-Corpus among them).
+- **Training involvement for Melati: No corpus-specific evidence**. Source: Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **In-the-wild speech with noisy labels.** The annotators saw the video and the transcript, not the voice alone, and agreed moderately (Fleiss' kappa 0.43); the classes are very unbalanced (48% neutral, 2% fear).
 - Several speakers, laughter of the studio audience and background music can be heard in a clip; a third of the clips are shorter than 2 s.
 - MELD's train split is in the training data of MERaLiON-SER-v1 and of EmoBox (emotion2vec+), so these models have heard the same speakers and show.

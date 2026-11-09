@@ -60,7 +60,7 @@ Most frequent confusions: happy predicted as neutral (46.5%), disgusted predicte
 
 ## Caveats
 
-- **Not in MERaLiON-SER-v1's training data** (CREMA-D, ESD, MELD, M3ED and Singaporean speech).
+- **Training involvement for MERaLiON-SER-v1: Used via upstream training**. Evidence scope: upstream teacher lineage. SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON. Source: SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Weak intensity.** A third of the emotional clips are acted at level 1 (weak), which is often hard to tell from neutral; the intensity of each clip is kept in the loader but not in the reports.
 - No listeners' labels per clip are published, so there is one way of counting a prediction as correct.
 - The sentences differ between emotions: besides common and generic sentences, each emotion has emotion-related ones, whose words hint at the emotion; a model that understands English text can use them.

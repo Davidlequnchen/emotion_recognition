@@ -60,7 +60,7 @@ Most frequent confusions: disgusted predicted as neutral (42.1%), angry predicte
 
 ## Caveats
 
-- **Not in Melati's training data** (nine acted corpora, JL-Corpus among them).
+- **Training involvement for Melati: No corpus-specific evidence**. Source: Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Weak intensity.** A third of the emotional clips are acted at level 1 (weak), which is often hard to tell from neutral; the intensity of each clip is kept in the loader but not in the reports.
 - No listeners' labels per clip are published, so there is one way of counting a prediction as correct.
 - The sentences differ between emotions: besides common and generic sentences, each emotion has emotion-related ones, whose words hint at the emotion; a model that understands English text can use them.

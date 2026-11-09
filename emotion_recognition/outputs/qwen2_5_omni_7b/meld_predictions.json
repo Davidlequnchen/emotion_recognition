@@ -28,7 +28,7 @@
   "accept": {},
   "chance": 0.142857,
   "in_training_data": false,
-  "training_source": "not published (Alibaba)",
+  "training_source": "Qwen2.5 and Whisper-large-v3 initialization plus multimodal pre/post-training; complete corpus-level provenance not published",
   "model_classes": [
     "angry",
     "disgusted",
@@ -88,5 +88,10 @@
     ],
     "prompt_hash": "aab2967fd07a",
     "model_id": "Qwen/Qwen2.5-Omni-7B"
-  }
+  },
+  "training_status": "not_established",
+  "training_evidence": [
+    "https://arxiv.org/html/2503.20215v1#S3",
+    "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+  ]
 }

@@ -59,6 +59,6 @@ With all 7 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Not in Melati's training data** (nine acted corpora, JL-Corpus among them).
+- **Training involvement for Melati: Used directly**. Evidence scope: author development calibration not applied. The author used nEMO to tune podcast thresholds, but did not fit the public SER head on it; this project uses raw argmax and does not apply those thresholds. Counted as seen in the broader development pipeline; the scope is calibration, not weight fitting. Source: Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - No listeners' labels are published: listeners only screened the recordings, so there is one way of counting a prediction as correct.
 - Recorded at home (24 kHz); only 3 of the 9 speakers are professional voice actors.

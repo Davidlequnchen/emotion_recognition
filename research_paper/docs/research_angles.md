@@ -6,7 +6,7 @@ which question deserves further work. Chinese version: [research_angles_zh.md](r
 [venues.md](venues.md). [experimental_design.md](experimental_design.md) retains the older design; check the new
 scope here before implementing it.
 
-The existing evaluation covers 13 datasets and five dedicated SER models. The three open-weight audio LLMs are
+The project adopts 15 datasets: the original 13 have SER baselines; audited DailyTalk and EmotionTalk await baselines. There are five dedicated SER models. The three open-weight audio LLMs are
 Gemma 4 E4B, Qwen2.5-Omni 7B and Qwen2-Audio 7B. API models are possible later checks. Use public research data
 permitted for each experiment, without company data.
 
@@ -135,6 +135,8 @@ Use consistent anonymous speaker markers so that only history conditions do not 
 names or show-specific knowledge. If target markers change the prompt, recompute H0 in the matching format rather
 than reusing a baseline cache with a different input format.
 
+**What do the four comparisons establish?** H0 is the no-history control; H3 uses unrelated-dialogue history, not another no-history condition or a reordering of the same history. H1 versus H0 measures the total contribution of audio history, including words, prosody, speaker, timing and background. H2 versus H0 tests whether written history also helps. H1 minus H2 is not a pure acoustic contribution: human transcripts are clearer than implicit recognition and modalities are processed differently. If H2 reproduces H1's gain, text history is sufficient to explain it under these conditions; this does not prove the model ignores speech. A later stronger check could compare identical written history with/without its original audio, always retaining target audio. Start with the four-condition pilot.
+
 ### Do existing labels show how humans change with context?
 
 No. Hearing “Fine” alone may suggest acceptance or irritation. Learning that it answers a complaint may change the
@@ -181,6 +183,29 @@ experiment identities to avoid overwriting or reusing the baseline incorrectly.
 
 Use this run and multiple-audio smoke tests for timing; the old full-grid few-shot estimates are no longer a
 scheduling commitment.
+
+### Next run: scope and preflight, 2026-11-09
+
+Omni's MELD Accuracy/UAR/macro-F1 are **51.27/43.45/40.43%**, all higher point estimates than the five current SER baselines. Gemma/Qwen2-Audio have macro-F1 30.86/29.35% but neutral prediction rates 54.45/10.58%. This suggests model-specific behaviour, without establishing significance or context use. All-neutral Accuracy is 48.16%, so Accuracy alone is insufficient.
+
+Our Qwen2-Audio Instruct Accuracy is 30.71%, versus 55.3% reported for MELD in its technical report. Checkpoint, prompt and input/scoring protocols are not fully matched; do a small official-format sanity check before expanding rather than attributing the difference directly to capability loss. [Technical report](https://arxiv.org/html/2407.10759v1)
+
+| Scope | Clips | Purpose |
+|---|---:|---|
+| Development targets from EmotionTalk train | Initially 200–300 | Omni H0–H3 interface, throughput and phenomenon checks |
+| EmotionTalk official test | 1,929 | Baseline after freezing design; 1,830 permit dyadic history under audited rules |
+| DailyTalk validation | 1,197 | Development only; fear/disgust/anger have just 1/3/4 clips |
+| DailyTalk formal holdout | To freeze | No official test in published files; split by dialogue before evaluation |
+
+EmotionTalk validation/test share some speaker IDs, so use train for speaker-independent development. Recompute the common target intersection after freezing stricter boundaries/windows: do not subtract a full-test H0 score from a smaller history-cohort score. DailyTalk has one byte-identical WAV pair across two training dialogues; keep those dialogues together in a new split or preregister deduplication.
+
+**Scale and time.** This Mac's MELD inference took Gemma 27.3, Omni 31.0 and Qwen2-Audio 43.8 minutes. Separate extrapolations by clip count/audio duration give roughly 28–33 hours for all three models over both complete corpora; EmotionTalk test roughly 1.3–1.8 hours, DailyTalk validation 47–48 minutes. These are neither confidence intervals nor guarantees. Measure actual development-subset throughput first.
+
+**Validate inputs first.** New evaluation loaders and H1–H3 are not connected yet. For the first pilot use one fully completed past turn, `history.end <= target.start`, ordered by start time, always preserving the complete target. EmotionTalk's existing three-turn CSV lists use end-time order and some histories overlap; do not blindly concatenate them as start-ordered non-overlapping speech. On test, 135/1,830 three-turn-plus-target combinations exceed 30 seconds. Gemma/Qwen2-Audio truncate, so reserve the complete target first and reduce older history using a common rule across models.
+
+Freeze target/history IDs, anonymous speakers, target boundaries, transcript cleaning, order and length budgets. Include them plus condition/seed in cache identities. Supply no history emotion/intensity, captions or target gold. A target-transcript-only check can supplement development. Once interfaces/prompts are frozen, run new-corpus baselines and compare context on common targets; then replicate useful findings across models and independent dialogues. No new inference was launched in this review.
+
+**Acting and reasonable judgment changes are separate issues.** MELD is TV performance, DailyTalk scripted conversation, EmotionTalk actor improvisation. None is fully unprompted everyday interaction. Replacing the dataset cannot substitute for independent matched-evidence human votes on the same target. “Fine” may already be clear from voice alone; measure whether history changes judgment. Released gold supports task scores but does not establish human-aligned model changes.
 
 ## 5. B: Can GEPA improve a demonstrated failure?
 

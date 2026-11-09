@@ -59,6 +59,6 @@ With all nine classes, the model chose a class that this dataset does not have f
 
 ## Caveats
 
-- **Not in EmoBox**, so emotion2vec+ seed was not fine-tuned on it. emotion2vec+ large was later trained on 40k hours of pseudo-labelled data whose sources are not published, so earlier exposure cannot be ruled out completely.
+- **Training involvement for emotion2vec+ large: No corpus-specific evidence**. Source: EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage. This project counts EmoBox-related corpora as seen through seed fine-tuning and subsequent pseudo-label supervision. The upstream marker records this training route; the final large checkpoint's exact raw recordings and initial weights are not enumerated.
 - No listeners' labels are published: listeners only screened the recordings, so there is one way of counting a prediction as correct.
 - Recorded at home (24 kHz); only 3 of the 9 speakers are professional voice actors.

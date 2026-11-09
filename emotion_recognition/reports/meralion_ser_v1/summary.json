@@ -1,8 +1,8 @@
 {
   "model": "meralion_ser_v1",
   "name": "MERaLiON-SER-v1",
-  "date": "2026-11-07",
-  "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+  "date": "2026-11-10",
+  "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
   "datasets": [
     {
       "dataset": "CREMA-D",
@@ -21,6 +21,13 @@
       ],
       "chance": 0.166667,
       "in_training_data": true,
+      "training_status": "confirmed_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ],
       "metrics": {
         "accuracy": 0.846815,
         "unweighted_accuracy": 0.848713,
@@ -49,6 +56,13 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "confirmed_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ],
       "metrics": {
         "accuracy": 0.300613,
         "unweighted_accuracy": 0.383758,
@@ -77,12 +91,228 @@
           "surprised"
         ]
       },
-      "in_training_data": false,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.759167,
         "unweighted_accuracy": 0.759167,
         "macro_f1": 0.772844,
         "accuracy_all_classes": 0.759167
+      }
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 1440,
+      "total_clips": 1440,
+      "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
+      "metrics": {
+        "accuracy": 0.593056,
+        "unweighted_accuracy": 0.612599,
+        "macro_f1": 0.59684,
+        "accuracy_all_classes": 0.593056
+      }
+    },
+    {
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 480,
+      "total_clips": 480,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
+      "metrics": {
+        "accuracy": 0.577083,
+        "unweighted_accuracy": 0.546429,
+        "macro_f1": 0.483262,
+        "accuracy_all_classes": 0.577083
+      }
+    },
+    {
+      "dataset": "EMOVO",
+      "key": "emovo",
+      "language": "Italian",
+      "clips": 588,
+      "total_clips": 588,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
+      "metrics": {
+        "accuracy": 0.528912,
+        "unweighted_accuracy": 0.528912,
+        "macro_f1": 0.468719,
+        "accuracy_all_classes": 0.528912
+      }
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 2800,
+      "total_clips": 2800,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "surprised",
+        "sad"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
+      "metrics": {
+        "accuracy": 0.4925,
+        "unweighted_accuracy": 0.4925,
+        "macro_f1": 0.378642,
+        "accuracy_all_classes": 0.4925
+      }
+    },
+    {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 6902,
+      "total_clips": 6902,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
+      "metrics": {
+        "accuracy": 0.474355,
+        "unweighted_accuracy": 0.474355,
+        "macro_f1": 0.417475,
+        "accuracy_all_classes": 0.474355,
+        "accuracy_acted_or_listener": 0.580411,
+        "listeners_vs_acted": 0.812187,
+        "model_vs_listeners": 0.52578
+      }
+    },
+    {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
+      "language": "English",
+      "clips": 8000,
+      "total_clips": 8000,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
+      "metrics": {
+        "accuracy": 0.28325,
+        "unweighted_accuracy": 0.322761,
+        "macro_f1": 0.250345,
+        "accuracy_all_classes": 0.28325
       }
     },
     {
@@ -100,6 +330,13 @@
       ],
       "chance": 0.25,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ],
       "metrics": {
         "accuracy": 0.745,
         "unweighted_accuracy": 0.745,
@@ -125,6 +362,13 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ],
       "metrics": {
         "accuracy": 0.648989,
         "unweighted_accuracy": 0.577856,
@@ -133,56 +377,6 @@
         "accuracy_acted_or_listener": 0.648989,
         "listeners_vs_acted": 1.0,
         "model_vs_listeners": 0.648989
-      }
-    },
-    {
-      "dataset": "RAVDESS",
-      "key": "ravdess",
-      "language": "English",
-      "clips": 1440,
-      "total_clips": 1440,
-      "emotions": 7,
-      "labels": [
-        "neutral",
-        "happy",
-        "sad",
-        "angry",
-        "fearful",
-        "disgusted",
-        "surprised"
-      ],
-      "chance": 0.142857,
-      "in_training_data": false,
-      "metrics": {
-        "accuracy": 0.593056,
-        "unweighted_accuracy": 0.612599,
-        "macro_f1": 0.59684,
-        "accuracy_all_classes": 0.593056
-      }
-    },
-    {
-      "dataset": "SAVEE",
-      "key": "savee",
-      "language": "English (British)",
-      "clips": 480,
-      "total_clips": 480,
-      "emotions": 7,
-      "labels": [
-        "angry",
-        "disgusted",
-        "fearful",
-        "happy",
-        "neutral",
-        "sad",
-        "surprised"
-      ],
-      "chance": 0.142857,
-      "in_training_data": false,
-      "metrics": {
-        "accuracy": 0.577083,
-        "unweighted_accuracy": 0.546429,
-        "macro_f1": 0.483262,
-        "accuracy_all_classes": 0.577083
       }
     },
     {
@@ -202,89 +396,18 @@
       ],
       "chance": 0.166667,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ],
       "metrics": {
         "accuracy": 0.551439,
         "unweighted_accuracy": 0.537699,
         "macro_f1": 0.480564,
         "accuracy_all_classes": 0.5501
-      }
-    },
-    {
-      "dataset": "EMOVO",
-      "key": "emovo",
-      "language": "Italian",
-      "clips": 588,
-      "total_clips": 588,
-      "emotions": 7,
-      "labels": [
-        "angry",
-        "disgusted",
-        "fearful",
-        "happy",
-        "neutral",
-        "sad",
-        "surprised"
-      ],
-      "chance": 0.142857,
-      "in_training_data": false,
-      "metrics": {
-        "accuracy": 0.528912,
-        "unweighted_accuracy": 0.528912,
-        "macro_f1": 0.468719,
-        "accuracy_all_classes": 0.528912
-      }
-    },
-    {
-      "dataset": "TESS",
-      "key": "tess",
-      "language": "English",
-      "clips": 2800,
-      "total_clips": 2800,
-      "emotions": 7,
-      "labels": [
-        "angry",
-        "disgusted",
-        "fearful",
-        "happy",
-        "neutral",
-        "surprised",
-        "sad"
-      ],
-      "chance": 0.142857,
-      "in_training_data": false,
-      "metrics": {
-        "accuracy": 0.4925,
-        "unweighted_accuracy": 0.4925,
-        "macro_f1": 0.378642,
-        "accuracy_all_classes": 0.4925
-      }
-    },
-    {
-      "dataset": "Emozionalmente",
-      "key": "emozionalmente",
-      "language": "Italian",
-      "clips": 6902,
-      "total_clips": 6902,
-      "emotions": 7,
-      "labels": [
-        "angry",
-        "disgusted",
-        "fearful",
-        "happy",
-        "neutral",
-        "sad",
-        "surprised"
-      ],
-      "chance": 0.142857,
-      "in_training_data": false,
-      "metrics": {
-        "accuracy": 0.474355,
-        "unweighted_accuracy": 0.474355,
-        "macro_f1": 0.417475,
-        "accuracy_all_classes": 0.474355,
-        "accuracy_acted_or_listener": 0.580411,
-        "listeners_vs_acted": 0.812187,
-        "model_vs_listeners": 0.52578
       }
     },
     {
@@ -302,6 +425,13 @@
       ],
       "chance": 0.25,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ],
       "metrics": {
         "accuracy": 0.470459,
         "unweighted_accuracy": 0.474735,
@@ -310,31 +440,6 @@
         "accuracy_acted_or_listener": 0.48447,
         "listeners_vs_acted": 0.772282,
         "model_vs_listeners": 0.397029
-      }
-    },
-    {
-      "dataset": "MEAD (8,000-clip subset)",
-      "key": "mead",
-      "language": "English",
-      "clips": 8000,
-      "total_clips": 8000,
-      "emotions": 7,
-      "labels": [
-        "angry",
-        "disgusted",
-        "fearful",
-        "happy",
-        "neutral",
-        "sad",
-        "surprised"
-      ],
-      "chance": 0.142857,
-      "in_training_data": false,
-      "metrics": {
-        "accuracy": 0.28325,
-        "unweighted_accuracy": 0.322761,
-        "macro_f1": 0.250345,
-        "accuracy_all_classes": 0.28325
       }
     }
   ],
@@ -370,9 +475,16 @@
       "language": "English",
       "clips": 4900,
       "sample": false,
-      "accuracy": 0.931633,
-      "unweighted_accuracy": 0.93171,
-      "in_training_data": true
+      "accuracy": 0.831429,
+      "unweighted_accuracy": 0.834833,
+      "in_training_data": true,
+      "training_status": "confirmed_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ]
     },
     {
       "dataset": "MELD",
@@ -380,19 +492,16 @@
       "language": "English",
       "clips": 2210,
       "sample": false,
-      "accuracy": 0.336199,
-      "unweighted_accuracy": 0.501145,
-      "in_training_data": true
-    },
-    {
-      "dataset": "MCAE-SPPS",
-      "key": "mcae_spps",
-      "language": "Mandarin",
-      "clips": 4297,
-      "sample": false,
-      "accuracy": 0.884338,
-      "unweighted_accuracy": 0.864542,
-      "in_training_data": false
+      "accuracy": 0.263801,
+      "unweighted_accuracy": 0.391972,
+      "in_training_data": true,
+      "training_status": "confirmed_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ]
     },
     {
       "dataset": "SAVEE",
@@ -400,9 +509,18 @@
       "language": "English (British)",
       "clips": 300,
       "sample": false,
-      "accuracy": 0.823333,
-      "unweighted_accuracy": 0.83125,
-      "in_training_data": false
+      "accuracy": 0.773333,
+      "unweighted_accuracy": 0.76875,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
       "dataset": "EMOVO",
@@ -410,29 +528,18 @@
       "language": "Italian",
       "clips": 336,
       "sample": false,
-      "accuracy": 0.77381,
-      "unweighted_accuracy": 0.77381,
-      "in_training_data": false
-    },
-    {
-      "dataset": "nEMO",
-      "key": "nemo",
-      "language": "Polish",
-      "clips": 3076,
-      "sample": false,
-      "accuracy": 0.770481,
-      "unweighted_accuracy": 0.767972,
-      "in_training_data": false
-    },
-    {
-      "dataset": "Emozionalmente",
-      "key": "emozionalmente",
-      "language": "Italian",
-      "clips": 3944,
-      "sample": false,
-      "accuracy": 0.74645,
-      "unweighted_accuracy": 0.74645,
-      "in_training_data": false
+      "accuracy": 0.761905,
+      "unweighted_accuracy": 0.761905,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
       "dataset": "JL-Corpus",
@@ -440,9 +547,128 @@
       "language": "English (New Zealand)",
       "clips": 960,
       "sample": false,
-      "accuracy": 0.745833,
-      "unweighted_accuracy": 0.745833,
-      "in_training_data": false
+      "accuracy": 0.740625,
+      "unweighted_accuracy": 0.740625,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 3944,
+      "sample": false,
+      "accuracy": 0.740365,
+      "unweighted_accuracy": 0.740365,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 1600,
+      "sample": false,
+      "accuracy": 0.634375,
+      "unweighted_accuracy": 0.634375,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 864,
+      "sample": false,
+      "accuracy": 0.62037,
+      "unweighted_accuracy": 0.657986,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
+      "language": "English",
+      "clips": 4280,
+      "sample": false,
+      "accuracy": 0.48271,
+      "unweighted_accuracy": 0.524507,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 4297,
+      "sample": false,
+      "accuracy": 0.867582,
+      "unweighted_accuracy": 0.844102,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ]
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 3076,
+      "sample": false,
+      "accuracy": 0.762029,
+      "unweighted_accuracy": 0.759294,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ]
     },
     {
       "dataset": "MESS",
@@ -452,37 +678,14 @@
       "sample": false,
       "accuracy": 0.745,
       "unweighted_accuracy": 0.745,
-      "in_training_data": false
-    },
-    {
-      "dataset": "TESS",
-      "key": "tess",
-      "language": "English",
-      "clips": 1600,
-      "sample": false,
-      "accuracy": 0.738125,
-      "unweighted_accuracy": 0.738125,
-      "in_training_data": false
-    },
-    {
-      "dataset": "RAVDESS",
-      "key": "ravdess",
-      "language": "English",
-      "clips": 864,
-      "sample": false,
-      "accuracy": 0.653935,
-      "unweighted_accuracy": 0.695747,
-      "in_training_data": false
-    },
-    {
-      "dataset": "MEAD (8,000-clip subset)",
-      "key": "mead",
-      "language": "English",
-      "clips": 4280,
-      "sample": false,
-      "accuracy": 0.490187,
-      "unweighted_accuracy": 0.531456,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ]
     },
     {
       "dataset": "THAI-SER (high-agreement subset)",
@@ -492,7 +695,14 @@
       "sample": false,
       "accuracy": 0.470459,
       "unweighted_accuracy": 0.474735,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+      "training_evidence": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+        "https://huggingface.co/openai/whisper-medium#training-data"
+      ]
     }
   ]
 }

@@ -1,8 +1,8 @@
 {
   "model": "vox_profile_whisper",
   "name": "Vox-Profile Whisper",
-  "date": "2026-11-07",
-  "training_source": "MSP-Podcast",
+  "date": "2026-11-10",
+  "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
   "datasets": [
     {
       "dataset": "THAI-SER (high-agreement subset)",
@@ -19,6 +19,12 @@
       ],
       "chance": 0.25,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.69286,
         "unweighted_accuracy": 0.700601,
@@ -47,6 +53,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.507639,
         "unweighted_accuracy": 0.493304,
@@ -72,6 +84,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.459775,
         "unweighted_accuracy": 0.409409,
@@ -104,6 +122,12 @@
         ]
       },
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.450833,
         "unweighted_accuracy": 0.450833,
@@ -129,6 +153,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.372917,
         "unweighted_accuracy": 0.315476,
@@ -154,6 +184,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.369313,
         "unweighted_accuracy": 0.369313,
@@ -179,6 +215,12 @@
       ],
       "chance": 0.25,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.363889,
         "unweighted_accuracy": 0.363889,
@@ -204,6 +246,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.358844,
         "unweighted_accuracy": 0.358844,
@@ -229,6 +277,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.33819,
         "unweighted_accuracy": 0.296001,
@@ -253,6 +307,12 @@
       ],
       "chance": 0.166667,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.336603,
         "unweighted_accuracy": 0.351988,
@@ -280,6 +340,12 @@
       ],
       "chance": 0.166667,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.327829,
         "unweighted_accuracy": 0.319992,
@@ -305,6 +371,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.301071,
         "unweighted_accuracy": 0.301071,
@@ -330,6 +402,12 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
       "metrics": {
         "accuracy": 0.191875,
         "unweighted_accuracy": 0.22891,
@@ -372,17 +450,13 @@
       "sample": false,
       "accuracy": 0.69286,
       "unweighted_accuracy": 0.700601,
-      "in_training_data": false
-    },
-    {
-      "dataset": "RAVDESS",
-      "key": "ravdess",
-      "language": "English",
-      "clips": 864,
-      "sample": false,
-      "accuracy": 0.590278,
-      "unweighted_accuracy": 0.575521,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "MCAE-SPPS",
@@ -390,9 +464,31 @@
       "language": "Mandarin",
       "clips": 4297,
       "sample": false,
-      "accuracy": 0.586688,
-      "unweighted_accuracy": 0.543384,
-      "in_training_data": false
+      "accuracy": 0.56458,
+      "unweighted_accuracy": 0.521962,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 864,
+      "sample": false,
+      "accuracy": 0.530093,
+      "unweighted_accuracy": 0.507812,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "Emozionalmente",
@@ -400,9 +496,15 @@
       "language": "Italian",
       "clips": 3944,
       "sample": false,
-      "accuracy": 0.5786,
-      "unweighted_accuracy": 0.5786,
-      "in_training_data": false
+      "accuracy": 0.509888,
+      "unweighted_accuracy": 0.509888,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "EMOVO",
@@ -410,19 +512,15 @@
       "language": "Italian",
       "clips": 336,
       "sample": false,
-      "accuracy": 0.571429,
-      "unweighted_accuracy": 0.571429,
-      "in_training_data": false
-    },
-    {
-      "dataset": "SAVEE",
-      "key": "savee",
-      "language": "English (British)",
-      "clips": 300,
-      "sample": false,
-      "accuracy": 0.546667,
-      "unweighted_accuracy": 0.4875,
-      "in_training_data": false
+      "accuracy": 0.5,
+      "unweighted_accuracy": 0.5,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "TESS",
@@ -432,7 +530,29 @@
       "sample": false,
       "accuracy": 0.499375,
       "unweighted_accuracy": 0.499375,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
+    },
+    {
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 300,
+      "sample": false,
+      "accuracy": 0.493333,
+      "unweighted_accuracy": 0.422917,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "CREMA-D",
@@ -440,19 +560,15 @@
       "language": "English",
       "clips": 4900,
       "sample": false,
-      "accuracy": 0.498163,
-      "unweighted_accuracy": 0.515393,
-      "in_training_data": false
-    },
-    {
-      "dataset": "nEMO",
-      "key": "nemo",
-      "language": "Polish",
-      "clips": 3076,
-      "sample": false,
-      "accuracy": 0.438882,
-      "unweighted_accuracy": 0.434312,
-      "in_training_data": false
+      "accuracy": 0.467959,
+      "unweighted_accuracy": 0.486283,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "JL-Corpus",
@@ -460,19 +576,31 @@
       "language": "English (New Zealand)",
       "clips": 960,
       "sample": false,
-      "accuracy": 0.426042,
-      "unweighted_accuracy": 0.426042,
-      "in_training_data": false
+      "accuracy": 0.40625,
+      "unweighted_accuracy": 0.40625,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
-      "dataset": "MELD",
-      "key": "meld",
-      "language": "English",
-      "clips": 2210,
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 3076,
       "sample": false,
-      "accuracy": 0.410407,
-      "unweighted_accuracy": 0.440535,
-      "in_training_data": false
+      "accuracy": 0.392718,
+      "unweighted_accuracy": 0.387353,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "MESS",
@@ -482,7 +610,29 @@
       "sample": false,
       "accuracy": 0.363889,
       "unweighted_accuracy": 0.363889,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
+    },
+    {
+      "dataset": "MELD",
+      "key": "meld",
+      "language": "English",
+      "clips": 2210,
+      "sample": false,
+      "accuracy": 0.331222,
+      "unweighted_accuracy": 0.342838,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     },
     {
       "dataset": "MEAD (8,000-clip subset)",
@@ -490,9 +640,15 @@
       "language": "English",
       "clips": 4280,
       "sample": false,
-      "accuracy": 0.342991,
-      "unweighted_accuracy": 0.389591,
-      "in_training_data": false
+      "accuracy": 0.323598,
+      "unweighted_accuracy": 0.370363,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
     }
   ]
 }

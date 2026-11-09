@@ -59,7 +59,7 @@ Most frequent confusions: neutral predicted as happy (32.7%), fearful predicted 
 
 ## Caveats
 
-- **Not in Vox-Profile WavLM's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile WavLM: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **In-the-wild speech with noisy labels.** The annotators saw the video and the transcript, not the voice alone, and agreed moderately (Fleiss' kappa 0.43); the classes are very unbalanced (48% neutral, 2% fear).
 - Several speakers, laughter of the studio audience and background music can be heard in a clip; a third of the clips are shorter than 2 s.
 - MELD's train split is in the training data of MERaLiON-SER-v1 and of EmoBox (emotion2vec+), so these models have heard the same speakers and show.

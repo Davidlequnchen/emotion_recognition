@@ -96,6 +96,8 @@ sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, impor
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, sample, truth_labels
 from prompts import configured_protocol
+from training_provenance import (EXPOSURE_LABEL, EXPOSURE_LEVELS, EXPOSURE_NOTE, training_marker,
+                                 training_metadata, with_training_provenance)
 
 # What the script reads of config/evaluation.yaml, and of each model in config/models.yaml
 SETTINGS = ["mode", "models", "datasets", "exclude", "limit", "overwrite", "devices", "summary_figure"]
@@ -153,14 +155,16 @@ def current_protocol(entry, ds):
 def training_caveat(key, entry, note):
     """Whether the dataset is in the model's training data (training_data and training_source in the registry), as
     the first caveat of a report; note: the loader's TRAINING_NOTE, if it has one."""
-    source = unbracketed(entry["training_source"])
-    if is_llm(entry) and key not in entry["training_data"]:  # an audio LLM whose training data is not published
-        text = f"**{entry['name']}'s training data**: {entry['training_source']}."
-    elif key in entry["training_data"]:
-        text = (f"**In {entry['name']}'s training data** ({source}), so the model has probably seen these clips; "
-                "treat the result as optimistic.")
-    else:
-        text = f"**Not in {entry['name']}'s training data** ({source})."
+    fields = training_metadata(key, entry)
+    label = EXPOSURE_LEVELS[fields["training_status"]]["label"]
+    text = f"**{EXPOSURE_LABEL} for {entry['name']}: {label}**."
+    if fields.get("training_scope"):
+        text += f" Evidence scope: {fields['training_scope'].replace('_', ' ')}."
+    if fields.get("training_reason"):
+        text += f" {fields['training_reason']}"
+    if fields["training_source"]:
+        text += f" Source: {fields['training_source']}."
+    text += " " + EXPOSURE_NOTE.replace("\n", " ")
     return f"{text} {note}" if note else text
 
 
@@ -586,14 +590,13 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
                                      + (" or is accepted for acted_emotion" if composite else ""),
         "p_*": f"model probability of each of its {n_all} classes (they add up to 1)",
     } | (getattr(predict, "extra_doc", {}) if extra_columns else {})
-    in_training = ds.key in entry["training_data"]
     meta = {
         "dataset": ds.name, "key": ds.key, "language": ds.language, "model": model, "model_name": name,
         "date": str(date.today()), "clips": len(clips), "total_clips": len(ds.clips), "classes": names,
         "labels": rows,       # the ground-truth labels, in the order of the confusion-matrix rows
         "accept": ds.accept,  # composite labels: the classes that count as correct for them
         "chance": round(float(chance), 6),
-        "in_training_data": in_training, "training_source": entry["training_source"],  # from the model registry
+        **training_metadata(ds.key, entry),  # current confirmed positives, never inferred negatives
         "model_classes": labels,  # the model's classes, in the order of the p_ columns
         # Library versions and notes of the model's loader, so that a later run can reuse these predictions
         "versions": predict.versions, "notes": predict.notes,
@@ -813,13 +816,16 @@ def best_runs(model, exclude=(), entry=None):
     most clips (a full run rather than a sample), with its file stem added. Datasets in exclude (`exclude` in
     config/evaluation.yaml) are left out."""
     out, order = ROOT / "outputs" / model, list(LOADERS)
+    training_entry = entry
+    if training_entry is None and MODELS_CONFIG.is_file():
+        training_entry = (yaml.safe_load(MODELS_CONFIG.read_text()) or {}).get(model)
     best = {}
     for p in sorted(out.glob("*_predictions.json")):
         run = json.loads(p.read_text(encoding="utf-8")) | {"stem": p.name.removesuffix("_predictions.json")}
         if entry is not None and is_llm(entry) and run.get("inference_protocol") != current_protocol(entry, run["classes"]):
             continue
         if "metrics" in run and run["key"] not in exclude and run["clips"] > best.get(run["key"], {"clips": 0})["clips"]:
-            best[run["key"]] = run
+            best[run["key"]] = with_training_provenance(run, training_entry)
     # Ground-truth labels in the order of the confusion-matrix rows. Older predictions files have no "labels": their
     # classes and composite labels stand in, those that clips in the CSV have (JL-Corpus has no clip acted surprised)
     for r in best.values():
@@ -828,6 +834,45 @@ def best_runs(model, exclude=(), entry=None):
                 found = {row[r["ground_truth"]] for row in csv.DictReader(fh)}
             r["labels"] = [x for x in [*r["classes"], *r.get("accept", {})] if x in found]
     return dict(sorted(best.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else len(order)))
+
+
+def refresh_training_caveats(model, entry, note="", exclude=()):
+    """Refresh only generated training notes in compatible saved Markdown reports, without inference or rescoring."""
+    changed = 0
+    marker = "## Caveats\n\n- "
+    for path in sorted((ROOT / "outputs" / model).glob("*_predictions.json")):
+        meta = json.loads(path.read_text(encoding="utf-8"))
+        if "metrics" not in meta or meta.get("key") in exclude:
+            continue
+        if is_llm(entry) and meta.get("inference_protocol") != current_protocol(entry, meta.get("classes", [])):
+            continue
+        report = ROOT / "reports" / model / (path.name.removesuffix("_predictions.json") + ".md")
+        if not report.is_file():
+            continue
+        text = report.read_text(encoding="utf-8")
+        if marker not in text:
+            continue
+        start = text.index(marker) + len(marker)
+        end = text.find("\n", start)
+        end = len(text) if end < 0 else end
+        old = text[start:end]
+        if not (old.startswith(("**In ", "**Not in ", "**Confirmed training-corpus exposure",
+                                "**Exposure not established", "**Training-source evidence", "**Training involvement"))
+                or "'s training data**" in old):
+            continue  # Do not replace a manually authored or dataset-specific caveat.
+        # Older generated notes can have wrapped continuation lines; replace their whole paragraph once.
+        while end < len(text):
+            next_end = text.find("\n", end + 1)
+            next_end = len(text) if next_end < 0 else next_end
+            continuation = text[end + 1:next_end]
+            if not continuation.strip() or continuation.startswith(("- ", "#")):
+                break
+            end = next_end
+        current = text[:start] + training_caveat(meta["key"], entry, note) + text[end:]
+        if current != text:
+            report.write_text(current, encoding="utf-8")
+            changed += 1
+    return changed
 
 
 def shared_scores(model, run, shared):
@@ -855,15 +900,16 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     if not runs:
         print(f"  no results in outputs/{model}/ yet, so no summary")
         return
-    name, trained = entry["name"], set(entry["training_data"])
+    name = entry["name"]
+    evidence_order = {status: i for i, status in enumerate(EXPOSURE_LEVELS)}
+    evidence_rank = lambda r: evidence_order[r["training_status"]]
     reports = ROOT / "reports" / model
     sampled = [r for r in runs if r.get("total_clips", r["clips"]) > r["clips"]]
     pct = lambda x: f"{100 * x:.1f}%" if x is not None else "–"
     clips = lambda r: f"{r['clips']:,}" + (f" of {r['total_clips']:,} (sample)" if r in sampled else "")
     chance = lambda r: r.get("chance", 1 / len(r["classes"]))  # older predictions files have no "chance"
-    yes_no = lambda r: "yes" if r["key"] in trained else "not known" if is_llm(entry) else "no"
-    # The datasets in the model's training data first, then the others, each group by accuracy (best first)
-    ranked = sorted(runs, key=lambda r: (r["key"] not in trained, -r["metrics"]["accuracy"]))
+    evidence_cell = lambda r: EXPOSURE_LEVELS[r["training_status"]]["label"]
+    ranked = sorted(runs, key=lambda r: (evidence_rank(r), -r["metrics"]["accuracy"]))
 
     def labels(r):
         """The labels as text; a composite label names the classes it accepts, e.g. "excited (happy or surprised)".
@@ -874,8 +920,8 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     # Composite labels, e.g. "JL-Corpus's *excited* (happy or surprised)"
     composite = [f"{r['dataset']}'s *{label}* ({' or '.join(accept)})" for r in runs
                  for label, accept in r.get("accept", {}).items()]
-    column = f"In {name}'s training data"
-    rows = [f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {yes_no(r)} | {clips(r)} | "
+    column = EXPOSURE_LABEL
+    rows = [f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {evidence_cell(r)} | {clips(r)} | "
             f"{len(r['classes'])} | {pct(chance(r))} | **{pct(r['metrics']['accuracy'])}** | "
             f"{pct(r['metrics'].get('accuracy_acted_or_listener'))} | {pct(r['metrics']['unweighted_accuracy'])} | "
             f"{pct(r['metrics']['macro_f1'])} |" for r in ranked]
@@ -883,7 +929,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         f"# {name}: results on every dataset",
         "",
         f"Generated by `scripts/evaluation/evaluate.py` on {date.today()}. Each dataset links to its full report. The "
-        "datasets in the model's training data come first, then the others, each group sorted by accuracy.",
+        "datasets are grouped by training-source evidence level, each group sorted by accuracy.",
         "",
         f"| Dataset | Language | Ground-truth labels | {column} | Clips | Emotions | Chance "
         "| Accuracy: acted emotion | Accuracy: acted or listeners' vote | Unweighted accuracy | Macro F1 |",
@@ -895,10 +941,10 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         *([f"- **Composite labels** (no model class; a prediction of any class in brackets counts as correct): "
            f"{', '.join(composite)}. Chance level counts these classes, so it is higher than 1 in the number of "
            "emotions."] if composite else []),
-        f"- **{column}**: *yes* means that the dataset is part of the data the model was trained on "
-        f"({unbracketed(entry['training_source'])}), so the model has probably seen these clips and the result is "
-        "optimistic. " + ("*not known*: the training data is not published." if is_llm(entry) else "*no*: it is not.")
-        + (f" {note}" if note else ""),
+        f"- **{column}**: " + "; ".join(level["label"] for level in EXPOSURE_LEVELS.values()) + ". "
+        "Direct and upstream use both count as seen under this project policy; the stage is recorded separately. "
+        + EXPOSURE_NOTE.replace("\n", " "),
+        f"- **Training sources**: {entry.get('training_source', 'not stated')}." + (f" {note}" if note else ""),
         "- **Accuracy: acted emotion** compares the prediction with the emotion the speaker was asked to portray. "
         "The prediction is the most probable of the emotions that the dataset has, so chance level depends on how "
         "many emotions it has.",
@@ -940,7 +986,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     # The common-emotion subset, keeping each model's original dataset-level prediction (no second choice).
     shared = sorted(set.intersection(*(set(r["classes"]) for r in runs))) if len(runs) > 1 else []
     scored = sorted(((r, *shared_scores(model, r, shared)) for r in runs),
-                    key=lambda s: (s[0]["key"] not in trained, -(s[2] or 0))) if shared else []
+                    key=lambda s: (evidence_rank(s[0]), -(s[2] or 0))) if shared else []
     if shared:
         summary += [
             f"## Only the emotions every dataset has: {', '.join(shared)}",
@@ -951,7 +997,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
             "",
             f"| Dataset | Language | Ground-truth labels | {column} | Clips | Accuracy | Unweighted accuracy |",
             "|---|---|---|---|---|---|---|",
-            *[f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {yes_no(r)} | "
+            *[f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {evidence_cell(r)} | "
               f"{n:,}{' (sample)' if r in sampled else ''} | **{pct(acc)}** | {pct(ua)} |" for r, n, acc, ua in scored],
             "",
             "Computed from the saved prediction labels in `outputs/`; probabilities are not used to reselect an answer.",
@@ -962,19 +1008,19 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     # The same numbers as JSON, for the viewer page (scripts/viewer/make_viewer.py)
     rounded = lambda x: round(float(x), 6) if x is not None else None
     data = {
-        "model": model, "name": name, "date": str(date.today()), "training_source": entry["training_source"],
+        "model": model, "name": name, "date": str(date.today()), "training_source": entry.get("training_source", ""),
         "datasets": [{"dataset": r["dataset"], "key": r["key"], "language": r["language"], "clips": r["clips"],
                       "total_clips": r.get("total_clips", r["clips"]), "emotions": len(r["classes"]),
                       "labels": r["labels"],  # ground-truth labels, in the order of the confusion-matrix rows
                       "chance": round(float(chance(r)), 6), **({"accept": r["accept"]} if r.get("accept") else {}),
-                      "in_training_data": r["key"] in trained, "metrics": r["metrics"]} for r in ranked],
+                      **training_metadata(r["key"], entry), "metrics": r["metrics"]} for r in ranked],
         "figure": grid.relative_to(reports).as_posix() if grid else None,
         "figure_datasets": [r["dataset"] for r in shown] if grid else [],
         "acted_or_listener": [r["dataset"] for r in lenient] if grid else [],
         "shared_emotions": shared,
         "shared": [{"dataset": r["dataset"], "key": r["key"], "language": r["language"], "clips": n,
                     "sample": r in sampled, "accuracy": rounded(acc), "unweighted_accuracy": rounded(ua),
-                    "in_training_data": r["key"] in trained} for r, n, acc, ua in scored],
+                    **training_metadata(r["key"], entry)} for r, n, acc, ua in scored],
     }
     path.with_suffix(".json").write_text(json.dumps(data, indent=2), encoding="utf-8")
     print(f"  summary of {len(runs)} dataset(s) -> {path.relative_to(ROOT)} (and .json)")
@@ -1000,7 +1046,6 @@ def write_comparison(registry, exclude=()):
                 values[m, k] |= dict(zip(("shared_clips", "shared_accuracy", "shared_unweighted_accuracy"),
                                          shared_scores(m, r, shared)))
     sampled = lambda r: r.get("total_clips", r["clips"]) > r["clips"]
-    trained = lambda m, k: k in registry[m]["training_data"]
     chance = lambda r: r.get("chance", 1 / len(r["classes"]))  # older predictions files have no "chance"
     pct = lambda x: f"{100 * x:.1f}%"
     samples = any(sampled(r) for m in models for r in runs[m].values())
@@ -1020,7 +1065,7 @@ def write_comparison(registry, exclude=()):
                     cells.append("–")
                     continue
                 cell = f"**{pct(got[m])}**" if len(got) > 1 and round(100 * got[m], 1) == best else pct(got[m])
-                cells.append(cell + "†" * trained(m, k)
+                cells.append(cell + training_marker(runs[m][k])
                              + (f" ({runs[m][k]['clips']:,} clips)" if sampled(runs[m][k]) else ""))
             chance_value = chance_of(k)
             chance_cell = pct(chance_value) if chance_value is not None else "–"
@@ -1035,8 +1080,10 @@ def write_comparison(registry, exclude=()):
         "clips and is scored against the same labels. Each model's name links to its summary, which links to a report "
         "per dataset.",
         "",
-        "- **†**: the dataset is in the model's training data, so the model has probably seen these clips; treat the "
-        "result as optimistic.",
+        f"- **{EXPOSURE_LABEL}**: " + "; ".join(f"{level['marker'] or 'no marker'} {level['label']}"
+                                                       for level in EXPOSURE_LEVELS.values()) + ". "
+        "Indirect support is an upstream-influence inference, not confirmed raw-corpus training. "
+        + EXPOSURE_NOTE.replace("\n", " "),
         "- **Bold**: the best model on the dataset.",
         *(["- **(N clips)**: a sample of the dataset (`limit` in config/evaluation.yaml), not every clip."]
           if samples else []),
@@ -1080,10 +1127,12 @@ def write_comparison(registry, exclude=()):
     summary += [
         "## Training data",
         "",
-        *[f"- [{registry[m]['name']}]({m}/summary.md): {registry[m]['training_source']}. "
-          + (f"In its training data: {', '.join(facts[k]['dataset'] for k in keys if trained(m, k))}."
-             if any(trained(m, k) for k in keys) else "Whether these datasets are in its training data is not known."
-             if is_llm(registry[m]) else "None of these datasets is in its training data.")
+        *[f"- [{registry[m]['name']}]({m}/summary.md): {registry[m].get('training_source', 'not stated')}. "
+          + " ".join(f"{level['label']}: "
+                     + ", ".join(facts[k]["dataset"] for k in keys
+                                 if k in runs[m] and runs[m][k]["training_status"] == status) + "."
+                     for status, level in EXPOSURE_LEVELS.items()
+                     if any(k in runs[m] and runs[m][k]["training_status"] == status for k in keys))
           for m in models],
         "",
     ]
@@ -1092,13 +1141,13 @@ def write_comparison(registry, exclude=()):
     rounded = lambda x: round(float(x), 6) if x is not None else None
     data = {
         "date": str(date.today()),
-        "models": [{"model": m, "name": registry[m]["name"], "training_source": registry[m]["training_source"],
-                    "training_data": registry[m]["training_data"], "summary": f"{m}/summary.md"} for m in models],
+        "models": [{"model": m, "name": registry[m]["name"], "training_source": registry[m].get("training_source", ""),
+                    "training_data": registry[m].get("training_data", []), "summary": f"{m}/summary.md"} for m in models],
         "datasets": [{"key": k, "dataset": facts[k]["dataset"], "language": facts[k]["language"],
                       "chance": rounded(chance(facts[k]))} for k in keys],
         "shared_emotions": shared,
         "results": {m: {k: {"clips": r["clips"], "total_clips": r.get("total_clips", r["clips"]), "sample": sampled(r),
-                            "in_training_data": trained(m, k),
+                            **training_metadata(k, registry[m]),
                             **{x: (v if x == "shared_clips" else rounded(v)) for x, v in values[m, k].items()
                                if x in ("accuracy", "unweighted_accuracy", "macro_f1", "shared_clips",
                                         "shared_accuracy", "shared_unweighted_accuracy")}}

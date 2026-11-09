@@ -25,8 +25,8 @@
   ],
   "accept": {},
   "chance": 0.166667,
-  "in_training_data": false,
-  "training_source": "nine acted corpora, JL-Corpus among them",
+  "in_training_data": true,
+  "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
   "model_classes": [
     "neutral",
     "happy",
@@ -67,5 +67,11 @@
     "seconds": 1343.8,
     "ms_per_clip": 299.9,
     "on_cpu": 0
-  }
+  },
+  "training_status": "confirmed_exposure",
+  "training_scope": "author_development_calibration_not_applied",
+  "training_reason": "The author used nEMO to tune podcast thresholds, but did not fit the public SER head on it; this project uses raw argmax and does not apply those thresholds. Counted as seen in the broader development pipeline; the scope is calibration, not weight fitting.",
+  "training_evidence": [
+    "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md"
+  ]
 }

@@ -1,8 +1,8 @@
 {
   "model": "emotion2vec_plus_large",
   "name": "emotion2vec+ large",
-  "date": "2026-11-07",
-  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "date": "2026-11-10",
+  "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
   "datasets": [
     {
       "dataset": "SAVEE",
@@ -22,6 +22,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.933333,
         "unweighted_accuracy": 0.925,
@@ -51,6 +60,15 @@
         ]
       },
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.925,
         "unweighted_accuracy": 0.925,
@@ -76,6 +94,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.920833,
         "unweighted_accuracy": 0.922867,
@@ -101,6 +128,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.900875,
         "unweighted_accuracy": 0.89681,
@@ -126,6 +162,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.87585,
         "unweighted_accuracy": 0.87585,
@@ -151,6 +196,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.869458,
         "unweighted_accuracy": 0.869458,
@@ -178,6 +232,15 @@
       ],
       "chance": 0.166667,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.864553,
         "unweighted_accuracy": 0.865401,
@@ -206,6 +269,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.855357,
         "unweighted_accuracy": 0.855357,
@@ -231,6 +303,15 @@
       ],
       "chance": 0.142857,
       "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ],
       "metrics": {
         "accuracy": 0.455905,
         "unweighted_accuracy": 0.298381,
@@ -253,6 +334,13 @@
       ],
       "chance": 0.25,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ],
       "metrics": {
         "accuracy": 0.705942,
         "unweighted_accuracy": 0.687908,
@@ -281,6 +369,13 @@
       ],
       "chance": 0.142857,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ],
       "metrics": {
         "accuracy": 0.613483,
         "unweighted_accuracy": 0.541993,
@@ -308,6 +403,13 @@
       ],
       "chance": 0.166667,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ],
       "metrics": {
         "accuracy": 0.519527,
         "unweighted_accuracy": 0.505879,
@@ -330,6 +432,13 @@
       ],
       "chance": 0.25,
       "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ],
       "metrics": {
         "accuracy": 0.407778,
         "unweighted_accuracy": 0.407778,
@@ -372,37 +481,16 @@
       "sample": false,
       "accuracy": 1.0,
       "unweighted_accuracy": 1.0,
-      "in_training_data": true
-    },
-    {
-      "dataset": "SAVEE",
-      "key": "savee",
-      "language": "English (British)",
-      "clips": 300,
-      "sample": false,
-      "accuracy": 0.97,
-      "unweighted_accuracy": 0.964583,
-      "in_training_data": true
-    },
-    {
-      "dataset": "EMOVO",
-      "key": "emovo",
-      "language": "Italian",
-      "clips": 336,
-      "sample": false,
-      "accuracy": 0.958333,
-      "unweighted_accuracy": 0.958333,
-      "in_training_data": true
-    },
-    {
-      "dataset": "MEAD (8,000-clip subset)",
-      "key": "mead",
-      "language": "English",
-      "clips": 4280,
-      "sample": false,
-      "accuracy": 0.953037,
-      "unweighted_accuracy": 0.944009,
-      "in_training_data": true
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
       "dataset": "JL-Corpus",
@@ -412,27 +500,54 @@
       "sample": false,
       "accuracy": 0.946875,
       "unweighted_accuracy": 0.946875,
-      "in_training_data": true
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
-      "dataset": "CREMA-D",
-      "key": "crema_d",
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 300,
+      "sample": false,
+      "accuracy": 0.946667,
+      "unweighted_accuracy": 0.935417,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
       "language": "English",
-      "clips": 4900,
+      "clips": 4280,
       "sample": false,
-      "accuracy": 0.932041,
-      "unweighted_accuracy": 0.931004,
-      "in_training_data": true
-    },
-    {
-      "dataset": "Emozionalmente",
-      "key": "emozionalmente",
-      "language": "Italian",
-      "clips": 3944,
-      "sample": false,
-      "accuracy": 0.925203,
-      "unweighted_accuracy": 0.925203,
-      "in_training_data": true
+      "accuracy": 0.92757,
+      "unweighted_accuracy": 0.916778,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
       "dataset": "RAVDESS",
@@ -440,9 +555,75 @@
       "language": "English",
       "clips": 864,
       "sample": false,
-      "accuracy": 0.924769,
-      "unweighted_accuracy": 0.928819,
-      "in_training_data": true
+      "accuracy": 0.914352,
+      "unweighted_accuracy": 0.917101,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "EMOVO",
+      "key": "emovo",
+      "language": "Italian",
+      "clips": 336,
+      "sample": false,
+      "accuracy": 0.895833,
+      "unweighted_accuracy": 0.895833,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 4900,
+      "sample": false,
+      "accuracy": 0.89,
+      "unweighted_accuracy": 0.890352,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
+    },
+    {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 3944,
+      "sample": false,
+      "accuracy": 0.869675,
+      "unweighted_accuracy": 0.869675,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
       "dataset": "MELD",
@@ -450,9 +631,18 @@
       "language": "English",
       "clips": 2210,
       "sample": false,
-      "accuracy": 0.525339,
-      "unweighted_accuracy": 0.460437,
-      "in_training_data": true
+      "accuracy": 0.486878,
+      "unweighted_accuracy": 0.417523,
+      "in_training_data": true,
+      "training_status": "probable_exposure",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_scope": "upstream_teacher_lineage",
+      "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46",
+        "https://github.com/emo-box/EmoBox#datasets"
+      ]
     },
     {
       "dataset": "MCAE-SPPS",
@@ -460,9 +650,16 @@
       "language": "Mandarin",
       "clips": 4297,
       "sample": false,
-      "accuracy": 0.877822,
-      "unweighted_accuracy": 0.85327,
-      "in_training_data": false
+      "accuracy": 0.8606,
+      "unweighted_accuracy": 0.834444,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ]
     },
     {
       "dataset": "THAI-SER (high-agreement subset)",
@@ -472,7 +669,14 @@
       "sample": false,
       "accuracy": 0.705942,
       "unweighted_accuracy": 0.687908,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ]
     },
     {
       "dataset": "nEMO",
@@ -480,9 +684,16 @@
       "language": "Polish",
       "clips": 3076,
       "sample": false,
-      "accuracy": 0.678153,
-      "unweighted_accuracy": 0.673508,
-      "in_training_data": false
+      "accuracy": 0.66645,
+      "unweighted_accuracy": 0.661634,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ]
     },
     {
       "dataset": "MESS",
@@ -492,7 +703,14 @@
       "sample": false,
       "accuracy": 0.407778,
       "unweighted_accuracy": 0.407778,
-      "in_training_data": false
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+      "training_evidence": [
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+        "https://github.com/ddlBoJack/emotion2vec/issues/73",
+        "https://github.com/ddlBoJack/emotion2vec/issues/46"
+      ]
     }
   ]
 }

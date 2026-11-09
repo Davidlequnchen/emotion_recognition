@@ -87,7 +87,7 @@ The listeners' majority vote matches the acted emotion for 100.0% of the 6,675 c
 
 ## Caveats
 
-- **Not in Vox-Profile Whisper's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile Whisper: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Validated clips only.** The dataset keeps a clip only if at least 43% of its 40 listeners chose the intended emotion, so the acted label and the listeners' vote usually agree.
 - Mandarin speech, 48 kHz, resampled to 16 kHz by the model's loader.
 - **Acted labels are not perceived emotions.** The ground truth is what the actor intended; listeners sometimes heard something else, as the listeners' numbers above show.

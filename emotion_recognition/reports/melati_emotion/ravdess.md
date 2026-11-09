@@ -58,7 +58,7 @@ Most frequent confusions: neutral predicted as sad (62.5%), disgusted predicted 
 
 ## Caveats
 
-- **Not in Melati's training data** (nine acted corpora, JL-Corpus among them).
+- **Training involvement for Melati: No corpus-specific evidence**. Source: Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - *Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.
 - Listeners rated every file 10 times (247 listeners). The paper publishes their ratings as recognition rates per file, not as a vote for an emotion, so this report has no listeners' labels.
 - Audio: 48 kHz WAV, resampled to 16 kHz; 5 files are stereo, and their channels are averaged.

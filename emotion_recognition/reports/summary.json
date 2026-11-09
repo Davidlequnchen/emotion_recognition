@@ -1,77 +1,85 @@
 {
-  "date": "2026-11-09",
+  "date": "2026-11-10",
   "models": [
     {
       "model": "emotion2vec_plus_large",
       "name": "emotion2vec+ large",
-      "training_source": "EmoBox (through emotion2vec+ seed)",
+      "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
       "training_data": [
         "crema_d",
-        "ravdess",
-        "tess",
-        "jl_corpus",
-        "esd",
-        "mead",
-        "meld",
         "emovo",
         "emozionalmente",
-        "savee"
+        "esd",
+        "jl_corpus",
+        "mead",
+        "meld",
+        "ravdess",
+        "savee",
+        "tess"
       ],
       "summary": "emotion2vec_plus_large/summary.md"
     },
     {
       "model": "meralion_ser_v1",
       "name": "MERaLiON-SER-v1",
-      "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+      "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
       "training_data": [
         "crema_d",
+        "emovo",
+        "emozionalmente",
         "esd",
-        "meld"
+        "jl_corpus",
+        "mead",
+        "meld",
+        "ravdess",
+        "savee",
+        "tess"
       ],
       "summary": "meralion_ser_v1/summary.md"
     },
     {
       "model": "melati_emotion",
       "name": "Melati",
-      "training_source": "nine acted corpora, JL-Corpus among them",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
       "training_data": [
         "jl_corpus",
-        "emozionalmente"
+        "emozionalmente",
+        "nemo"
       ],
       "summary": "melati_emotion/summary.md"
     },
     {
       "model": "vox_profile_whisper",
       "name": "Vox-Profile Whisper",
-      "training_source": "MSP-Podcast",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
       "training_data": [],
       "summary": "vox_profile_whisper/summary.md"
     },
     {
       "model": "vox_profile_wavlm",
       "name": "Vox-Profile WavLM",
-      "training_source": "MSP-Podcast",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
       "training_data": [],
       "summary": "vox_profile_wavlm/summary.md"
     },
     {
       "model": "qwen2_5_omni_7b",
       "name": "Qwen2.5-Omni 7B",
-      "training_source": "not published (Alibaba)",
+      "training_source": "Qwen2.5 and Whisper-large-v3 initialization plus multimodal pre/post-training; complete corpus-level provenance not published",
       "training_data": [],
       "summary": "qwen2_5_omni_7b/summary.md"
     },
     {
       "model": "qwen2_audio_7b",
       "name": "Qwen2-Audio 7B Instruct",
-      "training_source": "not published (Alibaba)",
+      "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
       "training_data": [],
       "summary": "qwen2_audio_7b/summary.md"
     },
     {
       "model": "gemma4_e4b",
       "name": "Gemma 4 E4B",
-      "training_source": "not published (Google)",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
       "training_data": [],
       "summary": "gemma4_e4b/summary.md"
     }
@@ -169,6 +177,15 @@
         "total_clips": 7442,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.864553,
         "unweighted_accuracy": 0.865401,
         "macro_f1": 0.865683,
@@ -181,6 +198,13 @@
         "total_clips": 6675,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
         "accuracy": 0.613483,
         "unweighted_accuracy": 0.541993,
         "macro_f1": 0.500753,
@@ -193,6 +217,13 @@
         "total_clips": 11848,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
         "accuracy": 0.705942,
         "unweighted_accuracy": 0.687908,
         "macro_f1": 0.696642,
@@ -205,6 +236,13 @@
         "total_clips": 4481,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
         "accuracy": 0.519527,
         "unweighted_accuracy": 0.505879,
         "macro_f1": 0.473726,
@@ -217,6 +255,13 @@
         "total_clips": 1800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
         "accuracy": 0.407778,
         "unweighted_accuracy": 0.407778,
         "macro_f1": 0.352239,
@@ -229,6 +274,15 @@
         "total_clips": 1440,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.920833,
         "unweighted_accuracy": 0.922867,
         "macro_f1": 0.922045,
@@ -241,6 +295,15 @@
         "total_clips": 2800,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.855357,
         "unweighted_accuracy": 0.855357,
         "macro_f1": 0.798306,
@@ -253,6 +316,15 @@
         "total_clips": 1200,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.925,
         "unweighted_accuracy": 0.925,
         "macro_f1": 0.922668,
@@ -265,6 +337,15 @@
         "total_clips": 8000,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.900875,
         "unweighted_accuracy": 0.89681,
         "macro_f1": 0.890151,
@@ -277,6 +358,15 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.455905,
         "unweighted_accuracy": 0.298381,
         "macro_f1": 0.284932,
@@ -289,6 +379,15 @@
         "total_clips": 588,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.87585,
         "unweighted_accuracy": 0.87585,
         "macro_f1": 0.876219,
@@ -301,6 +400,15 @@
         "total_clips": 6902,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.869458,
         "unweighted_accuracy": 0.869458,
         "macro_f1": 0.869253,
@@ -313,6 +421,15 @@
         "total_clips": 480,
         "sample": false,
         "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.933333,
         "unweighted_accuracy": 0.925,
         "macro_f1": 0.928172,
@@ -327,6 +444,13 @@
         "total_clips": 7442,
         "sample": false,
         "in_training_data": true,
+        "training_status": "confirmed_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
         "accuracy": 0.846815,
         "unweighted_accuracy": 0.848713,
         "macro_f1": 0.847376,
@@ -339,6 +463,13 @@
         "total_clips": 6675,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
         "accuracy": 0.648989,
         "unweighted_accuracy": 0.577856,
         "macro_f1": 0.544171,
@@ -351,6 +482,13 @@
         "total_clips": 11848,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
         "accuracy": 0.470459,
         "unweighted_accuracy": 0.474735,
         "macro_f1": 0.474074,
@@ -363,6 +501,13 @@
         "total_clips": 4481,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
         "accuracy": 0.551439,
         "unweighted_accuracy": 0.537699,
         "macro_f1": 0.480564,
@@ -375,6 +520,13 @@
         "total_clips": 1800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
         "accuracy": 0.745,
         "unweighted_accuracy": 0.745,
         "macro_f1": 0.746711,
@@ -386,7 +538,16 @@
         "clips": 1440,
         "total_clips": 1440,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.593056,
         "unweighted_accuracy": 0.612599,
         "macro_f1": 0.59684,
@@ -398,7 +559,16 @@
         "clips": 2800,
         "total_clips": 2800,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.4925,
         "unweighted_accuracy": 0.4925,
         "macro_f1": 0.378642,
@@ -410,7 +580,16 @@
         "clips": 1200,
         "total_clips": 1200,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.759167,
         "unweighted_accuracy": 0.759167,
         "macro_f1": 0.772844,
@@ -422,7 +601,16 @@
         "clips": 8000,
         "total_clips": 8000,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.28325,
         "unweighted_accuracy": 0.322761,
         "macro_f1": 0.250345,
@@ -435,6 +623,13 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": true,
+        "training_status": "confirmed_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
         "accuracy": 0.300613,
         "unweighted_accuracy": 0.383758,
         "macro_f1": 0.27999,
@@ -446,7 +641,16 @@
         "clips": 588,
         "total_clips": 588,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.528912,
         "unweighted_accuracy": 0.528912,
         "macro_f1": 0.468719,
@@ -458,7 +662,16 @@
         "clips": 6902,
         "total_clips": 6902,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.474355,
         "unweighted_accuracy": 0.474355,
         "macro_f1": 0.417475,
@@ -470,7 +683,16 @@
         "clips": 480,
         "total_clips": 480,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "probable_exposure",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_scope": "upstream_teacher_lineage",
+        "training_reason": "SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46",
+          "https://github.com/emo-box/EmoBox#datasets"
+        ],
         "accuracy": 0.577083,
         "unweighted_accuracy": 0.546429,
         "macro_f1": 0.483262,
@@ -485,6 +707,12 @@
         "total_clips": 7442,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.513706,
         "unweighted_accuracy": 0.524463,
         "macro_f1": 0.46725,
@@ -497,6 +725,12 @@
         "total_clips": 6675,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.48839,
         "unweighted_accuracy": 0.480546,
         "macro_f1": 0.433239,
@@ -509,6 +743,12 @@
         "total_clips": 11848,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.727043,
         "unweighted_accuracy": 0.717556,
         "macro_f1": 0.72154,
@@ -520,7 +760,14 @@
         "clips": 4481,
         "total_clips": 4481,
         "sample": false,
-        "in_training_data": false,
+        "in_training_data": true,
+        "training_status": "confirmed_exposure",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_scope": "author_development_calibration_not_applied",
+        "training_reason": "The author used nEMO to tune podcast thresholds, but did not fit the public SER head on it; this project uses raw argmax and does not apply those thresholds. Counted as seen in the broader development pipeline; the scope is calibration, not weight fitting.",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md"
+        ],
         "accuracy": 0.636911,
         "unweighted_accuracy": 0.625128,
         "macro_f1": 0.595246,
@@ -533,6 +780,12 @@
         "total_clips": 1800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.404444,
         "unweighted_accuracy": 0.404444,
         "macro_f1": 0.375449,
@@ -545,6 +798,12 @@
         "total_clips": 1440,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.484028,
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.466076,
@@ -557,6 +816,12 @@
         "total_clips": 2800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.504286,
         "unweighted_accuracy": 0.504286,
         "macro_f1": 0.434398,
@@ -569,6 +834,12 @@
         "total_clips": 1200,
         "sample": false,
         "in_training_data": true,
+        "training_status": "confirmed_exposure",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.995,
         "unweighted_accuracy": 0.995,
         "macro_f1": 0.994802,
@@ -581,6 +852,12 @@
         "total_clips": 8000,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.306875,
         "unweighted_accuracy": 0.349443,
         "macro_f1": 0.275936,
@@ -593,6 +870,12 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.287577,
         "unweighted_accuracy": 0.230016,
         "macro_f1": 0.18684,
@@ -605,6 +888,12 @@
         "total_clips": 588,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.559524,
         "unweighted_accuracy": 0.559524,
         "macro_f1": 0.537645,
@@ -617,6 +906,12 @@
         "total_clips": 6902,
         "sample": false,
         "in_training_data": true,
+        "training_status": "confirmed_exposure",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.850188,
         "unweighted_accuracy": 0.850188,
         "macro_f1": 0.850221,
@@ -629,6 +924,12 @@
         "total_clips": 480,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.6125,
         "unweighted_accuracy": 0.564286,
         "macro_f1": 0.532112,
@@ -643,6 +944,12 @@
         "total_clips": 7442,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.336603,
         "unweighted_accuracy": 0.351988,
         "macro_f1": 0.299302,
@@ -655,6 +962,12 @@
         "total_clips": 6675,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.459775,
         "unweighted_accuracy": 0.409409,
         "macro_f1": 0.351958,
@@ -667,6 +980,12 @@
         "total_clips": 11848,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.69286,
         "unweighted_accuracy": 0.700601,
         "macro_f1": 0.693023,
@@ -679,6 +998,12 @@
         "total_clips": 4481,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.327829,
         "unweighted_accuracy": 0.319992,
         "macro_f1": 0.287864,
@@ -691,6 +1016,12 @@
         "total_clips": 1800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.363889,
         "unweighted_accuracy": 0.363889,
         "macro_f1": 0.267674,
@@ -703,6 +1034,12 @@
         "total_clips": 1440,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.507639,
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.445022,
@@ -715,6 +1052,12 @@
         "total_clips": 2800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.301071,
         "unweighted_accuracy": 0.301071,
         "macro_f1": 0.174065,
@@ -727,6 +1070,12 @@
         "total_clips": 1200,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.450833,
         "unweighted_accuracy": 0.450833,
         "macro_f1": 0.473273,
@@ -739,6 +1088,12 @@
         "total_clips": 8000,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.191875,
         "unweighted_accuracy": 0.22891,
         "macro_f1": 0.172989,
@@ -751,6 +1106,12 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.33819,
         "unweighted_accuracy": 0.296001,
         "macro_f1": 0.261093,
@@ -763,6 +1124,12 @@
         "total_clips": 588,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.358844,
         "unweighted_accuracy": 0.358844,
         "macro_f1": 0.313627,
@@ -775,6 +1142,12 @@
         "total_clips": 6902,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.369313,
         "unweighted_accuracy": 0.369313,
         "macro_f1": 0.319599,
@@ -787,6 +1160,12 @@
         "total_clips": 480,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
         "accuracy": 0.372917,
         "unweighted_accuracy": 0.315476,
         "macro_f1": 0.293572,
@@ -801,6 +1180,12 @@
         "total_clips": 7442,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.307444,
         "unweighted_accuracy": 0.320936,
         "macro_f1": 0.274098,
@@ -813,6 +1198,12 @@
         "total_clips": 6675,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.396105,
         "unweighted_accuracy": 0.367027,
         "macro_f1": 0.336439,
@@ -825,6 +1216,12 @@
         "total_clips": 11848,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.573599,
         "unweighted_accuracy": 0.546096,
         "macro_f1": 0.521601,
@@ -837,6 +1234,12 @@
         "total_clips": 4481,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.284088,
         "unweighted_accuracy": 0.269846,
         "macro_f1": 0.215033,
@@ -849,6 +1252,12 @@
         "total_clips": 1800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.363333,
         "unweighted_accuracy": 0.363333,
         "macro_f1": 0.287223,
@@ -861,6 +1270,12 @@
         "total_clips": 1440,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.446528,
         "unweighted_accuracy": 0.424107,
         "macro_f1": 0.384374,
@@ -873,6 +1288,12 @@
         "total_clips": 2800,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.401429,
         "unweighted_accuracy": 0.401429,
         "macro_f1": 0.315539,
@@ -885,6 +1306,12 @@
         "total_clips": 1200,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.483333,
         "unweighted_accuracy": 0.483333,
         "macro_f1": 0.504985,
@@ -897,6 +1324,12 @@
         "total_clips": 8000,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.193875,
         "unweighted_accuracy": 0.230536,
         "macro_f1": 0.182348,
@@ -909,6 +1342,12 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.348543,
         "unweighted_accuracy": 0.294204,
         "macro_f1": 0.267992,
@@ -921,6 +1360,12 @@
         "total_clips": 588,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.292517,
         "unweighted_accuracy": 0.292517,
         "macro_f1": 0.225029,
@@ -933,6 +1378,12 @@
         "total_clips": 6902,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.278325,
         "unweighted_accuracy": 0.278325,
         "macro_f1": 0.237179,
@@ -945,6 +1396,12 @@
         "total_clips": 480,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
         "accuracy": 0.3375,
         "unweighted_accuracy": 0.290476,
         "macro_f1": 0.286691,
@@ -959,6 +1416,12 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen2.5 and Whisper-large-v3 initialization plus multimodal pre/post-training; complete corpus-level provenance not published",
+        "training_evidence": [
+          "https://arxiv.org/html/2503.20215v1#S3",
+          "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+        ],
         "accuracy": 0.512653,
         "unweighted_accuracy": 0.434526,
         "macro_f1": 0.40434,
@@ -973,6 +1436,12 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
         "accuracy": 0.307132,
         "unweighted_accuracy": 0.395469,
         "macro_f1": 0.293543,
@@ -987,6 +1456,12 @@
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
         "accuracy": 0.478144,
         "unweighted_accuracy": 0.296598,
         "macro_f1": 0.308557,

@@ -62,7 +62,7 @@ With all 9 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Not in Vox-Profile Whisper's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile Whisper: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Unofficial copy.** The official corpus is free for research after registration and its licence forbids redistribution; the files come from an unofficial copy on Kaggle (ejlok1/surrey-audiovisual-expressed-emotion-savee), checked only against the file names and counts of the corpus.
 - Only 4 speakers, all male. 10 evaluators validated the recordings originally; their results per clip are not published, so there is one way of counting a prediction as correct.
 - Most sentences differ between emotions, and some of them are emotion-specific, so their words can hint at the emotion.

@@ -1,0 +1,2274 @@
+{
+  "audit_date": "2026-11-09",
+  "scope": "Eight evaluated checkpoints and 15 adopted datasets; API placeholders are not evaluated.",
+  "policy": "Training involvement includes direct or upstream use at any training/development stage. Count documented seed fine-tuning, pseudo-label teachers, retained-backbone pretraining and final-model fine-tuning; explicit development calibration is counted and labelled separately. Source statements and supported lineage inferences suffice; no need for the final checkpoint to reread original audio. Evidence levels describe mechanism/strength, not whether upstream use is excluded.",
+  "unhatched_meaning": "No corpus-specific evidence found; not verified unseen. Patterns distinguish direct/indirect/possible associations; corpus exposure does not establish test-file leakage.",
+  "dataset_order": [
+    "crema_d",
+    "mcae_spps",
+    "mess",
+    "ravdess",
+    "tess",
+    "jl_corpus",
+    "thai_ser",
+    "nemo",
+    "mead",
+    "meld",
+    "emovo",
+    "emozionalmente",
+    "savee",
+    "dailytalk",
+    "emotiontalk"
+  ],
+  "sources": {
+    "e2v_large_card": {
+      "url": "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+      "revision": "6c303ba987b86b93193de93e34bb2b077a6bedc4",
+      "pinned_card_verified_equal_to_local": true
+    },
+    "e2v_owner_large_data": {
+      "url": "https://github.com/ddlBoJack/emotion2vec/issues/73",
+      "date": "2025-06-14",
+      "speaker": "repository owner ddlBoJack",
+      "fact": "Large training data described as in-house industrial data; no record-level provenance or target-corpus exclusion supplied."
+    },
+    "e2v_owner_teacher": {
+      "url": "https://github.com/ddlBoJack/emotion2vec/issues/46",
+      "date": "2024-09-20",
+      "speaker": "repository owner ddlBoJack",
+      "fact": "Seed labels the filtered pseudo-labeled data used to fine-tune base. This is evidence of label-teacher linkage, not an explicit seed-to-base-to-large weight initialization chain."
+    },
+    "emobox_inventory": {
+      "url": "https://github.com/emo-box/EmoBox#datasets",
+      "fact": "32 datasets/294.4 hours inventory; the seed card says 201 hours, without exact selected-corpus or split list."
+    },
+    "original_e2v_paper": {
+      "url": "https://aclanthology.org/2024.findings-acl.931.pdf",
+      "fact": "Original emotion2vec self-supervised pretraining includes IEMOCAP, MELD, MEAD, CMU-MOSEI, MSP-Podcast v1.8. Its initial data2vec/data2vec2 base checkpoints are LibriSpeech models. Does not establish these raw corpora were used by the selected plus-large checkpoint."
+    },
+    "mera_card": {
+      "url": "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+      "revision": "7e3ee6fa4534dea8316e8ca43e377e2fbb58496b",
+      "pinned_card_verified_equal_to_local": true
+    },
+    "mera_paper": {
+      "url": "https://arxiv.org/html/2511.04914v1#S4.SS1",
+      "version": "arXiv v1, 2025-11-07",
+      "fact": "SER training names CREMA-D, ESD, MELD, M3ED plus proprietary SG-ECMT/SGTV. SG-ECMT labels use seed/base agreement then MERaLiON relabeling."
+    },
+    "mera_backbone": {
+      "url": "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/exporter_lora_whisper.py",
+      "fact": "Export reconstructs a Whisper-medium encoder from official openai/whisper-medium snapshot abdf7c39ab9d0397620ccaea8974cc764cd0953e, then merges LoRA."
+    },
+    "whisper_pretraining": {
+      "url": "https://huggingface.co/openai/whisper-medium#training-data",
+      "fact": "680,000 hours of internet audio/transcripts. Exact source-record list not public; no adopted-corpus exclusion follows from not being named."
+    },
+    "melati_public_card": {
+      "url": "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/resolve/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+      "revision": "145f4eb05d07dc4d06352132787a8b4f836e7710",
+      "local_card_sha256": "2f1efbe57c30e66561cec27210e405d1d80c2b1963bafb41aa3b9bcf22cf2010",
+      "verification": "HTTP200 pinned card equals local README byte-for-byte",
+      "stages": "Frozen Whisper-v3 features; public SER head trained on nine named corpora; separate internal head has additional corpora; nEMO held out from head fitting but used in threshold calibration."
+    },
+    "vox_whisper_card": {
+      "url": "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/resolve/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+      "revision": "b92dab65151206a603810ec8b72eb528b9dd983c",
+      "local_card_sha256": "0bd416c1effd415bcd3bf71808ddbcff8d9937206644d2045ecba6f0e658c4af",
+      "verification": "HTTP200 pinned card equals local README byte-for-byte",
+      "stages": "Selected speech-only categorical checkpoint trained on MSP-Podcast, derived from Whisper-large-v3."
+    },
+    "vox_wavlm_card": {
+      "url": "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/resolve/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+      "revision": "621a2ceaaa2408e390e0fc9454e8c29490f689e2",
+      "local_card_sha256": "11a845db15576b8f3a59750b04ec91048df11767b9d5055ba996da945bd15574",
+      "verification": "HTTP200 pinned card equals local README byte-for-byte",
+      "stages": "Selected speech-only categorical checkpoint trained on MSP-Podcast, derived from WavLM-large."
+    },
+    "whisper_v3_backbone": {
+      "url": "https://huggingface.co/openai/whisper-large-v3/blob/06f233fe06e710322aca913c1bc4249a0d71fce1/README.md",
+      "revision": "06f233fe06e710322aca913c1bc4249a0d71fce1",
+      "stages": "1M hours weakly labeled plus4M pseudo-labeled audio. No adopted15 corpus or clip inventory supplied."
+    },
+    "wavlm_large_backbone": {
+      "url": "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md",
+      "revision": "c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c",
+      "stages": "SSL 60k h Libri-Light +10k h GigaSpeech +24k h VoxPopuli. No adopted15 corpus named, no clip-level overlap audit provided."
+    },
+    "vox_paper": {
+      "url": "https://arxiv.org/html/2505.14648v2",
+      "version": "v2 2026-10-06",
+      "stages": "Categorical emotion training uses MSP-Podcast v1.12 standard splits; other task-specific datasets in Vox-Profile benchmark are not evidence this emotion checkpoint trained on them."
+    },
+    "melati_local_inference": {
+      "path": "emotion_recognition/scripts/models/melati.py",
+      "stages": "Current evaluation uses raw softmax argmax, without the author podcast precision thresholds. Author nEMO calibration still counts as seen under the broad development-pipeline policy; label the stage rather than excluding it."
+    }
+  },
+  "models": {
+    "emotion2vec_plus_large": {
+      "source_revision": "6c303ba987b86b93193de93e34bb2b077a6bedc4",
+      "documented_training_stages": [
+        "201 h seed academic subset from EmoBox (family/teacher context)",
+        "4,788 h filtered pseudo-labeled base data (family/teacher context)",
+        "42,526 h filtered in-house industrial pseudo-labeled data for large; named target-corpus provenance unknown"
+      ],
+      "initialization_into_large": "Not established by primary documentation; neither seed-weight inheritance nor scratch/reinitialization is proven. Card wording describes data iteration, not exact weight ancestry.",
+      "documented_adopted_exposure": [],
+      "explicitly_excluded_adopted": [],
+      "potential_family_inventory": [
+        "crema_d",
+        "emovo",
+        "emozionalmente",
+        "jl_corpus",
+        "mead",
+        "meld",
+        "ravdess",
+        "savee",
+        "tess"
+      ],
+      "datasets": {
+        "jl_corpus": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "emovo": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed.",
+            "Original emotion2vec paper documents this pretraining corpus, but exact plus-large initialization/inheritance is not established."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher",
+            "original_e2v_paper"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "meld": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed.",
+            "Original emotion2vec paper documents this pretraining corpus, but exact plus-large initialization/inheritance is not established."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher",
+            "original_e2v_paper"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "savee": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "crema_d": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "emozionalmente": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion.",
+            "Indirectly supported upstream association: in EmoBox inventory; selected seed subset and raw-data/weight inheritance into large are unconfirmed."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data",
+            "emobox_inventory",
+            "e2v_owner_teacher"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Large exact corpus/record list not disclosed; no explicit target-corpus exclusion."
+          ],
+          "evidence": [
+            "e2v_large_card",
+            "e2v_owner_large_data"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "emotion2vec+ large",
+      "self_supervised_vs_pseudolabel_note": "Original emotion2vec online self-distillation uses an EMA teacher and five named SSL corpora. emotion2vec+ seed academic-label fine-tuning and subsequent emotion pseudo-label iteration are a different teacher mechanism; neither proves all EmoBox corpora were used for selected-large encoder SSL.",
+      "counted_as_seen": [
+        "crema_d",
+        "ravdess",
+        "tess",
+        "jl_corpus",
+        "mead",
+        "meld",
+        "emovo",
+        "emozionalmente",
+        "savee"
+      ]
+    },
+    "meralion_ser_v1": {
+      "source_revision": "7e3ee6fa4534dea8316e8ca43e377e2fbb58496b",
+      "documented_training_stages": [
+        "OpenAI Whisper-medium backbone pretraining, followed by frozen-base + LoRA SER adaptation",
+        "SER supervised/pseudo-labeled training: CREMA-D, ESD, MELD, M3ED, SG-ECMT and SGTV",
+        "Seed/base models generate labels for proprietary SG-ECMT; not evidence their own raw training clips are included"
+      ],
+      "documented_adopted_exposure": [
+        "crema_d",
+        "meld"
+      ],
+      "explicitly_excluded_adopted": [],
+      "scoped_external_exclusion_note": "Official card says MSP-Podcast/IEMOCAP/IndoWaveSentiment not used in model training; treat as SER-author training-stage exclusion, not proof of never in Whisper internet pretraining. None is among adopted 15.",
+      "datasets": {
+        "jl_corpus": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "emovo": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "meld": {
+          "status": "confirmed_exposure",
+          "hatch": "///",
+          "confirmed_stage": "SER supervised training",
+          "reasons": [
+            "Explicitly named in the exact MERaLiON-SER technical report; corpus-level exposure only, not evidence this evaluation split/clip was used."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "training_or_retained_backbone",
+          "counts_as_used_in_project": true
+        },
+        "savee": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "crema_d": {
+          "status": "confirmed_exposure",
+          "hatch": "///",
+          "confirmed_stage": "SER supervised training",
+          "reasons": [
+            "Explicitly named in the exact MERaLiON-SER technical report; corpus-level exposure only, not evidence this evaluation split/clip was used."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "training_or_retained_backbone",
+          "counts_as_used_in_project": true
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "emozionalmente": {
+          "status": "probable_exposure",
+          "hatch": "...",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded.",
+            "Supported upstream teacher-lineage link via emotion2vec seed/base is not raw target-corpus exposure; counted as seen via upstream training, with a distinct pattern recording the mechanism."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "upstream_teacher_lineage",
+          "direct_raw_audio_use_confirmed": false,
+          "inference": "EmoBox corpus inventory -> seed academic training -> documented pseudo-label/data-iteration lineage -> final model. Exact seed subset, final raw clips and weight inheritance are not proven.",
+          "claim_scope": "inferred_upstream_supervision_influence",
+          "direct_raw_audio_membership": "unknown",
+          "evaluation_split_membership": "unknown",
+          "weight_initialization_or_inheritance": "not_established",
+          "seed_specific_corpus_subset": "not_individually_disclosed",
+          "counts_as_used_in_project": true
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not named in reported SER sources; Whisper pretraining/proprietary sources are not fully enumerated, so never-used cannot be concluded."
+          ],
+          "evidence": [
+            "mera_paper",
+            "mera_card",
+            "mera_backbone",
+            "whisper_pretraining"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "MERaLiON-SER-v1",
+      "counted_as_seen": [
+        "crema_d",
+        "ravdess",
+        "tess",
+        "jl_corpus",
+        "mead",
+        "meld",
+        "emovo",
+        "emozionalmente",
+        "savee"
+      ]
+    },
+    "melati_emotion": {
+      "source_revision": "145f4eb05d07dc4d06352132787a8b4f836e7710",
+      "documented_training_stages": [
+        "Frozen openai/whisper-large-v3 backbone",
+        "Public SER head: EMNS1063, Emozionalmente6902, JL-Corpus1440, MESD862, Oreau502, RESD1396, SUBESCO7000, EmoV-DB5172, Expresso4558",
+        "Author tunes podcast precision thresholds on half of nEMO+NonverbalTTS held-out clips; current project does not apply those thresholds"
+      ],
+      "documented_adopted_exposure": [
+        "jl_corpus",
+        "nemo",
+        "emozionalmente"
+      ],
+      "explicitly_excluded_adopted": [],
+      "datasets": {
+        "jl_corpus": {
+          "status": "confirmed_exposure",
+          "hatch": "///",
+          "confirmed_stage": "Public SER head supervised training on frozen backbone features",
+          "reasons": [
+            "Exact selected public checkpoint model card names this corpus. Corpus-level inclusion does not prove all evaluated clips or splits were training examples.",
+            "Card names1440 clips, whereas project original JL copy has2400; flag corpus-level overlap only, not every evaluation clip."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "training_or_retained_backbone",
+          "counts_as_used_in_project": true
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "confirmed_exposure",
+          "hatch": "///",
+          "confirmed_stage": "Author development threshold calibration; this evaluation uses raw argmax without those thresholds",
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scoped_exclusion": "Author calls nEMO held out from head fitting; not an exclusion guarantee for Whisper backbone. Threshold calibration uses held-out corpus, but current raw-argmax loader ignores those thresholds.",
+          "scope": "author_development_calibration_not_applied",
+          "counts_as_used_in_project": true
+        },
+        "tess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emovo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "meld": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim.",
+            "Named only as an additional corpus of a different internal-pipeline head; do not transfer that training to the selected public head."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "savee": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "crema_d": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim.",
+            "Named only as an additional corpus of a different internal-pipeline head; do not transfer that training to the selected public head."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim.",
+            "Named only as an additional corpus of a different internal-pipeline head; do not transfer that training to the selected public head."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emozionalmente": {
+          "status": "confirmed_exposure",
+          "hatch": "///",
+          "confirmed_stage": "Public SER head supervised training on frozen backbone features",
+          "reasons": [
+            "Exact selected public checkpoint model card names this corpus. Corpus-level inclusion does not prove all evaluated clips or splits were training examples."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "training_or_retained_backbone",
+          "counts_as_used_in_project": true
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Not in the nine named public SER-head corpora; backbone corpus membership is undisclosed, so no whole-life never-used claim."
+          ],
+          "evidence": [
+            "melati_public_card",
+            "whisper_v3_backbone",
+            "melati_local_inference"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "Melati",
+      "counted_as_seen": [
+        "jl_corpus",
+        "nemo",
+        "emozionalmente"
+      ]
+    },
+    "vox_profile_whisper": {
+      "source_revision": "b92dab65151206a603810ec8b72eb528b9dd983c",
+      "documented_training_stages": [
+        "OpenAI Whisper-large-v3 backbone pretraining",
+        "Selected categorical SER adaptation on MSP-Podcast, v1.12 per paper"
+      ],
+      "documented_adopted_exposure": [],
+      "explicitly_excluded_adopted": [],
+      "datasets": {
+        "jl_corpus": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emovo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "meld": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "savee": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "crema_d": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emozionalmente": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "None of adopted15 is named in the selected MSP-Podcast adaptation; Whisper backbone corpus inventory is not fully disclosed. No corpus-specific exclusion found."
+          ],
+          "evidence": [
+            "vox_whisper_card",
+            "whisper_v3_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "Vox-Profile Whisper",
+      "counted_as_seen": []
+    },
+    "vox_profile_wavlm": {
+      "source_revision": "621a2ceaaa2408e390e0fc9454e8c29490f689e2",
+      "documented_training_stages": [
+        "WavLM-large SSL on Libri-Light, GigaSpeech and VoxPopuli",
+        "Selected categorical SER adaptation on MSP-Podcast, v1.12 per paper"
+      ],
+      "documented_adopted_exposure": [],
+      "explicitly_excluded_adopted": [],
+      "datasets": {
+        "jl_corpus": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emovo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "meld": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "savee": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "crema_d": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emozionalmente": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Documented training source names contain none of adopted15. No explicit per-corpus exclusion or underlying-recording overlap audit; treat as not-listed/unknown rather than proved never-used."
+          ],
+          "evidence": [
+            "vox_wavlm_card",
+            "wavlm_large_backbone",
+            "vox_paper"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "Vox-Profile WavLM",
+      "counted_as_seen": []
+    },
+    "qwen2_5_omni_7b": {
+      "source_revision": "ae9e1690543ffd5c0221dc27f79834d0294cba00",
+      "documented_training_stages": [
+        "Qwen2.5 LLM and Whisper-large-v3 initialization",
+        "Multimodal pretraining and instruction tuning; full corpus/clip lists unavailable"
+      ],
+      "documented_adopted_exposure": [],
+      "datasets": {
+        "crema_d": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "jl_corpus": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "meld": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emovo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emozionalmente": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "savee": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "MELD is an evaluation benchmark, not evidence of training use. Whisper and Qwen corpus lists do not establish exclusion of these 15 corpora."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2503.20215v1",
+            "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "Qwen2.5-Omni 7B",
+      "counted_as_seen": []
+    },
+    "qwen2_audio_7b": {
+      "source_revision": "0a095220c30b7b31434169c3086508ef3ea5bf0a",
+      "documented_training_stages": [
+        "Qwen-7B LLM and Whisper-large-v3 initialization",
+        "Audio-text pretraining, supervised instruction tuning and DPO"
+      ],
+      "documented_adopted_exposure": [],
+      "datasets": {
+        "crema_d": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "jl_corpus": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "meld": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emovo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emozionalmente": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "savee": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "Report section3.1 asserts evaluation-data exclusion and table1 includes MELD test. Preserve this scoped author statement; it does not independently audit all inherited backbone or text sources."
+          ],
+          "evidence_urls": [
+            "https://arxiv.org/html/2407.10759v1",
+            "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "Qwen2-Audio 7B Instruct",
+      "scoped_exclusion_claims": [
+        {
+          "dataset": "meld",
+          "split": "test/evaluation data as described in the report",
+          "source": "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "claim": "Authors report excluding evaluation data from their audio training pipeline.",
+          "limit": "Does not imply all MELD splits were excluded, and does not independently audit retained Whisper/Qwen source-record membership."
+        }
+      ],
+      "counted_as_seen": []
+    },
+    "gemma4_e4b": {
+      "source_revision": "4ecc2ba63bcac23ba4a767fc87025b1450f84c9c",
+      "documented_training_stages": [
+        "305M USM-based audio encoder retained/frozen during LLM pretraining; architecture lineage does not identify exact encoder training recordings",
+        "Broad multimodal pretraining, instruction tuning; full corpus/clip lists unavailable"
+      ],
+      "documented_adopted_exposure": [],
+      "datasets": {
+        "crema_d": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mcae_spps": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "ravdess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "tess": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "jl_corpus": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "thai_ser": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "nemo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "mead": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "meld": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emovo": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emozionalmente": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "savee": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "dailytalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        },
+        "emotiontalk": {
+          "status": "not_established",
+          "hatch": "",
+          "confirmed_stage": null,
+          "reasons": [
+            "Complete training provenance for this selected checkpoint and inherited components is not disclosed.",
+            "January2025 pretraining cutoff and general benchmark filtering are not dataset-by-dataset exclusion certificates; instruction tuning and retained-encoder provenance are not fully enumerated."
+          ],
+          "evidence_urls": [
+            "https://ai.google.dev/gemma/docs/core/model_card_4",
+            "https://arxiv.org/html/2607.02770v1",
+            "https://huggingface.co/google/gemma-4-E4B-it"
+          ],
+          "scope": "not_established",
+          "counts_as_used_in_project": false
+        }
+      },
+      "name": "Gemma 4 E4B",
+      "counted_as_seen": []
+    }
+  },
+  "corrections": [
+    "The former binary policy hid indirect/possible evidence among unknowns. It is replaced with four graded categories; a paper/report/card/author statement can directly confirm a source without training-log access.",
+    "emotion2vec+ large: nine adopted EmoBox associations remain visible as indirectly supported upstream teacher/family links, rather than confirmed direct use or total unknown.",
+    "MERaLiON: CREMA-D/MELD direct statements retained; seven additional adopted EmoBox-teacher links marked supported indirectly.",
+    "Melati: JL-Corpus/Emozionalmente directly documented; nEMO author calibration association counted as seen/directly documented development use with the explicit note that this implementation does not use the calibrated thresholds.",
+    "DailyTalk and EmotionTalk: no corpus-specific training evidence found for the eight checkpoints; leave unknown, not verified unseen.",
+    "Scores, predictions and inference protocols are unchanged by evidence review; regenerate saved metadata, reports, figures and viewer from the registry."
+  ],
+  "evidence_levels": {
+    "confirmed_exposure": {
+      "label": "Used directly",
+      "marker": "†",
+      "hatch": "///",
+      "definition": "A credible paper, report, model card or author statement explicitly names this corpus for the selected checkpoint or a retained component. This is source-supported, not an absolute guarantee."
+    },
+    "probable_exposure": {
+      "label": "Used via upstream training",
+      "marker": "‡",
+      "hatch": "...",
+      "definition": "Credible sources support a specific upstream corpus-family/teacher/data-iteration chain. Individual corpus subset, retained weights and final raw-audio use can remain unverified; this category records an indirect-influence inference, not confirmation of direct training."
+    },
+    "possible_exposure": {
+      "label": "Possible association",
+      "marker": "?",
+      "hatch": "xx",
+      "definition": "A relevant teacher/family/development association exists, but corpus selection, checkpoint inheritance or applicability is unresolved. Does not assert direct raw-audio training."
+    },
+    "not_established": {
+      "label": "No corpus-specific evidence",
+      "marker": "",
+      "hatch": "",
+      "definition": "No corpus-specific training association found. General model training information can still be known. Does not mean verified unseen."
+    }
+  },
+  "grading_revision_date": "2026-11-10",
+  "project_used_definition": "Count a corpus as used if credible sources support its involvement anywhere upstream in the training pipeline, including seed fine-tuning or teachers that supply pseudo-labels. Both confirmed_exposure and probable_exposure are used (in_training_data=true). Distinguish the mechanism without requiring final-model rereading of the original audio. Explicit author development calibration is counted as seen too, with its stage and applicability disclosed."
+}

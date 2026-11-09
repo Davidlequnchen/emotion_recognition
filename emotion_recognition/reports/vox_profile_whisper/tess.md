@@ -62,6 +62,6 @@ With all 9 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Not in Vox-Profile Whisper's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile Whisper: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - Only two speakers, so the result says little about other voices; models often score close to 100% on TESS.
 - No listeners' labels are published with the dataset. Audio: 24,414 Hz WAV (one file, `OAF_food_fear.wav`, is 96 kHz), resampled to 16 kHz.

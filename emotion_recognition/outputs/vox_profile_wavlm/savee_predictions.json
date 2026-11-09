@@ -28,7 +28,7 @@
   "accept": {},
   "chance": 0.142857,
   "in_training_data": false,
-  "training_source": "MSP-Podcast",
+  "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
   "model_classes": [
     "angry",
     "contempt",
@@ -71,5 +71,10 @@
     "seconds": 135.6,
     "ms_per_clip": 282.6,
     "on_cpu": 0
-  }
+  },
+  "training_status": "not_established",
+  "training_evidence": [
+    "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+    "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+  ]
 }

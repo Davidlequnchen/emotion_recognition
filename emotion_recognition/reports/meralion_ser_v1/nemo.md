@@ -59,6 +59,6 @@ With all 7 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Not in MERaLiON-SER-v1's training data** (CREMA-D, ESD, MELD, M3ED and Singaporean speech).
+- **Training involvement for MERaLiON-SER-v1: No corpus-specific evidence**. Source: SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - No listeners' labels are published: listeners only screened the recordings, so there is one way of counting a prediction as correct.
 - Recorded at home (24 kHz); only 3 of the 9 speakers are professional voice actors.

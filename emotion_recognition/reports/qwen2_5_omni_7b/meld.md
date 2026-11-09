@@ -64,7 +64,7 @@ With all 8 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Qwen2.5-Omni 7B's training data**: not published (Alibaba). The model may have heard these public datasets during training.
+- **Training involvement for Qwen2.5-Omni 7B: No corpus-specific evidence**. Source: Qwen2.5 and Whisper-large-v3 initialization plus multimodal pre/post-training; complete corpus-level provenance not published. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage. The model may have heard these public datasets during training.
 - **In-the-wild speech with noisy labels.** The annotators saw the video and the transcript, not the voice alone, and agreed moderately (Fleiss' kappa 0.43); the classes are very unbalanced (48% neutral, 2% fear).
 - Several speakers, laughter of the studio audience and background music can be heard in a clip; a third of the clips are shorter than 2 s.
 - MELD's train split is in the training data of MERaLiON-SER-v1 and of EmoBox (emotion2vec+), so these models have heard the same speakers and show.

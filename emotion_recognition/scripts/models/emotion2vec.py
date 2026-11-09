@@ -16,9 +16,9 @@ import torch
 
 MODEL_FILES = ["model.pt", "config.yaml", "configuration.json", "tokens.txt"]
 # Added to the training-data caveat of every report and summary of an emotion2vec+ model
-TRAINING_NOTE = ("emotion2vec+ seed, the first model in the chain that led to emotion2vec+ large, was fine-tuned on "
-                 "EmoBox data; large was later trained on about 40k hours of pseudo-labelled data whose sources are "
-                 "not published, so earlier exposure to other datasets cannot be ruled out completely.")
+TRAINING_NOTE = ("This project counts EmoBox-related corpora as seen through seed fine-tuning and subsequent "
+                 "pseudo-label supervision. The upstream marker records this training route; the final large "
+                 "checkpoint's exact raw recordings and initial weights are not enumerated.")
 
 
 class Predictor:

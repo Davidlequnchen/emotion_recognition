@@ -55,6 +55,6 @@ With all 9 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Not in Vox-Profile WavLM's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile WavLM: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - *Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.
 - The public version has 1,800 clips and acted labels only; the listeners' ratings are available from the author on request. Audio is sampled at 24,414 Hz, resampled to 16 kHz.

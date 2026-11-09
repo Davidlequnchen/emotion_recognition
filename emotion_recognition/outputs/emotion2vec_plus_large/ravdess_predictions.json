@@ -37,7 +37,7 @@
   },
   "model_name": "emotion2vec+ large",
   "in_training_data": true,
-  "training_source": "EmoBox (through emotion2vec+ seed)",
+  "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
   "model_classes": [
     "angry",
     "disgusted",
@@ -48,5 +48,13 @@
     "sad",
     "surprised",
     "<unk>"
+  ],
+  "training_status": "probable_exposure",
+  "training_scope": "upstream_teacher_lineage",
+  "training_reason": "Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset and raw-audio/weight inheritance into large are not enumerated.",
+  "training_evidence": [
+    "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+    "https://github.com/ddlBoJack/emotion2vec/issues/46",
+    "https://github.com/emo-box/EmoBox#datasets"
   ]
 }

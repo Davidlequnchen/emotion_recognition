@@ -87,7 +87,7 @@ The listeners' majority vote matches the acted emotion for 100.0% of the 6,675 c
 
 ## Caveats
 
-- **Not in EmoBox**, so emotion2vec+ seed was not fine-tuned on it. emotion2vec+ large was later trained on 40k hours of pseudo-labelled data whose sources are not published, so earlier exposure cannot be ruled out completely.
+- **Training involvement for emotion2vec+ large: No corpus-specific evidence**. Source: EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage. This project counts EmoBox-related corpora as seen through seed fine-tuning and subsequent pseudo-label supervision. The upstream marker records this training route; the final large checkpoint's exact raw recordings and initial weights are not enumerated.
 - **Validated clips only.** The dataset keeps a clip only if at least 43% of its 40 listeners chose the intended emotion, so the acted label and the listeners' vote usually agree.
 - Mandarin speech, 48 kHz, resampled to 16 kHz by the model's loader.
 - **Acted labels are not perceived emotions.** The ground truth is what the actor intended; listeners sometimes heard something else, as the listeners' numbers above show.

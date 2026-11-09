@@ -62,7 +62,7 @@ With all 9 model classes, the model chose a class that this dataset does not hav
 
 ## Caveats
 
-- **Not in Vox-Profile WavLM's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile WavLM: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - *Calm* is not quite *neutral*: calm clips predicted as neutral count as correct.
 - Listeners rated every file 10 times (247 listeners). The paper publishes their ratings as recognition rates per file, not as a vote for an emotion, so this report has no listeners' labels.
 - Audio: 48 kHz WAV, resampled to 16 kHz; 5 files are stereo, and their channels are averaged.

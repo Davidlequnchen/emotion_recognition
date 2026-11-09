@@ -34,6 +34,8 @@ import plot_results
 import prompts
 from eval_datasets import EvalSet, accepted
 from parsing import parse_label
+from training_provenance import (EXPOSURE_LEVELS, training_hatch, training_marker,
+                                 with_training_provenance)
 
 LABELS = ["angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised"]
 FOUR = ["angry", "happy", "neutral", "sad"]
@@ -474,6 +476,215 @@ class EvaluationReuseTests(Fixture):
         shared = {row["key"]: row for row in summary["shared"]}
         self.assertEqual(shared["six"]["accuracy"], 0)
         self.assertEqual(shared["four"]["accuracy"], 1)
+
+    def test_registry_corrects_stale_plot_flags_both_ways_without_changing_inference(self):
+        self.viewer_config()
+        path = self.write_run(self.protocol)
+        original = json.loads(path.read_text()) | {"cache_fingerprint": "unchanged"}
+        for previous, confirmed in ((True, False), (False, True)):
+            with self.subTest(previous=previous, confirmed=confirmed):
+                stale = original | {"in_training_data": previous, "training_source": "obsolete source"}
+                path.write_text(json.dumps(stale))
+                before = path.read_bytes()
+                entry = self.entry | {"training_data": ["fixture"] if confirmed else []}
+                results = plot_results.load_results("all", "all", [], registry={"fake": entry}, root=self.root)
+                run = results["fake"]["fixture"]
+                self.assertEqual(run["in_training_data"], confirmed)
+                self.assertEqual(run["training_status"], "confirmed_exposure" if confirmed else "not_established")
+                for field in ("metrics", "inference_protocol", "cache_fingerprint"):
+                    self.assertEqual(run[field], stale[field])
+                self.assertEqual(path.read_bytes(), before)
+                # Historical booleans cannot alter the effective figure fingerprint once the registry is fixed.
+                fingerprint = plot_results.results_fingerprint(results)
+                path.write_text(json.dumps(stale | {"in_training_data": not previous}))
+                reloaded = plot_results.load_results("all", "all", [], registry={"fake": entry}, root=self.root)
+                self.assertEqual(plot_results.results_fingerprint(reloaded), fingerprint)
+
+    def test_viewer_corrects_current_and_summary_only_flags_both_ways(self):
+        path = self.write_run(self.protocol)
+        for previous, confirmed in ((True, False), (False, True)):
+            with self.subTest(previous=previous, confirmed=confirmed), mock.patch.object(make_viewer, "ROOT", self.root):
+                meta = json.loads(path.read_text()) | {"in_training_data": previous}
+                entry = self.entry | {"training_data": ["fixture"] if confirmed else []}
+                current = make_viewer.current_summary("fake", {path.with_suffix(".csv"): meta}, entry)
+                row = current["datasets"][0]
+                self.assertEqual(row["in_training_data"], confirmed)
+                self.assertEqual(row["metrics"], meta["metrics"])
+                self.assertEqual(row["inference_protocol"], self.protocol)
+                summary_path = self.root / "old_summary.json"
+                summary_path.write_text(json.dumps({"datasets": [meta], "shared": [meta], "figure": None}))
+                fallback = make_viewer.load_summary(summary_path, [], entry)
+                for group in ("datasets", "shared"):
+                    self.assertEqual(fallback[group][0]["in_training_data"], confirmed)
+                    self.assertEqual(fallback[group][0]["metrics"], meta["metrics"])
+
+    def test_registry_change_invalidates_embedded_plots_without_changing_protocol(self):
+        config = self.viewer_config()
+        self.write_run(self.protocol)
+        positive = self.entry | {"training_data": ["fixture"]}
+        (config / "models.yaml").write_text(yaml.safe_dump({"fake": positive}))
+        folder = self.root / "reports" / "figures"
+        folder.mkdir(parents=True)
+        (folder / "accuracy_by_dataset.png").write_bytes(b"mock image")
+        old = plot_results.load_results("all", "all", [], root=self.root)
+        manifest = {"fingerprint": plot_results.results_fingerprint(old), "metrics": ["accuracy"]}
+        (folder / "results_manifest.json").write_text(json.dumps(manifest))
+        with mock.patch.object(make_viewer, "ROOT", self.root), \
+                mock.patch.object(make_viewer, "MODELS_CONFIG", config / "models.yaml"), \
+                mock.patch.object(make_viewer, "embed_image", return_value="embedded"):
+            self.assertEqual(len(make_viewer.load_plots()), 1)
+            (config / "models.yaml").write_text(yaml.safe_dump({"fake": self.entry}))
+            self.assertEqual(make_viewer.load_plots(), [])
+            new = plot_results.load_results("all", "all", [], root=self.root)
+            self.assertEqual(new["fake"]["fixture"]["metrics"], old["fake"]["fixture"]["metrics"])
+            self.assertEqual(new["fake"]["fixture"]["inference_protocol"], self.protocol)
+            self.assertNotEqual(plot_results.results_fingerprint(new), manifest["fingerprint"])
+
+    def test_pure_summary_refresh_uses_registry_and_unknown_is_not_an_unseen_claim(self):
+        path = self.write_run(self.protocol)
+        meta = json.loads(path.read_text()) | {"in_training_data": True,
+                "metrics": {"accuracy": .5, "unweighted_accuracy": .5, "macro_f1": .4}}
+        path.write_text(json.dumps(meta))
+        before = path.read_bytes()
+        (self.root / "reports" / "fake").mkdir(parents=True)
+        report_path = self.root / "reports" / "fake" / "fixture.md"
+        before_note = "# Saved report\n\nAccuracy: 50.0%\n\n## Caveats\n\n- "
+        after_note = "\n- Dataset-specific note stays intact.\n"
+        report_path.write_text(before_note + "**Not in Fake local's training data** (obsolete source).\n"
+                               "Obsolete wrapped training explanation." + after_note)
+        for confirmed in (False, True):
+            entry = self.entry | {"llm": False, "training_data": ["fixture"] if confirmed else []}
+            with self.subTest(confirmed=confirmed), mock.patch.object(evaluation, "LOADERS", {"fixture": None}):
+                evaluation.write_summary("fake", entry, "")
+                evaluation.write_comparison({"fake": entry})
+                self.assertEqual(evaluation.refresh_training_caveats("fake", entry), 1)
+                updated = report_path.read_text()
+                self.assertEqual(updated, before_note + evaluation.training_caveat("fixture", entry, "") + after_note)
+                self.assertEqual(evaluation.refresh_training_caveats("fake", entry), 0)
+                self.assertEqual(report_path.read_text(), updated)
+                self.assertNotIn("Obsolete wrapped", updated)
+                individual = json.loads((self.root / "reports" / "fake" / "summary.json").read_text())
+                overall = json.loads((self.root / "reports" / "summary.json").read_text())
+                self.assertEqual(individual["datasets"][0]["in_training_data"], confirmed)
+                self.assertEqual(individual["datasets"][0]["metrics"], meta["metrics"])
+                self.assertEqual(overall["results"]["fake"]["fixture"]["in_training_data"], confirmed)
+                self.assertEqual(overall["results"]["fake"]["fixture"]["accuracy"], .5)
+                self.assertEqual(path.read_bytes(), before)
+                report = (self.root / "reports" / "fake" / "summary.md").read_text()
+                self.assertIn("not verified unseen", report)
+                self.assertNotIn("*no*: it is not", report)
+                caveat = evaluation.training_caveat("fixture", entry, "")
+                self.assertNotIn("**Not in", caveat)
+                self.assertIn(EXPOSURE_LEVELS["confirmed_exposure" if confirmed else "not_established"]["label"], caveat)
+
+    def test_missing_registry_fields_remain_readable_without_trusting_old_positive(self):
+        record = {"key": "custom", "metrics": {"accuracy": .7}, "in_training_data": True,
+                  "inference_protocol": self.protocol, "training_evidence": ["obsolete"]}
+        for entry in (None, {}, {"name": "old fixture"}):
+            current = with_training_provenance(record, entry)
+            self.assertFalse(current["in_training_data"])
+            self.assertEqual(current["training_status"], "not_established")
+            self.assertEqual(current["metrics"], record["metrics"])
+            self.assertEqual(current["inference_protocol"], self.protocol)
+            self.assertNotIn("training_evidence", current)
+        self.assertTrue(record["in_training_data"])
+        evidence = [{"source": "provided by registry", "stage": "backbone"}]
+        current = with_training_provenance(record, {"training_data": ["custom"], "training_evidence": evidence})
+        self.assertEqual(current["training_evidence"], evidence)
+        current["training_evidence"][0]["stage"] = "changed in presentation copy"
+        self.assertEqual(evidence[0]["stage"], "backbone")
+
+    def test_four_evidence_levels_survive_plot_viewer_and_report_metadata(self):
+        statuses = list(EXPOSURE_LEVELS)
+        detail = {f"grade{i}": {"status": status, "scope": "upstream_teacher_lineage",
+                               "reason": f"Audit reason for {status}", "evidence": ["https://example.org/source"]}
+                  for i, status in enumerate(statuses)}
+        entry = self.entry | {"training_data": list(detail), "training_exposure": detail}
+        chosen, originals = {}, {}
+        for i, status in enumerate(statuses):
+            path = self.write_run(self.protocol, stem=f"grade{i}")
+            meta = json.loads(path.read_text()) | {"key": f"grade{i}", "dataset": f"Grade {i}",
+                    "in_training_data": status == "not_established",
+                    "metrics": {"accuracy": .5, "unweighted_accuracy": .5, "macro_f1": .4}}
+            path.write_text(json.dumps(meta))
+            chosen[path.with_suffix(".csv")] = meta
+            originals[path] = path.read_bytes()
+        registry = {"fake": entry}
+        config = self.viewer_config()
+        selected = plot_results.load_results("all", "all", [], registry=registry, root=self.root)["fake"]
+        with mock.patch.object(make_viewer, "ROOT", self.root):
+            viewer = make_viewer.current_summary("fake", chosen, entry)
+        self.assertEqual([r["training_status"] for r in viewer["datasets"]], statuses)
+        self.assertEqual([r["training_status"] for r in viewer["shared"]], statuses)
+        (self.root / "reports" / "fake").mkdir(parents=True)
+        with mock.patch.object(evaluation, "LOADERS", dict.fromkeys(detail)):
+            evaluation.write_summary("fake", entry, "")
+            evaluation.write_comparison(registry)
+        report = json.loads((self.root / "reports" / "fake" / "summary.json").read_text())
+        comparison = (self.root / "reports" / "summary.md").read_text()
+        for i, status in enumerate(statuses):
+            key = f"grade{i}"
+            for row in (selected[key], viewer["datasets"][i], report["datasets"][i]):
+                self.assertEqual(row["training_status"], status)
+                self.assertEqual(row["in_training_data"], i < 2)
+                self.assertEqual(row["training_reason"], detail[key]["reason"])
+                self.assertEqual(row["metrics"], {"accuracy": .5, "unweighted_accuracy": .5, "macro_f1": .4})
+            self.assertIn(EXPOSURE_LEVELS[status]["label"], evaluation.training_caveat(key, entry, ""))
+            self.assertIn("50.0%" + EXPOSURE_LEVELS[status]["marker"], comparison)
+        for path, before in originals.items():
+            self.assertEqual(path.read_bytes(), before)
+
+    def test_possible_and_unknown_change_figure_fingerprint_even_when_both_flags_are_false(self):
+        self.viewer_config()
+        path = self.write_run(self.protocol)
+        before = path.read_bytes()
+        results = []
+        for status in ("possible_exposure", "not_established"):
+            entry = self.entry | {"training_exposure": {"fixture": {"status": status}}}
+            results.append(plot_results.load_results("all", "all", [], registry={"fake": entry}, root=self.root))
+            row = results[-1]["fake"]["fixture"]
+            self.assertFalse(row["in_training_data"])
+            self.assertEqual(row["inference_protocol"], self.protocol)
+            self.assertEqual(row["metrics"], {"accuracy": .5})
+        self.assertNotEqual(plot_results.results_fingerprint(results[0]), plot_results.results_fingerprint(results[1]))
+        self.assertEqual(path.read_bytes(), before)
+
+    def test_chart_artists_use_four_patterns_and_markers_not_legacy_booleans(self):
+        statuses = list(EXPOSURE_LEVELS)
+        models = [f"model{i}" for i in range(4)]
+        names = {model: model for model in models}
+        colours = dict(zip(models, plot_results.COLOURS))
+        results = {model: {"fixture": {"key": "fixture", "dataset": "Fixture", "classes": FOUR,
+                    "clips": 2, "metrics": {"accuracy": .5}, "training_status": status,
+                    "in_training_data": status == "not_established"}}
+                   for model, status in zip(models, statuses)}
+        plt = plot_results.setup_matplotlib()
+        captured = []
+        def capture(figure, _plt, stem):
+            captured.append(figure)
+            return stem
+        try:
+            with mock.patch.object(plot_results, "save", side_effect=capture):
+                plot_results.per_dataset_figure(plt, "accuracy", results, models, names, colours,
+                                                ["fixture"], 4, self.root)
+                plot_results.overview_figure(plt, "accuracy", results, models, names, colours,
+                                            ["fixture"], self.root)
+            panels, overview = captured
+            for i, status in enumerate(statuses):
+                patches = [p for p in panels.axes[0].patches if round(p.get_x() + p.get_width() / 2) == i]
+                self.assertIn(training_hatch(status), [p.get_hatch() or "" for p in patches])
+            texts = [t.get_text() for t in overview.axes[0].texts]
+            for status in statuses:
+                self.assertIn("50.0" + EXPOSURE_LEVELS[status]["marker"], texts)
+            panels.canvas.draw()
+            renderer = panels.canvas.get_renderer()
+            note = panels.texts[-1].get_window_extent(renderer)
+            legend = panels.legends[0].get_window_extent(renderer)
+            self.assertLess(note.y1, legend.y0)
+            self.assertGreaterEqual(overview.subplotpars.bottom * overview.get_figheight(), 1.10 - 1e-6)
+        finally:
+            for figure in captured:
+                plt.close(figure)
 
 
 if __name__ == "__main__":

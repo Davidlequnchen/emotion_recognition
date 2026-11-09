@@ -83,6 +83,6 @@ The listeners' majority vote matches the acted emotion for 45.6% of the 6,798 cl
 
 ## Caveats
 
-- **In MERaLiON-SER-v1's training data** (CREMA-D, ESD, MELD, M3ED and Singaporean speech), so the model has probably seen these clips; treat the result as optimistic.
+- **Training involvement for MERaLiON-SER-v1: Used directly**. Source: SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - One clip, `1076_MTI_SAD_XX.wav`, contains no audio (a known CREMA-D issue); it is kept.
 - **Acted labels are not perceived emotions.** The ground truth is what the actor intended; listeners sometimes heard something else, as the listeners' numbers above show.

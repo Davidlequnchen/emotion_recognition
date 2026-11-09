@@ -28,7 +28,7 @@
   "accept": {},
   "chance": 0.142857,
   "in_training_data": false,
-  "training_source": "not published (Google)",
+  "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
   "model_classes": [
     "angry",
     "disgusted",
@@ -88,5 +88,10 @@
     ],
     "prompt_hash": "aab2967fd07a",
     "model_id": "google/gemma-4-E4B-it"
-  }
+  },
+  "training_status": "not_established",
+  "training_evidence": [
+    "https://ai.google.dev/gemma/docs/core/model_card_4",
+    "https://huggingface.co/google/gemma-4-E4B-it"
+  ]
 }

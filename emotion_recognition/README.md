@@ -117,7 +117,9 @@ Historical data/model directory contents were removed from the main repository's
 2026-11-09; existing clones should read the [history migration notes](docs/git_history_cleanup.md).
 The `data/` submodule similarly pins metadata and a Release restore tool. MCAE-SPPS, TESS, the selected
 JL-Corpus recordings, nEMO, EMOVO, THAI-SER, MEAD, MELD and SAVEE are mirrored as Release archives, not Git blobs.
-DailyTalk and EmotionTalk are additional retained context-pilot mirrors; neither is registered for formal evaluation.
+The adopted collection contains 15 datasets: 13 have completed SER baselines, while DailyTalk and EmotionTalk
+are downloaded and verified, with baselines pending. Their evaluation loaders and context inputs are not yet registered;
+adoption does not mean an experiment has run. See the [dataset survey](docs/datasets_survey_en.md).
 [data/README.md](data/README.md) records scope, checksums and source terms; THAI-SER contains the four evaluated
 emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS, RAVDESS and
 Emozionalmente retain their original/external download sources. ESD stays local and excluded.
@@ -277,9 +279,9 @@ Alternatively, supply an IT-provided CA PEM bundle using `--ca-bundle "/path/to/
 **Restore the eleven pinned dataset mirrors** with Python 3.9+ and Git:
 
 ```bash
-python3 scripts/common/setup_datasets.py                  # all eleven Release mirrors, including pilot candidates
+python3 scripts/common/setup_datasets.py                  # all eleven Release mirrors, including the two adopted additions
 python3 scripts/common/setup_datasets.py tess meld        # selected mirrors only
-python3 scripts/common/setup_datasets.py dailytalk emotiontalk  # retained context candidates only
+python3 scripts/common/setup_datasets.py dailytalk emotiontalk  # adopted context additions only
 python3 scripts/common/setup_datasets.py --list           # all 15 registered sources and scopes; evaluation remains 13
 python3 scripts/common/setup_datasets.py --verify-only    # check local mirrored files without downloading
 ```
@@ -634,8 +636,14 @@ THAI-SER result was made this way from its full run of October, which is archive
 `outputs/archive/emotion2vec_plus_large/thai_ser_full_*` ([report](reports/archive/emotion2vec_plus_large/thai_ser_full.md)).
 
 The models are registered in `config/models.yaml`: display name, loader, folder, Hugging Face repository, and
-`training_data`, the evaluation datasets that the model was trained on (emotion2vec+ large also has `mac_device: cpu`,
-faster for it, see the speeds below). Each model runs through its loader in
+`training_data` for corpora counted as used/seen anywhere in the training pipeline (direct or upstream) and
+optional per-corpus `training_exposure` for mechanism/evidence details
+(pre-training, backbone or fine-tuning). Papers, technical reports, cards and author statements count as evidence.
+† / diagonal hatches mean direct use; ‡ / dots mean upstream use; both count as used/seen. ? / cross hatches mean possible
+association (including explicitly scoped teacher/development links). Unmarked means no corpus-specific evidence,
+not verified unseen. Corpus exposure does not prove that test clips leaked. See [the audit](docs/training_provenance.md). Reports, plots and the viewer resolve these markers
+from the **current registry**, overriding historical prediction-JSON booleans without changing scores or inference
+protocols. emotion2vec+ large also has `mac_device: cpu` (faster for it, see the speeds below). Each model runs through its loader in
 `scripts/models/` and loads from its folder in `models/` only: the script sets `HF_HUB_OFFLINE=1` and never touches
 the network. A model whose folder has no weights yet is skipped with a message. To add a model, see
 [models/README.md](models/README.md#adding-a-model).
@@ -655,7 +663,7 @@ the model's key in the registry, e.g. `emotion2vec_plus_large`):
   and whether it is in the model's training data), every dataset's confusion matrix in one figure, and a comparison
   on the emotions that every dataset has.
 - [`reports/summary.md`](reports/summary.md): every model on every dataset, with accuracy, unweighted accuracy, macro
-  F1 and the accuracy on the shared emotions; † marks a dataset that is in the model's training data.
+  F1 and the accuracy on the shared emotions; † / ‡ both count as used/seen (direct / upstream); ? means possible association; unmarked does not mean verified unseen.
 
 A sample run (`limit`) adds `_sample<N>` to the file names, e.g. `reports/meralion_ser_v1/crema_d_sample14.md`. A model
 and dataset whose results for the same `limit` are already in `outputs/<model>/` are skipped when their inference
@@ -725,7 +733,7 @@ dataset.
 
 emotion2vec+ large (its [summary](reports/emotion2vec_plus_large/summary.md) adds unweighted accuracy and macro F1):
 
-| Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote |
+| Dataset | Language | Ground-truth labels | EmoBox membership (historical example) | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote |
 |---|---|---|---|---|---|---|---|
 | [CREMA-D](reports/emotion2vec_plus_large/crema_d.md) | English | angry, disgusted, fearful, happy, neutral, sad | yes | 7,442 | 6 (16.7%) | **86.5%** | 89.6% |
 | [MCAE-SPPS](reports/emotion2vec_plus_large/mcae_spps.md) | Mandarin | neutral, happy, angry, fearful, sad, disgusted, surprised | no | 6,675 | 7 (14.3%) | **61.3%** | 61.3% |
@@ -738,16 +746,14 @@ emotion2vec+ large (its [summary](reports/emotion2vec_plus_large/summary.md) add
 
 *Ground-truth labels*: the acted emotions under the project's names (*neutral* includes MESS's and RAVDESS's
 *calm*, TESS's *surprised* is its *pleasant surprise*, and JL-Corpus's *excited* is a composite label, see above), in
-the order of the confusion-matrix rows. *In emotion2vec+ training data (EmoBox)*: *yes* means that the dataset is in
-EmoBox, whose data fine-tuned emotion2vec+ seed, the first model in the chain that led to emotion2vec+ large, so the
-model has probably seen its clips; *no* means that it is not in EmoBox, although earlier exposure cannot be ruled out
-completely (emotion2vec+ large was later trained on pseudo-labelled data whose sources are not published). The
-results of CREMA-D, RAVDESS, TESS and JL-Corpus are therefore optimistic; MCAE-SPPS, THAI-SER, nEMO and MESS give a
-more realistic picture. *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that
+the order of the confusion-matrix rows. *EmoBox membership (historical example)* records only whether the corpus is listed in EmoBox. It is not confirmed
+exposure of this emotion2vec+ large checkpoint: seed/teacher lineage and undisclosed pseudo-label sources do not
+establish use of a particular corpus by large. A “no” in this membership column is not verified unseen. Current
+plots and summaries use the registry's graded-evidence rule rather than this historical membership heuristic. *Acted or listeners' vote* also accepts the listeners' majority vote; it exists only for datasets that
 publish listeners' labels (CREMA-D, MCAE-SPPS and THAI-SER; for MCAE-SPPS the two agree by construction, because only clips that listeners recognised
-were kept). The other models were trained on other data: CREMA-D is in MERaLiON-SER-v1's training data and JL-Corpus
-in Melati's, while the Vox-Profile models were trained on MSP-Podcast only; `reports/summary.md` marks such results
-with †.
+were kept). For every model's current confirmed corpora and disclosed training stages, use `config/models.yaml` and the
+regenerated `reports/summary.md`. A disclosed task-training list does not establish all earlier backbone exposure;
+† / ‡ both count as seen, while distinguishing direct and upstream use; neither establishes test-clip leakage.
 
 ESD is left out of the evaluation (`exclude`): its licence is research-only and forbids sharing it, it has no
 listener test, and it is in EmoBox. Its data stays in `data/`; its earlier emotion2vec+ report is in
@@ -768,7 +774,7 @@ LLMs again with four choices, so a uniform 25% chance baseline does not apply to
 a legacy result calculated by reselecting the largest of the four SER probabilities; newly generated summaries
 use the original-prediction rule described above:
 
-| Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Accuracy, 4 shared emotions |
+| Dataset | Language | Ground-truth labels | EmoBox membership (historical example) | Clips | Accuracy, 4 shared emotions |
 |---|---|---|---|---|---|
 | [TESS](reports/emotion2vec_plus_large/tess.md) | English | angry, disgusted, fearful, happy, neutral, surprised, sad | yes | 1,600 | **100.0%** |
 | [JL-Corpus](reports/emotion2vec_plus_large/jl_corpus.md) | English (New Zealand) | angry, happy, neutral, sad, excited (happy or surprised) | yes | 960 | **94.7%** |
@@ -823,7 +829,7 @@ model, and expected to stay under 10 MB with all five; open it in any browser). 
 - **Results** (opens first), with a model switch; values are coloured by level (green for 80% or more, amber for 60
   to 80%, red under 60%):
   - **All models**: one row per dataset and one column per model, as in [reports/summary.md](reports/summary.md), with
-    a switch between accuracy, unweighted accuracy and macro F1; † marks a dataset in that model's training data.
+    a switch between accuracy, unweighted accuracy and macro F1; † marks confirmed training-corpus exposure; no marker means exposure not established.
   - **One model**: its results table, as in `reports/<model>/summary.md` (read from the JSON file next to it), with
     the datasets in its training data first, then the others, each group sorted by accuracy; then its confusion
     matrices (click the figure to enlarge it) and the table of the emotions that every dataset has.
@@ -880,12 +886,22 @@ For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, 
 - `overview_<metric>`: a dataset-by-model score matrix with numeric percentages and a shared colour scale, so additional models do not crowd grouped bars. Missing compatible results appear as a grey dash, and chance reference values have a separate column.
 
 Each model keeps its colour (colour-blind-safe) in the bar panels and overview header. Bars have black outlines;
-a hatch in the panels or a dagger (†) in the overview marks a dataset in that model's training data. A dashed line
+a hatch in the panels or a dagger (†) in the overview means **Confirmed training-corpus exposure** according to the
+current registry. Unhatched/unmarked means **exposure not established**, not verified unseen; corpus exposure does
+not prove test-clip leakage. A dashed line
 in the panels shows chance level, and a value with * comes from a sample of the dataset. The script
 reads `outputs/<model>/<dataset>_predictions.json`, with audio LLMs restricted to the current `inference_protocol`
 (section 8). Legacy outputs stay on disk but do not enter newly generated plots or result pages. Plot generation
 writes `results_manifest.json` beside the figures; the result page embeds only plots whose manifest matches the
-current compatible results. After a prompt change, redraw plots before rebuilding the page to include them.
+current compatible results, including current training-exposure metadata. After a prompt or registry-exposure
+change, redraw plots before rebuilding the page. To refresh existing summaries without inference, import
+`scripts/evaluation/evaluate.py` and call `write_summary(model, registry[model], note="", ...)` for models with saved
+results, followed by `write_comparison(registry, exclude=...)`. `refresh_training_caveats(model, entry, exclude=...)`
+updates only the generated training note in compatible saved per-dataset Markdown reports. These reporting functions
+read saved predictions; they do not load model weights or change prediction JSON and its dataset-level metrics.
+Shared-subset tables still use saved prediction labels under the existing rule. Summary generation may restitch
+existing confusion panels. Run `plot_results.py` and
+`make_viewer.py` afterward for current figures and pages; no evaluation rerun is needed for a provenance correction.
 
 ## 8. Audio LLMs
 

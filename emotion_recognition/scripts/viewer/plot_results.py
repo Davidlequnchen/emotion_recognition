@@ -4,8 +4,9 @@ Dataset panels and compact score matrices for comparing models, for papers and s
 Reads the results that the evaluations left in outputs/ and draws, for each metric in config/plots.yaml:
     reports/figures/<metric>_by_dataset.png (300 dpi) and .pdf   one panel per dataset, one bar per model
     reports/figures/overview_<metric>.png and .pdf                dataset-by-model annotated score matrix
-Bars with a hatch: the dataset is in that model's training data, so its result is optimistic. The dashed line in each
-panel: chance level. A value marked * comes from a sample of the dataset (evaluation limit), not every clip.
+Bar patterns distinguish directly documented, indirectly supported and possible training-source evidence.
+Unhatched means no corpus-specific evidence, not verified unseen; source links do not prove test-clip leakage.
+The dashed line in each panel: chance level. A value marked * comes from a sample, not every clip.
 
 Which results it reads: every outputs/<model>/<dataset>[_sample<N>]_predictions.json that has `metrics` (for a model
 and dataset with several compatible runs, the one with the most clips). Registered audio LLMs require the current
@@ -13,7 +14,8 @@ inference_protocol; legacy prompt/candidate results stay on disk but are exclude
 (scripts/evaluation/evaluate.py) or through an API (GPT Realtime, Gemini): an API evaluation only has to write the same
 kind of JSON into outputs/<its key>/. The fields used are:
     dataset (display name), key (dataset key), model_name (display name of the model), clips, total_clips,
-    chance (a fraction), in_training_data (true or false), metrics {accuracy, unweighted_accuracy, macro_f1, ...}
+    chance (a fraction), metrics {accuracy, unweighted_accuracy, macro_f1, ...}
+Training markers/status/source are resolved from config/models.yaml, not historical in_training_data booleans.
 Models are ordered as in config/models.yaml, then any other model folder in alphabetical order; datasets in the order
 of scripts/common/eval_datasets.py.
 
@@ -38,6 +40,8 @@ sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS
 from prompts import configured_protocol
+from training_provenance import (EXPOSURE_LABEL, EXPOSURE_LEVELS, EXPOSURE_NOTE, training_hatch,
+                                 training_marker, with_training_provenance)
 
 # One colour per model, in this order (Okabe-Ito: distinguishable with colour-vision deficiencies and in grey print)
 COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
@@ -76,6 +80,7 @@ def load_results(models, datasets, exclude, registry=None, root=None):
                                        config=root / "config" / "llm.yaml", root=root)
         if expected is not None and run.get("inference_protocol") != expected:
             continue
+        run = with_training_provenance(run, registry.get(model))
         if run.get("clips", 0) > best.get(model, {}).get(key, {}).get("clips", 0):
             best.setdefault(model, {})[key] = run
     return best
@@ -101,13 +106,14 @@ def setup_matplotlib():
     return plt
 
 
-def legend_handles(plt, names, colours, any_trained, chance=True):
+def legend_handles(plt, names, colours, chance=True):
     from matplotlib.lines import Line2D
     from matplotlib.patches import Patch
     handles = [Patch(facecolor=colours[m], edgecolor=INK, linewidth=1.2, label=names[m]) for m in names]
-    if any_trained:
-        handles.append(Patch(facecolor="white", edgecolor=INK, hatch="///", linewidth=1.2,
-                             label="dataset in the model's training data"))
+    for status, level in EXPOSURE_LEVELS.items():
+        handles.append(Patch(facecolor="white", edgecolor="#9a9fa6" if status == "possible_exposure" else INK,
+                             hatch=training_hatch(status), linewidth=1.0,
+                             label=level["label"] + (" (no hatch)" if not level["hatch"] else "")))
     if chance:  # macro F1 has no chance line
         handles.append(Line2D([0], [0], color=INK_2, linestyle="--", linewidth=1.6, label="chance level"))
     return handles
@@ -126,15 +132,13 @@ def bar_label(ax, x, value, run):
 def per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out):
     """One panel per dataset, one bar per model."""
     rows = math.ceil(len(datasets) / columns)
-    any_trained = any(run.get("in_training_data") and metric in run["metrics"]
-                      for per_model in results.values() for run in per_model.values())
-    legend_columns = min(4, len(models) + int(any_trained) + int(metric != "macro_f1"))
+    legend_count = len(models) + len(EXPOSURE_LEVELS) + int(metric != "macro_f1")
+    legend_columns = min(4, legend_count)
     # Use physical margins: a percentage of a tall canvas used to leave several inches below the panels.
-    legend_rows = math.ceil((len(models) + int(any_trained) + int(metric != "macro_f1")) / legend_columns)
-    legend_height = 0.32 * legend_rows + 0.18
+    legend_rows = math.ceil(legend_count / legend_columns)
+    legend_height = 0.32 * legend_rows + 0.64
     height = 4.0 * rows + legend_height + 1.0
     fig, axes = plt.subplots(rows, columns, figsize=(5.6 * columns, height), squeeze=False)
-    trained = False
     for k, key in enumerate(datasets):
         ax = axes[k // columns][k % columns]
         runs = [results.get(m, {}).get(key) for m in models]
@@ -143,9 +147,15 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
             if run is None or metric not in run["metrics"]:
                 ax.text(i, 2, "n/a", ha="center", va="bottom", fontsize=11, color=INK_2)
                 continue
-            value, hatch = run["metrics"][metric], "///" if run.get("in_training_data") else None
-            trained |= bool(hatch)
-            ax.bar(i, 100 * value, width=0.72, color=colours[m], edgecolor=INK, linewidth=1.2, hatch=hatch, zorder=3)
+            value = run["metrics"][metric]
+            status = run.get("training_status", "not_established")
+            hatch = training_hatch(status)
+            ax.bar(i, 100 * value, width=0.72, color=colours[m], edgecolor=INK, linewidth=1.2,
+                   hatch=hatch if status != "possible_exposure" else None, zorder=3)
+            if status == "possible_exposure":
+                # A light cross-pattern is a possible association, not a confirmed-exposure hatch.
+                ax.bar(i, 100 * value, width=0.72, facecolor="none", edgecolor="#9a9fa6", linewidth=0,
+                       hatch=hatch, zorder=3.1)
             bar_label(ax, i, value, run)
         chance = chance_of(first)
         if chance and metric != "macro_f1":
@@ -166,9 +176,10 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
         axes[k // columns][k % columns].axis("off")
     fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=21,
                  fontweight="bold", color=INK, y=1 - 0.10 / height)
-    fig.legend(handles=legend_handles(plt, names, colours, trained, metric != "macro_f1"), loc="lower center",
-               ncol=legend_columns, frameon=False, bbox_to_anchor=(0.5, 0.08 / height), borderaxespad=0,
+    fig.legend(handles=legend_handles(plt, names, colours, metric != "macro_f1"), loc="lower center",
+               ncol=legend_columns, frameon=False, bbox_to_anchor=(0.5, 0.54 / height), borderaxespad=0,
                columnspacing=1.7, handletextpad=0.6, labelspacing=0.55)
+    fig.text(0.5, 0.08 / height, EXPOSURE_NOTE, ha="center", va="bottom", fontsize=10.5, color=INK_2)
     fig.subplots_adjust(left=0.045, right=0.992, top=1 - 1.28 / height,
                         bottom=(legend_height + 0.16) / height, wspace=0.19, hspace=0.34)
     return save(fig, plt, out / f"{metric}_by_dataset")
@@ -182,7 +193,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     has_chance = metric != "macro_f1"
     ncols = len(models) + int(has_chance)
     values = np.full((len(datasets), ncols), np.nan)
-    trained, sampled = False, False
+    sampled = False
     first = {key: next(results[m][key] for m in models if key in results.get(m, {})) for key in datasets}
     for row, key in enumerate(datasets):
         for col, model in enumerate(models):
@@ -221,11 +232,9 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
             if np.isnan(value):
                 text, colour = "—", "#858b94"
             else:
-                in_training = bool(run.get("in_training_data"))
                 is_sample = run["clips"] < run.get("total_clips", run["clips"])
-                trained |= in_training
                 sampled |= is_sample
-                text = f"{value:.1f}" + ("†" if in_training else "") + ("*" if is_sample else "")
+                text = f"{value:.1f}" + training_marker(run) + ("*" if is_sample else "")
                 r, g, b, _ = cmap(value / 100)
                 colour = "white" if 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.49 else INK
             ax.text(col, row, text, ha="center", va="center", fontsize=13, color=colour)
@@ -238,14 +247,15 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     colourbar = fig.colorbar(plotted, ax=ax, fraction=0.026, pad=0.025, shrink=0.94)
     colourbar.set_label(f"{METRIC_NAMES.get(metric, metric)} (%)", fontsize=17, labelpad=11)
     colourbar.ax.tick_params(labelsize=12)
-    notes = (["† Dataset in the model's training data"] if trained else [])
+    notes = [f"{level['marker']} {level['label']}" for level in EXPOSURE_LEVELS.values() if level["marker"]]
     notes += ["* Sampled evaluation"] if sampled else []
     notes.append("— No compatible result")
     fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} across models and datasets", fontsize=20,
                  fontweight="bold", color=INK, y=0.985)
-    fig.text(0.5, 0.025, "    ".join(notes), ha="center", va="bottom", fontsize=12.5, color=INK_2)
+    fig.text(0.5, 0.025, "    ".join(notes) + "\n" + EXPOSURE_NOTE,
+             ha="center", va="bottom", fontsize=11.5, color=INK_2)
     fig.subplots_adjust(left=3.15 / width, right=1 - 0.85 / width,
-                        top=1 - 1.0 / height, bottom=0.55 / height)
+                        top=1 - 1.0 / height, bottom=1.10 / height)
     return save(fig, plt, out / f"overview_{metric}")
 
 

@@ -58,7 +58,7 @@ Most frequent confusions: fearful predicted as sad (46.7%), disgusted predicted 
 
 ## Caveats
 
-- **Not in MERaLiON-SER-v1's training data** (CREMA-D, ESD, MELD, M3ED and Singaporean speech).
+- **Training involvement for MERaLiON-SER-v1: Used via upstream training**. Evidence scope: upstream teacher lineage. SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved. This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON. Source: SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Unofficial copy.** The official corpus is free for research after registration and its licence forbids redistribution; the files come from an unofficial copy on Kaggle (ejlok1/surrey-audiovisual-expressed-emotion-savee), checked only against the file names and counts of the corpus.
 - Only 4 speakers, all male. 10 evaluators validated the recordings originally; their results per clip are not published, so there is one way of counting a prediction as correct.
 - Most sentences differ between emotions, and some of them are emotion-specific, so their words can hint at the emotion.

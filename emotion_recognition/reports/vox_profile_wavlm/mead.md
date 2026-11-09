@@ -60,7 +60,7 @@ Most frequent confusions: happy predicted as neutral (61.2%), disgusted predicte
 
 ## Caveats
 
-- **Not in Vox-Profile WavLM's training data** (MSP-Podcast).
+- **Training involvement for Vox-Profile WavLM: No corpus-specific evidence**. Source: SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Weak intensity.** A third of the emotional clips are acted at level 1 (weak), which is often hard to tell from neutral; the intensity of each clip is kept in the loader but not in the reports.
 - No listeners' labels per clip are published, so there is one way of counting a prediction as correct.
 - The sentences differ between emotions: besides common and generic sentences, each emotion has emotion-related ones, whose words hint at the emotion; a model that understands English text can use them.

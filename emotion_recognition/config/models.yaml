@@ -7,8 +7,11 @@
 #   loader          : the code that runs it, scripts/models/<loader>.py
 #   dir             : where its files are (not for API models)
 #   hf_repo         : the Hugging Face repository it comes from (ms_repo: ModelScope, if it is there too)
-#   training_data   : the evaluation datasets it was trained on, so its results there are optimistic
-#   training_source : what its training data was, in a few words (shown next to training_data)
+#   training_data   : corpora counted as used anywhere in this training pipeline, directly or via upstream teachers;
+#                     training_exposure separates direct and upstream use; absence does not certify unseen. See docs/training_provenance.md.
+#   training_exposure: optional per-corpus status/scope/reason/evidence; distinguishes indirect/possible links
+#   training_source : disclosed stages and remaining uncertainty (shown next to training_data)
+#   training_evidence: papers, technical reports, model cards or author statements; not inferred from scores
 #   mac_device      : (optional) its device on the Mac, when it differs from devices.mac in config/evaluation.yaml
 #   limit           : (optional) N clips of each dataset for this model; overrides `limit` in config/evaluation.yaml
 #   skip            : (optional) files of the repository that download_model.py leaves out (not needed here)
@@ -27,37 +30,217 @@ emotion2vec_plus_large:
   dir: models/emotion2vec_plus_large
   hf_repo: emotion2vec/emotion2vec_plus_large
   ms_repo: iic/emotion2vec_plus_large
-  training_data: [crema_d, ravdess, tess, jl_corpus, esd, mead, meld, emovo, emozionalmente, savee]
-  training_source: EmoBox (through emotion2vec+ seed)
+  training_data: [crema_d, emovo, emozionalmente, esd, jl_corpus, mead, meld, ravdess, savee, tess]
+  training_exposure:
+    crema_d:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    emovo:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    emozionalmente:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    esd:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    jl_corpus:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    mead:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    meld:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    ravdess:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    savee:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    tess:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: Author documents EmoBox seed training and iterative pseudo-label lineage into large; the exact seed corpus subset
+        and raw-audio/weight inheritance into large are not enumerated.
+      evidence:
+      - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+  training_source: EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining
+  training_evidence:
+    - https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md
+    - https://github.com/ddlBoJack/emotion2vec/issues/73
+    - https://github.com/ddlBoJack/emotion2vec/issues/46
   mac_device: cpu   # MPS compiles new kernels for every new clip length, so the CPU is faster
 meralion_ser_v1:
   name: MERaLiON-SER-v1
   loader: meralion_ser
   dir: models/meralion_ser_v1
   hf_repo: MERaLiON/MERaLiON-SER-v1
-  training_data: [crema_d, esd, meld]
-  training_source: CREMA-D, ESD, MELD, M3ED and Singaporean speech
+  training_data: [crema_d, emovo, emozionalmente, esd, jl_corpus, mead, meld, ravdess, savee, tess]
+  training_exposure:
+    emovo:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    emozionalmente:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    jl_corpus:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    mead:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    ravdess:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    savee:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+    tess:
+      status: probable_exposure
+      scope: upstream_teacher_lineage
+      reason: SER report documents emotion2vec seed/base teachers for SG-ECMT labels; their EmoBox corpus subset is unresolved.
+        This counts as upstream training use; it does not assert direct reuse of those raw clips by MERaLiON.
+      evidence:
+      - https://arxiv.org/html/2511.04914v1#S4.SS1
+      - https://github.com/ddlBoJack/emotion2vec/issues/46
+      - https://github.com/emo-box/EmoBox#datasets
+  training_source: SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen
+  training_evidence:
+    - https://arxiv.org/html/2511.04914v1#S4.SS1
+    - https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md
+    - https://huggingface.co/openai/whisper-medium#training-data
 melati_emotion:
   name: Melati
   loader: melati
   dir: models/melati_emotion
   hf_repo: Scicom-intl/Melati-Emotion-Whisper-Large-V3
-  training_data: [jl_corpus, emozionalmente]
-  training_source: nine acted corpora, JL-Corpus among them
+  training_data: [jl_corpus, emozionalmente, nemo]
+  training_exposure:
+    nemo:
+      status: confirmed_exposure
+      scope: author_development_calibration_not_applied
+      reason: The author used nEMO to tune podcast thresholds, but did not fit the public SER head on it; this project uses
+        raw argmax and does not apply those thresholds. Counted as seen in the broader development pipeline; the scope is calibration, not weight fitting.
+      evidence:
+      - https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md
+  training_source: Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here
+  training_evidence:
+    - https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md
+    - https://huggingface.co/openai/whisper-large-v3#training-data
 vox_profile_whisper:
   name: Vox-Profile Whisper
   loader: vox_profile
   dir: models/vox_profile_whisper
   hf_repo: tiantiaf/whisper-large-v3-msp-podcast-emotion
   training_data: []
-  training_source: MSP-Podcast
+  training_source: SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed
+  training_evidence:
+    - https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md
+    - https://huggingface.co/openai/whisper-large-v3#training-data
 vox_profile_wavlm:
   name: Vox-Profile WavLM
   loader: vox_profile
   dir: models/vox_profile_wavlm
   hf_repo: tiantiaf/wavlm-large-categorical-emotion
   training_data: []
-  training_source: MSP-Podcast
+  training_source: SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit
+  training_evidence:
+    - https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md
+    - https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md
 qwen2_5_omni_7b:
   name: Qwen2.5-Omni 7B
   loader: qwen2_5_omni  # its Thinker only (text output), 8.93B parameters; bfloat16
@@ -68,7 +251,10 @@ qwen2_5_omni_7b:
   llm: true
   skip: [spk_dict.pt]   # the Talker's voices (speech output is not used)
   training_data: []
-  training_source: not published (Alibaba)
+  training_source: Qwen2.5 and Whisper-large-v3 initialization plus multimodal pre/post-training; complete corpus-level provenance not published
+  training_evidence:
+    - https://arxiv.org/html/2503.20215v1#S3
+    - https://huggingface.co/Qwen/Qwen2.5-Omni-7B
 qwen2_audio_7b:
   name: Qwen2-Audio 7B Instruct
   loader: qwen2_audio   # 8.40B parameters; bfloat16
@@ -78,7 +264,10 @@ qwen2_audio_7b:
   licence: Apache-2.0
   llm: true
   training_data: []
-  training_source: not published (Alibaba)
+  training_source: Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable
+  training_evidence:
+    - https://arxiv.org/html/2407.10759v1#S3.SS1
+    - https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct
 gemma4_e4b:
   name: Gemma 4 E4B
   loader: gemma4_audio  # 8.00B parameters (4.5B effective); bfloat16; needs PyTorch >= 2.6
@@ -88,7 +277,10 @@ gemma4_e4b:
   licence: Apache-2.0
   llm: true
   training_data: []
-  training_source: not published (Google)
+  training_source: Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)
+  training_evidence:
+    - https://ai.google.dev/gemma/docs/core/model_card_4
+    - https://huggingface.co/google/gemma-4-E4B-it
 gpt_realtime:
   name: GPT Realtime
   loader: gpt_realtime

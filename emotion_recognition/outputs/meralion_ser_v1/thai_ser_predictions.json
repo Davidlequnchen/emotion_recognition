@@ -22,7 +22,7 @@
   "accept": {},
   "chance": 0.25,
   "in_training_data": false,
-  "training_source": "CREMA-D, ESD, MELD, M3ED and Singaporean speech",
+  "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
   "model_classes": [
     "neutral",
     "happy",
@@ -69,5 +69,11 @@
     "ms_per_clip": 285.8,
     "on_cpu": 0
   },
-  "subset": "high_agreement"
+  "subset": "high_agreement",
+  "training_status": "not_established",
+  "training_evidence": [
+    "https://arxiv.org/html/2511.04914v1#S4.SS1",
+    "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+    "https://huggingface.co/openai/whisper-medium#training-data"
+  ]
 }

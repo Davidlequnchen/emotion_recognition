@@ -212,6 +212,19 @@
 <script id="data" type="application/json">__DATA__</script>
 <script>
   const DATA = JSON.parse(document.getElementById("data").textContent);
+  const EVIDENCE_LEVELS = DATA.training_evidence_levels || {
+    confirmed_exposure: { label: "Used directly", marker: "†", hatch: "///" },
+    probable_exposure: { label: "Used via upstream training", marker: "‡", hatch: "..." },
+    possible_exposure: { label: "Possible association", marker: "?", hatch: "xx" },
+    not_established: { label: "No corpus-specific evidence", marker: "", hatch: "" },
+  };
+  const EVIDENCE_ORDER = Object.keys(EVIDENCE_LEVELS);
+  const evidenceStatus = (row) => row?.training_status in EVIDENCE_LEVELS ? row.training_status
+    : row?.in_training_data ? "confirmed_exposure" : "not_established"; // legacy external page data only
+  const evidenceLevel = (row) => EVIDENCE_LEVELS[evidenceStatus(row)];
+  const evidenceMarker = (row) => evidenceLevel(row).marker;
+  const evidenceRank = (row) => EVIDENCE_ORDER.indexOf(evidenceStatus(row));
+  const evidenceNote = DATA.training_evidence_note || "No pattern: no corpus-specific evidence, not verified unseen. Source links do not establish test-clip leakage.";
   // Results: the model shown ("all" = every model side by side) and the value in the comparison table.
   // Examples: the dataset (index in DATA.datasets), the model, and the filters, which stay when the model changes.
   const state = { view: "all", metric: "accuracy", plot: null, dataset: 0, model: null, criterion: null, status: "all", emotion: "all" };
@@ -369,7 +382,7 @@
       ...run.criteria.map((c) => el("div", { className: `tile${c.column === state.criterion ? " active" : ""}` },
         el("div", { className: "label", textContent: `${model.name}: matches the ${c.name}` }),
         el("div", { className: "value" }, levelValue(c.accuracy)),
-        el("div", { className: "note", textContent: sample + (run.in_training_data ? "; in its training data, so optimistic" : "") }))),
+        el("div", { className: "note", textContent: sample + `; training-source evidence: ${evidenceLevel(run).label}` }))),
       el("div", { className: "tile" },
         el("div", { className: "label", textContent: "Clips on this page" }),
         el("div", { className: "value", textContent: String(clips.length) }),
@@ -420,11 +433,12 @@
     return shown >= 80 ? "lv-high" : shown >= 60 ? "lv-mid" : "lv-low";
   }
   const levelValue = (x) => el("span", { className: `level ${level(x)}`, textContent: pct(x) });
-  function legend(dagger) {
+  function legend() {
     const key = (cls, text) => el("span", { className: "key" }, el("i", { className: `swatch ${cls}`, attrs: { "aria-hidden": "true" } }), text);
     return el("div", { className: "legend" }, el("span", { textContent: "Colour of a value:" }),
       key("lv-high", "80% or more"), key("lv-mid", "60 to 80%"), key("lv-low", "under 60%"),
-      dagger ? el("span", { className: "key" }, el("span", { className: "dag", textContent: "†" }), dagger) : null);
+      ...Object.values(EVIDENCE_LEVELS).map((level) => el("span", { className: "key" },
+        el("span", { className: "dag", textContent: level.marker || "no marker" }), level.label)));
   }
   const sampleOf = (d) => d.total_clips > d.clips ? ` of ${d.total_clips.toLocaleString()}` : "";
   // Ground-truth labels in the order of the confusion-matrix rows; a composite label names the classes it accepts
@@ -441,9 +455,8 @@
   // Rows split into the datasets in the model's training data (first) and the others, each from the best value down
   function byTraining(model, items, value) {
     const sort = (list) => [...list].sort((a, b) => (value(b) ?? -1) - (value(a) ?? -1));
-    const inData = items.filter((d) => d.in_training_data), others = items.filter((d) => !d.in_training_data);
-    return [[`In ${model.name}'s training data`, sort(inData)],
-      [inData.length ? "Not in its training data" : `Not in ${model.name}'s training data`, sort(others)]].filter(([, list]) => list.length);
+    return EVIDENCE_ORDER.map((status) => [`${EVIDENCE_LEVELS[status].label}: ${model.name}`,
+      sort(items.filter((item) => evidenceStatus(item) === status))]).filter(([, list]) => list.length);
   }
 
   const METRICS = [["accuracy", "Accuracy: acted emotion"], ["unweighted_accuracy", "Unweighted accuracy"], ["macro_f1", "Macro F1"]];
@@ -451,23 +464,26 @@
     const keys = [...new Set(models.flatMap((m) => m.summary.datasets.map((d) => d.key)))];
     const datasets = keys.map((key) => {
       const results = models.map((m) => m.summary.datasets.find((d) => d.key === key));
-      return { first: results.find(Boolean), results, trained: results.some((d) => d?.in_training_data) };
+      return { first: results.find(Boolean), results,
+        evidence: Math.min(...results.filter(Boolean).map(evidenceRank)) };
     });
     const values = (row) => row.results.map((d) => d?.metrics?.[state.metric]).filter((x) => typeof x === "number");
     const mean = (row) => values(row).length ? values(row).reduce((a, b) => a + b, 0) / values(row).length : -1;
     const cell = (d, m) => {
       if (!d) return el("td", { className: "n", title: `No results of ${m.name} on this dataset` }, el("span", { className: "level", textContent: "–" }), el("span", { className: "dag" }));
-      const notes = [d.in_training_data ? `in ${m.name}'s training data` : "", d.total_clips > d.clips ? `on a sample of ${d.clips.toLocaleString()} of ${d.total_clips.toLocaleString()} clips` : ""].filter(Boolean);
+      const notes = [`${evidenceLevel(d).label} for ${m.name}`, d.training_reason || "", d.total_clips > d.clips ? `on a sample of ${d.clips.toLocaleString()} of ${d.total_clips.toLocaleString()} clips` : ""].filter(Boolean);
       return el("td", { className: "n", title: notes.join("; ") }, levelValue(d.metrics?.[state.metric]),
-        el("span", { className: "dag", textContent: d.in_training_data ? "†" : "" }),
-        d.in_training_data ? el("span", { className: "sr", textContent: "in its training data" }) : null);
+        el("span", { className: "dag", textContent: evidenceMarker(d) }),
+        evidenceMarker(d) ? el("span", { className: "sr", textContent: evidenceLevel(d).label }) : null);
     };
     const switcher = el("div", { className: "seg", attrs: { role: "group", "aria-label": "Value in the table" } });
     const box = el("div");
     const draw = () => {
       segmented(switcher, METRICS, state.metric, (v) => { state.metric = v; draw(); });
       const name = METRICS.find(([k]) => k === state.metric)[1];
-      const groups = [["In at least one model's training data (†)", datasets.filter((r) => r.trained)], ["In no model's training data", datasets.filter((r) => !r.trained)]];
+      const groups = EVIDENCE_ORDER.map((status, rank) => [
+        `Strongest evidence across these models: ${EVIDENCE_LEVELS[status].label}`,
+        datasets.filter((row) => row.evidence === rank)]);
       box.replaceChildren(resultsTable(
         [["Dataset"], ["Language"], ["Chance", "n"], ...models.map((m) => [m.name, "n model"])],
         groups.filter(([, rs]) => rs.length).map(([title, rs]) => [title, [...rs].sort((a, b) => mean(b) - mean(a)).map((r) =>
@@ -478,15 +494,17 @@
     draw();
     const sampled = models.some((m) => m.summary.datasets.some((d) => d.total_clips > d.clips));
     return [el("h2", { textContent: "Every model on every dataset" }),
-      el("p", { className: "sub", textContent: `${models.length} models, ${keys.length} datasets. One prediction per clip, each model as released (no fine-tuning). Rows: the datasets in some model's training data first, then those in none (the fairest comparison), each group from the best average down.` }),
+      el("p", { className: "sub", textContent: `${models.length} models, ${keys.length} datasets. One prediction per clip, each model as released (no fine-tuning). Rows grouped by the strongest training-source evidence among these models, each group from the best average down.` }),
       el("div", { className: "toolbar" }, el("div", { className: "control" }, "Value", switcher)),
-      legend("in that model's training data, so the result is optimistic"), box,
+      legend(), box,
       el("ul", { className: "notes" },
         ...models.map((m) => {
-          const trained = m.summary.datasets.filter((d) => d.in_training_data).map((d) => d.dataset);
-          return el("li", {}, el("b", { textContent: m.name }), `: trained on ${m.training_source || "data not stated"}` +
-            (trained.length ? `; † on ${trained.join(", ")}.` : "; none of these datasets is in its training data."));
+          const marked = m.summary.datasets.filter((d) => evidenceMarker(d))
+            .map((d) => `${evidenceMarker(d)} ${d.dataset} (${evidenceLevel(d).label})`);
+          return el("li", {}, el("b", { textContent: m.name }), `: ${m.training_source || "sources not stated"}` +
+            (marked.length ? `; ${marked.join(", ")}.` : "; no corpus-specific evidence for these datasets."));
         }),
+        el("li", { textContent: evidenceNote + " Indirect support means inferred upstream influence, not confirmed raw-corpus training." }),
         el("li", { textContent: "Accuracy: acted emotion: the share of clips whose prediction matches the emotion the speaker was asked to portray. The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many emotions it has." }),
         el("li", { textContent: "Unweighted accuracy: the mean of the per-emotion accuracies, so every emotion counts the same. Macro F1: the mean of the per-emotion F1 scores." }),
         el("li", { textContent: "Chance: the accuracy of a random guess among the dataset's emotions. Each model's own tab has the details: ground-truth labels, clips, the confusion matrices." }),
@@ -509,14 +527,12 @@
         ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), "n")] : []), td(pct(d.metrics.unweighted_accuracy), "n"),
         td(pct(d.metrics.macro_f1), "n")]))]),
       `Results of ${m.name} on every dataset`);
-    const trained = s.datasets.some((d) => d.in_training_data);
-    const notes = el("ul", { className: "notes" },
-      el("li", { textContent: `Rows: the datasets in ${m.name}'s training data first, then the others, each group from the highest accuracy (acted emotion) down; the row takes the colour of that accuracy.` }),
+     const notes = el("ul", { className: "notes" },
+      el("li", { textContent: `Rows grouped by training-source evidence level, each group from the highest accuracy (acted emotion) down; the row takes the colour of that accuracy.` }),
       el("li", { textContent: "Ground-truth labels: the emotions the speakers were asked to portray, under the project's names for them, in the order of the rows of the confusion matrices." }),
       composite.length ? el("li", { textContent: `Composite labels (no model class; a prediction of any class in brackets counts as correct): ${composite.join(", ")}. Chance level counts these classes, so it is higher than 1 in the number of emotions.` }) : null,
-      el("li", { textContent: `Training data of ${m.name}: ${m.training_source || "not stated"}. ` + (trained
-        ? "In its training data: the model has probably heard these clips, so its results there are optimistic. Not in its training data: a fairer test, although earlier exposure cannot be ruled out completely."
-        : "None of these datasets is in it, although earlier exposure cannot be ruled out completely.") }),
+      el("li", { textContent: `Training sources of ${m.name}: ${m.training_source || "not stated"}. ` + evidenceNote
+        + " Indirect support means inferred upstream influence, not confirmed raw-corpus training." }),
       el("li", { textContent: "Accuracy: acted emotion compares the prediction with the emotion the speaker was asked to portray. The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many emotions it has." }),
       listeners ? el("li", { textContent: "Accuracy: acted or listeners' vote also accepts the listeners' majority vote; only datasets that publish listeners' labels have it." }) : null,
       el("li", { textContent: "Unweighted accuracy: the mean of the per-emotion accuracies, so every emotion counts the same. Macro F1: the mean of the per-emotion F1 scores." }),
@@ -582,7 +598,9 @@
     };
     $("plots-body").replaceChildren(
       el("h2", { textContent: "Bar plots" }),
-      el("p", { className: "sub", textContent: "Every model on every dataset, drawn by scripts/viewer/plot_results.py (PNG and PDF in reports/figures/). Hatched bars: the dataset is in that model's training data. Dashed line: chance level. Click a figure to enlarge it." }),
+      el("p", { className: "sub", textContent: "Every model on every dataset, drawn by scripts/viewer/plot_results.py (PNG and PDF in reports/figures/). Patterns: "
+        + Object.values(EVIDENCE_LEVELS).map((level) => `${level.hatch || "none"}: ${level.label}`).join("; ")
+        + ". " + evidenceNote + " Indirect support is not confirmed raw-corpus training. Dashed line: chance level. Click a figure to enlarge it." }),
       el("div", { className: "toolbar" }, el("div", { className: "control" }, "Metric ", switcher)),
       el("h3", { textContent: `${plot.name}: one panel per dataset` }), zoomable(plot.by_dataset, `${plot.name} of every model, one panel per dataset`),
       ...(plot.overview ? [el("h3", { textContent: `${plot.name}: every dataset side by side` }), zoomable(plot.overview, `${plot.name} of every model on every dataset`)] : []));

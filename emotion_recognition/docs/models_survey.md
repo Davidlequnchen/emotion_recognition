@@ -1,5 +1,9 @@
 # 情绪识别开源模型调研（Emotion Recognition Open-Source Model Survey）
 
+2026-11-09 训练来源复核：论文、技术报告、模型卡及作者说明均可作证。图表用不同纹理区分直接有据、间接支持与可能关联；无纹理只表示暂无语料对应证据，不代表未使用，也不等于测试片段泄漏。八模型×十五语料及校准例外见 [training_provenance.md](training_provenance.md)。
+
+训练使用采用宽口径：直接或间接、上游预训练或 seed/教师伪标签链均计为“用过／见过”；C/I 都为已见，纹理仅区分方式。
+
 英文版：[models_survey_en.md](models_survey_en.md)（内容相同）。数据集调研见 [datasets_survey.md](datasets_survey.md)。
 
 调研日期：2026-10-28。目标：调研和 emotion2vec+ large 类似、可以下载权重在本地运行的语音情绪识别（SER）模型，选出本项目下一步值得评估的模型。
@@ -19,12 +23,12 @@
   - 大小：专用 SER 模型大多在 93.2M 到 639.9M 之间；开源音频大模型 5.54B 到 35.26B。
 - **不少新模型的标签来自 emotion2vec+**：SenseVoice 的情绪标签是 emotion2vec+ large 打的；MERaLiON-SER 和 C²SER 的部分训练数据也用 emotion2vec+ 打标签。它们不能算独立的对照。
 - **输入长度**：基于 Whisper 编码器的模型（MERaLiON-SER-v1、Melati、Vox-Profile Whisper 等）按固定窗口计算（30 s，Vox-Profile Whisper 为 15 s），短片段补静音，长音频被截断；emotion2vec 和 wav2vec2、WavLM、HuBERT 类模型按实际长度计算。长通话要先切段再合并预测（见表 1a 前的提示和各表的“输入音频”列）。
-- **和 emotion2vec+ large 最可比的**：MERaLiON-SER-v1（类别正是本项目的 7 类，另有维度输出，可商用）、Melati（7 类，Whisper large-v3，非商用），以及只用 MSP-Podcast 训练的 Vox-Profile（9 类）和 Odyssey 2024 基线（8 类）。
+- **和 emotion2vec+ large 最可比的**：MERaLiON-SER-v1（类别正是本项目的 7 类，另有维度输出，可商用）、Melati（7 类，Whisper large-v3，非商用），以及SER 适配使用 MSP-Podcast 的 Vox-Profile（9 类）和 Odyssey 2024 基线（8 类）。
   Melati 的卡片在 7,791 条留出数据（nEMO 和 NonverbalTTS 的 VoxCeleb 部分）上比较过，UAR：emotion2vec+ large 0.522，MERaLiON-SER 0.464，Melati 0.538。
 - **建议下一步评估**（表中标 ⭐ 的模型；接入难度见第 5 节）：
   1. MERaLiON-SER-v1：类别正是本项目的 7 类，另有维度输出，可商用；用 transformers 加载，要写几十行代码。
   2. Melati：7 类，卡片上的留出结果略高于 emotion2vec+ large；非商用，也用 transformers 加载。
-  3. Vox-Profile 分类模型（Whisper、WavLM）和 Odyssey 2024 分类基线：只用 MSP-Podcast（播客里的自然情绪）训练。Vox-Profile 是 IS2025 挑战赛最佳方案的纯语音版，但非商用、要装它的包，卡片还说短于 3 秒的片段预测不可靠；Odyssey 基线是 MIT 许可，最容易加载。
+  3. Vox-Profile 分类模型（Whisper、WavLM）和 Odyssey 2024 分类基线：SER 适配使用 MSP-Podcast（播客自然情绪），另有保留骨干的预训练。Vox-Profile 是 IS2025 挑战赛最佳方案的纯语音版，但非商用、要装它的包，卡片还说短于 3 秒的片段预测不可靠；Odyssey 基线是 MIT 许可，最容易加载。
   4. 维度模型（audEERING、Vox-Profile WavLM 维度、Odyssey 2024 维度）：输出 arousal、valence、dominance，要另写分析。
   - emotion2vec+ seed、base 和 SenseVoiceSmall 接入最省事（只改配置或小改），但都和 emotion2vec+ large 同源，作对照意义不大，所以没标 ⭐。
 
@@ -68,7 +72,7 @@
 
 | # | 模型 | 架构 | 训练数据 | 语言 | 输出 | 输入音频 | 备注 |
 |---|---|---|---|---|---|---|---|
-| 1 | ⭐ **emotion2vec+ large** | data2vec 2.0 式编码器：CNN + 12 层 Transformer（1024 维）+ 线性分类头，162.1M 参数 | 伪标签数据 42,526 h（从 160,000 h 里选出约 40,000 h），来源未公布 | 未公布 | 9 类：angry、disgusted、fearful、happy、neutral、other、sad、surprised、unknown（包含本项目的 7 类） | 16 kHz 单声道（FunASR 会重采样），可变长度，卡片没给上限；本项目 Apple MPS 跑不了长于约 20 s 的片段（第一层卷积输出超过 65,536 步），脚本改用 CPU | 每一版都在前一版的数据上迭代：seed（#8）→ base（#7）→ large |
+| 1 | ⭐ **emotion2vec+ large** | data2vec 2.0 式编码器：CNN + 12 层 Transformer（1024 维）+ 线性分类头，162.1M 参数 | 伪标签数据 42,526 h（从 160,000 h 里选出约 40,000 h），来源未公布 | 未公布 | 9 类：angry、disgusted、fearful、happy、neutral、other、sad、surprised、unknown（包含本项目的 7 类） | 16 kHz 单声道（FunASR 会重采样），可变长度，卡片没给上限；本项目 Apple MPS 跑不了长于约 20 s 的片段（第一层卷积输出超过 65,536 步），脚本改用 CPU | 数据／伪标签迭代不等于已证实的权重继承；large 的逐语料暴露未公开，见 [来源审核](training_provenance.md) |
 | 2 | ⭐ **MERaLiON-SER-v1** | Whisper-medium 编码器（冻结，LoRA 已合并）+ 注意力池化 + 改进的 ECAPA-TDNN；分类和维度两个头；313.4M 参数 | CREMA-D、ESD、MELD、M3ED；SG-ECMT 66,209 条（英、中、马来、泰米尔；标签是 emotion2vec+ seed 和 base 一致的预测，再用本模型二次标注）；SGTV 约 117,000 条、约 120 h（影视对白，人工标注，英、中） | 英（含新加坡英语）、中、马来、泰米尔；泰、印尼、越南有限支持 | 7 类：neutral、happy、sad、angry、fearful、disgusted、surprised（正是本项目的 7 类）；另有 valence、arousal、dominance（0–1） | ⚠️ **固定 30 s 窗口**：16 kHz；短片段补静音到 30 s，长于 30 s 只用前 30 s；池化包含补的静音 | — |
 | 3 | ⭐ **Melati 情绪分类** | Whisper large-v3 编码器（冻结）+ 各层平均池化后加权混合 + LayerNorm + 256 维隐层，637.3M 参数 | 28,895 条：EMNS、Emozionalmente、JL-Corpus、MESD、Oreau、RESD、SUBESCO、EmoV-DB、Expresso | 训练语料有 6 种语言（孟加拉、英、法、意、俄、西） | 7 类：neutral、happy、sad、angry、surprised、fearful、disgusted（正是本项目的 7 类） | ⚠️ **固定 30 s 窗口**：16 kHz；补静音到 30 s，长于 30 s 截断（短于 0.1 s 先补齐）；只在片段自己的帧上池化 | — |
 | 4 | ⭐ **Vox-Profile Whisper 分类** | Whisper large-v3 编码器（后半层 LoRA）+ 1×1 卷积 + 平均池化 + MLP 头，639.9M 参数 | MSP-Podcast v1.12（IS2025 挑战赛数据，只用 3–15 秒的片段） | 英语 | 9 类：Anger、Contempt、Disgust、Fear、Happiness、Neutral、Sadness、Surprise、Other；另有次级情绪和 arousal、valence、dominance 头 | ⚠️ **固定 15 s 窗口**：16 kHz 单声道；补静音到 15 s，长于 15 s 只用前 15 s；训练用 3–15 s 的片段，短于 3 s 不可靠 | 卡片称训练流程来自 IS2025 SER 挑战赛的最佳系统 SAILER（这里去掉了文本）；短于 3 秒的片段预测不可靠；官方代码在 forward 里写死了 `.cuda()` |

@@ -59,7 +59,7 @@ Most frequent confusions: neutral predicted as happy (43.9%), disgusted predicte
 
 ## Caveats
 
-- **In MERaLiON-SER-v1's training data** (CREMA-D, ESD, MELD, M3ED and Singaporean speech), so the model has probably seen these clips; treat the result as optimistic.
+- **Training involvement for MERaLiON-SER-v1: Used directly**. Source: SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **In-the-wild speech with noisy labels.** The annotators saw the video and the transcript, not the voice alone, and agreed moderately (Fleiss' kappa 0.43); the classes are very unbalanced (48% neutral, 2% fear).
 - Several speakers, laughter of the studio audience and background music can be heard in a clip; a third of the clips are shorter than 2 s.
 - MELD's train split is in the training data of MERaLiON-SER-v1 and of EmoBox (emotion2vec+), so these models have heard the same speakers and show.

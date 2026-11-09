@@ -84,7 +84,7 @@ The listeners' majority vote matches the acted emotion for 81.2% of the 6,187 cl
 
 ## Caveats
 
-- **In Melati's training data** (nine acted corpora, JL-Corpus among them), so the model has probably seen these clips; treat the result as optimistic.
+- **Training involvement for Melati: Used directly**. Source: Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here. Direct use and upstream teacher use both count as training involvement. No pattern: no corpus-specific evidence, not verified unseen. Corpus use is not test-clip leakage.
 - **Amateur speakers and microphones.** The clips were crowd-sourced and mostly recorded with non-professional equipment; the listeners marked the audio quality as bad in 4% of their ratings. They recognised the intended emotion with a UAR of 66% (the authors' figure).
 - Emozionalmente is in EmoBox, so it is in the training data of emotion2vec+, and in Melati's training data.
 - **Acted labels are not perceived emotions.** The ground truth is what the actor intended; listeners sometimes heard something else, as the listeners' numbers above show.
