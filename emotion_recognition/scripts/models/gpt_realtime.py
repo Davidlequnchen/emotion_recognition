@@ -17,13 +17,14 @@ Every answer is saved at once as one JSON line in outputs/<model>/responses.json
 (a hash of the prompts and labels), answers (the raw texts), label, usage (tokens), requests, seconds, model (the
 snapshot the API reported), date. A clip whose audio_path, api_model and prompts hash are already there is not sent
 again, so an interrupted run goes on where it stopped and nothing is paid twice.
+set_dataset restricts every request and answer parser to the dataset's classes; the returned vector keeps the
+global configured labels plus invalid, and cache hashes distinguish the allowed label sets.
 
 The key comes from the OPENAI_API_KEY environment variable or a line OPENAI_API_KEY=... in the .env file at the
 repository root (git-ignored); it is never printed. Clips of datasets whose licence does not allow giving their audio
 to others (ESD) are refused.
 """
 import asyncio
-import hashlib
 import json
 import os
 import sys
@@ -42,7 +43,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "common"))    # eval_datasets.py
 from data_loader import prepare_audio
 from eval_datasets import SOURCES
 from parsing import parse_label
-from prompts import load_prompts
+from prompts import load_prompts, prompt_protocol
 
 URL = "wss://api.openai.com/v1/realtime?model={}"
 RATE = 24000          # the Realtime API takes 16-bit PCM at 24 kHz, mono
@@ -135,30 +136,53 @@ class Predictor:
         self.api_model = entry["api_model"]
         self.retries, self.retries_invalid = int(settings["retries"]), int(settings["retries_invalid"])
         self.timeout = float(settings["timeout_s"])
-        prompts = load_prompts(ROOT / settings["prompts"])
-        self.system, self.user, self.choices = prompts["system"], prompts["user"], prompts["labels"]
-        self.labels = [*self.choices, INVALID]
-        # A hash of the prompts and labels: a cached answer counts only for the same prompts
-        self.prompt_hash = hashlib.sha256(json.dumps(prompts, sort_keys=True).encode()).hexdigest()[:12]
+        self.prompt_source = settings["prompts"]
+        self.prompt_path = ROOT / self.prompt_source
+        prompts = load_prompts(self.prompt_path)
+        self.labels = [*prompts["labels"], INVALID]
+        self.configure_prompts(prompts)
         self.key = find_key()  # never printed
-        self.cache_file = ROOT / "outputs" / entry["key"] / "responses.jsonl"
+        # Tests may direct the cache to a temporary folder without touching production outputs.
+        self.cache_file = Path(entry.get("cache_file") or ROOT / "outputs" / entry["key"] / "responses.jsonl")
         self.cache = self.read_cache()
         self.on_cpu, self.sent = 0, 0  # on_cpu: always 0 (evaluate.py reads it); sent: requests in this run
         import websockets
         self.versions = {"api model": self.api_model, "websockets": websockets.__version__}
+        self.refresh_notes()
+        where = self.cache_file.relative_to(ROOT) if self.cache_file.is_relative_to(ROOT) else self.cache_file
+        print(f"  cache       : {where}, {len(self.cache):,} answer(s) for these prompts "
+              f"(hash {self.prompt_hash}) and {self.api_model}; those clips are not sent again")
+
+    def configure_prompts(self, prompts):
+        """Set allowed answer labels while preserving the global output-vector order."""
+        self.system, self.user = prompts["system"], prompts["user"]
+        self.choices = list(prompts["labels"])
+        self.protocol = prompt_protocol(prompts)
+        self.prompt_hash = self.protocol["prompt_hash"]
+
+    def set_dataset(self, ds):
+        """Use the dataset's allowed answers for all requests, retries, parsing and cached answers."""
+        self.configure_prompts(load_prompts(self.prompt_path, labels=ds.classes))
+        self.cache = self.read_cache()
+        self.refresh_notes()
+        print(f"  prompt      : {ds.key}, labels {', '.join(self.choices)}, hash {self.prompt_hash}; "
+              f"{len(self.cache):,} cached answer(s)")
+
+    def refresh_notes(self):
+        """Describe the active prompt without changing the API session behavior."""
+        where = self.cache_file.relative_to(ROOT) if self.cache_file.is_relative_to(ROOT) else self.cache_file
         self.notes = [
             f"Each clip is sent as 24 kHz 16-bit mono PCM to the `{self.api_model}` Realtime API (WebSocket, text "
             f"output, no turn detection), with the system prompt as the session instructions and the user prompt of "
-            f"`{settings['prompts']}`",
+            f"`{self.prompt_source}`",
             f"The one-word answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the "
-            f"{len(self.choices)} emotions plus `invalid` (no readable answer after asking {self.retries_invalid} more "
-            "time(s)); so the probabilities are 0 or 1",
+            f"{len(self.labels) - 1} configured emotions plus `invalid` (no readable answer after asking "
+            f"{self.retries_invalid} more time(s)); so the probabilities are 0 or 1. Allowed answers for every "
+            f"request and retry in this run: {', '.join(self.choices)}",
             "The Realtime API does not allow temperature 0, so the answers can vary from run to run",
             "An answer that is not one of the dataset's emotions counts as wrong (column *other answer* of the "
-            f"confusion matrices); the raw answers are in `{self.cache_file.relative_to(ROOT)}`",
+            f"confusion matrices); the raw answers are in `{where}`",
         ]
-        print(f"  cache       : {self.cache_file.relative_to(ROOT)}, {len(self.cache):,} answer(s) for these prompts "
-              f"(hash {self.prompt_hash}) and {self.api_model}; those clips are not sent again")
 
     def read_cache(self):
         """The saved answers for this api_model and these prompts: audio_path -> record."""
@@ -168,9 +192,10 @@ class Predictor:
                 try:
                     record = json.loads(line)
                 except json.JSONDecodeError:  # e.g. a line cut off when a run was killed
-                    print(f"  WARNING     : line {n} of {self.cache_file.relative_to(ROOT)} is not JSON; ignored")
+                    print(f"  WARNING     : line {n} of {self.cache_file} is not JSON; ignored")
                     continue
-                if record.get("api_model") == self.api_model and record.get("prompts") == self.prompt_hash:
+                if (record.get("api_model") == self.api_model and record.get("prompts") == self.prompt_hash
+                        and record.get("label") in [*self.choices, INVALID]):
                     cache[record["audio_path"]] = record
         return cache
 
@@ -211,6 +236,7 @@ class Predictor:
                 if label:
                     break
             record = {"audio_path": rel, "api_model": self.api_model, "prompts": self.prompt_hash, "answers": answers,
+                      "labels": list(self.choices), "label_scope": self.protocol["label_scope"],
                       "label": label or INVALID, "usage": usage, "requests": len(answers),
                       "seconds": round(time.perf_counter() - t0, 2), "model": snapshot, "date": str(date.today())}
             self.cache_file.parent.mkdir(parents=True, exist_ok=True)

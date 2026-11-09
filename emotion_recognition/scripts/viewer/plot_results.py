@@ -8,7 +8,8 @@ Bars with a hatch: the dataset is in that model's training data, so its result i
 panel: chance level. A value marked * comes from a sample of the dataset (evaluation limit), not every clip.
 
 Which results it reads: every outputs/<model>/<dataset>[_sample<N>]_predictions.json that has `metrics` (for a model
-and dataset with several runs, the one with the most clips). So any model counts, whether it ran locally
+and dataset with several compatible runs, the one with the most clips). Registered audio LLMs require the current
+inference_protocol; legacy prompt/candidate results stay on disk but are excluded. So any model counts, whether it ran locally
 (scripts/evaluation/evaluate.py) or through an API (GPT Realtime, Gemini): an API evaluation only has to write the same
 kind of JSON into outputs/<its key>/. The fields used are:
     dataset (display name), key (dataset key), model_name (display name of the model), clips, total_clips,
@@ -22,6 +23,7 @@ Settings: config/plots.yaml. scripts/evaluation/evaluate.py runs it at its end w
 config/evaluation.yaml.
 """
 import json
+import hashlib
 import math
 import sys
 from pathlib import Path
@@ -32,7 +34,9 @@ ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/
 CONFIG = ROOT / "config" / "plots.yaml"
 MODELS_CONFIG = ROOT / "config" / "models.yaml"
 sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
+sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS
+from prompts import configured_protocol
 
 # One colour per model, in this order (Okabe-Ito: distinguishable with colour-vision deficiencies and in grey print)
 COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
@@ -50,10 +54,16 @@ def as_list(value):
     return [value] if isinstance(value, str) else list(value or [])
 
 
-def load_results(models, datasets, exclude):
+def load_results(models, datasets, exclude, registry=None, root=None):
     """{model key: {dataset key: run}}: the finished run with the most clips per model and dataset."""
+    root = Path(root or ROOT)
+    models = models if models == "all" else as_list(models)
+    datasets = datasets if datasets == "all" else as_list(datasets)
+    exclude = as_list(exclude)
+    if registry is None:
+        registry = yaml.safe_load((root / "config" / "models.yaml").read_text()) or {}
     best = {}
-    for path in sorted((ROOT / "outputs").glob("*/*_predictions.json")):
+    for path in sorted((root / "outputs").glob("*/*_predictions.json")):
         model = path.parent.name
         if model == "archive" or (models != "all" and model not in models):
             continue
@@ -61,9 +71,18 @@ def load_results(models, datasets, exclude):
         key = run.get("key")
         if "metrics" not in run or key in exclude or (datasets != "all" and key not in datasets):
             continue
+        expected = configured_protocol(registry.get(model, {}), run.get("classes", []),
+                                       config=root / "config" / "llm.yaml", root=root)
+        if expected is not None and run.get("inference_protocol") != expected:
+            continue
         if run.get("clips", 0) > best.get(model, {}).get(key, {}).get("clips", 0):
             best.setdefault(model, {})[key] = run
     return best
+
+
+def results_fingerprint(results):
+    """Identify the exact result metadata behind figures, so a viewer cannot embed stale pre-protocol plots."""
+    return hashlib.sha256(json.dumps(results, sort_keys=True).encode()).hexdigest()
 
 
 def setup_matplotlib():
@@ -192,7 +211,7 @@ def main():
     # ------------------------------------------------------------------
     step("Step 1/3 | Load configuration")
     settings = yaml.safe_load(CONFIG.read_text()) or {}
-    registry = list((yaml.safe_load(MODELS_CONFIG.read_text()) or {}).keys())
+    registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
     metrics, columns = as_list(settings.get("metrics", ["accuracy"])), int(settings.get("columns", 3))
     wanted_models = settings.get("models", "all")
     wanted_models = wanted_models if wanted_models == "all" else as_list(wanted_models)
@@ -207,7 +226,7 @@ def main():
     # Step 2: Collect the results in outputs/<model>/ (local models and API models alike)
     # ------------------------------------------------------------------
     step("Step 2/3 | Collect results")
-    results = load_results(wanted_models, wanted_datasets, exclude)
+    results = load_results(wanted_models, wanted_datasets, exclude, registry)
     if not results:
         sys.exit("ERROR: no results in outputs/<model>/ yet; run scripts/evaluation/evaluate.py first.")
     models = [m for m in registry if m in results] + sorted(m for m in results if m not in registry)
@@ -226,6 +245,7 @@ def main():
     # ------------------------------------------------------------------
     step("Step 3/3 | Draw the figures")
     plt = setup_matplotlib()
+    rendered = []
     for metric in metrics:
         if not any(metric in r["metrics"] for m in models for r in results[m].values()):
             print(f"  {metric}: no result has this metric, skipped")
@@ -233,6 +253,10 @@ def main():
         for stem in (per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out),
                      overview_figure(plt, metric, results, models, names, colours, datasets, out)):
             print(f"  {stem.relative_to(ROOT)}.png and .pdf")
+        rendered.append(metric)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "results_manifest.json").write_text(json.dumps({"fingerprint": results_fingerprint(results),
+                                                         "metrics": rendered}, indent=2), encoding="utf-8")
     print("Done.")
 
 

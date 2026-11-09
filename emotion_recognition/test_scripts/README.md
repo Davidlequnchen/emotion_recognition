@@ -6,6 +6,7 @@ the `.env` file at the repository root (git-ignored), and never print it.
 
 | Script | What it does | Cost |
 |---|---|---|
+| `test_dataset_label_choices.py` | Offline regression tests for dataset-specific choices, retries, cache/protocol isolation, result reuse, and consistent summary/viewer/plot selection. Uses fake models and API calls plus temporary files; no weights, keys or existing outputs are needed | free (no inference or network) |
 | `check_openai.py` | Lists the models the key can use (free), then sends one test clip to an audio model (`gpt-audio-mini`) through Chat Completions | one request, a fraction of a cent |
 | `check_openai_realtime.py` | Sends the same clip to each Realtime model (`gpt-realtime`, `gpt-realtime-2.1`) over WebSocket, as 24 kHz 16-bit mono PCM, and prints the answer and token usage | one request per model, a fraction of a cent each |
 | `check_local_audio_llms.py` | Loads one open-weight audio LLM (`MODEL` at the top: Qwen2.5-Omni, Qwen2-Audio or Gemma 4) through its loader and runs it on 18 clips (CREMA-D, MCAE-SPPS, TESS): the filled chat template, each answer, ms per clip, device memory, invalid answers. Answers go to a temporary folder, never to `outputs/` | free (local) |
@@ -14,6 +15,12 @@ the `.env` file at the repository root (git-ignored), and never print it.
 | `check_llm_extras.py` | Checks the label probabilities and hidden states of the three local audio LLMs (`save_label_probs`, `save_hidden_states` in `config/llm.yaml`) on 20 clips (data/samples, RAVDESS, THAI-SER): each clip with and without them (alternating order), the answers compared, the probabilities summed, their most probable label against the answer, label_mass, seconds per clip, and the features reloaded with `load_features`. Answers and features go to a temporary folder, never to `outputs/` or `features/` | free (local) |
 | `check_llm_nan_retry.py` | Checks the NaN retries of the local audio LLMs (`nan_retries` in `config/llm.yaml`) with Gemma 4 on 4 clips of data/samples, without a real NaN: generate() is wrapped to return NaN logits for 1, 2 and 4 calls. Recovery after retry 1 (memory cache emptied) and retry 2 (weights reloaded), the give-up after 3 retries (`invalid` with an "error", no probabilities or features) with the run going on, the answers against a clean run, and the answer cache and features index after a simulated interruption and resume. Answers and features go to a temporary folder, never to `outputs/` or `features/` | free (local) |
 | `time_steady.py` | Steady-state speed of the models whose speed on MPS depends on the input length (the three audio LLMs and Vox-Profile WavLM): one process per model runs 400 clips in a row (200 of THAI-SER, then 200 of MEAD), logs per clip the seconds, the duration and whether its input length is new (a one-time compile), and prints the mean seconds per clip in four windows. Waits while the machine is busy; the LLM answers go to a temporary folder, never to `outputs/` | free (local) |
+
+Run the offline regression suite in the `emotion_recognition_llm` environment:
+
+```bash
+python -m unittest discover -s test_scripts -p 'test_dataset_label_choices.py' -v
+```
 
 Results on 2026-10-27 with `data/samples/1001_DFA_ANG_XX.wav` (acted emotion: angry): `gpt-audio-mini`,
 `gpt-realtime` and `gpt-realtime-2.1` all answered `neutral`. The clip took 22 audio tokens (about 10 per second).

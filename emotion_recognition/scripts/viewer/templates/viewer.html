@@ -540,7 +540,7 @@
     if (s.shared?.length) {
       const n = s.shared_emotions.length;
       parts.push(el("h3", { textContent: `Only the emotions every dataset has: ${s.shared_emotions.join(", ")}` }),
-        el("p", { className: "caption", textContent: `The datasets have different emotions, and some are much harder than others. Here every dataset is scored on the same ${n} emotions (chance ${pct(1 / n)}): clips of other emotions are left out, and the prediction is the most probable of these ${n}. Rows grouped and coloured as above.` }),
+        el("p", { className: "caption", textContent: `Only clips whose ground truth is one of these ${n} emotions are included. Every model keeps its original dataset-level prediction; answers outside the subset count as wrong. This is a subset analysis, not new inference with fewer choices, so there is no common chance baseline. Rows grouped and coloured as above.` }),
         legend(),
         resultsTable([["Dataset"], ["Language"], ["Ground-truth labels", "labels"], ["Clips", "n"], ["Accuracy", "n"], ["Unweighted accuracy", "n"]],
           byTraining(m, s.shared, (d) => d.accuracy).map(([title, list]) => [title, list.map((d) => row(d, d.accuracy, [

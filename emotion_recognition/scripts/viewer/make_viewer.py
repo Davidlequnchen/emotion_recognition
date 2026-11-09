@@ -4,7 +4,9 @@ Build a static HTML page with the results of every evaluated model and example c
 The page has three tabs. Results (the default): a switch between all models side by side (one row per dataset, one
 column per model, one metric at a time) and one model at a time (its summary tables, with the datasets in its training
 data first, and its confusion matrices). Values are coloured by level: 80% or more, 60 to 80%, under 60%. Both views
-read reports/<model>/summary.json. Examples: pick a dataset and a model, play a clip and compare its labels (e.g. the
+read reports/<model>/summary.json for SER models. Audio LLM summaries and examples use only predictions matching
+the current inference_protocol; their summaries are rebuilt from those runs, so legacy summaries cannot reappear.
+Examples: pick a dataset and a model, play a clip and compare its labels (e.g. the
 acted emotion and the listeners' vote) with that model's prediction and probabilities, and with every other model's
 prediction for the same clip. Datasets: the source, licence and credit of each dataset. The open tab is in the URL
 hash (#results, #examples, #datasets), so a tab can be linked and the browser's back button works.
@@ -50,6 +52,7 @@ import csv
 import functools
 import io
 import json
+import math
 import os
 import random
 import sys
@@ -63,6 +66,10 @@ from PIL import Image, features
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
 from eval_datasets import SOURCES
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "llm_eval"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from prompts import configured_protocol
+import plot_results
 
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "viewer.yaml"         # this script's settings
@@ -102,13 +109,25 @@ def embed_image(path, width=None):
 
 def load_plots():
     """The bar plots of scripts/viewer/plot_results.py (metrics and folder from config/plots.yaml), embedded at 3,000
-    pixels wide: [{metric, name, by_dataset, overview}] for every metric whose figures exist."""
+    pixels wide, only when their manifest matches the current compatible runs."""
     settings = yaml.safe_load((ROOT / "config" / "plots.yaml").read_text()) or {}
     folder, plots = ROOT / settings.get("out", "reports/figures"), []
+    manifest_path = folder / "results_manifest.json"
+    if not manifest_path.is_file():
+        return []  # Preserve old image files, but do not present figures whose result protocol is unknown.
+    manifest = read_json(manifest_path)
+    registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
+    selected = plot_results.load_results(settings.get("models", "all"), settings.get("datasets", "all"),
+                                         settings.get("exclude") or [], registry=registry, root=ROOT)
+    if manifest.get("fingerprint") != plot_results.results_fingerprint(selected):
+        print("  WARNING     : bar plots use older results; redraw them with scripts/viewer/plot_results.py")
+        return []
     names = {"accuracy": "Accuracy", "unweighted_accuracy": "Unweighted accuracy", "macro_f1": "Macro F1",
              "accuracy_all_classes": "Accuracy, all model classes",
              "accuracy_acted_or_listener": "Accuracy, acted or listeners' vote"}
     for metric in settings.get("metrics", []):
+        if metric not in manifest.get("metrics", []):
+            continue
         grid, overview = folder / f"{metric}_by_dataset.png", folder / f"overview_{metric}.png"
         if grid.is_file():
             plots.append({"metric": metric, "name": names.get(metric, metric), "by_dataset": embed_image(grid, 3000),
@@ -134,6 +153,90 @@ def load_summary(path, exclude):
     summary["figure"] = embed_image(figure) if figure else None
     summary["figure_datasets"] = summary.get("figure_datasets", []) if figure else []
     return summary
+
+
+def current_run(meta, registry):
+    """SER records remain usable; LLM records must match the current configured model, prompt and candidates."""
+    expected = configured_protocol(registry.get(meta["model"], {}), meta.get("classes", []),
+                                   config=ROOT / "config" / "llm.yaml", root=ROOT)
+    return expected is None or meta.get("inference_protocol") == expected
+
+
+def best_metadata(metas):
+    """Pick the largest compatible run for each model and dataset before building either summaries or examples."""
+    best = {}
+    for path, meta in metas.items():
+        key = (meta["model"], meta["key"])
+        if key not in best or meta.get("clips", 0) > metas[best[key]].get("clips", 0):
+            best[key] = path
+    return best
+
+
+def current_summary(model, chosen, entry):
+    """Build a summary from selected prediction metadata/CSVs, including the current shared-subset scoring rule."""
+    ranked = sorted(chosen.items(), key=lambda item: (not item[1].get("in_training_data", False),
+                                                      -item[1]["metrics"]["accuracy"]))
+    datasets = [{"dataset": meta["dataset"], "key": meta["key"], "language": meta.get("language", ""),
+                 "clips": meta["clips"], "total_clips": meta.get("total_clips", meta["clips"]),
+                 "emotions": len(meta["classes"]), "labels": meta.get("labels", meta["classes"]),
+                 "chance": meta.get("chance", 1 / len(meta["classes"])), "accept": meta.get("accept", {}),
+                 "in_training_data": meta.get("in_training_data", False), "metrics": meta["metrics"],
+                 **({"inference_protocol": meta["inference_protocol"]} if "inference_protocol" in meta else {})}
+                for _, meta in ranked]
+    shared = sorted(set.intersection(*(set(meta["classes"]) for meta in chosen.values()))) if len(chosen) > 1 else []
+    shared_rows = []
+    for path, meta in ranked if shared else []:
+        with open(path, newline="", encoding="utf-8") as fh:
+            rows = [row for row in csv.DictReader(fh) if row[meta["ground_truth"]] in shared]
+        ground = meta["ground_truth"]
+        hits = [row["prediction"] == row[ground] for row in rows]
+        recalls = [sum(row["prediction"] == emotion for row in rows if row[ground] == emotion)
+                   / sum(row[ground] == emotion for row in rows)
+                   for emotion in shared if any(row[ground] == emotion for row in rows)]
+        shared_rows.append({"dataset": meta["dataset"], "key": meta["key"], "language": meta.get("language", ""),
+                            "clips": len(rows), "sample": meta["clips"] < meta.get("total_clips", meta["clips"]),
+                            "accuracy": sum(hits) / len(hits) if hits else None,
+                            "unweighted_accuracy": sum(recalls) / len(recalls) if recalls else None,
+                            "in_training_data": meta.get("in_training_data", False)})
+    # Individual figures share the selected CSV's stem and are written before its completion metadata. Compose
+    # them in memory rather than embedding a stale summary_confusion.png from a legacy seven-choice run.
+    settings_path = ROOT / "config" / "evaluation.yaml"
+    settings = yaml.safe_load(settings_path.read_text()) if settings_path.is_file() else {}
+    figure = (settings or {}).get("summary_figure") or {}
+    order = {key: i for i, key in enumerate(figure.get("order") or [])}
+    panels, figure_datasets, lenient = [], [], []
+    for path, meta in sorted(chosen.items(), key=lambda item: order.get(item[1]["key"], len(order))):
+        stem = path.name.removesuffix("_predictions.csv")
+        folder = ROOT / "reports" / model / "figures"
+        alternate = folder / f"{stem}_confusion_acted_or_listener.png"
+        use_listener = meta["key"] in (figure.get("acted_or_listener") or []) and alternate.is_file()
+        panel = alternate if use_listener else folder / f"{stem}_confusion.png"
+        if panel.is_file():
+            with Image.open(panel) as image:
+                thumbnail = image.convert("RGB")
+            thumbnail.thumbnail((900, 900), Image.LANCZOS)
+            panels.append(thumbnail)
+            figure_datasets.append(meta["dataset"])
+            if use_listener:
+                lenient.append(meta["dataset"])
+    embedded = None
+    if panels:
+        columns = min(3, math.ceil(math.sqrt(len(panels))))
+        width, height = max(image.width for image in panels), max(image.height for image in panels)
+        grid = Image.new("RGB", (columns * width, math.ceil(len(panels) / columns) * height), "white")
+        for i, panel in enumerate(panels):
+            grid.paste(panel, ((i % columns) * width + (width - panel.width) // 2,
+                              (i // columns) * height + (height - panel.height) // 2))
+        buffer = io.BytesIO()
+        kind = "webp" if features.check("webp") else "png"
+        grid.save(buffer, kind.upper(), **({"lossless": True} if kind == "webp" else {}))
+        embedded = f"data:image/{kind};base64,{base64.b64encode(buffer.getvalue()).decode()}"
+    first = next(iter(chosen.values()))
+    return {"model": model, "name": entry.get("name") or first.get("model_name", model),
+            "training_source": entry.get("training_source") or first.get("training_source", ""),
+            "date": max(meta.get("date", "") for meta in chosen.values()), "datasets": datasets,
+            "shared_emotions": shared, "shared": shared_rows, "figure": embedded,
+            "figure_datasets": figure_datasets, "acted_or_listener": lenient}
 
 
 def load_run(csv_path, meta):
@@ -250,7 +353,7 @@ def main():
     exclude = set(settings["exclude"] or [])  # left out of both pages: no results, no clips
     out = (ROOT / settings["out"]).resolve()
     site = (ROOT / settings["site"]).resolve() if settings["site"] else None
-    registry = list(yaml.safe_load(MODELS_CONFIG.read_text()) or {})
+    registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
     print(f"  config      : {CONFIG}")
     print(f"  clips       : up to {n_correct} right and {n_wrong} wrong per dataset and model (correct, wrong)")
     print(f"  seed        : {seed} (to get the same clips again, set `seed: {seed}` in config/viewer.yaml)")
@@ -272,16 +375,33 @@ def main():
         if "metrics" not in meta:  # the evaluation writes the JSON, with the metrics, after the CSV
             print(f"  skipped     : {rel(f)}, no finished .json next to it (a run in progress?)")
         elif meta["key"] not in exclude:
-            metas[f] = meta | {"model": meta.get("model") or f.parent.name}
+            meta = meta | {"model": meta.get("model") or f.parent.name}
+            if current_run(meta, registry):
+                metas[f] = meta
+            else:
+                print(f"  skipped     : {rel(f)}, legacy audio LLM inference protocol")
+    best = best_metadata(metas)
     found = ({f.parent.name for f in (ROOT / "reports").glob("*/summary.json")}
              | {meta["model"] for meta in metas.values()}) - {"archive"}
+    found = {model for model in found if not (registry.get(model, {}).get("api")
+                                             or registry.get(model, {}).get("llm"))
+             or any(m == model for m, _ in best)}
     if not found:
         sys.exit("ERROR: no results found. Run an evaluation first: python scripts/evaluation/evaluate.py")
     models = [m for m in registry if m in found] + sorted(found - set(registry))  # unregistered model folders last
     page_models, order = [], []  # order: every dataset with results, in order of first appearance
     for model in models:
         path = ROOT / "reports" / model / "summary.json"
-        summary = load_summary(path, exclude) if path.is_file() else None
+        entry = registry.get(model, {})
+        chosen = {f: metas[f] for (m, _), f in best.items() if m == model}
+        if chosen:
+            summary = current_summary(model, chosen, entry)
+        else:
+            summary = load_summary(path, exclude) if path.is_file() else None
+            if summary:
+                # Without per-clip predictions, an old summary may use the former SER-only probability reselection.
+                # Keep its other information, but do not present incomparable shared-subset scores.
+                summary["shared_emotions"], summary["shared"] = [], []
         meta = next((meta for meta in metas.values() if meta["model"] == model), {})
         name = (summary or {}).get("name") or meta.get("model_name") or model
         source = (summary or {}).get("training_source") or meta.get("training_source") or ""
@@ -297,13 +417,8 @@ def main():
 
     # Step 3: the predictions; one run per model and dataset, the one with the most clips (a full run, not a sample)
     step("Step 3/5 | Read the predictions (outputs/<model>/)")
-    best = {}  # (model, dataset key) -> (clips, csv)
-    for f, meta in metas.items():
-        run, clips = (meta["model"], meta["key"]), meta.get("clips", 0)
-        if run not in best or clips > best[run][0]:
-            best[run] = (clips, f)
     runs = {}  # dataset key -> {model: run}, models in page order
-    for (model, key), (_, f) in sorted(best.items(), key=lambda item: (models.index(item[0][0]), item[0][1])):
+    for (model, key), f in sorted(best.items(), key=lambda item: (models.index(item[0][0]), item[0][1])):
         run = load_run(f, metas[f])
         runs.setdefault(key, {})[model] = run
         accuracies = ", ".join(f"{100 * c['accuracy']:.1f}% ({c['name']})" for c in run["criteria"])

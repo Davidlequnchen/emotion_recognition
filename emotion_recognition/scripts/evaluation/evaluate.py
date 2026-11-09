@@ -90,9 +90,12 @@ os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/)
 CONFIG = ROOT / "config" / "evaluation.yaml"     # this script's settings
 MODELS_CONFIG = ROOT / "config" / "models.yaml"  # the model registry
+LLM_CONFIG = ROOT / "config" / "llm.yaml"
 sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, imported by name (`loader` in the registry)
+sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, sample, truth_labels
+from prompts import configured_protocol
 
 # What the script reads of config/evaluation.yaml, and of each model in config/models.yaml
 SETTINGS = ["mode", "models", "datasets", "exclude", "limit", "overwrite", "devices", "summary_figure"]
@@ -136,6 +139,15 @@ def is_llm(entry):
     """True for an audio LLM (`api: true` or `llm: true` in the registry): it answers with one label, so an answer that
     is none of the dataset's emotions counts as wrong, and its training data is not published."""
     return bool(entry.get("api") or entry.get("llm"))
+
+
+def current_protocol(entry, ds):
+    """Expected LLM prompt, answer choices and model identity, computed without loading a model.
+
+    ds can be an EvalSet or its class list (summary generation uses the classes stored in each run).
+    Dedicated SER inference has no prompt and keeps its existing result-reuse behavior.
+    """
+    return configured_protocol(entry, getattr(ds, "classes", ds), config=LLM_CONFIG, root=ROOT)
 
 
 def training_caveat(key, entry, note):
@@ -197,8 +209,7 @@ def dataset(key):
     return LOADERS[key]()
 
 
-@functools.cache
-def earlier_run(model, key, limit):
+def earlier_run(model, key, limit, protocol=None):
     """Reuse of finished results: an earlier finished run of the model on this dataset (its predictions JSON in
     outputs/<model>/ or outputs/archive/<model>/) whose predictions CSV holds every clip that a run with this limit
     evaluates now, as {"csv": its path, "meta": its JSON, "scores": clips x model classes}, or None. The probabilities
@@ -214,6 +225,8 @@ def earlier_run(model, key, limit):
     for path in candidates:
         meta = json.loads(path.read_text(encoding="utf-8"))
         if meta.get("key") != key or "model_classes" not in meta or not path.with_suffix(".csv").exists():
+            continue
+        if protocol is not None and meta.get("inference_protocol") != protocol:
             continue
         with open(path.with_suffix(".csv"), newline="", encoding="utf-8") as fh:
             rows = {r["audio_path"]: r for r in csv.DictReader(fh)}
@@ -383,11 +396,27 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     """Steps 4-6 for one model and dataset: load the dataset, run the model on every clip, write the outputs.
     reuse: an earlier run that holds every clip (earlier_run); its probabilities are taken instead of running the
     model."""
+    protocol = current_protocol(entry, ds)
+    if reuse:
+        # A single predictor can serve several datasets. Its previous dataset's notes must not describe a reused
+        # run whose prompt choices differ; use the provenance stored with that run instead.
+        predict.notes = reuse["meta"].get("notes", [])
+        predict.versions = reuse["meta"].get("versions", {})
+    if protocol is not None:
+        if reuse:
+            if reuse["meta"].get("inference_protocol") != protocol:
+                raise ValueError(f"{model}/{ds.key}: cannot reuse a different inference protocol")
+        else:
+            predict.set_dataset(ds)
+            if predict.protocol | {"model_id": protocol["model_id"]} != protocol:
+                raise ValueError(f"{model}/{ds.key}: loader prompt choices differ from the evaluation protocol")
     name, labels = entry["name"], list(predict.labels)
     # ------------------------------------------------------------------
     # Step 4: Load the dataset (scripts/common/eval_datasets.py) and its labels
     # ------------------------------------------------------------------
     step(f"Step 4/8 | {name}: load {ds.name}")
+    if protocol is not None:
+        print(f"  choices     : {', '.join(protocol['labels'])} (prompt {protocol['prompt_hash']})")
     # limit: clips taken at even intervals, emotion by emotion (in file order within each), so that every emotion
     # is sampled even when the file order repeats (TESS: the 7 emotions of each word in a row)
     clips = sample(ds, limit)
@@ -579,6 +608,8 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     }
     if ds.subset:  # a fixed subset of the dataset (`subsets` in config/evaluation.yaml)
         meta["subset"] = ds.subset
+    if protocol is not None:
+        meta["inference_protocol"] = protocol
     if reuse:  # the probabilities come from an earlier run: where from, and its runtime (if it saved one)
         meta["reused_from"] = reuse["csv"].relative_to(ROOT).as_posix()
         meta["runtime"] = {"reused": True, "date": reuse["meta"]["date"]} | reuse["meta"].get("runtime", {})
@@ -776,7 +807,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     print(f"\nDone: report -> {out.relative_to(ROOT)}, predictions -> {predictions.relative_to(ROOT)}")
 
 
-def best_runs(model, exclude=()):
+def best_runs(model, exclude=(), entry=None):
     """Per dataset key, in eval_datasets.LOADERS order: the predictions JSON of the run in outputs/<model>/ with the
     most clips (a full run rather than a sample), with its file stem added. Datasets in exclude (`exclude` in
     config/evaluation.yaml) are left out."""
@@ -784,6 +815,8 @@ def best_runs(model, exclude=()):
     best = {}
     for p in sorted(out.glob("*_predictions.json")):
         run = json.loads(p.read_text(encoding="utf-8")) | {"stem": p.name.removesuffix("_predictions.json")}
+        if entry is not None and is_llm(entry) and run.get("inference_protocol") != current_protocol(entry, run["classes"]):
+            continue
         if "metrics" in run and run["key"] not in exclude and run["clips"] > best.get(run["key"], {"clips": 0})["clips"]:
             best[run["key"]] = run
     # Ground-truth labels in the order of the confusion-matrix rows. Older predictions files have no "labels": their
@@ -798,18 +831,13 @@ def best_runs(model, exclude=()):
 
 def shared_scores(model, run, shared):
     """Clips, accuracy and unweighted accuracy of one run on the emotions every dataset has: clips of other emotions
-    are left out, and the prediction is the most probable of the shared emotions."""
+    are left out, but every model keeps its original dataset-level prediction. This is a subset analysis, not new
+    inference with a smaller candidate set; predictions outside shared count as wrong for both SER and LLMs."""
     with open(ROOT / "outputs" / model / f"{run['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
         rows = [r for r in csv.DictReader(fh) if r["acted_emotion"] in shared]
     if not rows:  # a small sample can miss them
         return 0, None, None
-    pred = []
-    for r in rows:
-        if r["prediction"] in shared:  # most probable of the dataset's emotions, so also of the shared ones
-            pred.append(r["prediction"])
-        else:  # use the probabilities in the file; they have 4 decimals, so a tie counts as wrong
-            p = [float(r.get(f"p_{e}", 0)) for e in shared]  # 0 for an emotion the model has no class for
-            pred.append(shared[p.index(max(p))] if p.count(max(p)) == 1 else None)
+    pred = [r["prediction"] for r in rows]
     truth = np.array([r["acted_emotion"] for r in rows])
     hit = np.array(pred) == truth
     return len(rows), hit.mean(), np.mean([hit[truth == e].mean() for e in shared if (truth == e).any()])
@@ -822,7 +850,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     datasets in figure_order first (the others follow in eval_datasets.LOADERS order); those in acted_or_listener show
     their "acted emotion or listeners' vote" confusion matrix. Datasets in exclude are left out. figure_order and
     acted_or_listener come from `summary_figure`, exclude from `exclude`, in config/evaluation.yaml."""
-    runs = list(best_runs(model, exclude).values())
+    runs = list(best_runs(model, exclude, entry).values())
     if not runs:
         print(f"  no results in outputs/{model}/ yet, so no summary")
         return
@@ -908,7 +936,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
             + (" A composite label has its own row, whose bold cells count as correct." if composite else ""),
             "",
         ]
-    # The same comparison on the emotions that every dataset has, so that the choice of emotions does not matter
+    # The common-emotion subset, keeping each model's original dataset-level prediction (no second choice).
     shared = sorted(set.intersection(*(set(r["classes"]) for r in runs))) if len(runs) > 1 else []
     scored = sorted(((r, *shared_scores(model, r, shared)) for r in runs),
                     key=lambda s: (s[0]["key"] not in trained, -(s[2] or 0))) if shared else []
@@ -916,18 +944,16 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         summary += [
             f"## Only the emotions every dataset has: {', '.join(shared)}",
             "",
-            "The datasets have different emotions, and some emotions are much harder than others, so the table above "
-            f"also reflects which emotions each dataset has. Here every dataset is scored on the same {len(shared)} "
-            f"emotions (chance {pct(1 / len(shared))}): clips of other emotions are left out, and the prediction is "
-            f"the most probable of these {len(shared)}.",
+            f"Only clips whose ground truth is one of these {len(shared)} emotions are included. Every model keeps "
+            "its original dataset-level prediction; predictions outside this subset count as wrong. This is a subset "
+            "analysis, not a new inference run with fewer answer choices, so there is no common chance baseline.",
             "",
             f"| Dataset | Language | Ground-truth labels | {column} | Clips | Accuracy | Unweighted accuracy |",
             "|---|---|---|---|---|---|---|",
             *[f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {yes_no(r)} | "
               f"{n:,}{' (sample)' if r in sampled else ''} | **{pct(acc)}** | {pct(ua)} |" for r, n, acc, ua in scored],
             "",
-            "Computed from the predictions files in `outputs/`. Their probabilities have 4 decimals, so a clip whose "
-            "shared emotions are tied counts as wrong.",
+            "Computed from the saved prediction labels in `outputs/`; probabilities are not used to reselect an answer.",
             "",
         ]
     path = reports / "summary.md"
@@ -957,7 +983,7 @@ def write_comparison(registry, exclude=()):
     """reports/summary.md (and .json, see the docstring of this file): every registered model with results in
     outputs/<model>/ on every dataset, with the same run per model and dataset as the model's summary (the one with
     the most clips). Rows: datasets, in eval_datasets.LOADERS order; columns: models, in registry order."""
-    runs = {m: best_runs(m, exclude) for m in registry}
+    runs = {m: best_runs(m, exclude, registry[m]) for m in registry}
     models = [m for m in registry if runs[m]]
     if not models:
         print("  no results in outputs/ yet, so no comparison")
@@ -995,7 +1021,9 @@ def write_comparison(registry, exclude=()):
                 cell = f"**{pct(got[m])}**" if len(got) > 1 and round(100 * got[m], 1) == best else pct(got[m])
                 cells.append(cell + "†" * trained(m, k)
                              + (f" ({runs[m][k]['clips']:,} clips)" if sampled(runs[m][k]) else ""))
-            lines.append(f"| {facts[k]['dataset']} | {facts[k]['language']} | {pct(chance_of(k))} | "
+            chance_value = chance_of(k)
+            chance_cell = pct(chance_value) if chance_value is not None else "–"
+            lines.append(f"| {facts[k]['dataset']} | {facts[k]['language']} | {chance_cell} | "
                          + " | ".join(cells) + " |")
         return lines
     dataset_chance = lambda k: chance(facts[k])
@@ -1040,11 +1068,12 @@ def write_comparison(registry, exclude=()):
         summary += [
             f"## Only the emotions every dataset has: {', '.join(shared)}",
             "",
-            f"Accuracy with every dataset scored on the same {len(shared)} emotions: clips of other emotions are left "
-            f"out, and the prediction is the most probable of these {len(shared)}, so the choice of emotions does not "
-            "matter. Computed from the predictions files in `outputs/`.",
+            f"Only clips whose ground truth is one of these {len(shared)} emotions are included. Both SER models and "
+            "audio LLMs keep their original dataset-level predictions; answers outside the subset count as wrong. "
+            "This does not rerun inference with fewer choices, so there is no common chance baseline. Computed from "
+            "the prediction labels in `outputs/`.",
             "",
-            *table("shared_accuracy", lambda k: 1 / len(shared)),
+            *table("shared_accuracy", lambda k: None),
             "",
         ]
     summary += [
@@ -1078,7 +1107,7 @@ def write_comparison(registry, exclude=()):
     print(f"  {len(models)} model(s) on {len(keys)} dataset(s) -> {path.relative_to(ROOT)} (and .json)")
 
 
-def finished_run(model, key, limit):
+def finished_run(model, key, limit, protocol=None):
     """The predictions JSON of an earlier finished run that a run with these settings would replace, or None.
     With `limit` smaller than the dataset, a run writes outputs/<model>/<key>_sample<limit>_*, otherwise
     outputs/<model>/<key>_*. The JSON is written last, so it exists only for a finished run."""
@@ -1094,6 +1123,9 @@ def finished_run(model, key, limit):
                  "config/evaluation.yaml sets. Move it (CSV and JSON) to outputs/archive/<model>/ under another name, "
                  "e.g. <key>_full_predictions.*, and its report to reports/archive/<model>/; the new run then reuses "
                  "its predictions of the clips it holds.")
+    if found and (not found.with_suffix(".csv").exists()
+                  or protocol is not None and json.loads(found.read_text(encoding="utf-8")).get("inference_protocol") != protocol):
+        return None
     if limit and sample.exists():
         return sample
     # A full run also counts when the limit is at least the size of the dataset (then there is no sample)
@@ -1181,7 +1213,15 @@ def main():
                      "in config/models.yaml); use cpu, mps or cuda:<index>.")
     # Models and datasets that already have results for this limit in outputs/<model>/ are skipped, unless overwrite
     # is true; so is a model that cannot run yet (no loader or no weights)
-    done = {m: {k: run for k in keys if not overwrite and (run := finished_run(m, k, limits[m]))} for m in models}
+    missing_for_llm = [k for k in keys if any(is_llm(registry[m]) for m in models)
+                       and not (ROOT / "data" / k).is_dir()]
+    if missing_for_llm:
+        sys.exit(f"ERROR: not downloaded: {', '.join(missing_for_llm)}. Download it with "
+                 "scripts/common/download_data.py before preparing the dataset-specific LLM prompts.")
+    protocols = {m: {k: current_protocol(registry[m], dataset(k)) if is_llm(registry[m]) else None
+                     for k in keys} for m in models}
+    done = {m: {k: run for k in keys if not overwrite and
+               (run := finished_run(m, k, limits[m], protocols[m][k]))} for m in models}
     todo = {m: [k for k in keys if k not in done[m]] for m in models}
     # An API model is never given a dataset whose licence does not allow giving its audio to others (ESD)
     private = {m: [k for k in todo[m] if not SOURCES.get(k, {}).get("api_audio")]
@@ -1222,7 +1262,8 @@ def main():
     # Reuse of finished results: datasets whose clips are all in an earlier finished run of the same model
     # (outputs/<model>/ or outputs/archive/<model>/) take its predictions instead of running the model; never with
     # overwrite (then the model runs again)
-    reuse = {m: {k: run for k in ks if not overwrite and (run := earlier_run(m, k, limits[m]))} for m, ks in todo.items()}
+    reuse = {m: {k: run for k in ks if not overwrite and
+                (run := earlier_run(m, k, limits[m], protocols[m][k]))} for m, ks in todo.items()}
     for m, runs in reuse.items():
         for k, run in runs.items():
             print(f"  reuse       : {m} on {k}: every clip is in {run['csv'].relative_to(ROOT)} ({run['meta']['date']}), "

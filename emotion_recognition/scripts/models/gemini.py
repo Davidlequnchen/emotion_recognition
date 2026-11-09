@@ -5,6 +5,9 @@ ready() says so, and evaluate.py skips the model with that message. The implemen
 scripts/models/gpt_realtime.py, with the same interface, prompts, parsing and cache:
     - load(model_dir, device, entry) returns a Predictor (labels: the seven emotions of the prompts plus `invalid`;
       versions, notes, on_cpu = 0); entry["api_model"] is the Gemini model name;
+    - set_dataset(ds) restricts system/user prompts and parsing to ds.classes, preserves the global output-vector
+      labels, and uses prompts.prompt_protocol(load_prompts(path, labels=ds.classes)) for self.protocol and the
+      response cache hash; saved records include labels and label_scope;
     - each clip becomes a 16 kHz mono 16-bit WAV file (prepare_audio(path, "wav16k") in
       scripts/llm_eval/data_loader.py), sent as inline data (mime type audio/wav) with the user prompt, through the
       google-genai SDK (pip install google-genai); the system prompt is the system instruction, temperature 0;

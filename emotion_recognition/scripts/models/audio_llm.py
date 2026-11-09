@@ -19,7 +19,9 @@ Device and precision: bfloat16 on CUDA and on MPS (checked on the M4 Max: see te
 float32 on the CPU; scaled dot-product attention (sdpa); the weights load straight onto the device (device_map).
 
 Every answer is saved at once as one JSON line in outputs/<model>/responses.jsonl: audio_path, hf_repo, prompts (a
-hash of the prompts, labels and REMINDER), answers (the raw texts), label, requests, seconds, device, dtype, date. A
+hash of the prompts, allowed labels, label scope and REMINDER), answers (the raw texts), label, requests, seconds,
+device, dtype, date. Before a dataset is evaluated, set_dataset restricts the prompt and parser to its classes;
+the returned one-hot vector keeps the global class order. A
 clip whose audio_path, hf_repo and prompts hash are already there is not run again (unless it was given up after NaN
 logits, below), so an interrupted run goes on where it stopped. The local models may get every dataset (nothing leaves the machine).
 
@@ -34,7 +36,8 @@ config/llm.yaml:
                          token_p_<label> and token_mass columns; the prediction stays the parsed answer.
     save_hidden_states - the prefill hidden states of `hidden_layers` layers of the language model, averaged over the
                          positions of the audio tokens (over all prompt tokens if they cannot be found), as float16 in
-                         features/<model>/<dataset>/ (git-ignored; Features below, read with load_features).
+                         features/<model>/<dataset>/<prompt_hash>/ (git-ignored; Features below, read with
+                         load_features). Standalone sample checks without set_dataset keep the unversioned path.
 Both come from the first request only (not from a follow-up after an invalid answer), and only for clips run now:
 a clip answered earlier (in the cache) gets neither.
 
@@ -51,7 +54,6 @@ cached answer, so a later run of the model tries such a clip again.
 """
 import copy
 import gc
-import hashlib
 import json
 import sys
 import time
@@ -68,11 +70,9 @@ ROOT = Path(__file__).resolve().parents[2]  # project root (emotion_recognition/
 CONFIG = ROOT / "config" / "llm.yaml"       # prompts, retries_invalid, max_new_tokens
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))  # prompts.py, parsing.py
 from parsing import VARIANTS, parse_label
-from prompts import load_prompts
+from prompts import REMINDER, load_prompts, prompt_protocol
 
 INVALID = "invalid"  # the class of a clip without a readable answer
-# The follow-up question after an answer that is not exactly one label ({labels}: the list, as in the prompts)
-REMINDER = "Answer with exactly one word from this list, in lowercase, and nothing else: {labels}."
 # Added to the training-data caveat of every report and summary of these models
 TRAINING_NOTE = "The model may have heard these public datasets during training."
 
@@ -134,7 +134,7 @@ def even_layers(n_layers, wanted):
 
 
 class Features:
-    """The pooled hidden states of one model on one dataset, in features/<model>/<dataset>/:
+    """The pooled hidden states of one model on one dataset and prompt, in features/<model>/<dataset>/<prompt_hash>/:
         hidden.f16   float16, one row of (layers x hidden size) per clip, appended clip by clip
         index.jsonl  one line per row: row, audio_path, pooling ("audio" or "prompt": the positions averaged), tokens
         meta.json    model, hf_repo, prompts hash, layers, hidden size, dtype, shape of a row, how rows were pooled
@@ -195,7 +195,7 @@ def read_features(folder):
 
 
 def load_features(folder):
-    """(vectors, index, meta) of a features/<model>/<dataset>/ folder, read-only (safe while a run writes to it):
+    """(vectors, index, meta) of a feature folder, read-only (safe while a run writes to it):
     vectors is a clips x layers x hidden size float16 array (memory-mapped), index the rows of index.jsonl in the same
     order, meta meta.json. Example: vectors[:, -1] holds every clip's last-layer vector."""
     meta, rows = read_features(folder)
@@ -217,15 +217,14 @@ class Predictor:
         import transformers
 
         settings = yaml.safe_load(CONFIG.read_text())
-        prompts = load_prompts(ROOT / settings["prompts"])
-        self.system, self.user, self.choices = prompts["system"], prompts["user"], prompts["labels"]
-        self.reminder = REMINDER.format(labels=", ".join(self.choices))
-        self.labels = [*self.choices, INVALID]
+        self.prompt_source = settings["prompts"]
+        self.prompt_path = ROOT / self.prompt_source
+        prompts = load_prompts(self.prompt_path)
+        self.labels = [*prompts["labels"], INVALID]
+        self.dataset_key = None  # standalone sample checks start with all configured labels
+        self.configure_prompts(prompts)
         self.retries_invalid, self.max_new_tokens = int(settings["retries_invalid"]), int(settings["max_new_tokens"])
         self.nan_retries = int(settings.get("nan_retries", 3))  # runs of a clip again after NaN logits
-        # A hash of the prompts, labels and reminder: a cached answer counts only for the same questions
-        self.prompt_hash = hashlib.sha256(json.dumps({**prompts, "reminder": self.reminder}, sort_keys=True)
-                                          .encode()).hexdigest()[:12]
         self.family, self.device, self.dtype = family, torch.device(device), dtype_for(device)
         self.hf_repo = entry["hf_repo"]
         self.max_seconds = getattr(family, "MAX_SECONDS", None)
@@ -235,7 +234,6 @@ class Predictor:
         self.cache = self.read_cache()
         self.on_cpu, self.ran, self.cut = 0, 0, 0  # on_cpu: always 0 (evaluate.py reads it); ran: clips run now
         self.gave_up = []  # clips given up after NaN logits in every retry (evaluate.py counts them per dataset)
-        dtype = str(self.dtype).replace("torch.", "")
         if self.device.type == "mps":
             plain_stop_check_on_mps()
         self.model_dir = model_dir  # kept for a reload after NaN logits (recover())
@@ -273,11 +271,11 @@ class Predictor:
             self.audio_token = getattr(config, "audio_token_id", None) or getattr(config, "audio_token_index", None)
             self.hidden_layers = settings.get("hidden_layers", 4)
             self.features_dir = Path(entry.get("features_dir") or ROOT / "features" / entry["key"])
-            self.features = {}  # dataset -> Features
+            self.features = {}  # (dataset, prompt hash) -> Features; standalone checks use the dataset alone
             self.model_key = entry["key"]
             folder = self.features_dir
             folder = folder.relative_to(ROOT) if folder.is_relative_to(ROOT) else folder
-            print(f"  features    : {folder}/<dataset>/, hidden_layers {self.hidden_layers}, audio token id "
+            print(f"  features    : {folder}/<dataset>/<prompt_hash>/, hidden_layers {self.hidden_layers}, audio token id "
                   f"{self.audio_token}")
         # What evaluate.py's predictions JSON says about the extra columns (extra())
         self.extra_doc = {"token_p_*": "audio LLMs: the model's probability of each label at the first generated "
@@ -286,22 +284,48 @@ class Predictor:
                           "token_mass": "audio LLMs: the share of the whole vocabulary that the labels' first tokens "
                                         "get at that position"} if self.save_probs else {}
         self.versions = {"transformers": transformers.__version__}
+        self.refresh_notes()
+        where = self.cache_file.relative_to(ROOT) if self.cache_file.is_relative_to(ROOT) else self.cache_file
+        print(f"  cache       : {where}, {len(self.cache):,} answer(s) for these prompts (hash {self.prompt_hash}) and "
+              f"{self.hf_repo}; those clips are not run again")
+
+    def configure_prompts(self, prompts):
+        """Choose the prompt's allowed answers without changing the model's output-vector class order."""
+        self.system, self.user = prompts["system"], prompts["user"]
+        self.choices = list(prompts["labels"])
+        self.reminder = REMINDER.format(labels=", ".join(self.choices))
+        self.protocol = prompt_protocol(prompts, local=True)
+        self.prompt_hash = self.protocol["prompt_hash"]
+
+    def set_dataset(self, ds):
+        """Restrict this dataset's prompt, parser and label probabilities; keep the loaded model and old artifacts."""
+        self.configure_prompts(load_prompts(self.prompt_path, labels=ds.classes))
+        self.dataset_key = ds.key
+        self.cache = self.read_cache()
+        if self.save_probs:
+            self.label_ids = label_tokens(self.processor.tokenizer, self.choices)
+        self.refresh_notes()
+        print(f"  prompt      : {ds.key}, labels {', '.join(self.choices)}, hash {self.prompt_hash}; "
+              f"{len(self.cache):,} cached answer(s)")
+
+    def refresh_notes(self):
+        """Report the actual allowed labels and follow-up instruction of the active dataset."""
         where = self.cache_file.relative_to(ROOT) if self.cache_file.is_relative_to(ROOT) else self.cache_file
         self.notes = [
-            f"{family.DESCRIPTION}, with the system and user prompts of `{settings['prompts']}` (the same as for GPT "
+            f"{self.family.DESCRIPTION}, with the system and user prompts of `{self.prompt_source}` (the same as for GPT "
             f"Realtime); the clip as 16 kHz mono" + (f" (at most its first {self.max_seconds} s)" if self.max_seconds
                                                     else ""),
             f"Greedy decoding (do_sample=False, no repetition penalty), at most {self.max_new_tokens} new tokens, "
-            f"{dtype} on `{self.device}`, sdpa attention; so the answers are the same from run to run (up to "
+            f"{str(self.dtype).replace('torch.', '')} on `{self.device}`, sdpa attention; so the answers are the same "
+            "from run to run (up to "
             "rounding differences between devices)",
             f"The answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the "
-            f"{len(self.choices)} emotions plus `invalid`. An answer that is not exactly one label gets a follow-up "
+            f"{len(self.labels) - 1} configured emotions plus `invalid`. Allowed answers for this run: "
+            f"{', '.join(self.choices)}. An answer that is not exactly one allowed label gets a follow-up "
             f"in the same conversation (\"{self.reminder}\"), up to {self.retries_invalid} time(s); then `invalid`",
             "An answer that is not one of the dataset's emotions counts as wrong (column *other answer* of the "
             f"confusion matrices); the raw answers are in `{where}`",
         ]
-        print(f"  cache       : {where}, {len(self.cache):,} answer(s) for these prompts (hash {self.prompt_hash}) and "
-              f"{self.hf_repo}; those clips are not run again")
 
     def read_cache(self):
         """The saved answers for this model and these prompts: audio_path -> record."""
@@ -315,7 +339,7 @@ class Predictor:
                     continue
                 # A clip given up after NaN logits ("error") is not a cached answer: a later run tries it again
                 if (record.get("hf_repo") == self.hf_repo and record.get("prompts") == self.prompt_hash
-                        and "error" not in record):
+                        and record.get("label") in [*self.choices, INVALID] and "error" not in record):
                     cache[record["audio_path"]] = record
         return cache
 
@@ -370,18 +394,22 @@ class Predictor:
         return {"hidden": vectors.to(torch.float16).cpu().numpy(), "pooling": pooling, "tokens": int(mask.sum())}
 
     def save_features(self, rel, found):
-        """Append one clip's pooled hidden states to features/<model>/<dataset>/ (the dataset: the folder of the clip
-        in data/)."""
+        """Append hidden states to a prompt-versioned dataset folder, preserving earlier prompt runs."""
         parts = Path(rel).parts
-        dataset = parts[1] if len(parts) > 2 and parts[0] == "data" else "other"
-        if dataset not in self.features:
-            self.features[dataset] = Features(self.features_dir / dataset)
+        dataset = self.dataset_key or (parts[1] if len(parts) > 2 and parts[0] == "data" else "other")
+        key = (dataset, self.prompt_hash) if self.dataset_key is not None else dataset
+        folder = self.features_dir / dataset
+        if self.dataset_key is not None:
+            folder /= self.prompt_hash
+        if key not in self.features:
+            self.features[key] = Features(folder)
         meta = {"model": self.model_key, "hf_repo": self.hf_repo, "prompts": self.prompt_hash,
+                "labels": list(self.choices), "label_scope": self.protocol["label_scope"],
                 "layers": self.layers, "num_layers": self.num_layers, "row_shape": list(found["hidden"].shape),
                 "dtype": "float16", "pooling": "mean over the prefill positions of the audio tokens (index.jsonl: "
                 "pooling = audio), or over every prompt position when they cannot be found (pooling = prompt); "
                 "first request only; layer 0 = embeddings, num_layers = the last layer"}
-        self.features[dataset].add(rel, found["hidden"], found["pooling"], found["tokens"], meta)
+        self.features[key].add(rel, found["hidden"], found["pooling"], found["tokens"], meta)
 
     def ask(self, wav):
         """One try at a clip: the first request, then follow-ups while the answer is not exactly one label. Returns
@@ -439,6 +467,7 @@ class Predictor:
             if "hidden" in found:  # written before the answer, so a stopped run never has an answer without them
                 self.save_features(rel, found)
             record = {"audio_path": rel, "hf_repo": self.hf_repo, "prompts": self.prompt_hash, "answers": answers,
+                      "labels": list(self.choices), "label_scope": self.protocol["label_scope"],
                       "label": label or INVALID, "requests": len(answers)}
             if not finite:  # given up: invalid, without label probabilities or features; a later run tries it again
                 record["error"] = f"nan after {self.nan_retries} retries"

@@ -67,7 +67,7 @@ emotion_recognition/
 │   ├── finetuning_emotion2vec_plus_large.md  # what fine-tuning would need: data, GPUs, which layers (+ _en.md)
 │   ├── data_preparation_call_centre_audio.md # how to cut call recordings into segments for labelling and training
 │   └── figures/                # the architecture diagram (PowerPoint and PNG), data-preparation figures and their script
-├── features/                   # local audio LLMs' pooled hidden states, features/<model>/<dataset>/ (not in git)
+├── features/                   # local audio LLM hidden states, <model>/<dataset>/<prompt_hash>/ (not in git)
 ├── models/
 │   ├── README.md               # every model's files, size and licence; how to get, split and add models
 │   ├── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
@@ -540,7 +540,7 @@ exclude: [esd]    # never evaluated, even with `all`, and left out of the summar
                   # their data stays in data/. ESD: its licence forbids sharing any part of the data
 limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
                   # sample); null = every clip. A model's own `limit` in config/models.yaml wins (none set now)
-overwrite: false  # false: skip a model and dataset whose results (same limit) are already in outputs/<model>/;
+overwrite: false  # false: skip matching results (same limit; audio LLMs also require matching inference_protocol);
                   # true: evaluate it again and replace them. The summaries show every result there,
                   # except those of excluded datasets
 plots: true       # true: at the end, draw the bar plots of every model on every dataset (scripts/viewer/plot_results.py,
@@ -567,10 +567,12 @@ summary_figure:   # every dataset's confusion matrix in one figure, in each mode
 
 The subset is part of the dataset's loader, so `evaluate.py`, the LLM data loader and the viewer all see the same
 clips, and the dataset's name says so in every report and summary, e.g. *THAI-SER (high-agreement subset)*. Set a
-dataset to `null` in `subsets` to use every clip. A finished run is never run again: when an earlier finished run of
+dataset to `null` in `subsets` to use every clip. A matching finished run need not run again: when an earlier run of
 the same model, in `outputs/<model>/` or `outputs/archive/<model>/`, holds every clip to evaluate, `evaluate.py` takes
 the predictions from its CSV instead of running the model (and does not even load a model whose every dataset can be
-reused). emotion2vec+ large's THAI-SER result was made this way from its full run of October, which is archived as
+reused). Audio LLMs additionally require a matching `inference_protocol` (prompt hash, model ID and candidate
+choices); old seven-choice results or files without matching metadata are not reused. emotion2vec+ large's
+THAI-SER result was made this way from its full run of October, which is archived as
 `outputs/archive/emotion2vec_plus_large/thai_ser_full_*` ([report](reports/archive/emotion2vec_plus_large/thai_ser_full.md)).
 
 The models are registered in `config/models.yaml`: display name, loader, folder, Hugging Face repository, and
@@ -598,8 +600,10 @@ the model's key in the registry, e.g. `emotion2vec_plus_large`):
   F1 and the accuracy on the shared emotions; † marks a dataset that is in the model's training data.
 
 A sample run (`limit`) adds `_sample<N>` to the file names, e.g. `reports/meralion_ser_v1/crema_d_sample14.md`. A model
-and dataset whose results for the same `limit` are already in `outputs/<model>/` are skipped, so after adding a
-dataset or a model the script evaluates only the new ones; set `overwrite: true` to evaluate again. A model's summary
+and dataset whose results for the same `limit` are already in `outputs/<model>/` are skipped when their inference
+protocol matches (audio LLMs check prompt hash, model ID and candidate choices). After adding a dataset or model,
+the script evaluates only missing or incompatible results; `overwrite: true` forces a new run of matching results.
+A model's summary
 covers every dataset with results in `outputs/<model>/`, also those not listed in `datasets`, and `reports/summary.md`
 every model with results, also those not listed in `models`; for a dataset with a full run and a sample, they show the
 run with more clips.
@@ -626,14 +630,17 @@ emotion2vec+ nine (plus `other` and `<unk>`).
 | Emozionalmente | 7, column `emotion_expressed` (listeners: `emotion_recognized`): anger, disgust, fear, joy, neutrality, sadness, surprise | anger → angry, disgust → disgusted, fear → fearful, joy → happy, neutrality → neutral, sadness → sad, surprise → surprised |
 | SAVEE | 7, letters after the speaker in the file name: `a`nger, `d`isgust, `f`ear, `h`appiness, `n`eutral, `sa`dness, `su`rprise | a → angry, d → disgusted, f → fearful, h → happy, n → neutral, sa → sad, su → surprised |
 
-How the probabilities become a prediction:
+How model outputs become a prediction:
 
-- **Main result** (*accuracy: acted emotion*): the prediction is the most probable of the dataset's own emotions; the
-  model's other classes (for example emotion2vec+'s `other` and `<unk>`, or Vox-Profile's `contempt` and `other`) are
-  ignored. On MESS, for example, only angry, happy, neutral and sad compete, so chance level is 25%. Every model's raw
-  probabilities are used: Melati's official thresholds are not applied (see [Models](#models)).
-- **All model classes** (in each report): the prediction is the most probable of all the model's classes, so choosing
-  a class that the dataset does not have (for example surprised on CREMA-D) counts as wrong.
+- **Main result** (*accuracy: acted emotion*): dedicated SER models choose the most probable of the dataset's own
+  prediction classes (`ds.classes`); their other classes (for example emotion2vec+'s `other` and `<unk>`, or
+  Vox-Profile's `contempt` and `other`) are ignored. Audio LLMs receive the same candidate set in their prompts,
+  parsing and retries, and are scored using their generated answer. On MESS, for example, only angry, happy, neutral
+  and sad compete, so chance level is 25%. SER models' raw probabilities are used: Melati's official thresholds
+  are not applied (see [Models](#models)).
+- **All model classes** (in each SER report): the prediction is the most probable of all the model's classes, so
+  choosing a class that the dataset does not have (for example surprised on CREMA-D) counts as wrong. LLMs do not
+  supply an alternative unrestricted prediction; their saved label-token probabilities are a separate analysis.
 - **Unweighted accuracy** is the mean recall of the acted emotions, so every emotion counts the same; **macro F1** is
   the mean F1 of the predicted emotions.
 - **Listeners' votes** (CREMA-D, MCAE-SPPS, THAI-SER, Emozionalmente) use the same mapping; for a tied vote, any of the tied emotions
@@ -696,9 +703,12 @@ RAVDESS, TESS and JL-Corpus, the three English datasets added last, are all in E
 expected. TESS's two speakers reach 99% to 100% on six emotions, but none of its 400 *pleasant surprise* clips comes
 out as surprised (70% are predicted as fearful); JL-Corpus counts only its five primary emotions.
 
-The datasets have different emotions, and some emotions are much harder than others. On the four emotions that every
-dataset has (angry, happy, neutral and sad; chance 25%), counting only clips of these emotions and taking the most
-probable of the four as the prediction (also in the [summary](reports/emotion2vec_plus_large/summary.md)):
+The datasets have different emotions, and some emotions are much harder than others. The shared-four analysis
+counts only clips whose ground truth is angry, happy, neutral or sad, while keeping each model's original
+dataset-level prediction; another predicted class counts as wrong. It does not reselect SER probabilities or run
+LLMs again with four choices, so a uniform 25% chance baseline does not apply to every dataset. The table below is
+a legacy result calculated by reselecting the largest of the four SER probabilities; newly generated summaries
+use the original-prediction rule described above:
 
 | Dataset | Language | Ground-truth labels | In emotion2vec+ training data (EmoBox) | Clips | Accuracy, 4 shared emotions |
 |---|---|---|---|---|---|
@@ -813,15 +823,18 @@ For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, 
 
 Each model keeps its colour (colour-blind-safe), bars have black outlines, a hatch marks a dataset in that model's
 training data, a dashed line shows chance level, and a value with * comes from a sample of the dataset. The script
-reads every `outputs/<model>/<dataset>_predictions.json`, so every evaluated model appears, the audio LLMs too
-(section 8).
+reads `outputs/<model>/<dataset>_predictions.json`, with audio LLMs restricted to the current `inference_protocol`
+(section 8). Legacy outputs stay on disk but do not enter newly generated plots or result pages. Plot generation
+writes `results_manifest.json` beside the figures; the result page embeds only plots whose manifest matches the
+current compatible results. After a prompt change, redraw plots before rebuilding the page to include them.
 
 ## 8. Audio LLMs
 
 GPT Realtime runs through `scripts/evaluation/evaluate.py` like the other models, through its loader
 `scripts/models/gpt_realtime.py`; Gemini (`scripts/models/gemini.py`) is a placeholder for now and is skipped with a
 message. Each clip is sent as 24 kHz 16-bit mono PCM with the prompts of `scripts/llm_eval/prompts.yaml`, which ask
-for one of the seven emotions; the one-word answer becomes the prediction.
+for one of that dataset's candidate emotions (`ds.classes`); the one-word answer becomes the prediction. The YAML's
+seven `labels` are the global vocabulary, filtered to the dataset's candidates in canonical order.
 
 To run it (paid):
 
@@ -833,26 +846,35 @@ To run it (paid):
 - **Clips**: every clip, like the local models (decided 2026-11-06, for one protocol across the paper). Every dataset
   is sent except ESD, whose licence forbids giving it to anyone (`api_audio` in `scripts/common/eval_datasets.py`;
   decided 2026-11-06, as LISTEN and other benchmarks did): 56,264 clips of 13 datasets, with THAI-SER and MEAD on their
-  [subsets](#subsets). Earlier runs used `limit: 200` (`<dataset>_sample200_*` files); their cached
-  answers are reused, so those clips are not paid twice.
+  [subsets](#subsets). Earlier runs used `limit: 200` (`<dataset>_sample200_*` files); cached answers can be reused
+  only when their prompt hash, model ID and dataset candidates match the current inference protocol.
 - **Cost and time**: one request per clip, one at a time. A 2 s CREMA-D clip took about 190 input tokens (about 20
   of them audio, the rest the prompts), 3 output tokens and 5.5 s (2026-10-29), so the full run takes about 130 hours
   per model one request at a time and, at the published gpt-realtime prices, about US$175 (docs/audio_llms_survey_en.md, section 3).
 - **Cache**: every answer is saved at once in `outputs/gpt_realtime/responses.jsonl` (raw answer, label, tokens). A
-  clip already answered with the same model and prompts is not sent again, so an interrupted run continues where it
-  stopped and nothing is paid twice. Changing the prompts starts a new set of answers.
+  clip already answered with the same model, prompts and candidate choices is not sent again, so an interrupted
+  matching run continues where it stopped. Changing any of these starts a new set of answers; raw answers with
+  different hashes remain together in the cache.
 - **Retries** (`config/llm.yaml`): network errors, rate limits and server errors are tried again (`retries: 3`, with
   a growing pause); an answer that is not exactly one emotion is asked again once (`retries_invalid: 1`), then
   counts as `invalid`.
-- **Scoring**: an answer that is not one of the dataset's emotions (e.g. surprised on CREMA-D) or `invalid` counts as
-  wrong, and has its own column, *other answer*, in the confusion matrices. The Realtime API does not allow
+- **Scoring**: parsing and retry instructions use only that dataset's candidate emotions; an out-of-candidate
+  answer gets the configured retry and then counts as `invalid` if it still fails. Invalid answers count as wrong
+  and have their own column, *other answer*, in the confusion matrices. The Realtime API does not allow
   temperature 0, so answers can vary between runs.
 
 The results go where every model's go: `outputs/gpt_realtime/` (predictions CSV and JSON) and `reports/gpt_realtime/`,
-and they appear in `reports/summary.md`, the bar plots and the results page without further steps. The LLMs choose
-from all seven emotions, so their accuracy compares best with the local models' *accuracy with all model classes*
-(in each report). The prompts, the data loader preview and the parser: [scripts/llm_eval/README.md](scripts/llm_eval/README.md).
+and they appear in `reports/summary.md`, the bar plots and the results page without further steps. Both audio LLMs
+and dedicated SER models use `ds.classes` for their main dataset-level comparison. JL-Corpus's five candidates
+are angry, happy, neutral, sad and surprised; its *excited* ground truth accepts happy or surprised, and is not
+itself an answer option. The prompts, the data loader preview and the parser: [scripts/llm_eval/README.md](scripts/llm_eval/README.md).
 Quick checks of the key and the API: [test_scripts/](test_scripts/README.md).
+
+After changing a prompt, follow the [rerun notes](scripts/llm_eval/README.md#rerunning-after-a-prompt-change).
+Prediction metadata's `inference_protocol` is checked before skipping or reusing results, so a prompt or candidate
+change is detected with `overwrite: false`. New hidden states use `features/<model>/<dataset>/<prompt_hash>/`,
+leaving older directories untouched. A future rerun replaces same-named prediction CSV/JSON and reports; archive
+those files first if they are needed for comparison. Editing configuration alone launches no evaluation.
 
 ### 8.1 Open-weight audio LLMs (run here)
 
@@ -867,7 +889,7 @@ dataset's emotions counts as wrong; training data "not known").
 2. In `config/evaluation.yaml`: `models: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b]` (no `api_models` needed).
 3. `conda activate emotion_recognition_llm` (section 1.5), then `python scripts/evaluation/evaluate.py`.
 
-- **What the model sees**: the same system and user prompts and the same seven labels as GPT Realtime
+- **What the model sees**: the same system and user templates and dataset-specific candidate labels as GPT Realtime
   (`scripts/llm_eval/prompts.yaml`), in the model's own chat template; the clip as 16 kHz mono (Qwen2-Audio and
   Gemma 4 take at most 30 s, so a longer clip is cut). The audio comes before the user prompt for the Qwen models and
   after it for Gemma 4, as their model cards advise; Gemma 4's thinking is off.
@@ -876,17 +898,17 @@ dataset's emotions counts as wrong; training data "not known").
   answer that is not exactly one label gets a follow-up in the same conversation ("Answer with exactly one word from
   this list ..."), once (`retries_invalid`); then the clip counts as `invalid`.
 - **Cache**: every answer goes at once into `outputs/<model>/responses.jsonl` (raw answers, label, device, dtype), so a
-  stopped run continues where it stopped; changing the prompts starts a new set of answers.
+  stopped run resumes with matching prompts, model ID and candidates; different hashes coexist in the same file.
 - **Label probabilities and hidden states** (`save_label_probs`, `save_hidden_states`, `hidden_layers` in
   `config/llm.yaml`, on by default): taken from the same `generate()` call as the first answer, so no extra model run.
   Each clip's line in `responses.jsonl` gets `label_probs` (each label's probability at the first generated token:
   the summed probability of the first tokens of "angry", "Angry", " angry", " Angry" and of one-token words that the
-  parser reads as that label, such as "anger" or " fear", renormalised over the 7 labels)
+  parser reads as that label, such as "anger" or " fear", renormalised over the dataset's candidate labels)
   and `label_mass` (the share of the whole vocabulary these tokens get); the predictions CSV adds them as
   `token_p_<label>` and `token_mass` columns, while the prediction stays the parsed answer. The labels' first tokens
   differ for all three models, so no label needs whole-sequence scoring. The prefill hidden states of 4 evenly spaced
   layers of the language model (the last included), averaged over the positions of the audio tokens, go as float16
-  to `features/<model>/<dataset>/` (git-ignored): `hidden.f16` (one row of layers x hidden size per clip),
+  to `features/<model>/<dataset>/<prompt_hash>/` (git-ignored): `hidden.f16` (one row of layers x hidden size per clip),
   `index.jsonl` (row -> audio_path, pooling, number of audio tokens) and `meta.json` (layers, shape). They are
   written clip by clip before the answer, so a stopped run resumes cleanly; read them with `load_features(folder)`
   in `scripts/models/audio_llm.py`. About 20–33 kB per clip, about 4.6 GB for the 55,784 clips of the 3 models. Both

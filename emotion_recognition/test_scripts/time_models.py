@@ -122,6 +122,7 @@ def main():
         scratch = Path(tempfile.mkdtemp(prefix=f"timing_{m}_"))
         if entry.get("llm"):
             entry["cache_file"] = scratch / "responses.jsonl"  # fresh: no cached answer, nothing in outputs/
+            entry["features_dir"] = scratch / "features"  # keep standalone check features out of dataset runs
         print(f"  machine     : load {load:.1f}, {free}% memory free; device {device}, "
               f"{torch.get_num_threads()} threads")
         loader = importlib.import_module(entry["loader"])

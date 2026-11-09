@@ -61,7 +61,7 @@ def main(model=MODEL, device=DEVICE, dtype=DTYPE, clips=CLIPS):
     if dtype:  # override the loader's choice for this check only
         audio_llm.dtype_for = lambda _: getattr(torch, dtype)
     scratch = Path(tempfile.mkdtemp(prefix=f"{model}_"))
-    entry = entry | {"key": model, "cache_file": scratch / "responses.jsonl"}
+    entry = entry | {"key": model, "cache_file": scratch / "responses.jsonl", "features_dir": scratch / "features"}
 
     # Step 2: load the model
     print("\nStep 2 | load")

@@ -13,6 +13,7 @@ classes that count as correct). items() yields one item per clip and prepares ea
     accepted       the model classes that count as correct for it, sorted: usually just `acted`; excited: happy,
                    surprised (`accepted` in eval_datasets.py)
     listener       the listeners' majority vote ("a or b" for a tie); "" if the dataset has none
+    choices        the dataset's allowed answer classes, in the prompt vocabulary's fixed order
     system, user   the prompts, with the labels filled in (prompts.yaml, read by prompts.py)
     audio_format   pcm16_24k or wav16k (`audio_format` in config/llm.yaml)
     sample_rate    sampling rate of the prepared audio (24000 or 16000)
@@ -113,6 +114,8 @@ def prepare_audio(path, audio_format):
 
 def dataset_items(ds, clips, prompts, audio_format):
     """One item per clip of one dataset (see the docstring of this file), each prepared when it is asked for."""
+    if set(prompts["labels"]) != set(ds.classes):
+        raise ValueError(f"{ds.key}: prompt choices must match the dataset's classes")
     for clip in clips:
         audio, samples, rate = prepare_audio(clip["audio"], audio_format)
         yield {
@@ -122,6 +125,7 @@ def dataset_items(ds, clips, prompts, audio_format):
             "acted": clip["acted"],
             "accepted": sorted(accepted(ds, clip["acted"])),
             "listener": clip["listener"],
+            "choices": list(prompts["labels"]),
             "system": prompts["system"],
             "user": prompts["user"],
             "audio_format": audio_format,
@@ -139,10 +143,10 @@ def items(settings=None, audio_format=None):
     audio_format = audio_format or settings["audio_format"]
     if audio_format not in RATES:
         sys.exit(f"ERROR: unknown audio_format {audio_format!r}; use {' or '.join(RATES)}")
-    prompts = load_prompts(ROOT / settings["prompts"])
     keys, _ = select_datasets(settings)
     for key in keys:
         ds = LOADERS[key]()
+        prompts = load_prompts(ROOT / settings["prompts"], labels=ds.classes)
         yield from dataset_items(ds, sample(ds, settings["limit"]), prompts, audio_format)
 
 
@@ -187,7 +191,7 @@ def main():
     step("Step 3/4 | Load the prompts")
     prompts = load_prompts(ROOT / settings["prompts"])
     print(f"  file        : {settings['prompts']}")
-    print(f"  labels      : {', '.join(prompts['labels'])}")
+    print(f"  vocabulary  : {', '.join(prompts['labels'])} (filtered to each dataset's choices below)")
     for k in ("system", "user"):
         print(f"  {k:<11} : ({len(prompts[k])} characters)\n    {prompts[k]}")
 
@@ -197,7 +201,10 @@ def main():
     total, seconds = 0, 0.0
     for key in keys:
         ds = LOADERS[key]()
+        prompts = load_prompts(ROOT / settings["prompts"], labels=ds.classes)
         step(f"Step 4/4 | {ds.name}: clips and the first {n_show} item(s)")
+        print(f"  choices     : {', '.join(prompts['labels'])}")
+        print(f"  system      : {prompts['system']}")
         clips = sample(ds, limit)
         duration = sum(sf.info(c["audio"]).duration for c in clips)  # reads only the file headers
         total, seconds = total + len(clips), seconds + duration
