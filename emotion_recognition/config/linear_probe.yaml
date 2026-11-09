@@ -1,0 +1,40 @@
+# 先完成正式 LLM 评测，再读取服务器上的 features 训练小分类器；只用 CPU。
+# 原理和操作说明：scripts/analysis/README.md
+# 在 emotion_recognition/ 目录先检查：python scripts/analysis/linear_probe.py --dry-run
+models: [gemma4_e4b, qwen2_5_omni_7b, qwen2_audio_7b]
+datasets: all
+
+# seed 决定按说话人分组的随机划分；论文可用 --seeds 42 43 44 检查稳定性。
+seeds: [42]
+# all = 所有已保存层（不是模型的每一层）；也可填 last 或具体层号列表。
+layers: all
+# C 越小，越限制分类器权重。只根据验证集 UAR 选 C 和层，不看测试分数。
+c_values: [0.01, 0.1, 1.0, 10.0]
+# 按训练集各类的样本数，增加稀少类别在训练时的权重。
+class_weight: balanced
+max_iter: 1000
+require_convergence: true       # 某层选中的分类器未收敛时，报错并保留原因。
+num_threads: 4                  # CPU 计算线程数；不加载大模型，也不使用 GPU。
+prediction_batch_size: 1024
+
+# 按说话人/组的数量划分，不保证音频条数恰好符合这个比例。
+train_validation_test: [0.6, 0.2, 0.2]
+# 以下数据集改用明确的训练/验证/测试人数；人数与实际不符会报错。
+group_counts:
+  crema_d: [61, 15, 15]
+  mcae_spps: [4, 1, 1]
+  mess: [4, 1, 1]
+  nemo: [5, 2, 2]
+  thai_ser: [140, 30, 30]
+# 留空则自动生成并导出划分；也可指定 dataset: 已核对的划分CSV路径。
+# CSV 列：audio_path, group, split（train/validation/test），可附 seed。
+split_manifests: {}
+
+# 保持输入来自同一正式评测设置，避免 prompt、标签集或表示方式混用。
+require_current_protocol: true
+require_audio_pooling: true     # 默认拒绝定位音频失败后改为平均整个 prompt 的向量。
+hash_features: true             # 计算输入文件的指纹，方便复现；向量仍留在服务器。
+export_model_parameters: true   # 导出分类器权重与标准化参数，不导出逐音频向量。
+# MELD 目前只有官方 test 特征。开启也只能做明确标记的额外诊断，须另给对话划分。
+allow_test_only_diagnostics: false
+output_dir: outputs/linear_probe # 每次新建 UTC 时间目录，不覆盖已有结果。

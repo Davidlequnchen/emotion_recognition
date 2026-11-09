@@ -6,6 +6,7 @@ the `.env` file at the repository root (git-ignored), and never print it.
 
 | Script | What it does | Cost |
 |---|---|---|
+| `test_linear_probe.py` | CPU synthetic tests for group-disjoint splits, train-only preprocessing, validation-only C/layer selection, read-only feature integrity and CSV/JSON exports. No actual LLM, audio or GPU is used | free (no inference or network) |
 | `test_dataset_setup.py` | Tests data-submodule initialization, verified reuse of old files, preservation of external/archived local data, failed setup recovery, path boundaries and original-source/Release dispatch. Uses temporary local Git repositories and tiny files | free (local; no inference or remote downloads) |
 | `test_model_setup.py` | Tests model submodule initialization, safe preservation and reuse of existing weights, failed initialization recovery, path boundaries and GitHub download dispatch. Uses temporary local Git repositories and tiny fixtures | free (local; no inference or remote downloads) |
 | `test_dataset_label_choices.py` | Offline regression tests for dataset-specific choices, retries, cache/protocol isolation, result reuse, and consistent summary/viewer/plot selection. Uses fake models and API calls plus temporary files; no weights, keys or existing outputs are needed | free (no inference or network) |

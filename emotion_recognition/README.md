@@ -886,6 +886,14 @@ current compatible results. After a prompt change, redraw plots before rebuildin
 
 ## 8. Audio LLMs
 
+After completing inference, [the linear-probe guide (原理、运行与结果解读)](scripts/analysis/README.md) explains how
+to keep the LLM fixed and train a small classifier on its saved representations. This is a supervised diagnostic,
+reported separately from zero-shot generation. CPU analysis runs on the server and exports per-clip predictions,
+probabilities, group splits and configuration as CSV/JSON; the original feature binaries remain there.
+Use the existing `emotion_recognition_llm` environment with
+`pip install -r requirements.txt`; analysis runs on CPU without loading the LLMs or using a GPU. Settings:
+`config/linear_probe.yaml`. Run `python scripts/analysis/linear_probe.py --dry-run` to audit inputs before training.
+
 GPT Realtime runs through `scripts/evaluation/evaluate.py` like the other models, through its loader
 `scripts/models/gpt_realtime.py`; Gemini (`scripts/models/gemini.py`) is a placeholder for now and is skipped with a
 message. Each clip is sent as 24 kHz 16-bit mono PCM with the prompts of `scripts/llm_eval/prompts.yaml`, which ask

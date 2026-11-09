@@ -26,7 +26,7 @@ does not matter (user's decision).
 | C | Training-data overlap and model family trees | 🥉 | low | none | preliminary numbers |
 | D | Same clip, same prompt: does the answer change? | 🥉 | low-medium | 0–6 h per model | design ready |
 | E | Words-only control (speech-to-text → text LLM) | 🔹 | low | ≈ 1 h | later |
-| F | 🆕 Label probabilities, neutral-bias removal, three readouts | 🔹 | low | none extra | new |
+| F | 🆕 Label probabilities, neutral-bias removal, three readouts | 🔹 | low | no extra LLM inference with complete features; CPU analysis needed | probe implemented; prior correction pending |
 | G | Actor's intended emotion vs what listeners heard | 🔹 | low | none | partly done |
 | H | Are confidence numbers honest? (calibration) | 🔹 | low | none | later |
 | I | JEV-style structured outputs | 💤 set aside for now (2026-11-06) | — | — | — |
@@ -43,8 +43,9 @@ does not matter (user's decision).
 ([EACL 2026](https://aclanthology.org/2026.eacl-long.274/)), VoxEmo ([arXiv 2603.08936](https://arxiv.org/abs/2603.08936)),
 EmoBox ([Interspeech 2024](https://arxiv.org/abs/2406.07162)), VocalAffectBench
 ([arXiv 2608.28932](https://arxiv.org/abs/2608.28932)). So a plain benchmark is not enough. The open question is
-where the gap lives. **In the prompt**: the model heard the emotion, but a habit ("when unsure, say neutral") hides
-it. Or **in hearing**: the audio encoder never passed the emotion on. Hints point both ways: open audio LLMs keep
+how much of the gap comes from prompt-dependent readout and label preferences, and how much from limits of the
+representations. F probes accessible label information with supervision; it cannot by itself separate all causes.
+Relevant clues: open audio LLMs keep
 speaking style in the audio encoder but lose it before the answer ("Heard but Not Heeded",
 [arXiv 2609.00727](https://arxiv.org/abs/2609.00727)), and describing acoustic cues in the prompt helps
 ([arXiv 2606.07309](https://arxiv.org/abs/2606.07309)); but random examples do not help SER (Piao et al.,
@@ -54,7 +55,7 @@ QA ([arXiv 2610.20085](https://arxiv.org/abs/2610.20085)).
 **How.** Two prompt-side tests: 🥇 **examples** (A) and 🥈 **rewritten instructions** (B). Both run on the same test
 clips, against the SER models, with the same measures: accuracy, UA (unweighted accuracy: the mean of per-class
 accuracies, so a big class cannot dominate), macro-F1, **neutral rate** (share of "neutral" answers), **accuracy
-without neutral** (do gains only come from saying "neutral" less?) and the **prior-correction baseline** (F). C, D and
+without neutral** (do gains only come from saying "neutral" less?) and the planned **prior-correction baseline** (F). C, D and
 E check that the numbers can be trusted.
 
 | RQ | Question | Section |
@@ -209,8 +210,9 @@ of speech in-context learning" on stutter, pronunciation and SER; details not pu
 Xplore before writing**. Both findings can be true; our controls decide. A*STAR is in Singapore: likely reviewers.
 
 **Possible results (made up).** Speaker reference works: C3 beats C2 on unseen corpora, C4 falls back to C0.
-Examples only shift habits: the neutral rate drops, but prior correction (F) gives the same gain. Nothing helps: the
-bottleneck is hearing, not the prompt.
+If the neutral rate drops and future prior correction (F) gives a similar gain, label preference may explain part
+of the improvement; this does not establish that examples only shift habits. If nothing helps, these tested
+prompts did not work; it does not prove that the encoder lacks emotion information.
 
 **Compute and time on our Mac:** Stage 1 ≈ 14 h (two nights); Stage 2 ≈ 15 h.
 
@@ -266,7 +268,7 @@ language notes ("Thai is tonal"). **What it cannot**: what the audio encoder del
   rollouts. Three seeds on one cell (CREMA-D, Qwen2-Audio, R-text) to see the spread.
 - **Baselines**: our prompt (`prompts.yaml`); hand edits (+ label definitions, + cue descriptions, + "do not default to
   neutral", short chain of thought); VoxEmo's 5-prompt vote; random paraphrase search at the same budget (does the
-  coach matter?); best ICL condition and GEPA + best examples (RQ4); prior correction (F); SER models.
+  coach matter?); best ICL condition and GEPA + best examples (RQ4); prior correction (F, not yet implemented); SER models.
 - **Transfer (RQ4)**: to all 13 corpora (the 4 unseen are key); English vs Mandarin source tested on Thai, Polish,
   Italian; one model's prompt on the other models and APIs; 7-class prompts on 4-class corpora.
 
@@ -324,11 +326,13 @@ GPT Realtime and Gemini in phase 3 on the company computer.
 
 **🆕 What phase 2 saves besides the answer**, from the same model call (no extra runs; `config/llm.yaml`):
 
-- the **7 label probabilities**: how likely each label is as the first word of the answer, rescaled to sum to 1;
-- the **mean-pooled hidden states**: the model's internal numbers over the audio part, averaged into one vector per
-  clip, from 4 layers (float16, ≈ 20–33 kB per clip, git-ignored).
+- **first-token scores for the dataset's candidate labels** (`token_p_*`) and their total vocabulary mass
+  (`token_mass`): generation-side probability proxies, not full-label probabilities; see F;
+- the **mean-pooled hidden states**: language-model hidden vectors averaged over audio-token positions, one per
+  saved layer, from 4 layers (float16, ≈ 20–33 kB per clip, git-ignored). These depend on the prompt and context.
 
-So analysis F and the linear-probe comparison need no extra runs.
+With complete paired outputs, F needs no new LLM inference, but still requires separate CPU probe fitting and
+aligned readout comparisons. Prior correction is not implemented yet.
 
 ---
 
@@ -423,30 +427,72 @@ Polish.
 
 ## 🔹 F. 🆕 Label probabilities, removing the neutral bias, and three readouts
 
-**In one sentence:** besides the one word the model says, we read how likely it finds each label, which shows
-whether it "heard it but habitually said neutral".
+**In one sentence:** compare what the model says, which label its generation scores favour, and what a supervised
+linear classifier can recover from its saved representations. These readouts help locate gaps; none alone proves
+that the model did or did not "hear" emotion.
 
-**Why it matters.** Now the model says one word, e.g. "neutral". With the saved probabilities we also see its inner
-ranking, e.g. neutral 45%, angry 40%, the rest 15%. That answers: did it hear the anger but fall back on "neutral" out
-of habit? It is the cleanest test of "habit vs hearing", and the yardstick for A and B.
+**What the three readouts measure.**
 
-**How.**
+| Readout | How it is obtained | Question |
+|---|---|---|
+| (a) **One-word answer** | Parse the model's generated answer | How well does the model perform directly under this prompt? This is the original zero-shot readout. |
+| (b) **Label scores** (`token_p_*`, with prior correction planned) | Rank label-related token scores at the first generated position, renormalised across labels | Does the correct label score highly despite a different final answer? How much can changing relative label preferences help? |
+| (c) **Linear probe** | Freeze the large model; train a small classifier on hidden vectors and labelled training clips | How much label information is accessible with supervised linear readout under this representation and data protocol? |
 
-1. **Label probabilities**, saved for every clip in phase 2: no sampling, no parsing errors. When the model says
-   "neutral", how often is the right label second?
-2. **Prior correction** (removing the habitual lean). Measure the model's average probability per label on the train
-   split, e.g. "neutral" gets 50% where a fair share is 14%. Divide each clip's probabilities by these averages and
-   take the top label again ("contextual calibration", [Zhao et al., ICML 2021](https://arxiv.org/abs/2102.09690)).
-   If this cheap fix gives the same gain as A or B, those methods only removed a habit.
-3. **Three readouts per clip**: (a) the **spoken answer**; (b) the **top label probability**, with and without prior
-   correction; (c) a **linear probe**: a tiny classifier (one linear layer) trained on the saved hidden states of
-   train speakers and tested on test speakers. It asks: "is the emotion stored inside the model, even if it does not
-   say it?"
+**What a linear probe learns.** Treat each saved hidden vector as notes already written by the large model. The
+probe leaves those notes and all large-model parameters unchanged. It learns a weight for each vector dimension
+and class, plus a bias: `score_k = w_k · z + b_k`. Softmax converts these scores into multiclass probabilities.
+"Linear" describes this single weighted-sum scoring layer, with no additional hidden layers.
 
-**Reading the result.** If (c) comes close to the SER models while (a) is far behind, the model inside **did** hear
-the emotion and only fails when "saying" it (as in "Heard but Not Heeded"). If (b) with correction closes most of the
-gap, it is mostly the neutral habit. If even (c) is weak, the emotion never got through the audio encoder, and no
-prompt can fix it.
+The implementation uses L2-regularised `LogisticRegression` on standardised saved features. Training emotion labels
+teach this new classifier how to read the vectors. Thus the large model is frozen, but the readout **is trained
+with supervision**. This is a supervised representation diagnostic, not the LLM's zero-shot performance or a free
+output-format change. The exported `probe_p_*` columns are probabilities from this new classifier.
+
+**What is being probed?** Saved features are language-model prefill hidden states, averaged over audio-token
+positions at selected layers. They have passed through the language model and depend on the prompt and context;
+they are not pure audio-encoder outputs. The default requires `pooling=audio` and rejects fallback pooling over the
+whole prompt. Averaging only audio positions still does not remove prompt influence.
+
+**Protocol and fair comparisons.**
+
+1. Freeze speaker-disjoint train/validation/test manifests before fitting, and reuse each dataset's manifest across
+   models. Labels may be used for stratification; features and predictions are not. Missing features must not lead
+   to a different test subset for one model.
+2. Fit `StandardScaler` and the classifier on train only. Select regularisation `C` and then the layer by validation
+   UAR only. Do not refit on train+validation or select the best-looking test layer.
+3. Evaluate on test. Align (a), (b), probe and SER predictions by audio ID on the **same eligible test clips, target
+   labels and scoring rules**. A probe test-subset score cannot be subtracted from a full-corpus LLM/SER score.
+   Composite-target exclusions, for example, require recomputing all compared readouts on matching test items and
+   targets. Alignment does not make the tasks identical: after excluding excited in JL-Corpus, the probe has four
+   supervised classes while the original LLM still had five inference candidates. Filtering test clips cannot
+   remove that candidate-set difference; retain and report it. Also disclose the probe's extra supervision.
+
+TESS is skipped by default because it has only two speakers. MELD is also skipped because current features cover
+official test only: training on those features would consume the official test. Input requirements, explicitly
+marked diagnostic exceptions, commands and exports are in the
+[linear-probe guide](../../emotion_recognition/scripts/analysis/README.md).
+
+**Label-score caveats and planned prior correction.** Original LLM `p_*` columns are one-hot encodings of the
+answer, not confidence. Use `token_p_*` together with `token_mass`: the former renormalises label-related
+first-token probability mass across labels, while the latter records their total share of the vocabulary mass.
+An angry score of 60% when all label tokens jointly receive only 1% of vocabulary mass is not a 60% probability
+that the clip is angry. First-token scores are also not exact full-label sequence probabilities; shared first
+tokens, later tokens, formatting and retries can affect their relation to the final answer.
+
+**Prior correction is not implemented yet** and is not performed by the probe script. One planned baseline would
+estimate average `token_p_*` on train, adjust each clip's relative scores using those averages, then renormalise
+and rank labels again. Fix the rule and any parameters on train/validation, never test. High average scores may
+reflect output preference, actual class prevalence or clip difficulty; equal shares are not automatically the
+right target. A gain would show that this readout adjustment helps. Matching an A/B gain would not establish that
+A/B only removed a neutral habit.
+
+**Reading the result.** A strong probe with a weak answer supports the presence of label information accessible to
+a supervised linear classifier in these saved representations. It motivates studying the native readout, but
+does not establish emotion understanding or a purely output-side failure. Better first-token or corrected scores
+show a gap between readout rules, with tokenisation, format and class preferences still to check. A weak probe
+only limits this combination of layers, pooling, training data, split and linear classifier; it does not prove
+that the encoder lacks emotion information or that no prompt could help.
 
 **API models** give no hidden states, so no (c). They give no answer probabilities either (checked 2026-11-06, see
 [api_logprobs.md](api_logprobs.md)). GPT Realtime has no logprobs for its answer: its only `include` option gives the
@@ -454,8 +500,11 @@ probabilities of the input-audio transcript, made by a separate model. gemini-3.
 Google dropped them for 3.x models on purpose. So for the APIs we use D's repeated sampling instead (e.g. N = 10 on a
 subset): 6 "angry" out of 10 ≈ 60%.
 
-**Compute and time:** nothing extra; probes train in minutes on the CPU. **Risks:** labels that share a first token
-need multi-token scoring; probes on corpora with few speakers (MCAE-SPPS, MESS) may overfit.
+**Compute and time:** with complete paired features already saved, probe analysis needs no new LLM inference,
+audio loading or GPU. CPU time and RAM depend on sample count, dimensions, layers and the `C` search; "minutes"
+is not a general guarantee. Linear-probe fitting and export are implemented; paired three-readout comparisons and
+prior correction remain separate analysis work. Few-speaker corpora may overfit; report multiple seeds and
+speaker/dialogue-grouped uncertainty.
 
 ---
 
@@ -516,12 +565,13 @@ giving the LLM a SER model's prediction as a hint (product-like).
 | Item | For | Status |
 |---|---|---|
 | Finish the benchmark (Vox-Profile, phase 2 ≈ 36 h, phase 3 APIs) | all | running |
-| Save 7 label probabilities and mean-pooled hidden states per clip (3 local LLMs) | F, D, H | 🆕 set, runs with phase 2 |
+| Save candidate-label first-token scores, `token_mass` and mean-pooled hidden states per clip (3 local LLMs) | F, D, H | 🆕 set, runs with phase 2 |
 | Logprobs check for GPT Realtime and Gemini ([api_logprobs.md](api_logprobs.md)) | F, D | 🆕 done: neither gives them; use repeated sampling |
 | Pin the GPT Realtime model: `gpt-realtime` shuts down on 2027-01-20; the official successor is `gpt-realtime-2.1` | all | 🆕 decision pending with the user |
 | Neutral rate, accuracy without neutral, bootstrap and paired tests in `evaluate.py` | all | open |
-| Split files and 500-clip test lists; multi-audio loaders; example pickers | A, B, F | new |
-| Prior correction and linear probes | F | new |
+| Split files and 500-clip test lists; multi-audio loaders; example pickers | A, B | new |
+| Group-disjoint probe splits, CPU fitting and CSV/JSON export | F | implemented; formal runs need complete features |
+| Prior correction and paired three-readout comparisons | F | pending |
 | GEPA adapter around `Predictor`; coach access; transcripts, eGeMAPS, vote tables | B, E, G | new |
 | LoRA-SFT reference on a CUDA GPU | GRPO question | optional |
 | Release code, splits, prompts, per-clip predictions; no restricted audio | paper | at submission |
