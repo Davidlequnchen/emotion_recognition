@@ -144,6 +144,16 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(proc.returncode,0,proc.stdout+proc.stderr)
         self.assertEqual(json.loads((self.models/'invoked.json').read_text()),['toy','--workers','3','--verify-only'])
 
+    def test_cli_forwards_company_ca_path_with_spaces(self):
+        self.ensure()
+        script=self.project/'scripts/common/setup_models.py'
+        script.parent.mkdir(parents=True)
+        shutil.copyfile(SOURCE,script)
+        ca=self.root/'company certificates'/'company-ca.pem'
+        proc=subprocess.run([sys.executable,str(script),'toy','--ca-bundle',str(ca)],capture_output=True,text=True)
+        self.assertEqual(proc.returncode,0,proc.stdout+proc.stderr)
+        self.assertEqual(json.loads((self.models/'invoked.json').read_text()),['toy','--workers','2','--ca-bundle',str(ca)])
+
     def test_existing_target_is_not_overwritten_by_reuse(self):
         self.legacy()
         models=self.ensure()

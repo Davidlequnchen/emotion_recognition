@@ -153,6 +153,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("models", nargs="*", metavar="MODEL", help="model keys; omit for all")
     parser.add_argument("--verify-only", action="store_true", help="verify existing weights without downloading them")
+    parser.add_argument("--ca-bundle", type=Path, help="company/custom CA PEM bundle for Release downloads")
     parser.add_argument("--workers", type=int, default=2, help="parallel downloads (default: 2)")
     args = parser.parse_args(argv)
     if args.workers < 1:
@@ -167,6 +168,8 @@ def main(argv=None):
         command = [sys.executable, str(models / "download.py"), *keys, "--workers", str(args.workers)]
         if args.verify_only:
             command.append("--verify-only")
+        if args.ca_bundle is not None:
+            command.extend(["--ca-bundle", str(args.ca_bundle)])
         return subprocess.call(command)
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

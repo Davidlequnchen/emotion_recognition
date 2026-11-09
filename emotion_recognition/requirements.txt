@@ -15,3 +15,6 @@ pyarrow==26.0.0           # reads the Parquet files of THAI-SER and nEMO
 openpyxl==3.1.5           # reads the MCAE-SPPS label spreadsheet
 pyyaml==6.0.3             # reads the settings in config/*.yaml
 soundfile==0.14.0         # reads audio files
+
+# Automatically use OS certificate trust (including company root CAs) for HTTPS downloads.
+truststore>=0.10; python_version >= "3.10"
