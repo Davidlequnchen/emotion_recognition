@@ -184,7 +184,7 @@ Note: the datasets with many classes:
 ## 6. Downloaded locally (2026-10-23; ESD on 2026-10-26; RAVDESS, TESS and JL-Corpus on 2026-10-27; MEAD, MELD, EMOVO and Emozionalmente on 2026-11-05; SAVEE on 2026-11-06)
 
 Set `dataset` in `config/download_data.yaml` to the dataset's name (`all` for all of them), then run `python scripts/common/download_data.py`. Every file is checked against the checksum its host publishes (except ESD, JL-Corpus, SAVEE, MEAD and EMOVO, see the last column),
-and running the same command again after an interruption resumes the download (ESD, JL-Corpus and SAVEE are single zips and start again from the beginning). The data stays in `data/` and is by default not in git (several licences forbid sharing copies); for a machine that cannot reach these hosts, MCAE-SPPS, nEMO, TESS and JL-Corpus are exceptions for now (see the README).
+and running the same command again after an interruption resumes the download (ESD, JL-Corpus and SAVEE are single zips and start again from the beginning). The data stays in `data/` and is ignored by default. Selected copies of MCAE-SPPS, nEMO, TESS, JL-Corpus, EMOVO, THAI-SER, MEAD, MELD and SAVEE are stored in Git for machines that cannot reach their hosts. [data/README.md](../data/README.md) records their exact scope, checksums and source terms, including the repository owner's separate upload permission for SAVEE confirmed on 2026-11-09. CREMA-D, MESS, RAVDESS and Emozionalmente are available separately from Zenodo.
 
 | Dataset | `dataset` | Local folder | Content (measured) | Check |
 |---|---|---|---|---|

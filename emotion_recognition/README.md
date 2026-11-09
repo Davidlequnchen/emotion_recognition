@@ -109,15 +109,16 @@ emotion_recognition/
 └── requirements-llm-mac.txt, requirements-llm-cuda118.txt  # PyTorch 2.7.1 for the audio-LLM environment (Gemma 4)
 ```
 
-Git tracks the code, configuration, documentation and the six small test clips. Model files and the full datasets
-are in the repository's `.gitignore` (`model.pt` alone is 1.9 GB). On every new machine, re-create them with the
-two download scripts.
-For now there are exceptions, for a machine that cannot reach the hosts of these models and datasets (such as the
-NVIDIA server, which cannot reach Hugging Face): the weights of the four new models with their small files (about
-6.9 GB, see section 2), the unpacked MCAE-SPPS files (without its zips), the TESS files, the JL-Corpus recordings
-(`JL(wav+txt)/`; not the rest of its zip, see `data/jl_corpus/README.md`) and the nEMO Parquet files. Files over
-100 MB (GitHub refuses them) are committed in 90 MiB parts; after `git pull`, `python scripts/common/join_parts.py`
-joins and checks them.
+Git tracks the code, configuration, documentation and the six small test clips. Model files and datasets stay
+in `.gitignore` by default, with selected copies force-added for machines that cannot reach their source hosts
+(such as the NVIDIA server, which cannot reach Hugging Face).
+These copies include the weights of the four new models with their small files (about 6.9 GB, see section 2),
+MCAE-SPPS, TESS, the JL-Corpus recordings (`JL(wav+txt)/`; not the rest of its zip), nEMO, EMOVO, THAI-SER, MEAD,
+MELD and SAVEE. [data/README.md](data/README.md) lists their exact scope, checksums and sources; THAI-SER contains
+the four evaluated emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS,
+RAVDESS and Emozionalmente can be downloaded separately from Zenodo.
+Files over 100 MB (the model weights and nEMO Parquet files) are committed in 90 MiB parts; after `git pull`,
+`python scripts/common/join_parts.py` joins and checks them. The five newly committed audio copies need no join step.
 
 ## 1. Set up the environment
 
@@ -347,7 +348,7 @@ python scripts/common/download_data.py   # with `dataset: mcae_spps` in config/d
 | `dataset` | Language | Clips | Download | Format in `data/<name>/` | Labels | Licence |
 |---|---|---|---|---|---|---|
 | `mcae_spps` | Mandarin | 6,675 (6 actors, 200 sentences) | 0.66 GB | WAV 48 kHz in `audio/<emotion>/`, labels in `Corpus information.xlsx` | 7 emotions; 40 listeners per clip, intensity 1–9 | CC BY-NC 4.0 |
-| `thai_ser` | Thai | 27,854 (200 actors); evaluated: the high-agreement subset, 11,848 clips ([subsets](#subsets)) | 12.7 GB | Parquet with the audio inside (up to 4 microphones per clip) | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
+| `thai_ser` | Thai | 27,854 (200 actors); evaluated: the high-agreement subset, 11,848 clips ([subsets](#subsets)) | 12.7 GB (source) | Git copy: 22,584 FLACs for the four evaluated emotions and `labels.csv` (all 27,854 rows); source Parquet has up to 4 microphones per clip | 5 emotions; assigned and crowd majority labels, agreement | CC BY-SA 4.0 |
 | `nemo` | Polish | 4,481 (9 speakers, 90 sentences) | 0.53 GB | Parquet with the audio inside | 6 emotions (acted, checked by listeners) | CC BY-NC-SA 4.0 |
 | `mess` | English | 1,800 (6 speakers) | 0.19 GB | WAV 24.4 kHz in `audio/`; emotion in the file name (`A`ngry, `C`alm, `H`appy, `S`ad) | 4 emotions (acted); listener ratings only on request | CC BY 4.0 |
 | `esd` | English, Mandarin | 35,000 (20 speakers, 350 sentences) | 2.45 GB | WAV 16 kHz in `audio/Emotion Speech Dataset/<speaker>/<emotion>/`; text and emotion per clip in `<speaker>/<speaker>.txt` | 5 emotions (acted; no listener test) | research only, licence form (see below) |
@@ -369,18 +370,20 @@ checked against its Hugging Face SHA-256. MEAD and MELD are converted to 16 kHz 
 installed); MELD's archive and videos are deleted afterwards.
 Zip files are unpacked into `audio/` and then deleted, so only the extracted files take disk space; each dataset's
 `unpacked.json` lists the files of its unpacked zips, and a later run downloads a zip again only when one of them is
-missing. The Parquet files of THAI-SER and nEMO hold the audio and the labels
-together (reading them needs `pyarrow`); their loaders in `scripts/common/eval_datasets.py` extract the audio into
-`audio/` the first time the evaluation reads them.
+missing. The source Parquet files of THAI-SER and nEMO hold the audio and labels together (reading them needs
+`pyarrow`). THAI-SER's downloader extracts the four evaluated emotions into `audio/` and metadata into
+`labels.csv`, then deletes the Parquet files; the Git copy already contains those extracted files. nEMO's loader
+in `scripts/common/eval_datasets.py` extracts its audio the first time the evaluation reads its joined Parquet files.
 ESD is for research only: before using it, complete the licence form on its
 [GitHub page](https://github.com/HLTSingapore/Emotional-Speech-Data) and email it to the authors.
 SAVEE is free for research after registering on its [official page](http://kahlan.eps.surrey.ac.uk/savee/), and its
 licence forbids redistribution; the files used here come from an unofficial
-[Kaggle copy](https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee), so its clips never go
-on a public page (`public_audio: False` in `SOURCES`); like every dataset except ESD, they are sent to the API models
-for this research evaluation (`api_audio`).
-Several licences forbid commercial use or sharing copies, so use the data for research only; `data/` is git-ignored
-except the CREMA-D test clips.
+[Kaggle copy](https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee). The viewer does not
+embed its clips (`public_audio: False` in `SOURCES`); like every dataset except ESD, they are sent to the API models
+for this research evaluation (`api_audio`). The repository owner confirmed separate permission to upload the local
+copy on 2026-11-09; see [data/savee/README.md](data/savee/README.md).
+Several licences restrict commercial use or sharing copies. `data/` stays ignored by default; the selected Git
+copies and their source terms are documented in [data/README.md](data/README.md).
 
 ## 4. Choose the hardware mode
 

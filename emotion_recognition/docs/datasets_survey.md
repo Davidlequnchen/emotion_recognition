@@ -179,7 +179,7 @@
 ## 6. 已下载到本地（2026-10-23；ESD 为 2026-10-26；RAVDESS、TESS、JL-Corpus 为 2026-10-27；MEAD、MELD、EMOVO、Emozionalmente 为 2026-11-05；SAVEE 为 2026-11-06）
 
 在 `config/download_data.yaml` 里把 `dataset` 设为数据集名称（`all` 表示全部），然后运行 `python scripts/common/download_data.py`。每个文件都按托管平台公布的校验值核对过（ESD、JL-Corpus、SAVEE、MEAD 和 EMOVO 例外，见表格最后一列），
-中断后重新运行同一条命令即可续传（ESD、JL-Corpus 和 SAVEE 各是一个 zip，中断后会从头下载）。数据都在 `data/` 下，默认不进 git（多个许可禁止分发）；为了给打不开这些网站的电脑使用，MCAE-SPPS、nEMO、TESS 和 JL-Corpus 暂时例外，见 README。
+中断后重新运行同一条命令即可续传（ESD、JL-Corpus 和 SAVEE 各是一个 zip，中断后会从头下载）。数据都在 `data/` 下，默认被 Git 忽略；为了给打不开来源网站的电脑使用，MCAE-SPPS、nEMO、TESS、JL-Corpus、EMOVO、THAI-SER、MEAD、MELD 和 SAVEE 的指定副本已存入 Git。[data/README.md](../data/README.md) 记录准确范围、校验清单和来源条款，其中 SAVEE 的额外上传授权由仓库所有者于 2026-11-09 确认。CREMA-D、MESS、RAVDESS 和 Emozionalmente 可从 Zenodo 单独下载。
 
 | 数据集 | `dataset` | 本地位置 | 内容（实测） | 校验 |
 |---|---|---|---|---|
