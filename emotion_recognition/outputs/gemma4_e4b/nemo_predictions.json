@@ -1,0 +1,76 @@
+{
+  "dataset": "nEMO",
+  "key": "nemo",
+  "language": "Polish",
+  "model": "gemma4_e4b",
+  "model_name": "Gemma 4 E4B",
+  "date": "2026-11-08",
+  "clips": 4481,
+  "total_clips": 4481,
+  "classes": [
+    "angry",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.166667,
+  "in_training_data": false,
+  "training_source": "not published (Google)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "invalid"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Gemma 4 E4B (thinking off) gets one conversation per clip in its chat template: the system prompt, then one user turn with the user prompt first and the audio after it (as the model card advises), with the system and user prompts of `scripts/llm_eval/prompts.yaml` (the same as for GPT Realtime); the clip as 16 kHz mono (at most its first 30 s)",
+    "Greedy decoding (do_sample=False, no repetition penalty), at most 24 new tokens, bfloat16 on `mps`, sdpa attention; so the answers are the same from run to run (up to rounding differences between devices)",
+    "The answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the 7 emotions plus `invalid`. An answer that is not exactly one label gets a follow-up in the same conversation (\"Answer with exactly one word from this list, in lowercase, and nothing else: angry, disgusted, fearful, happy, neutral, sad, surprised.\"), up to 1 time(s); then `invalid`",
+    "An answer that is not one of the dataset's emotions counts as wrong (column *other answer* of the confusion matrices); the raw answers are in `outputs/gemma4_e4b/responses.jsonl`"
+  ],
+  "metrics": {
+    "accuracy": 0.181433,
+    "unweighted_accuracy": 0.172502,
+    "macro_f1": 0.121189,
+    "accuracy_all_classes": 0.181433
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray (`emotion`)",
+    "prediction": "model prediction: the most probable of the 6 emotions evaluated (angry, fearful, happy, neutral, sad, surprised); 'other answer' when the model's answer is none of them",
+    "prediction_all_classes": "model prediction: the most probable of all 8 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 8 classes (they add up to 1)",
+    "token_p_*": "audio LLMs: the model's probability of each label at the first generated position (first-token probabilities, renormalised over the labels; they add up to 1); the prediction is still the parsed answer",
+    "token_mass": "audio LLMs: the share of the whole vocabulary that the labels' first tokens get at that position"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 1827.4,
+    "ms_per_clip": 407.8,
+    "on_cpu": 0
+  }
+}

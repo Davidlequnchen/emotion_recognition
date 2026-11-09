@@ -10,7 +10,7 @@
 #   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
 mode: auto
 
-models: [gemma4_e4b]
+models: [qwen2_5_omni_7b]
                   # phase 1: the SER models; phase 2: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b];
                   # all = every registered model, or any list of keys from config/models.yaml
 api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid

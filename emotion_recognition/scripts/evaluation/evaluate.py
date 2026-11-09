@@ -498,7 +498,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     lenient_by_emotion = [lenient[truth == k].mean() if (truth == k).any() else 0.0 for k in range(len(rows))]
     rescued = collections.Counter((acted[i], names[pred[i]]) for i in np.flatnonzero(lenient & ~strict))
     acc_all = np.mean([labels[p] in accepted(ds, a) for p, a in zip(pred_all, acted)])
-    extra = {lab: int((pred_all == k).sum()) for k, lab in enumerate(labels) if lab not in names}
+    outside_counts = {lab: int((pred_all == k).sum()) for k, lab in enumerate(labels) if lab not in names}
     # Chance level: a random guess among the classes is right with probability (accepted classes) / (classes)
     chance = np.mean([len(accepted(ds, a) & set(names)) for a in acted]) / n_cls
     # Human reference: how often the listeners' single majority vote matches the acted emotion (ties left out)
@@ -527,8 +527,8 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     prob_columns = [f"p_{lab.strip('<>')}" for lab in labels]  # "<unk>" -> "p_unk"
     # Extra columns that a loader may give per clip (the local audio LLMs: token_p_<label> and token_mass, their
     # first-token probabilities; audio_llm.py), after the p_ columns; empty for a clip without them
-    extra = [predict.extra(str(clip["audio"])) for clip in clips] if hasattr(predict, "extra") and not reuse else []
-    extra_columns = list(dict.fromkeys(k for e in extra for k in e))
+    clip_extras = [predict.extra(str(clip["audio"])) for clip in clips] if hasattr(predict, "extra") and not reuse else []
+    extra_columns = list(dict.fromkeys(k for e in clip_extras for k in e))
     with open(predictions, "w", newline="") as fh:
         writer = csv.writer(fh)
         writer.writerow(["audio_path", "acted_emotion"] + ["listener_vote"] * has_listener
@@ -538,7 +538,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
             writer.writerow([clip["audio"].relative_to(ROOT).as_posix(), acted[i]] + [listener[i]] * has_listener
                             + [cols[pred[i]], labels[pred_all[i]], bool(strict[i])] + [bool(lenient[i])] * has_listener
                             + [f"{p:.4f}" for p in scores[i]]
-                            + [f"{extra[i][k]:.6f}" if k in extra[i] else "" for k in extra_columns])
+                            + [f"{clip_extras[i][k]:.6f}" if k in clip_extras[i] else "" for k in extra_columns])
     metrics = {"accuracy": acc, "unweighted_accuracy": recall.mean(), "macro_f1": macro_f1,
                "accuracy_all_classes": acc_all}
     if has_listener:
@@ -673,11 +673,11 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
         *([f"- **Listeners' vote**: {ds.listener}."] if has_listener else []),
         *[f"- {n}" for n in ds.notes],
         (f"- **{n_cls} emotions**: the prediction is the model's answer when it is one of the {n_cls} emotions in "
-         f"this dataset ({', '.join(names)}); any other answer ({', '.join(f'`{lab}`' for lab in extra)}) counts as "
+         f"this dataset ({', '.join(names)}); any other answer ({', '.join(f'`{lab}`' for lab in outside_counts)}) counts as "
          f"wrong, so the accuracy is the same with all {n_all} model classes." if is_llm(entry) else
          f"- **{n_cls} emotions**: the prediction is the most probable of the {n_cls} emotions in this dataset "
          f"({', '.join(names)})"
-         + (f"; the model's other classes ({', '.join(f'`{lab}`' for lab in extra)}) are ignored." if extra
+         + (f"; the model's other classes ({', '.join(f'`{lab}`' for lab in outside_counts)}) are ignored." if outside_counts
             else "; the model has no other classes.")
          + f" **All {n_all} model classes**: the prediction is the most probable of all {n_all} model classes, so "
          "choosing a class that the dataset does not have counts as wrong."),
@@ -747,13 +747,13 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
             f"Most frequent confusions: {top_confusions(cm_lenient, ds, rows_lenient, other=has_other)}.",
             "",
         ]
-    if extra:
+    if outside_counts:
         report += [
             f"## Predictions outside the {n_cls} emotions",
             "",
             f"With all {n_all} model classes, the model chose a class that this dataset does not have for "
-            f"{sum(extra.values()):,} clips ({pct(sum(extra.values()) / len(clips))}): "
-            + ", ".join(f"`{lab}` {n:,}" for lab, n in extra.items()) + ".",
+            f"{sum(outside_counts.values()):,} clips ({pct(sum(outside_counts.values()) / len(clips))}): "
+            + ", ".join(f"`{lab}` {n:,}" for lab, n in outside_counts.items()) + ".",
             "",
         ]
     if human is not None:
