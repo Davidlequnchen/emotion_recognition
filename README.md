@@ -14,9 +14,10 @@ python3 emotion_recognition/scripts/common/setup_models.py
 The main repository pins [emotion_recognition_models](https://github.com/Davidlequnchen/emotion_recognition_models)
 at `emotion_recognition/models/`. Git clones the small model files; the setup command downloads and verifies the
 model weights from GitHub Releases. By default it gets all eight models (about 64 GB); add model keys to get fewer.
-The shallow-clone flags avoid downloading the old model-weight history; omit them if you need the full Git history.
-For an existing clone, run `git pull` and the same setup command. Existing model files are preserved and valid
-weights are reused. Full environment instructions are in the project's README below.
+The shallow-clone flags are optional: on 2026-11-09, historical data/model directory contents were removed from
+the main repository's reachable history. Existing clones made before that rewrite should follow the
+[history migration notes](emotion_recognition/docs/git_history_cleanup.md), preserving local results and work
+before synchronising. Existing valid model files can be reused. Full environment instructions are below.
 
 Datasets follow the same pattern at `emotion_recognition/data/`, through the pinned
 [emotion_recognition_datasets](https://github.com/Davidlequnchen/emotion_recognition_datasets) submodule:
@@ -25,12 +26,13 @@ Datasets follow the same pattern at `emotion_recognition/data/`, through the pin
 python3 emotion_recognition/scripts/common/setup_datasets.py
 ```
 
-This restores the nine mirrored datasets from Releases. CREMA-D, MESS, RAVDESS and Emozionalmente retain their
+This restores the eleven mirrored datasets from Releases, including the retained DailyTalk and EmotionTalk
+context-pilot candidates; the formal evaluation still has thirteen datasets. Add dataset keys to restore selected
+mirrors only. CREMA-D, MESS, RAVDESS and Emozionalmente retain their
 original download sources; use `download_data.py --dataset NAME --source` as described in the project README.
 Existing data directories are preserved, verified files are reused, and local external datasets remain accessible.
-If pulling this migration removes files that used to be tracked by the main repository, setup recovers matching
-files from old Git objects already on that computer, including nEMO's old Parquet parts. Shallow clones do not
-fetch old history for this recovery; missing files use Releases.
+Legacy clones may recover matching files from old Git objects already on that computer, including nEMO's old
+Parquet parts. New clones and clones whose old objects were pruned use Releases; no old history is fetched.
 Neither model nor dataset setup uses Git LFS.
 
 | Folder | Project |

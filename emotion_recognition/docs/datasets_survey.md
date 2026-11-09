@@ -5,6 +5,8 @@
 调研日期：2026-10-23。目标：调研能用于评估情绪识别模型（emotion2vec+）和音频大模型（audio LLM）的公开情感语音数据集。
 筛选标准：同一句话用不同情绪表达，排除语义线索；标签质量高；规模大；许可和获取方式清楚。
 
+补充核对：2026-11-09 新增 IEMOCAP 和 MSP-Conversation 的对话上下文调研（第 3a 节）。两者尚未下载或加入评测，现有 13 个数据集不变。
+
 方法：检索论文、官方项目页、GitHub、HuggingFace、Zenodo、OSF 等，汇总数据集信息。
 大小以十进制 GB 计，来自各平台 API 的文件列表或 HTTP 请求；标"约"的是推算值，标"未公开"的是平台没有给出大小。
 标"未核实"的数字没能从一手资料确认。已下载到本地的数据集（见第 6 节），条数、时长和采样率是我下载后实测的。
@@ -21,6 +23,7 @@
   - emotion2vec 的预训练用了 IEMOCAP、MELD、CMU-MOSEI、MEAD 和 MSP-Podcast。
 - **最好的"干净"候选（都不在 EmoBox 中）**：MCAE-SPPS（普通话，2025/26）、THAI-SER（泰语，规模最大）、MSP-IMPROV 的 target sentences（英语）、nEMO（波兰语，2024）。
 - **英语**：没有找到同时满足"规模大、平行文本、有感知验证、不在 EmoBox"的数据集，只能把 MSP-IMPROV、MESS、Expresso 组合起来用。
+- **对话上下文候选**：IEMOCAP 有逐句类别及维度标注，较容易衔接当前分类任务；MSP-Conversation 有长对话的连续 V/A/D 标注，需要另设计维度评测。两者均需申请，不能当作匿名下载、自由再分发的开放许可数据；模型训练关系见第 3a 节。
 - **支持这个思路的证据**：[LISTEN](https://arxiv.org/abs/2510.10444)（2025）用 CREMA-D、ESD、TESS、SAVEE、RAVDESS 里文本中性的句子测试音频大模型。
   只给音频时，准确率只有 16.5–34.9%（[Qwen2.5-Omni](https://arxiv.org/abs/2503.20215) 34.0%，[Gemini 2.5 Pro](https://arxiv.org/abs/2507.06261) 34.9%）；只给文本时则有 85–97%。
   说明这些模型主要靠"转写成文字"，而不是真正在听声音。
@@ -134,12 +137,68 @@
 - **EARS** 的 22 种情绪：adoration, amazement, amusement, anger, confusion, contentment, cuteness, desire, disappointment, disgust, distress, embarrassment, ecstasy, fear, guilt, interest, pain, pride, realization, relief, sadness, serenity，另加 neutral（据 GitHub 仓库的 `transcripts.json`，其中拼作 `embarassment`、`extasy`）。
 - **EmoNet-Voice Bench** 的 40 类：完整列表见[论文](https://arxiv.org/abs/2506.09827)附录 A.1（EmoNet-Voice Taxonomy），例如 amusement, elation, contentment, pride, awe, relief, longing, doubt, fear, distress, shame, sadness, contempt, anger, pain, helplessness, emotional numbness。
 
+## 3a. 对话上下文候选（2026-11-09 新增，尚未加入评测）
+
+这两项补充服务于“给同一句话增加过去对话后，模型怎样判断情绪”的研究，不要求平行文本。这里单独按用途列出，不据此把数据集标为所有模型都没见过；它们不计入第 0 节的 13 个正式评测数据集。
+
+| # | 数据集（年份，语言） | 说话人 / 条数 / 时长 / **大小** | 情绪类别（英文）；维度 | 平行文本 / 会话结构 | 标签质量 | 音频；模态 | 许可；获取 | 链接 |
+|---|---|---|---|---|---|---|---|---|
+| 1 | **IEMOCAP**（2008，*Language Resources and Evaluation*；英语） | 10 名演员（5 男 5 女），5 个双人 sessions / **10,039 个说话轮次**（5,255 脚本、4,784 即兴）/ 约 **12 h**；常用四分类是 **5,531 条、约 7 h**的子集 / **官方下载包 GB 未公开，本项目未下载** | anger, sadness, happiness, disgust, fear, surprise, frustration, excited, neutral，另可选 other；常用四类为 angry/happy/sad/neutral，将 excited 并入 happy；另有 valence、activation/arousal、dominance（1–5） | 非平行；脚本及情境即兴双人对话；保留完整会话、逐句分段、转写及词/音素/音节对齐 | 原论文每条类别由 3 人评价，维度由 2 人评价；评价者按顺序看视频，可接触前文；部分条目无一致类别。不是直接把演员指令当真值 | 音频、视频、动作捕捉；原论文录制为 48 kHz，实际分发波形未本地核实 | 需电子 release 申请；限内部非商用研究、不可未经许可转交，不是开放许可或匿名直接下载 | [官方 release](https://sail.usc.edu/iemocap/iemocap_release.htm)；[原论文](https://sail.usc.edu/iemocap/Busso_2008_iemocap.pdf)；[许可](https://sail.usc.edu/iemocap/Data_Release_Form_IEMOCAP.pdf)；[四类子集口径](https://aclanthology.org/2024.findings-acl.931.pdf) |
+| 2 | **MSP-Conversation**（2020 初版，Interspeech；2026 arXiv 扩展介绍，当前 Release 2.0；英语） | 论文概览称 >450 名说话人（跨对话身份信息不完整）/ **310 段完整对话**，每段约 10–20 min；分成 **908 个 3–7 min 的 conversation parts** 用于标注 / **77 h 26 min** / **官方下载包 GB 未公开，本项目未下载** | **连续 valence、arousal、dominance，−100～100**；原生没有 angry/happy 等离散分类真值 | 非平行、自然播客会话；提供人工完成或人工修订的 speaker diarization、轮次时间边界及重叠发言信息 | 人听长对话并用 joystick 连续评分；每个 part、每个属性至少 6 名有效标注者；论文处理后的轨迹为 10 Hz（不是音频采样率） | 自然会话音频；原始采样率、是否附完整逐字转写尚未核实，不能默认与 MELD 一样已有转写 | 免费 Academic License，但需机构授权签署人签协议后申请；不是自由开放下载/再分发；Test2 真值不公开 | [官方 Release 2.0](https://lab-msp.com/MSP/MSP-Conversation.html)；[2020 论文](https://www.isca-archive.org/interspeech_2020/martinezlucas20_interspeech.html)；[2026 论文](https://arxiv.org/html/2603.22536v1)；[协议](https://lab-msp.com/MSP/publications/Busso-FDPDTUA-MSP-Conversation-v2.pdf) |
+
+**怎样理解 ground truth。** 两者都有人工情绪标注，但标注的是观察者的情绪感知，不是能直接验证的说话人内心状态。IEMOCAP 可按预先固定的类别和一致性规则接入分类；不能将全量 10,039 条与四类 5,531 条混写，原论文当时的维度标注也未全部完成，获取包后应核对实际完整性。MSP-Conversation 是随时间变化的三条评分曲线：valence 表示负面到正面，arousal 表示平静到激动，dominance 表示弱势到强势。它适合维度回归及动态分析，不能随意切阈值后称为官方 angry/happy 标签。
+
+**MSP-Conversation 的“条数”与公开真值。** 12,555 是 Release 2.0 与 MSP-Podcast 重叠的 speaking turns，**不是整个 Conversation 的逐句 clip 总数**，也不是已核实的本项目模型训练重叠条数。官方按长对话组织；最终切成多少片段取决于轮次/窗口方案。划分为 Train 169 对话（41 h 22 min）、Dev 52（12 h 36 min）、Test1 58（14 h 17 min）、Test2 31（9 h 9 min）；Test2 标签保留作外部评测，不随 release 公开。Conversation 与 Podcast 的标注还同时存在连续/逐句、量表等差异，不能把差异全部归因于上下文。[2026 论文 §V](https://arxiv.org/html/2603.22536v1)
+
+**存储预算与下载大小分开。** 官方公开页没有可核对的原始包字节数，本项目尚未取得数据，所以 GB 栏保留“未公开”。仅供规划：若按公布时长保存一份 **16 kHz、单声道、PCM16** 音频，12 h 约 **1.38 GB**，77 h 26 min 约 **8.92 GB**（时长 × 16,000 × 2 字节）。这些是转换格式下的计算值，**不是原始下载包大小**，不含视频、动作数据、重复的整段/切片和中间文件。
+
+IEMOCAP 的公开许可第 6 条还要求在计划评测、比较及公开报告前，与许可方沟通；申请时应说明本项目的研究用途。MSP-Conversation 需要机构授权签署，不是个人点击接受即可下载。两者若日后加入，API 传输与数据共享范围也应按各自获准的条款配置，不能直接沿用现有数据集的设置。[IEMOCAP 许可](https://sail.usc.edu/iemocap/Data_Release_Form_IEMOCAP.pdf)、[MSP-Conversation 获取说明](https://lab-msp.com/MSP/MSP-Conversation.html)
+
+### 与本项目五个 SER 模型的训练关系
+
+下表只描述公开的情绪任务训练来源。没有列出某语料，不等于能证明 Whisper/WavLM 等骨干预训练从未见过相关录音；同语料暴露也不等于已经证实测试文件泄漏。
+
+| 模型 | IEMOCAP | MSP-Conversation |
+|---|---|---|
+| **emotion2vec+ large** | emotion2vec 家族公开预训练使用过 IEMOCAP；large 的伪标签来源未完全公开。存在训练来源暴露，不能作为明确未见语料；不据此断言该 large checkpoint 确定用过全部类别标签 | 未找到直接使用 Conversation 的声明；公开 emotion2vec 预训练使用 MSP-Podcast v1.8，另有 large 未公开来源。存在相关录音重叠风险 |
+| **MERaLiON-SER-v1** | 官方明确声明未用于该模型训练，仅评测 | 公开 SER 训练清单未列 Conversation / Podcast；MSP-Podcast 用于评测 |
+| **Melati** | 公开九个 SER 训练语料中未列出 | 公开九个 SER 训练语料中未列 Conversation / Podcast |
+| **Vox-Profile Whisper** | 公开 SER 训练来源是 MSP-Podcast，未列 IEMOCAP | 用 MSP-Podcast 训练，可能与 Conversation 共享录音；未声明直接训练过 Conversation |
+| **Vox-Profile WavLM** | 同 Whisper 版，未列 IEMOCAP | 同 Whisper 版，有 MSP-Podcast 来源重叠风险 |
+
+依据：[emotion2vec 论文](https://aclanthology.org/2024.findings-acl.931.pdf)、[MERaLiON 模型卡](https://huggingface.co/MERaLiON/MERaLiON-SER-v1/raw/main/README.md)及[论文](https://arxiv.org/html/2511.04914v1)、[Melati 官方卡](https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3)（本轮核对已下载的官方卡；在线入口访问未成功）、[Vox-Profile Whisper 卡](https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/raw/main/README.md)、[WavLM 卡](https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/raw/main/README.md)。Podcast 版本和 train/test split 必须另行按音频 ID 核对；12,555 的交集数字不能直接套到当前两个 Vox 模型的训练集上。
+
+**这两者的定位。** IEMOCAP 更容易衔接现有分类任务，但需先申请并固定标签规则。MSP-Conversation 更适合自然会话与连续情绪研究，不直接塞入七类分类表。若优先避免机构签约，先看第 3b 节的低门槛替代项；这两者保留为后续候选，不默认申请或接入。
+
+## 3b. 获取更方便的对话音频候选（2026-11-09 核对，尚未加入评测）
+
+本轮优先考虑无需机构签署或邮件审批的资源，MIT 是偏好，不将“有 GitHub”“仓库代码是 MIT”和“原音频也是 MIT”混为一谈。按用户选择，DailyTalk 和 EmotionTalk 均已下载、完成全量核验并保留；RESD 只核实元数据，暂不下载。它们均未加入当前 13 个正式评测数据集。
+
+| 数据集（年份，语言） | 规模 / **公开包大小** | 对话与标注 | 数据许可 / 获取 | 适合本项目的程度 | 一手来源 |
+|---|---|---|---|---|---|
+| **DailyTalk**（2022 arXiv；ICASSP 2023，英语）＋可选 **ECSS 补标**（AAAI 2024） | 实测 **2,541 段对话、23,773 条录音、21.674 h、2 名演员**；官方 ZIP **5.341 GB**，解包 WAV **6.900 GB** | 轮次连续，每段 5–20 轮，有 speaker、转写；原情绪属性继承 DailyDialog 文本。ECSS 论文描述专业听音与语义补标，但公开类别逐条与原标签一致，仅 intensity 是新增信息，不能当作独立听感类别金标准 | **音频 CC BY-SA 4.0**，官方 Drive 直接下载，无机构签约；ECSS 仓库 MIT 不能覆盖上游音频许可 | **已保留，适合英语历史输入 pilot**。但只有两演员、表演对话，公开 ECSS 的 none 实测 **79.77%**；不适合单独证明自然人群泛化 | [DailyTalk 官方](https://github.com/keonlee9420/DailyTalk)、[论文](https://arxiv.org/html/2207.01063v3)、[官方 Drive](https://drive.google.com/drive/folders/1WRt-EprWs-2rmYxoWYT9_13omlhDHcaL)、[ECSS 官方](https://github.com/walker-hyf/ECSS)、[本地审计](../data/dailytalk/audit.json) |
+| **EmotionTalk**（2025 arXiv；Findings ACL 2026，普通话） | 论文 **19 名演员、744 段对话**；固定版本实测 **742 段（734 段双人）、19,250 句、23.6025 h**；原包 **14.812 GB**，WAV **14.750 GB**；整个 HF 仓库 **36.108 GB** | 以同会话 start/end 时间合并双 speaker；七类音频 gold 与五名标注者判断/置信度。音频标签不是文本标签；标注时可回听过去，不能称孤立句投票 | **CC BY-NC-SA 4.0**；HF 登录并接受免费自动访问条件，无机构合同流程；不是 MIT | **已保留，适合中文历史 pilot**。双人对话有 **18,306 个历史目标（test 1,830）**；音频 neutral **48.72%**；val/test 有 speaker ID 重叠 | [官方卡](https://huggingface.co/datasets/BAAI/Emotiontalk)、[ACL 论文及附录 A/C](https://aclanthology.org/2026.findings-acl.440.pdf)、[本地审计](../data/emotiontalk/audit.json) |
+| **RESD**（2022，俄语） | 数据卡称 20 名演员；当前 HF **1,396 条**（train 1,116、test 280），两个 parquet 共 **0.485 GB**；项目总述称约 4 h，本轮未测音频总时长 | 演员无固定台词、按指定情绪即兴双人对话，七类；标签代表演员被要求表达的情绪，不是独立听感投票。当前字段为 name/path/emotion/speech，历史顺序与说话人身份能否可靠恢复仍待核实 | **MIT**，官方数据卡明确适用于数据；HF `gated=false`，可直接下载 | **最符合 MIT 偏好，但暂非历史实验首选**。俄语、enthusiasm 等类别需另定映射；Melati 的公开训练清单已含 RESD，不能视为所有 SER 的未见语料 | [官方数据卡](https://huggingface.co/datasets/Aniemore/resd)、[版本统计](https://huggingface.co/datasets/Aniemore/resd/blob/main/dataset_infos.json)、[作者项目](https://github.com/aniemore/Aniemore) |
+| **Dialogs**（Interspeech 2026，俄语） | 官方报告 **3 名演员、11,796 句、20.6 h**；公开 HF 仓库 **5.571 GB** | 人声面对面对话，脚本由 GPT-3.5 辅助、允许即兴；每句三人评价，12 个风格/情绪混合标签。公开 CSV 有 speaker/text/emotion，但未显式给 dialogue_id/turn_id；文件名线索是否足以恢复顺序未核实 | **OpenRAIL**，非 MIT；HF `gated=false`，官方明确可免费商用、无需作者另行批准，仍有使用限制 | 可进一步核对声音参照用途；在确认轮次组织前，不作为现成完整历史数据。不能把 poem/whisper 等风格直接当作七类情绪 | [官方数据卡与许可](https://huggingface.co/datasets/langswap/dialogs-ru-emotional-conversations)、[论文](https://arxiv.org/html/2607.14310v1) |
+
+**DailyTalk 的实际核验结果。** 全部 WAV 的头、PCM 内容和 metadata 对应关系通过检查。ECSS 的 `train_frame.txt`＋`val_frame.txt` 有 **23,759 个唯一 ID、2,540 段对话**；归一化 `no emotion`/`none` 后，**全部类别都与 DailyTalk 原标签相同**。因此不能把两套文件解释成两组独立人工类别判断。公开文件的 none 为 18,952 条（79.77%），fear 为 18 条，与论文表中的计数不一致，实验以所用文件的实际分布为准。对话 d175 的 14 句没有 ECSS 标签，d1451 声明 19 轮但实际只有连续 10 轮；严格 pilot 排除两段后有 **2,539 段完整对话**。原文件保留，排除原因写入审计。
+
+ID 如 `5_1_d2136` 表示第 2136 段对话的第 5 轮、speaker 1，数字轮次可恢复过去历史。全量数据有 **1,545 段多情绪对话、4,495 条有过去历史的非中性目标**，其中 1,161 条是短回应（≤3 词或≤2 秒），适合先做历史输入 pilot。实例和原文见 [pilot_examples.json](../data/dailytalk/pilot_examples.json)。它没有同一目标在 H0/H1 条件下的两套人工投票；若研究人类判断随上下文变化，仍需另收标注。[ECSS 标签与处理代码](https://github.com/walker-hyf/ECSS)
+
+**EmotionTalk 的实际核验结果。** 全部 **19,250 对 WAV/JSON** 通过音频和配对检查。只有已完整结束的过去轮次（`endTime <= target startTime + 1ms`）才纳入历史；4,033 个目标与更早开始的轮次有重叠，不能简单按文件名取前几句。八段只发布单 speaker 音频的对话保留原文件，但从主要双人分析排除。官方 train/validation/test 分别为 **15,413 / 1,908 / 1,929 句**；train 与其余划分的发布 speaker IDs 不重叠，validation/test 共享 `02`、`13`。采用 `Audio/json` 的 `emotion_result`，neutral 为 **9,378 条**，不能套用 HF README 的 multimodal 总表。发布 gold 与简单多数票不总一致，保留原 gold 与逐人投票，不擅自覆盖。它同样没有 H0/H1 两套独立人类判断。[详细检查及具体对话例子](../data/emotiontalk/README.md)
+
+**其他论文用什么。** [ECSS（AAAI 2024）](https://arxiv.org/pdf/2312.11947)直接用 DailyTalk 做情绪会话语音研究并补标；[EmotionTalk（Findings ACL 2026）](https://aclanthology.org/2026.findings-acl.440/)提供更丰富的音频感知标注。[情绪 M3ED（ACL 2022）](https://github.com/AIM3-RUC/RUCM3ED)也公开中文影视对话音频入口，但本轮未找到明确的数据 MIT/CC 条款，所以不因下载链接存在就认定许可宽松。不要与 `m3ed.io` 的同名机器人视觉数据集混淆。
+
+**本轮决定。** **DailyTalk、EmotionTalk 均保留**，分别用于英语与中文历史输入 pilot；完整来源、许可、索引和审计随数据 repo 保存。**RESD 暂不下载**：官方字段只有 name/path/emotion/speech，未找到可验证的 dialogue ID、时间戳或轮次定义，不能凭文件名中的数字猜顺序。这不证明顺序绝对无法恢复，但目前不足以支持可靠的历史实验。
+
+核查日期：2026-11-09。DailyTalk 已下载并逐文件检查；EmotionTalk 只下载 Audio.tar 与必要小文件，不下载 Multimodal.tar；RESD、Dialogs 仍仅检查公开元数据。仓库总大小不等于需要下载的音频大小；数据包与代码许可分别记录。
+
 ## 4. 注意事项
 
 - **非商用或限制性许可**：MCAE-SPPS（NC；论文本身是 NC-ND）、nEMO（NC-SA）、Expresso 和 EARS（NC）、RAVDESS 和 CaFE（NC-SA）、
-  TESS（NC）、ESD（仅限研究）、EmoV-DB（非商用）、HCUDB 和 OGVC（仅限研究）、MSP-IMPROV（学术许可）、MASC（LDC 付费）。
+  TESS（NC）、ESD（仅限研究）、EmoV-DB（非商用）、HCUDB 和 OGVC（仅限研究）、IEMOCAP（内部非商用研究）、MSP-Conversation 和 MSP-IMPROV（学术许可）、MASC（LDC 付费）。
   许可宽松的有：THAI-SER（BY-SA）、MESS、Emozionalmente 和 SUBESCO（BY）、CSEMOTIONS（Apache）、Thorsten（CC0）。
-- **需要注册或申请**：MSP-IMPROV（签协议）、ESD（填表 + 发邮件）、HCUDB 和 OGVC（NII-SRC，日文）、KESDy18（ETRI）、MASC（LDC）、IITKGP、GEMEP、
+- **需要注册或申请**：IEMOCAP（电子 release）、MSP-Conversation（机构签协议）、MSP-IMPROV（签协议）、ESD（填表 + 发邮件）、HCUDB 和 OGVC（NII-SRC，日文）、KESDy18（ETRI）、MASC（LDC）、IITKGP、GEMEP、
   CAVES（填表）、MCAE 伪句子（只读链接）、IEEE DataPort（需订阅）。
 - **Kaggle 等非官方镜像**（EMOVO、SAVEE、CASIA）：内容和许可没有官方保证，使用前尽量与原始来源核对。
 - **已知的标签和音频问题**：

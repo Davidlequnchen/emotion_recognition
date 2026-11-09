@@ -27,7 +27,7 @@ pip install -r requirements-mac.txt            # NVIDIA server: pip install -r r
 pip install -r requirements.txt
 python scripts/common/download_model.py        # default hub: github; all eight local models -> models/<key>/
 python scripts/emotion2vec/inference.py        # the six test clips, on the GPU it finds (section 5)
-# optional: restore the nine mirrored datasets; external sources are described in section 3
+# optional: restore the Release mirrors; external sources are described in section 3
 python3 scripts/common/setup_datasets.py
 # every model's accuracy on each -> reports/, and a web page with results -> outputs/viewer.html
 python scripts/evaluation/evaluate.py
@@ -55,7 +55,7 @@ emotion_recognition/
 │   └── llm.yaml                # audio LLMs: prompts, retries, timeout (and the settings of the data loader preview)
 ├── data/                       # pinned emotion_recognition_datasets submodule; metadata and tiny samples in Git
 │   ├── README.md               # sources, licences, exact dataset scopes and restore instructions
-│   ├── manifest.json           # nine Release mirrors + four external sources; sizes and SHA-256
+│   ├── manifest.json           # eleven Release mirrors + four external sources; sizes and SHA-256
 │   ├── download.py             # safe archive restore, resumable downloads and per-file verification
 │   ├── samples/                # six CREMA-D test clips (0.4 MB, included in the submodule)
 │   └── <dataset>/              # data restored here; local external/archived datasets stay local
@@ -113,14 +113,15 @@ emotion_recognition/
 
 Git tracks the code, configuration, documentation and the six small test clips. The `models/` submodule pins a
 small model repository; its weights are GitHub Release attachments and are restored by `setup_models.py` (section 2).
-The old SER weight parts remain in existing main-repository history, but new weights are not added to that history.
+Historical data/model directory contents were removed from the main repository's reachable history on
+2026-11-09; existing clones should read the [history migration notes](docs/git_history_cleanup.md).
 The `data/` submodule similarly pins metadata and a Release restore tool. MCAE-SPPS, TESS, the selected
 JL-Corpus recordings, nEMO, EMOVO, THAI-SER, MEAD, MELD and SAVEE are mirrored as Release archives, not Git blobs.
+DailyTalk and EmotionTalk are additional retained context-pilot mirrors; neither is registered for formal evaluation.
 [data/README.md](data/README.md) records scope, checksums and source terms; THAI-SER contains the four evaluated
 emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS, RAVDESS and
 Emozionalmente retain their original/external download sources. ESD stays local and excluded.
-The old dataset blobs and nEMO transfer parts remain in main-repository history. New nEMO restores use its two
-original Parquet files directly; no join step is required. Neither submodule uses Git LFS.
+New nEMO restores use its two original Parquet files directly; no join step is required. Neither submodule uses Git LFS.
 
 ## 1. Set up the environment
 
@@ -273,12 +274,13 @@ Alternatively, supply an IT-provided CA PEM bundle using `--ca-bundle "/path/to/
 
 ## 3. Download the data
 
-**Restore the nine pinned dataset mirrors** with Python 3.9+ and Git:
+**Restore the eleven pinned dataset mirrors** with Python 3.9+ and Git:
 
 ```bash
-python3 scripts/common/setup_datasets.py                  # all nine Release mirrors
+python3 scripts/common/setup_datasets.py                  # all eleven Release mirrors, including pilot candidates
 python3 scripts/common/setup_datasets.py tess meld        # selected mirrors only
-python3 scripts/common/setup_datasets.py --list           # all 13 registered sources and scopes
+python3 scripts/common/setup_datasets.py dailytalk emotiontalk  # retained context candidates only
+python3 scripts/common/setup_datasets.py --list           # all 15 registered sources and scopes; evaluation remains 13
 python3 scripts/common/setup_datasets.py --verify-only    # check local mirrored files without downloading
 ```
 
@@ -394,7 +396,7 @@ emotions; MELD is the exception (in-the-wild utterances from a TV series). They 
 which has links, sizes and caveats for many more.
 
 ```bash
-python3 scripts/common/setup_datasets.py mcae_spps  # pinned mirror; omit the key for all nine mirrors
+python3 scripts/common/setup_datasets.py mcae_spps  # pinned mirror; omit the key for all Release mirrors
 python scripts/common/download_data.py --dataset mcae_spps --source  # optional original publisher instead
 ```
 
@@ -865,7 +867,7 @@ Everything in `site/` becomes public, so look at the page before pushing it. Eac
 the whole page (about 2.5 MB with one model) to the git history; set `seed` in `config/viewer.yaml` to keep the same clips (a
 dataset's clips depend only on the seed and on that dataset's results).
 
-### 7.2 Bar plots for papers and slides
+### 7.2 Figures for papers and slides
 
 ```bash
 python scripts/viewer/plot_results.py   # also runs at the end of evaluate.py when `plots: true` (config/evaluation.yaml)
@@ -874,11 +876,12 @@ python scripts/viewer/plot_results.py   # also runs at the end of evaluate.py wh
 For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, macro F1) it writes to
 `reports/figures/`, as PNG (300 dpi) and PDF:
 
-- `<metric>_by_dataset`: one panel per dataset (eight, in three rows of three, the last with two), one bar per model;
-- `overview_<metric>`: every dataset side by side, a group of bars per dataset.
+- `<metric>_by_dataset`: one panel per dataset, four panels per row by default (`columns` in `config/plots.yaml`), one bar per model;
+- `overview_<metric>`: a dataset-by-model score matrix with numeric percentages and a shared colour scale, so additional models do not crowd grouped bars. Missing compatible results appear as a grey dash, and chance reference values have a separate column.
 
-Each model keeps its colour (colour-blind-safe), bars have black outlines, a hatch marks a dataset in that model's
-training data, a dashed line shows chance level, and a value with * comes from a sample of the dataset. The script
+Each model keeps its colour (colour-blind-safe) in the bar panels and overview header. Bars have black outlines;
+a hatch in the panels or a dagger (†) in the overview marks a dataset in that model's training data. A dashed line
+in the panels shows chance level, and a value with * comes from a sample of the dataset. The script
 reads `outputs/<model>/<dataset>_predictions.json`, with audio LLMs restricted to the current `inference_protocol`
 (section 8). Legacy outputs stay on disk but do not enter newly generated plots or result pages. Plot generation
 writes `results_manifest.json` beside the figures; the result page embeds only plots whose manifest matches the

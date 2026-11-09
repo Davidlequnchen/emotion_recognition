@@ -5,6 +5,8 @@ LLMs. First checked 2026-11-03; section 2 rechecked 2026-11-06 on the official p
 "Estimate" means projected from the previous cycle (its date is given); "unverified" means no official page confirmed
 it. Check the official call before planning.
 
+**Current shortlist (2026-11-09): 🎯 ACL 2027 — main target; ⭐ Interspeech 2027 and ⭐ IEEE ASLI 2027 — focus candidates; 🔁 EMNLP 2027 — fallback.** These markers show our present interest, not a commitment to submit, a quality ranking, or an acceptance forecast. The research contribution still needs pilot validation.
+
 ## Terms used below
 
 - **ARR (ACL Rolling Review)**: the shared peer-review system of the ACL family of NLP conferences
@@ -35,16 +37,16 @@ it. Check the official call before planning.
 
 - **CCF 7th edition (2026)** replaces the 2022 list: **ICLR is now CCF-A, IJCAI dropped to CCF-B, IEEE TMM is now
   CCF-A**; ICASSP, Interspeech, EMNLP and NAACL are CCF-B; EACL, ACII and ASLI are not listed.
-- **First choice: ACL 2027 (CCF-A, Kyoto, 2027-08-17 to 22), long paper, ARR deadline 2027-01-04.** New since
+- **🎯 First choice: ACL 2027 (CCF-A, Kyoto, 2027-08-17 to 22), long paper, ARR deadline 2027-01-04.** New since
   October 2026: every ARR submission needs a **qualified "designated service contributor"** (the "endorsement" rule,
   section 2.3); without one the paper goes to a lottery and may be desk rejected. Settle this before December.
-- Fallbacks: **EMNLP 2027** (ARR May 2027, estimate; reuses the ACL reviews), **NeurIPS 2027 Evaluations & Datasets**
+- Fallback: **🔁 EMNLP 2027** (ARR May 2027, estimate; reuses the ACL reviews), **NeurIPS 2027 Evaluations & Datasets**
   (CCF-A, **early May 2027**, estimate), **ACM MM 2027** (CCF-A, Hong Kong, about 2027-04-01, estimate).
-  **Interspeech 2027** (São Paulo) has an official deadline of **2027-02-09**, which falls inside the ARR review
+  **⭐ Interspeech 2027** (São Paulo) has an official deadline of **2027-02-09**, which falls inside the ARR review
   period, so the same paper cannot go to both.
-- General audio-LLM benchmarks land at ACL / NAACL / EMNLP, ICLR and NeurIPS; SER-specific benchmarks and audio-LLM
-  in-context learning for paralinguistics have so far appeared only at speech venues (Interspeech, ASRU, SLT). An
-  A-venue paper on these topics is an opening.
+- The precedents below span NLP, ML and specialist speech venues. Our choice should follow the contribution
+  established by the pilots; applying an existing method to SER or choosing a less-covered venue combination
+  does not by itself establish novelty.
 
 ## 1. CCF classification (7th edition, 2026, from the official PDF)
 
@@ -66,6 +68,29 @@ Source: https://www.ccf.org.cn/Academic_Evaluation/By_category/ (the official 20
 [download](https://www.ccf.org.cn/ccf/contentcore/resource/download?ID=112CF3BF7E1140ACEB271ADAED12A67ADFABB8FF099E40C2759502A85C8A281F);
 the field pages on the site may still show the 2022 table).
 
+**SLT / ASRU / ASLI clarification (checked 2026-11-09).** SLT and ASRU are already included in the classification
+and precedents below; ICASSP and ASLI are in the submission tables. SLT is a respected specialist speech-language
+venue: IEEE SPS describes it as one of its flagship workshops. Its historical "Workshop" name should not be
+confused with a small satellite workshop. SLT 2026 takes place on **2026-12-13 to 16 in Palermo, Italy**, and is the
+last standalone SLT ([IEEE SPS](https://signalprocessingsociety.org/events/2026-ieee-spoken-language-technology-workshop-slt)).
+ASRU is similarly an established specialist venue for speech recognition and understanding. IEEE calls it a major
+flagship workshop and a primary forum for academia–industry exchange, including speech foundation models,
+multimodal and affective computing ([IEEE Resource Center](https://resourcecenter.ieee.org/workshops/asru-workshops)).
+Its professional standing is stronger than the word "Workshop" alone might suggest; this does not make it
+interchangeable with a broad NLP or ML flagship.
+ICASSP is IEEE SPS's broader flagship conference on signal processing and its applications
+([official 2027 CFP](https://2027.ieeeicassp.org/wp-content/uploads/sites/13/2019/08/ICASSP2027-CallForPapers-draft-Jun7.pdf)).
+The CCF categories above are classification labels, not a complete measure of standing within the speech community.
+
+From 2027, **ASLI brings together SLT and ASRU**, while expanding the scope to audio, speech, spoken language and
+multimodal intelligence. The official site explicitly describes the merger
+([ASLI overview](https://2027.ieeeasli.org/prospective-patrons-and-exhibitors/),
+[CFP](https://2027.ieeeasli.org/call-for-papers/)). For future submissions in this specialist line, use the ASLI
+2027 entry below rather than assuming another standalone SLT or ASRU cycle. Under the announced 2027 structure,
+these are not three parallel independent submission venues. This describes the current merger plan, not a
+guarantee that the historical names can never be used again. ASLI's new name does not automatically inherit a CCF
+category or a settled acceptance rate.
+
 ## 2. Venues and deadlines (2027 cycle)
 
 Already passed or closed: ICASSP 2027 (2026-09-23), ICLR 2027 (2026-09-25), AAAI-27 (2026-07-28), **EACL 2027**
@@ -73,18 +98,19 @@ Already passed or closed: ICASSP 2027 (2026-09-23), ICLR 2027 (2026-09-25), AAAI
 2027-06-01 to 05; ARR Oct 2026 = 2026-10-12, now in review,
 [NAACL](https://2027.naacl.org/calls/main_conference_papers/)), COLING 2027 (Macau, ARR Oct 2026). NAACL and EACL
 both run in 2027, but no 2027 cycle is open for them. The only open *ACL main conferences are ACL 2027 and EMNLP 2027.
+ICASSP remains a longer-term option in this document; the closed 2027 cycle is not part of our current shortlist.
 
 ### 2a. Venues at a glance
 
 | Venue (CCF) | Dates & location | Field / community | Standing (h5-index) | Deadline | Link |
 |---|---|---|---|---|---|
-| **ACL 2027 (A)** | 2027-08-17 to 22, **Kyoto, Japan** (main conference 08-20 to 22) | NLP | top-tier flagship of NLP; h5 236 ([Scholar CL](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_computationallinguistics)) | ARR January 2027 cycle: full paper **2027-01-04** AoE (no separate abstract); commitment TBA | [2027.aclweb.org/calls/main](https://2027.aclweb.org/calls/main/) |
-| EMNLP 2027 (B) | TBA; "Mexico or Central America" ([joint workshop call](https://www.aclweb.org/portal/content/joint-call-workshops-proposals-2027)) | NLP | top-tier NLP (on par with ACL internationally, CCF-B); h5 218 ([Scholar CL](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_computationallinguistics)) | ARR May 2027 cycle, **estimate late May 2027** (May 2026 cycle: 2026-05-25, [ARR dates](https://aclrollingreview.org/dates)) | 2027.emnlp.org not live; [ARR dates](https://aclrollingreview.org/dates) |
+| **🎯 ACL 2027 (A)** | 2027-08-17 to 22, **Kyoto, Japan** (main conference 08-20 to 22) | NLP | top-tier flagship of NLP; h5 236 ([Scholar CL](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_computationallinguistics)) | ARR January 2027 cycle: full paper **2027-01-04** AoE (no separate abstract); commitment TBA | [2027.aclweb.org/calls/main](https://2027.aclweb.org/calls/main/) |
+| **🔁 EMNLP 2027 (B)** | TBA; "Mexico or Central America" ([joint workshop call](https://www.aclweb.org/portal/content/joint-call-workshops-proposals-2027)) | NLP | top-tier NLP (on par with ACL internationally, CCF-B); h5 218 ([Scholar CL](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_computationallinguistics)) | ARR May 2027 cycle, **estimate late May 2027** (May 2026 cycle: 2026-05-25, [ARR dates](https://aclrollingreview.org/dates)) | 2027.emnlp.org not live; [ARR dates](https://aclrollingreview.org/dates) |
 | IJCAI 2027 (B) | 2027-08-07 to 13, **Kyoto, Japan**; satellite Hengqin, China, 08-15 to 17 | general AI | strong general-AI conference; h5 136 ([Scholar AI](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_artificialintelligence)) | abstract **2027-01-04**, full **2027-01-11** AoE | [2027.ijcai.org CFP](https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/) |
-| Interspeech 2027 (B) | 2027-08-29 to 09-02, **São Paulo, Brazil** | speech | flagship of speech science and technology; h5 112 ([Scholar SP](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_signalprocessing)) | full paper **2027-02-09**, update 02-16 | [interspeech2027.org CFP](https://interspeech2027.org/calls/call_for_papers/) |
+| **⭐ Interspeech 2027 (B)** | 2027-08-29 to 09-02, **São Paulo, Brazil** | speech | flagship of speech science and technology; h5 112 ([Scholar SP](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_signalprocessing)) | full paper **2027-02-09**, update 02-16 | [interspeech2027.org CFP](https://interspeech2027.org/calls/call_for_papers/) |
 | **ACM MM 2027 (A)** | TBA dates, **Hong Kong** ([acmmm.org](https://acmmm.org/)) | multimedia | top multimedia conference; h5 119 ([Scholar MM](https://scholar.google.com/citations?view_op=top_venues&vq=eng_multimedia)) | **estimate** abstract late Mar, full **~2027-04-01** (MM 2026: 03-25 / 04-01, [dates](https://2026.acmmm.org/site/important-dates.html)) | [acmmm.org](https://acmmm.org/); 2026 rules: [CFP](https://2026.acmmm.org/site/cfp-guidelines.html) |
 | ACII 2027 (—) | TBA ([AAAC](https://aaac.world/conferences/)); annual since 2021 | affective computing | main conference of the affective-computing community; solid; h5 not in Scholar's top lists (unverified) | **estimate** Mar–Apr 2027 (ACII 2026: 03-27, extended to 04-24, [dates](https://acii-conf.net/2026/index.php/important-dates/)) | [aaac.world/conferences](https://aaac.world/conferences/) |
-| IEEE ASLI 2027 (—) | 2027-11-29 to 12-04, **Singapore** | speech / audio / language (IEEE SPS; continues ASRU and SLT) | new, first edition; inherits ASRU/SLT's standing (our estimate); no h5 yet | full paper **2027-04-21**, update 04-28 ([dates](https://2027.ieeeasli.org/important-dates/)) | [2027.ieeeasli.org CFP](https://2027.ieeeasli.org/call-for-papers/) |
+| **⭐ IEEE ASLI 2027 (—)** | 2027-11-29 to 12-04, **Singapore** | speech / audio / language (IEEE SPS; continues ASRU and SLT) | new, first edition; brings together established ASRU/SLT communities; selectivity and long-term standing not yet known; no h5 yet | full paper **2027-04-21**, update 04-28 ([dates](https://2027.ieeeasli.org/important-dates/)) | [2027.ieeeasli.org CFP](https://2027.ieeeasli.org/call-for-papers/) |
 | **NeurIPS 2027 E&D (A)** | TBA; "Europe" ([future meetings](https://neurips.cc/Conferences/FutureMeetings)) | general AI-ML | top-tier ML flagship; h5 371 (whole conference, [Scholar AI](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_artificialintelligence)); E&D is a dedicated track | **estimate early May 2027** (2026: abstract 05-04, full 05-06, [call](https://neurips.cc/Conferences/2026/CallForEvaluationsDatasets)) | [2026 E&D call](https://neurips.cc/Conferences/2026/CallForEvaluationsDatasets) |
 | **AAAI-28 (A)** | TBA (AAAI-27: Montréal, 2027-02-16 to 23, [AAAI-27](https://aaai.org/conference/aaai/aaai-27/)) | general AI | top-tier general AI; h5 232 ([Scholar AI](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_artificialintelligence)) | **estimate late Jul 2027** (AAAI-27: abstract 2026-07-21, full 07-28) | [AAAI-27 page](https://aaai.org/conference/aaai/aaai-27/) |
 | **ICLR 2028 (A)** | TBA (ICLR 2027: San Francisco, 2027-04-26 to 30, [dates](https://iclr.cc/Conferences/2027/Dates)) | general ML (representation learning) | top-tier ML flagship; h5 362 ([Scholar AI](https://scholar.google.com/citations?view_op=top_venues&hl=en&vq=eng_artificialintelligence)) | **estimate mid/late Sep 2027** (ICLR 2027: abstract 2026-09-18, full 09-25) | [ICLR 2027 CFP](https://iclr.cc/Conferences/2027/CallForPapers) |
@@ -95,13 +121,13 @@ both run in 2027, but no 2027 cycle is open for them. The only open *ACL main co
 
 | Venue | Acceptance rate (latest) | Fit for our paper | Difficulty for us | Paper types & length | Special requirements |
 |---|---|---|---|---|---|
-| **ACL 2027** | ACL 2026: main **18.9%** (2,296), Findings **17.8%** (2,163) of 12,148 ([front matter](https://aclanthology.org/2026.findings-acl.0.pdf)); ACL 2025: main 20.3%, Findings 16.7% of 8,360 ([PC report](https://www.aclweb.org/adminwiki/index.php/2025Q3_Reports:_Program_Chairs)) | **high**: lexical vs acoustic reliance is a language-model question; precedents AIR-Bench, S2S-Arena (section 3) | **high**: ~19% main; reviewers want insight beyond numbers; 8 weeks to the deadline with API runs not started; contributor rule | long 8 p / short 4 p + unlimited references and Limitations; +1 p if accepted ([call](https://2027.aclweb.org/calls/main/)); areas include "Speech Recognition, Text-to-Speech and Spoken Language Understanding" and "Interpretability and Analysis of Models for NLP"; Findings automatic | ARR rules ([CFP](https://aclrollingreview.org/cfp)): **designated service contributor** (section 2.3); max **20** submissions per author, **5** as first author; **complete OpenReview profile for every author** (ORCID, affiliation history, emails, DBLP/Anthology links) within 1 week after the deadline; **Limitations section mandatory** (missing = desk reject); **Responsible NLP checklist** (wrong or incomplete = possible desk reject); no anonymity period, preprints allowed (opt-in "no preprint" pledge until meta-reviews); no parallel submission; early desk reject of clearly sub-standard papers; one author registered by early registration and presenting (in person or online) ([call](https://2027.aclweb.org/calls/main/)) |
-| EMNLP 2027 | EMNLP 2025: main **22.2%** (1,811), Findings **17.3%** (1,417) of 8,174 ([front matter](https://aclanthology.org/2025.emnlp-main.0.pdf)); EMNLP 2026 main ~15% (third-party, unverified) | **high**: same as ACL | **medium-high**: same bar; 5 more months for controls; can reuse ACL reviews | as ACL (ARR) | as ACL (ARR rules) |
+| **🎯 ACL 2027** | ACL 2026: main **18.9%** (2,296), Findings **17.8%** (2,163) of 12,148 ([front matter](https://aclanthology.org/2026.findings-acl.0.pdf)); ACL 2025: main 20.3%, Findings 16.7% of 8,360 ([PC report](https://www.aclweb.org/adminwiki/index.php/2025Q3_Reports:_Program_Chairs)) | **high**: lexical vs acoustic reliance is a language-model question; precedents AIR-Bench, S2S-Arena (section 3) | **high**: ~19% main; reviewers want insight beyond numbers; 8 weeks to the deadline with API runs not started; contributor rule | long 8 p / short 4 p + unlimited references and Limitations; +1 p if accepted ([call](https://2027.aclweb.org/calls/main/)); areas include "Speech Recognition, Text-to-Speech and Spoken Language Understanding" and "Interpretability and Analysis of Models for NLP"; Findings automatic | ARR rules ([CFP](https://aclrollingreview.org/cfp)): **designated service contributor** (section 2.3); max **20** submissions per author, **5** as first author; **complete OpenReview profile for every author** (ORCID, affiliation history, emails, DBLP/Anthology links) within 1 week after the deadline; **Limitations section mandatory** (missing = desk reject); **Responsible NLP checklist** (wrong or incomplete = possible desk reject); no anonymity period, preprints allowed (opt-in "no preprint" pledge until meta-reviews); no parallel submission; early desk reject of clearly sub-standard papers; one author registered by early registration and presenting (in person or online) ([call](https://2027.aclweb.org/calls/main/)) |
+| **🔁 EMNLP 2027** | EMNLP 2025: main **22.2%** (1,811), Findings **17.3%** (1,417) of 8,174 ([front matter](https://aclanthology.org/2025.emnlp-main.0.pdf)); EMNLP 2026 main ~15% (third-party, unverified) | **high**: same as ACL | **medium-high**: same bar; 5 more months for controls; can reuse ACL reviews | as ACL (ARR) | as ACL (ARR rules) |
 | IJCAI 2027 | IJCAI 2025: 19.3% (1,042 / 5,404); IJCAI-ECAI 2026: 13.5% (858 / 6,342) (both third-party, [myhuiban](https://www.myhuiban.com/conference/405), unverified) | **low-medium**: general AI; speech benchmarks rare there | **high**: summary-reject phase, low rate; same abstract deadline as ACL (cannot do both) | main track 7 p + up to 2 p references; supplementary ≤ 50 MB ([CFP](https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/)) | **reciprocal review (new)**: each paper names a qualified author (≥ 5 full papers at IJCAI/AAAI/ECAI/NeurIPS/ICML/ICLR etc., or PC/SPC/AC service); exemption possible if none; a failing reviewer gets the paper desk rejected ([policy](https://2027.ijcai.org/reciprocal-review-policy/)); **summary reject** notice 2027-02-25; **USD 100 fee per paper**, waived if no author is on another IJCAI 2027 submission ([PPI](https://2027.ijcai.org/primary-paper-initiative/)); per-author cap (8 in 2026, [2026 CFP](https://2026.ijcai.org/ijcai-ecai-2026-call-for-papers-main-track/); 2027 number unverified); reproducibility checklist; in-person presentation |
-| Interspeech 2027 | IS 2025: **49.9%** (1,163 / 2,332 reviewed, [ISCA on X](https://x.com/ISCAInterspeech/status/1924762715966333005)); IS 2026: > 3,400 submissions ([ISCA](https://www.isca-speech.org/ISCA-Presidents-Message)), ~40% (estimate from the archive count) | **high**: the SER community (EmoBox, VoxEmo precedents) | **low-medium** (regular), **medium** (Long track targets < 30%) | Regular 4 p + 2 p (references, acknowledgements only); **Long Paper track 8 p + 2 p**; not both for one work ([CFP](https://interspeech2027.org/calls/call_for_papers/)) | max **2 papers as first author**; double-blind; no anonymity period, arXiv allowed (2026 rules, [IS2026](https://interspeech2026.org/en-AU/pages/for-authors/paper-submission)); scientific reporting checklist; **in-person presentation**, no-shows removed; ISCA copyright; no parallel submission; author reviewing not mandatory (2026); fully AI-written papers or fake references desk rejected |
+| **⭐ Interspeech 2027** | IS 2025: **49.9%** (1,163 / 2,332 reviewed, [ISCA on X](https://x.com/ISCAInterspeech/status/1924762715966333005)); IS 2026: > 3,400 submissions ([ISCA](https://www.isca-speech.org/ISCA-Presidents-Message)), ~40% (estimate from the archive count) | **high**: the SER community (EmoBox, VoxEmo precedents) | **low-medium** (regular), **medium** (Long track targets < 30%) | Regular 4 p + 2 p (references, acknowledgements only); **Long Paper track 8 p + 2 p**; not both for one work ([CFP](https://interspeech2027.org/calls/call_for_papers/)) | max **2 papers as first author**; double-blind; no anonymity period, arXiv allowed (2026 rules, [IS2026](https://interspeech2026.org/en-AU/pages/for-authors/paper-submission)); scientific reporting checklist; **in-person presentation**, no-shows removed; ISCA copyright; no parallel submission; author reviewing not mandatory (2026); fully AI-written papers or fake references desk rejected |
 | **ACM MM 2027** | MM 2025: **23.5%** (1,250 / 5,330); MM 2024: 26.2% ([acmmm.org](https://acmmm.org/)) | **medium**: topic "Emotional and Social Signals" fits; MM prefers multimodal work (single-modality "lower priority") | **medium-high**: 23%; audio-only | main track 6–8 p + up to 2 p references; **no appendix in the main file** (supplementary ≤ 50 MB); dataset track takes only dataset papers (2026 rules, [CFP](https://2026.acmmm.org/site/cfp-guidelines.html)) | **every author is a reviewer** (~4 papers; late or poor reviews desk-reject the reviewer's own paper); max **10** papers per author across tracks; complete OpenReview profiles (else desk reject); author list frozen after the abstract deadline; reviews published; no parallel submission (also not with an active ARR paper); ACM open access with APC unless the institution is in ACM Open ([MM 2026](https://2026.acmmm.org/)) |
 | ACII 2027 | not published (unverified) | **high** on topic (affective speech, benchmarks and LLM emotion recognition are listed topics) | **low-medium** (estimate) | 7 p + 1 p **Ethical Impact Statement (mandatory)** + unlimited references; IEEE template, EasyChair (2026 rules, [guidelines](https://acii-conf.net/2026/index.php/submission-guidelines/)) | double-blind; arXiv allowed (not ResearchGate); one track only; **in-person presentation** or removal from IEEE Xplore; reproducibility advice (seeds, error bars, effect sizes). Beware the fake "ICACII 2027" (WASET-type) |
-| IEEE ASLI 2027 | none (first edition) | **medium-high**: CFP welcomes "datasets, systems, benchmarks, applications, and analyses"; LLMs for speech/audio is a topic; emotion not named | **medium** (estimate) | 6 p + unlimited references and appendix; **Findings track** for accepted papers not chosen for the main programme ([CFP](https://2027.ieeeasli.org/call-for-papers/)) | one author registers and presents per paper; anonymity, arXiv policy, reviewer duty and caps not stated yet |
+| **⭐ IEEE ASLI 2027** | none (first edition) | **potentially high**: specialist audio/speech audience; CFP welcomes datasets, benchmarks and analyses; final fit depends on the research question | **unknown** (first edition) | 6 p + unlimited references and appendix; **Findings track** for accepted papers not chosen for the main programme ([CFP](https://2027.ieeeasli.org/call-for-papers/)) | one author registers and presents per paper; anonymity, arXiv policy, reviewer duty and caps not stated yet |
 | **NeurIPS 2027 E&D** | D&B 2024: **25.3%**; D&B 2025: 1,995 submissions, rate not published ([NeurIPS blog](https://blog.neurips.cc/2025/09/30/reflecting-on-the-2025-review-process-from-the-datasets-and-benchmarks-chairs/)); E&D 2026 not found | **high**: call accepts "systematic analyses of systems", "benchmarks on new or existing datasets"; "need not introduce a new model" ([call](https://neurips.cc/Conferences/2026/CallForEvaluationsDatasets)) | **high**: ~25%; ML reviewers want general lessons about evaluation, strong statistics | 9 p + unlimited references, appendix and **mandatory checklist**; +1 p if accepted ([handbook](https://neurips.cc/Conferences/2026/MainTrackHandbook)) | every author's OpenReview profile active before the abstract deadline; **responsible reviewing**: late reviewer-authors lose access to their own reviews, severe cases desk rejected; no mandatory per-paper reviewer or per-author cap found (2026, unverified for 2027); data and code accessible to reviewers; hosting + Croissant only for new datasets ([hosting](https://neurips.cc/Conferences/2026/EvaluationsDatasetsHosting)); arXiv allowed; one author registered in person (virtual pass not enough) |
 | **AAAI-28** | AAAI-26 main track: ~**17.5%** overall, ~41% passed phase 1, of ~23,000 reviewed ([AAAI slides](https://aaai.org/wp-content/uploads/2026/01/The-AAAI-2026-AI-Assisted-Peer-Review-Pilot-Program.pdf)) | **medium**: general AI audience | **high**: low rate, phase-1 reject | 7 p + 2 p references only; appendix and code as supplementary ([AAAI-27 instructions](https://aaai.org/conference/aaai/aaai-27/submission-instructions/)) | max **10** papers per author; **all qualified authors must be available to review**; **phase 1** (2 human + 1 AI review) rejects without rebuttal ([review process](https://aaai.org/conference/aaai/aaai-27/review-process/)); reproducibility checklist; arXiv allowed but not cited in the submission; in-person presentation ([attendance](https://aaai.org/conference/aaai/aaai-27/paper-publication-and-conference-attendance/)) |
 | **ICLR 2028** | ICLR 2026: **27.4%** (5,355 accepted; 19,525 submissions) ([ICLR blog](https://blog.iclr.cc/2026/03/31/a-retrospective-on-the)) | **low-medium**: needs ML-level insight, e.g. why in-context learning fails for paralinguistics | **high**: public reviews, ML framing | 9 p (10 after rebuttal) + unlimited references and appendix ([CFP](https://iclr.cc/Conferences/2027/CallForPapers)) | **reciprocal reviewing**: one author per paper reviews ≥ 3 papers (≥ 6 if on ≥ 3 submissions); a paper with no qualified author is exempt, but each author may be on **at most one** such paper ([guidelines](https://iclr.cc/Conferences/2027/AuthorGuidelines)); max 20 per author; **mandatory LLM-use disclosure** ([AI policy](https://iclr.cc/Conferences/2027/AIPolicyForAuthors)); submissions and reviews public, rejected papers de-anonymised ([policies](https://blog.iclr.cc/2026/09/02/submission-policies-for-iclr-2027/)) |
@@ -155,12 +181,11 @@ collaborator to vouch and review, or accept the lottery risk. Create OpenReview 
 
 ## 2c. Long or short, and are we eligible?
 
-**Long paper (8 pages) for ACL.** Ten models on 13 datasets, plus three analyses (lexical vs acoustic, intended vs
-perceived, seen vs unseen), the label mapping and a protocol section do not fit in 4 pages. ACL defines long papers
-as "substantial research contributions" and short ones as "preliminary findings or focused contributions"
-([call](https://2027.aclweb.org/calls/main/)). A short paper suits one focused finding, for example only "audio LLMs
-fall to near chance when the words are neutral, dedicated models do not". Keeping the whole benchmark in a short
-paper would force out the controls reviewers will ask for. Use the unlimited appendix for per-dataset tables.
+**Choose length after the pilots.** A substantial study of context, matched human judgments and independent
+validation may need the ACL long format (8 pages); one precise, well-supported finding may suit a short paper
+(4 pages). The number of models or datasets does not decide the contribution. Keep the main text focused on the
+selected research question, and move supporting benchmark tables to the appendix
+([ACL call and paper types](https://2027.aclweb.org/calls/main/)).
 
 **What ACL main / Findings expect from a benchmark-analysis paper** (our reading; ARR's reviewer guidelines say
 "SOTA results are neither necessary nor sufficient" and NLP "relies on many kinds of contributions",
@@ -172,39 +197,41 @@ paper would force out the controls reviewers will ask for. Use the unlimited app
 - reproducibility: released code, split lists, per-clip predictions, prompts;
 - a Limitations section (mandatory) and an ethics discussion (licences, emotion-recognition misuse, acted data).
 
-Main conference usually needs all of these plus a sharp story; Findings accepts solid, careful work with a smaller
-insight (our estimate).
+These are planning criteria, not a prediction of main-conference or Findings acceptance. Both outcomes require
+convincing evidence and a clear contribution.
 
-**Where we stand (state of 2026-11-06, from [experimental_design.md](experimental_design.md)).**
+**Where we stand (updated 2026-11-09; current scope in [research_angles.md](research_angles.md)).**
 
 | Reviewers will want | What we have | Gap |
 |---|---|---|
-| Broad, fair comparison | 10 models × 13 datasets, 56,264 clips, one 7-class mapping, all clips for every model | phase 1 half done; phase 2 (local LLMs, ~39 h) and phase 3 (API, ~86 h GPT Realtime; Gemini loader not written, model not chosen) not started |
+| Broad, fair comparison | planned 10 models × 13 datasets, 56,264 clips, dataset-specific candidate labels | five SER models completed; current-protocol local LLM evaluation incomplete, with a three-model MELD baseline in progress; API runs remain |
 | Current baselines | Qwen2.5-Omni, Qwen2-Audio, Gemma 4, GPT Realtime, Gemini | Qwen3-Omni and Audio Flamingo 3 deferred; reviewers may ask for them |
 | Lexical vs acoustic evidence | parallel vs emotion-worded corpora; THAI-SER scripted vs improvised | **text-only control** (ASR transcript or gold text → text LLM) is "later, optional"; it should be core for this claim |
 | Prompt robustness | one fixed prompt | a few prompt variants on a subset |
 | Stability | greedy local decoding | **repeat runs** of GPT Realtime (no temperature 0) on a subset |
 | Statistics | point estimates | **bootstrap CIs and paired tests** (cheap, from the prediction files) |
-| Human reference | listener–actor agreement: CREMA-D 45.6%, THAI-SER 77.2%, Emozionalmente human UAR 66% | present it as the **human baseline** next to the models |
-| Contamination | seen/unseen flags; 4 datasets unseen by every model with published data | open LLMs publish no training data: say so in Limitations |
-| Fair LLM vs SER scoring | LLMs choose among 7, SER models among the dataset's classes | report SER "all model classes" accuracy alongside |
+| Human reference | actor-intent and listener-perception information for some corpora | distinguish annotation targets and class priors; a human context comparison needs matched evidence conditions and new ratings, not just actor–listener agreement |
+| Training provenance | documented corpus exposure and unknown sources | absence from a published list is not proof of no exposure; corpus exposure alone is not test-file contamination |
+| Fair LLM vs SER scoring | implemented dataset-specific choices for both model families | rerun incompatible legacy LLM outputs; added-context inputs must be reported separately from single-utterance SER comparisons |
 | Release and approval | licence-checked data plan; no company data or patentable methods | company approval for publication still open |
 
-**Honest assessment.** The design is strong enough for ACL Findings and has a real chance at the main conference
-if the text-only control, CIs, repeat runs and a small prompt-variant check are in. Without them it reads as a
-benchmark table, and that risks rejection. The schedule is tight: all runs plus these controls and the writing must
-fit in about 8 weeks, and the service-contributor and company-approval questions must be settled first.
+**Honest assessment (updated 2026-11-09).** ACL is an aspirational main target, not evidence that the current design
+already meets the main-conference or Findings bar. Broad evaluation and careful controls are necessary groundwork;
+the contribution still needs a clear question and pilot evidence of a new, reproducible insight. Prioritise pilots
+on speaker-reference context or dialogue context before expanding the full experiment grid. Text-only controls,
+uncertainty estimates and repeat runs strengthen an eventual claim but do not create novelty by themselves.
+Choose the venue and paper length after the pilot, alongside the service-contributor and company-approval checks.
 
 **Realistic plan.**
 
-1. **Main: ACL 2027 long paper, ARR 2027-01-04**, if by mid-December (a) a qualified service contributor is
-   confirmed, (b) company approval is likely, and (c) phases 2–3 and the four controls are done or running. Commit
-   to ACL; Findings is the automatic fallback.
-2. **If the ARR reviews are weak**: revise and resubmit to ARR May 2027 for **EMNLP 2027** (with the old reviews),
+1. **🎯 Main target: ACL 2027, ARR 2027-01-04**, conditional on a pilot establishing a coherent contribution,
+   adequate validation, a qualified service contributor and publication approval. Prefer a focused paper over
+   filling every planned experiment cell; decide long or short from the resulting contribution.
+2. **🔁 Fallback: EMNLP 2027**: revise and resubmit to ARR May 2027 if appropriate (with the old reviews),
    or move to **NeurIPS 2027 E&D** (early May, estimate) once the paper is out of ARR.
-3. **If ACL is not ready or no contributor is available**: skip ARR in January and target the **Interspeech 2027
-   Long Paper track (2027-02-09)**, then ACM MM 2027 (about April) or IEEE ASLI 2027 (2027-04-21) if it is not
-   accepted. Interspeech and ARR cannot run in parallel for the same paper.
+3. **⭐ Focus candidates: Interspeech 2027 (2027-02-09) and IEEE ASLI 2027 (2027-04-21)**, particularly for a
+   focused speech-specific contribution. Select an eligible submission window; these are alternatives, not a
+   guaranteed sequential resubmission schedule. Interspeech, ASLI and ARR cannot run in parallel for the same paper.
 4. **Later**: AAAI-28 (late July 2027, estimate) as the next CCF-A option; **IEEE TMM** (CCF-A) or TASLP / TAFFC for
    an extended journal version.
 
@@ -233,17 +260,26 @@ fit in about 8 weeks, and the service-contributor and company-approval questions
 | Vox-Profile | DMLR (journal) | — | https://arxiv.org/abs/2505.14648 |
 | VoxEmo (35 SER corpora, speech LLMs) | submitted to Interspeech 2026 (acceptance unverified) | B | https://arxiv.org/abs/2603.08936 |
 | Speech ICL for paralinguistic tasks | ASRU 2025 | C | https://oar.a-star.edu.sg/communities-collections/articles/22939 |
-| "When Demonstrations Fail" (ICL limits in audio LLMs) | SLT 2026 | C | https://arxiv.org/abs/2603.20433 |
+| "When Demonstrations Fail" (ICL limits in audio LLMs) | **Accepted to IEEE SLT 2026**; conference still upcoming as of 2026-11-09 | C | [arXiv / author-reported acceptance](https://arxiv.org/abs/2603.20433) |
+| "Designing Textual Interfaces to Enhance LLM Reasoning on Audio-Visual Question Answering" (automatic prompt optimization) | **Submitted to IEEE ICASSP 2027**; acceptance unverified as of 2026-11-09 | B (target venue only) | [arXiv / submission status](https://arxiv.org/abs/2610.20085) |
+
+**Preprint dates are not conference publication dates.** "When Demonstrations Fail" first appeared on arXiv on
+**2026-03-20**; **2026-09-28** is its v2 revision date, not its first release or conference publication date.
+Its arXiv record reports SLT acceptance ([version history](https://arxiv.org/abs/2603.20433)). The AVQA interfaces
+paper first appeared on **2026-10-14**, and its record says only "Submitted to IEEE ICASSP 2027". Until an acceptance
+or proceedings record is verified, cite it as a preprint submitted to ICASSP, not an accepted or published ICASSP
+paper ([arXiv record](https://arxiv.org/abs/2610.20085)).
 
 ## 4. Recommended plan
 
-1. **ACL 2027 long paper via ARR (2027-01-04).** Frame around the language-model questions reviewers care about:
-   lexical vs acoustic reliance (with a text-only control), prompt and protocol sensitivity, consistency. Confirm the
-   designated service contributor and OpenReview profiles (company email, ORCID, DBLP) in November.
-2. If the ARR reviews are weak: **EMNLP 2027** (ARR May 2027, estimate) with the same reviews, or **NeurIPS 2027 E&D**
+1. **🎯 ACL 2027 via ARR (2027-01-04), conditional on pilot evidence.** First establish what evidence the models
+   use and whether context changes improve alignment with human judgments. A benchmark, ICL or GEPA experiment
+   alone does not establish a publishable contribution. Confirm the service contributor and author profiles.
+2. **🔁 EMNLP 2027** (ARR May 2027, estimate) for a revised submission with the earlier reviews, or **NeurIPS 2027 E&D**
    (early May, estimate). ACM MM 2027 (about April) cannot run in parallel with an active ARR submission.
-3. If ACL is not ready in time: **Interspeech 2027 Long Paper track (2027-02-09)**, then ACM MM 2027 or IEEE ASLI
-   2027 (2027-04-21). **AAAI-28 (July 2027, estimate)** as the next CCF-A option.
+3. **⭐ Interspeech 2027 (2027-02-09) and ⭐ IEEE ASLI 2027 (2027-04-21)** are our focus speech candidates;
+   choose based on the final contribution and review status. ACM MM 2027 and **AAAI-28 (July 2027, estimate)**
+   remain additional options, not the current focus. Do not assume the deadlines allow sequential submissions.
 4. **IEEE TMM** (CCF-A journal) or TASLP / TAFFC for an extended version.
 
 Release only licence-cleared material (code, split lists, predictions); no audio of restricted corpora, no company data.

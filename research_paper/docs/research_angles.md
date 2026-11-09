@@ -1,600 +1,320 @@
-# Research Angles
+# Research angles: what context helps audio LLMs judge emotion?
 
-Ideas for a paper built on our speech emotion recognition (SER) benchmark: 5 dedicated SER models and 5 audio LLMs on
-13 public emotional-speech datasets. Brainstorming stage; rewritten in plain language on 2026-11-06. Chinese version:
-[research_angles_zh.md](research_angles_zh.md). See also [related_work.md](related_work.md), [venues.md](venues.md),
-[experimental_design.md](experimental_design.md).
+Rewritten 2026-11-09. This is an **exploration plan, not an established paper claim**. Small pilots should determine
+which question deserves further work. Chinese version: [research_angles_zh.md](research_angles_zh.md). See also
+[datasets_survey.md](../../emotion_recognition/docs/datasets_survey.md), [related_work.md](related_work.md) and
+[venues.md](venues.md). [experimental_design.md](experimental_design.md) retains the older design; check the new
+scope here before implementing it.
 
-**Ground rules.** Public data only, no company data, nothing that could become a product or a patent: we only test
-existing models and methods. "Unverified" = not confirmed from a primary source; "estimate" = our calculation;
-"preliminary" = from unfinished runs.
+The existing evaluation covers 13 datasets and five dedicated SER models. The three open-weight audio LLMs are
+Gemma 4 E4B, Qwen2.5-Omni 7B and Qwen2-Audio 7B. API models are possible later checks. Use public research data
+permitted for each experiment, without company data.
 
-**Legend.** 🥇 main contribution 1 · 🥈 main contribution 2 (same weight, more risk) · 🧱 foundation (needed, not new
-alone) · 🥉 supporting section with its own results · 🔹 small finding (a paragraph or table) · 🔍 being analysed
-elsewhere · 💤 on hold or set aside · 📎 one or two sentences · 🆕 new in this version
+## 1. What are we trying to find out?
 
-## Priority overview
+**For the same target audio, how does additional evidence change the model's emotion judgment? Is that change
+reasonable, and does it agree with human judgments under the same evidence?**
 
-"Mac time" = our Mac M4 Max (48 GB) running the three open audio LLMs (Qwen2-Audio, Qwen2.5-Omni, Gemma 4). API cost
-does not matter (user's decision).
+Poor SER performance by audio LLMs and limited gains from a few demonstrations have precedents. More models and
+corpora do not necessarily answer a new question. We prioritise two specific kinds of additional evidence:
 
-| # | Angle | Role | Risk | Mac time | Status |
-|---|---|---|---|---|---|
-| A | Audio examples in the prompt (in-context learning, ICL) | 🥇 | medium | ≈ 14 h core (17 h with margin) + ≈ 15 h extras | design ready |
-| B | Automatic prompt rewriting with GEPA | 🥈 | high | ≈ 30–50 h in total | design ready |
-| 0 | Zero-shot benchmark, 10 models × 13 datasets | 🧱 | low | phase 2 ≈ 36 h | running |
-| C | Training-data overlap and model family trees | 🥉 | low | none | preliminary numbers |
-| D | Same clip, same prompt: does the answer change? | 🥉 | low-medium | 0–6 h per model | design ready |
-| E | Words-only control (speech-to-text → text LLM) | 🔹 | low | ≈ 1 h | later |
-| F | 🆕 Label probabilities, neutral-bias removal, three readouts | 🔹 | low | no extra LLM inference with complete features; CPU analysis needed | probe implemented; prior correction pending |
-| G | Actor's intended emotion vs what listeners heard | 🔹 | low | none | partly done |
-| H | Are confidence numbers honest? (calibration) | 🔹 | low | none | later |
-| I | JEV-style structured outputs | 💤 set aside for now (2026-11-06) | — | — | — |
-| J | Telephone audio | 💤 | high | 1 SER run per codec | on hold |
-| K | Clip length and padding | 📎 | low | none | mention only |
-
----
-
-## The paper in short
-
-**In one sentence:** can we make audio LLMs hear emotion better just by changing the prompt?
-
-**Why it matters.** It is already known that audio LLMs trail SER models and say "neutral" too often: LISTEN
-([EACL 2026](https://aclanthology.org/2026.eacl-long.274/)), VoxEmo ([arXiv 2603.08936](https://arxiv.org/abs/2603.08936)),
-EmoBox ([Interspeech 2024](https://arxiv.org/abs/2406.07162)), VocalAffectBench
-([arXiv 2608.28932](https://arxiv.org/abs/2608.28932)). So a plain benchmark is not enough. The open question is
-how much of the gap comes from prompt-dependent readout and label preferences, and how much from limits of the
-representations. F probes accessible label information with supervision; it cannot by itself separate all causes.
-Relevant clues: open audio LLMs keep
-speaking style in the audio encoder but lose it before the answer ("Heard but Not Heeded",
-[arXiv 2609.00727](https://arxiv.org/abs/2609.00727)), and describing acoustic cues in the prompt helps
-([arXiv 2606.07309](https://arxiv.org/abs/2606.07309)); but random examples do not help SER (Piao et al.,
-[SLT 2026](https://arxiv.org/abs/2603.20433)), and GEPA on omni models gave only −0.3 to +4.1 points on audio-visual
-QA ([arXiv 2610.20085](https://arxiv.org/abs/2610.20085)).
-
-**How.** Two prompt-side tests: 🥇 **examples** (A) and 🥈 **rewritten instructions** (B). Both run on the same test
-clips, against the SER models, with the same measures: accuracy, UA (unweighted accuracy: the mean of per-class
-accuracies, so a big class cannot dominate), macro-F1, **neutral rate** (share of "neutral" answers), **accuracy
-without neutral** (do gains only come from saying "neutral" less?) and the planned **prior-correction baseline** (F). C, D and
-E check that the numbers can be trusted.
-
-| RQ | Question | Section |
+| Evidence | Plain-language meaning | Difference from ordinary few-shot prompting |
 |---|---|---|
-| RQ1 | How big is the zero-shot gap per corpus, and how much is the "neutral" habit? | 🧱 0 |
-| RQ2 | Which audio examples help, and does the model link each example's sound to its label? | 🥇 A |
-| RQ3 | Do optimised instructions help? Does a coach that *hears* the errors beat one that only *reads* them? | 🥈 B |
-| RQ4 | Do gains carry over to other corpora, languages and models? Do A and B add up? | A + B |
-| RQ5 | What are we measuring: training overlap, word clues, run-to-run noise? | C, D, E |
+| **Speaker reference** | Hear how this person speaks calmly before judging the target | Provides the current speaker's vocal baseline rather than arbitrary examples from strangers; a neutral label is extra supervision |
+| **Real dialogue history** | Hear what happened before the target utterance | Comes from the target's conversation, without gold emotion labels; it is not labelled-demonstration ICL |
 
-**Contributions.** (1) The first controlled study of audio ICL for SER, on 5 parallel corpora (the words give no
-clue; 4 unseen by every model with published training data), 3 open and 2 API audio LLMs. (2) The first use of GEPA on
-audio LLMs for a paralinguistic task (how something is said, not what), including a coach that can hear. (3) A
-10 × 13 benchmark with seen vs unseen corpora, a noise floor and a words-only control.
+Both provide information through the input, but they test different questions. A retains the ICL direction while
+reporting **labelled references** separately from **history without emotion labels**. The target is perceived
+expressed emotion, not an unverifiable claim about a character's true internal state.
 
-**Titles**: "Can You Prompt an Audio LLM to Hear Emotion? Demonstrations vs Optimised Instructions on 13 Corpora";
-"Steering Audio LLMs Through the Prompt for Speech Emotion Recognition". **Outline** (8 pages, ACL long): setup; zero-
-shot gap (RQ1); examples (RQ2); instructions (RQ3); transfer (RQ4); what are we measuring (RQ5, actor vs listener
-labels); Limitations. **Maybe later**: C, G, H, J as a second paper for a speech venue (Interspeech or TASLP; see
-[venues.md](venues.md)).
+### Current research questions
 
-**Closest work and what it leaves open**
-
-| Work | What it did | Open for us |
+| RQ | Question | Main evidence |
 |---|---|---|
-| LISTEN ([EACL 2026](https://aclanthology.org/2026.eacl-long.274/)) | 6 audio LLMs; models "transcribe rather than listen" | no SER models, examples or prompt optimisation; gold transcripts |
-| VoxEmo ([arXiv 2603.08936](https://arxiv.org/abs/2603.08936)) | 35 corpora; > 20-point macro-F1 swings across prompts; 5-prompt vote | no closed models, no optimisation, no repeated calls |
-| VocalAffectBench ([arXiv 2608.28932](https://arxiv.org/abs/2608.28932)) | gpt-realtime-2 27.9%, 45.3% of answers "neutral" | one in-house corpus (280 clips) |
-| EmoBox ([Interspeech 2024](https://arxiv.org/abs/2406.07162)) | 32 corpora, frozen features | no LLMs |
-| Piao et al. ([SLT 2026](https://arxiv.org/abs/2603.20433)) | 1–8 random examples on CREMA-D, 6 audio LLMs; examples fix format, not the task | no same-speaker, balanced or retrieved examples |
-| Wong et al., A*STAR ([ASRU 2025](https://doi.org/10.1109/ASRU65441.2025.11434787)) | "some degree" of paralinguistic ICL | no controls, no closed models |
-| AudioICL-Bench ([SLT 2026](https://arxiv.org/abs/2609.11252)) | audio LLMs learn new sound→label pairs when hearing is easy | no emotion |
-| GEPA for audio-visual QA ([arXiv 2610.20085](https://arxiv.org/abs/2610.20085)) | −0.32 / +0.95 / +4.12 points | not emotion, no hearing coach |
-| GEPA ([ICLR 2026 oral](https://arxiv.org/abs/2507.19457)) | text tasks; beats GRPO by 6% with up to 35× fewer model calls | never on audio |
+| **RQ1: What helps?** | Which targets benefit from a same-speaker reference, real past dialogue or textual history? | Paired A1/A2 conditions; UAR, macro-F1, class recalls and prediction changes |
+| **RQ2: Are changes reasonable?** | Do humans change their judgments with context, and do models change accordingly rather than merely becoming confident or saying neutral less? | Multiple human votes on the same targets under matching evidence; these new annotations have not been collected |
+| **RQ3: Does it generalise?** | Does the finding depend on particular references, speakers, a television series or one model? | Independent speakers/dialogues, repeated reference choices, another corpus and different models |
+| **Conditional extension: Can we improve it?** | Can instruction optimisation address a demonstrated failure, and does letting the coach hear errors help? | B: the same coach with/without audio, matched search budgets and independent tests |
 
----
+The zero-shot benchmark is the starting point. C/D support reliability; E/G help interpret evidence and labels.
+**They need not each become a main contribution.**
 
-## Shared setup for A and B
+### Priority and current status
 
-**Models.** Mac: Qwen2-Audio-7B-Instruct (8.40B), Qwen2.5-Omni-7B (Thinker, 8.93B loaded), Gemma 4 E4B-it (8.00B,
-4.5B effective). API (company computer): GPT Realtime and Gemini (gemini-3.8-flash). The 5 SER models are the
-reference and are not prompted.
-
-**Corpora.** The 5 parallel corpora: every sentence is spoken in every emotion, so the words cannot give the answer.
-The other 8 corpora are for transfer tests.
-
-| Corpus | Language | Speakers | Classes | Why |
-|---|---|---|---|---|
-| CREMA-D | English | 91 | 6 | Piao et al.'s corpus; 4–12 listener votes per clip |
-| MCAE-SPPS | Mandarin | 6 | 7 | unseen, newest (2025/26); 40 listeners per clip |
-| nEMO | Polish | 9 | 6 | unseen; mostly non-professional speakers |
-| THAI-SER (scripted, high-agreement, 5,012 clips) | Thai | 200 | 4 | unseen; tonal language |
-| MESS | English | 6 | 4 (calm = neutral) | unseen; calm vs neutral |
-
-**Splits** (🆕, one file per corpus; no speaker in two parts): train (example pool and GEPA feedback) / validation
-(GEPA scoring) / test speakers = CREMA-D 61 / 15 / 15; THAI-SER 140 / 30 / 30; nEMO 5 / 2 / 2; MCAE-SPPS and MESS
-4 / 1 / 1 (2 folds, swapping the validation and test speaker).
-
-**Test clips.** 500 per corpus, balanced by emotion and speaker, **the same clips in every condition**, so each
-comparison is paired (McNemar test, paired bootstrap). One accuracy on 500 clips has a standard error of about
-2 points; over 2,500 clips a paired test sees differences of about 2–3 points.
-
-**Mac speed** (measured 2026-11-06, zero-shot, one clip at a time): Gemma 4 **0.47 s**, Qwen2.5-Omni **0.66 s**,
-Qwen2-Audio **1.00 s** per clip. One second of audio ≈ 25 tokens, so a 2.5 s example clip adds roughly 0.13 s to 30% of
-a call (two estimates, within ~30% of each other; [experimental_design.md](experimental_design.md) §5.1). Qwen2-Audio
-pads every clip to 30 s (`padding="max_length"`), about +0.15 s per example (unverified).
-
-| Model | k = 0 (measured) | k = 1 | k = 3 | k = 5 | k = 7 |
-|---|---|---|---|---|---|
-| Gemma 4 E4B | 0.47 s | ≈ 0.6 s | ≈ 0.9 s | ≈ 1.2 s | ≈ 1.5 s |
-| Qwen2.5-Omni | 0.66 s | ≈ 0.8 s | ≈ 1.1–1.3 s | ≈ 1.3–1.7 s | ≈ 1.6–2.1 s |
-| Qwen2-Audio | 1.00 s | ≈ 1.3 s | ≈ 1.8–1.9 s | ≈ 2.3–2.5 s | ≈ 2.8–3.1 s |
-
-k = number of example clips (≈ 2.5 s each, capped at 4 s). MPS recompiles for every new input length, so budget ×1.2;
-padding examples to a fixed 3.0 s and reusing a shared example prefix reduce this.
-
----
-
-## 🥇 A. Audio examples in the prompt (controlled in-context learning)
-
-**In one sentence:** the model hears a few labelled clips before the test clip, and controls show whether it really
-learns from them or just copies the label list.
-
-**Why it matters.** Piao et al. found that random examples do not help. Nobody tried what a person would find useful:
-**the same speaker** in each emotion. Emotion is relative: a high voice is normal for one person and excited for
-another. If the model can use "this is how *this* speaker sounds when calm", that is new. If it cannot, our controls
-say **why**.
-
-**What "k-shot" means.** k = the number of labelled example clips before the test clip; k = 0 is the plain benchmark.
-Nothing is trained, the examples only sit in the prompt:
-
-```text
-[system]    ... Answer with exactly one word: angry, disgusted, fearful, happy, neutral, sad, surprised.
-[user]      Example 1: <audio: example clip 1>  Which emotion does the voice express?
-[assistant] angry
-[user]      Example 2: <audio: example clip 2>  Which emotion does the voice express?
-[assistant] sad
-[user]      <audio: TEST clip>  Which emotion does the voice express?
-[assistant] → scored
-```
-
-Our zero-shot prompt already gets the format right (no invalid answers in the 18-clip pilot of 2026-11-05), so a gain
-cannot come from fixing the format, unlike in Piao et al.
-
-### How
-
-| Factor | What changes | What it tells us |
+| Direction | Role now | Status |
 |---|---|---|
-| **k** | 0, 1, 3, 5, one per class | more examples should help more, if they carry information |
-| **Balanced vs random** | one per emotion vs k random | random examples tilt the model toward labels it just saw ([Zhao et al. 2021](https://arxiv.org/abs/2102.09690)) |
-| **Same vs other speaker** | the test speaker's other recordings vs another speaker of the same gender | can it use the speaker's normal voice as a reference? Helps after special training ([Ihori et al., ASRU 2025](https://arxiv.org/abs/2509.08344): +8.2 points at 7 shots), never tested on off-the-shelf LLMs. **Main novelty of A** |
-| **Retrieved vs random** | the clips that sound most like the test clip | macro-F1 0.30 → 0.49 for Voxtral on one corpus ([Huang et al. 2026](https://arxiv.org/abs/2606.14784)); works for Whisper ASR ([Wang et al., ICASSP 2024](https://arxiv.org/abs/2309.07081)) |
-| **Shuffled labels** (control) | same audio, labels swapped | no drop = the model ignores which sound goes with which label |
-| **Labels without audio** (control) | "Example 1: [no audio] → angry" | "seeing labels" vs "hearing examples" |
-| **Order** (control) | same examples reordered | how often the answer just copies the last example's label |
+| **A1: Speaker references** | One candidate core question | Pilot design; reference inputs not implemented |
+| **A2: Real dialogue history** | One candidate core question; start with MELD | Three-model single-utterance baseline being prepared/run; context conditions not implemented |
+| **B: GEPA and feedback** | Improvement experiment after a clear finding | Keep the question; defer the large grid |
+| **0: 13-corpus benchmark** | Existing foundation | Five SER models complete; audio LLM evaluation in progress |
+| **C: Training provenance** | Necessary background stratification | Check public sources; performance alone does not establish contamination |
+| **D: Repetition and disagreement** | Reliability, with a possible ambiguity analysis | Start with representative subsets, not ten calls on every clip |
+| **E: Text controls** | Essential for A2, useful for A1 | Design alongside the pilots |
+| **F: Probes / label scores** | Optional supporting analysis or appendix | Probe implemented; not mandatory; prior correction not implemented |
+| **G: What labels mean** | Interpretation and annotation checks | Some listener data exist; MELD evidence-conditioned votes require new collection |
+| **H: Calibration** | Optional | Only if the main question needs it |
+| **I/J: Structured outputs / telephone quality** | Deferred | Outside this pilot |
+| **K: Length and padding** | Input documentation and limitations | No separate project now |
 
-**Two traps.** (1) **Odd one out**: if the examples are the test speaker saying the *test sentence* in every other
-emotion, the correct emotion needs a different sentence and gives itself away. So we use a **same-speaker reference
-set** (🆕): the test speaker saying **one other sentence** in each emotion; the other-speaker set is built the same
-way, so the two differ **only** in who speaks. (2) **Retrieval can leak the label** if the search uses an emotion model
-(emotion2vec+). So we report a **copy baseline** (🆕): "take the majority label of the retrieved clips", without the
-LLM. The LLM must beat it. We also retrieve with a non-emotion embedding (speaker or eGeMAPS features).
+## 2. A1: Can a person's calm voice provide a useful reference?
 
-**Staged design** (each test clip gets its own random examples, fixed seed; calls per model):
+A person may normally speak loudly, quickly or at a high pitch; the same change may mean something different for
+another person. The hypothesis is that **knowing this speaker's vocal baseline may help more than examples from
+unrelated speakers**. It is not assumed to work.
 
-| Stage | Conditions | Clips | Calls | Mac hours (Gemma / Omni / Qwen2-Audio) |
-|---|---|---|---|---|
-| 0. Multi-audio check | 20 prompts with 3 clips and a checkable question ("transcribe clip 2") | — | ≈ 50 | minutes |
-| **1. Core** (RQ2) | C0 zero-shot (reused); C1 random k = 3, other speakers (repeats Piao); C2 balanced, other speaker; C3 balanced, **same speaker**; C4 = C3 with shuffled labels | 5 × 500 | 10,000 | 3.2 / 4.0 / 6.5 h; **13.7 h** (≈ 17 h with ×1.2) |
-| 2. Extras | random k = 1, 5; retrieved k = 3 (two embeddings + copy baseline); labels without audio; reordered; **neutral anchor** (🆕: one same-speaker neutral clip); 2 per class | 3 × 500 | 10,500 | 3.3 / 4.3 / 6.9 h; 14.5 h (8–11 h for the best two) |
-| 3. APIs | Stage 1 + chosen extras | as above | ≈ 20,500 | company computer; GPT Realtime ≈ 5.5 s per clip, run in parallel |
-| Optional | majority vote over 3 example sets (Wong et al.) | 2 × 500 | 3,000 | 1–2.5 h per model |
+Choose one controlled corpus, such as CREMA-D or MCAE-SPPS, after checking reference availability, label quality and
+sentence structure. Do not begin with the previous five-corpus grid. MELD has neutral-labelled utterances, but no
+standard calm recording made for every character; it is a less convenient starting point for this question.
 
-Stage 1 answers the core questions: do examples help (C1, C2 vs C0)? Does the speaker matter (C3 vs C2)? Is the
-sound-to-label link used (C4 vs C3)? Stage 2 uses CREMA-D, MCAE-SPPS and THAI-SER.
+### Minimal paired conditions
 
-**Several clips in one prompt?** Qwen2-Audio **yes** ([card](https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct);
-each clip padded to 30 s). Qwen2.5-Omni **yes** ([card](https://huggingface.co/Qwen/Qwen2.5-Omni-7B)). Gemma 4
-**probably** ([card](https://huggingface.co/google/gemma-4-E4B-it) is silent; our processor supports it; its local
-layers see only 512 tokens back, so early examples reach only the global layers). Gemini **probably** (up to 9.5 h of
-audio, 20 MB inline; [docs](https://aistudio.google.com/docs/audio)). GPT Realtime **to check** with one test call.
-Audio LLMs often struggle with several clips ("Beyond Single-Audio", [EMNLP 2024 Findings](https://arxiv.org/abs/2409.18680)),
-hence Stage 0.
+Keep targets and candidate labels fixed; change only the reference:
 
-**The two closest papers.** Piao et al., "When Demonstrations Fail" ([SLT 2026](https://arxiv.org/abs/2603.20433)):
-6 audio LLMs incl. Qwen2-Audio, Qwen2.5-Omni and Gemini 2.5 Flash; examples "improve format compliance but fail to
-improve the core task performance"; with shuffled labels "SER performance remains comparable"; hiding the example
-labels drives SER to near zero, hiding the example audio does not. Our C1 + C4 on CREMA-D repeat their key result; the
-rest is new. Wong, Huzaifah, Chen, Aw (A*STAR) ([ASRU 2025](https://doi.org/10.1109/ASRU65441.2025.11434787),
-[record](https://oar.a-star.edu.sg/communities-collections/articles/22939)): open models "already exhibit some degree
-of speech in-context learning" on stutter, pronunciation and SER; details not public, so **get the paper from IEEE
-Xplore before writing**. Both findings can be true; our controls decide. A*STAR is in Singapore: likely reviewers.
-
-**Possible results (made up).** Speaker reference works: C3 beats C2 on unseen corpora, C4 falls back to C0.
-If the neutral rate drops and future prior correction (F) gives a similar gain, label preference may explain part
-of the improvement; this does not establish that examples only shift habits. If nothing helps, these tested
-prompts did not work; it does not prove that the encoder lacks emotion information.
-
-**Compute and time on our Mac:** Stage 1 ≈ 14 h (two nights); Stage 2 ≈ 15 h.
-
-**Risks:** "no gain" is likely, but with these controls still a clear answer; multi-audio may break on Gemma 4 (Stage 0
-catches it).
-
----
-
-## 🥈 B. Automatic prompt rewriting with GEPA
-
-**In one sentence:** a second LLM reads the audio LLM's mistakes and rewrites the instructions, round after round; does
-this help it hear emotion?
-
-**Why it matters.** Prompt wording alone moves SER macro-F1 by more than 20 points (VoxEmo), and audio LLMs say
-"neutral" far too often (in our pilot Gemma 4 answered mostly "neutral" although it transcribed the speech correctly).
-A prompt can change exactly these things. **Nobody has tried** a prompt optimiser on audio LLMs for SER or any
-paralinguistic task (searched 2026-11-06).
-
-**What GEPA is, in plain words** (Agrawal et al., [ICLR 2026 oral](https://arxiv.org/abs/2507.19457)). It improves the
-text of the prompt; the weights never change. One round: (1) run the audio LLM with the current prompt on a few
-training clips; (2) a **reflection LM**, a second LLM acting as a coach, reads the prompt, the answers and feedback
-("correct: angry; you said neutral") and writes a better prompt; (3) if it does better, score it on the validation
-set; (4) keep the **Pareto front**: every prompt that is the best on at least one validation clip. Think of a team of
-specialists: one prompt is great on angry clips, another on sad ones; GEPA keeps them all and builds on them instead
-of polishing one. (5) Stop when the **rollout budget** is used up (a rollout = one audio-LLM call on one clip).
-
-Paper numbers (text tasks, Qwen3-8B and GPT-4.1 mini): **1,839–7,051 rollouts** per run, mostly for validation (only
-**79–737** training rollouts); **17–90 coach calls**; beat GRPO (24,000 rollouts) by 6% on average (up to 20%) and
-MIPROv2 by more than 10%; a prompt optimised on one model still gave +9.0% on another (vs +12.2% native). DSPy
-recommends a stronger coach than the task model ([GEPA in depth](https://dspy.ai/current/diving-deeper/gepa-in-depth/)).
-
-**Known to work for audio? No.** The closest study ([arXiv 2610.20085](https://arxiv.org/abs/2610.20085), audio-visual
-QA, 2,500 trials) found Qwen3-Omni Instruct **−0.32**, Qwen3-Omni Thinking **+0.95**, Gemini 2.5 Flash **+4.12**
-points. So "no gain" is a real possibility; a controlled negative result still pairs well with A ("neither examples
-nor instructions fix hearing").
-
-**What it can change**: instructions, label definitions, cue descriptions ("anger: loud, tense, fast"; see
-[Juslin & Laukka 2003](https://doi.org/10.1037/0033-2909.129.5.770)), decision rules ("calm counts as neutral"),
-language notes ("Thai is tonal"). **What it cannot**: what the audio encoder delivers.
-
-### How
-
-| Coach | Sees per example | Risk |
+| Condition | Input | Purpose |
 |---|---|---|
-| **R-text**: strong text LLM (API) | prompt, answer, acted label, **listener votes** (🆕, "angry 5/9, neutral 4/9"), transcript, pitch/loudness/speed vs the speaker's average (eGeMAPS) | cannot hear; clichéd cues |
-| **R-audio**: audio LLM (Gemini Pro or a GPT audio model) | the same **plus the error clips** and one correct clip | hears emotion badly itself (gpt-realtime-2 27.9%); audio goes to an API (allowed for all 13 corpora, never ESD) |
-| R-self (optional): the audio LLM itself | as R-text | weak 7–8B coach |
+| S0 | Target audio | Baseline |
+| S1 | Another speaker's neutral reference + target | Effect of one additional labelled recording |
+| S2 | The target speaker's neutral reference + target | Speaker matching, compared with S1 |
+| S3 | The same neutral text cue without reference audio + target | Whether the cue alone explains gains |
 
-- **Sets**: feedback ≈ 200 balanced clips (train speakers); scoring 105–150 balanced clips (validation speakers), so
-  "always neutral" cannot win. Feedback never contains validation or test labels.
-- **Score** 1 / 0 per clip; minibatch of 7 (one per emotion), so the coach always sees confusions.
-- **Optimise on** CREMA-D and MCAE-SPPS (THAI-SER if time allows). **Budgets** 1,000 / **2,500 (main)** / 7,000
-  rollouts. Three seeds on one cell (CREMA-D, Qwen2-Audio, R-text) to see the spread.
-- **Baselines**: our prompt (`prompts.yaml`); hand edits (+ label definitions, + cue descriptions, + "do not default to
-  neutral", short chain of thought); VoxEmo's 5-prompt vote; random paraphrase search at the same budget (does the
-  coach matter?); best ICL condition and GEPA + best examples (RQ4); prior correction (F, not yet implemented); SER models.
-- **Transfer (RQ4)**: to all 13 corpora (the 4 unseen are key); English vs Mandarin source tested on Thai, Polish,
-  Italian; one model's prompt on the other models and APIs; 7-class prompts on 4-class corpora.
+Match reference sentences, duration and recording conditions where possible. Reference and target sentences must
+not overlap. Use several predetermined reference choices and report the spread. If extending to multiple emotion
+examples, add pairing shuffles, labels-only and order controls at the same audio/label budget. More examples need
+not help monotonically.
 
-**Compute and time on our Mac** (the main worry). Long prompts and recompiling give ≈ 0.8 / 1.05 / 1.5 s per rollout
-(Gemma / Omni / Qwen2-Audio): 2,500 rollouts = 0.6 / 0.7 / 1.0 h; 7,000 = 1.6 / 2.0 / 2.9 h. Testing one prompt on
-13 × 500 clips = 1.4 / 1.9 / 2.7 h. Coach calls cost a few dollars.
+**Same-speaker support is an explicit condition.** Prompt/rule/hyperparameter development still uses independent
+speakers. In formal A1 evaluation, another recording of the test speaker is deliberately allowed calibration
+input. Support and query recordings must be distinct, and the target's emotion cannot determine the reference.
+This is not zero-shot evaluation without speaker information. If gold labels select neutral support, disclose that
+extra annotation requirement.
 
-| Block | Runs | Mac hours |
+**Avoid answer leakage.** Do not make all wrong-emotion examples share the target sentence while the correct one
+uses a different sentence. Sentence matching must not reveal the answer. If emotion-embedding retrieval is added,
+also evaluate directly copying the retrieved labels. Retrieval and voting are not required in this first pilot.
+
+### When is it worth expanding?
+
+- S2 reliably exceeds S1/S3 and replicates on new speakers or another corpus: evidence that speaker references add value.
+- Only neutral predictions increase, without non-neutral recall gains: examine label preference before claiming better recognition.
+- No clear gain: use effect intervals to assess whether practically relevant gains were excluded; non-significance alone is not evidence of no effect.
+
+Speaker-personalised ICL has precedents, including [Ihori et al., ASRU 2025](https://arxiv.org/abs/2509.08344).
+Differences between existing frozen LLMs and specially trained systems need checking; they do not establish a
+first-of-its-kind contribution by themselves.
+
+## 3. A2: Does real past dialogue help interpret the target utterance?
+
+Start with MELD: locally it has utterance audio, `Dialogue_ID`, `Utterance_ID`, `Speaker` and transcripts. It comes
+from the television series *Friends*. It has conversation structure, but remains scripted and acted rather than
+fully spontaneous interaction.
+
+### A concrete example in our local data
+
+| MELD test item | Content | Existing label |
 |---|---|---|
-| Pilot | 1 small run (CREMA-D, Gemma 4, R-text) | 0.5 h |
-| Main grid | 3 models × 2 corpora × 2 coaches = 12 runs (+ 2 seeds) | 12–15 h |
-| Test 12 prompts on 13 corpora | 12 × 6,500 calls | ≈ 24 h (≈ 15 h with 300 clips per corpus) |
-| Cross-model transfer | best prompt per model on the others | 8–13 h |
-| **Total** | | **≈ 30–50 h**, about a week of nights and weekends |
+| Dialogue 252, utterance 0 | Chandler complains that Ross should not repeat himself | anger |
+| Dialogue 252, utterance 1 | Ross replies “Fine!” (about 1.1 s) | anger |
+| Dialogue 275, utterance 0, a different recording | Ross says “Fine.” | neutral |
 
-Engineering: a custom adapter for the [gepa](https://github.com/gepa-ai/gepa) library; GEPA starts after phase 2. GPT
-Realtime needs ≈ 4 h per 2,500 rollouts unless run in parallel. Not feasible on the Mac: large grids, 30B models
-(Qwen3-Omni), GRPO.
+The word does not uniquely determine emotion. The two target recordings differ, so **their label difference cannot
+be attributed to context alone**. Instead, hold `dia252_utt1.wav` fixed and vary what precedes it:
 
-**Risks:** may not help 7–8B models; clichéd cue lists; the R-audio coach hears emotion badly.
-
----
-
-## Do we need to compare against GRPO?
-
-**In one sentence:** no; cite published results, add one small LoRA fine-tuning run only if a GPU is free, and name
-GRPO as future work.
-
-**Why reviewers might ask.** GEPA's headline is "beats GRPO". GRPO is reinforcement learning: the model answers each
-clip several times, gets a reward (1 if right), and its weights are updated. But our question is prompting vs
-*trained SER models*, and those already serve as the "trained" reference.
-
-**What it takes.** R1-AQA ([arXiv 2503.11197](https://arxiv.org/abs/2503.11197)): GRPO on Qwen2-Audio, **8 × H800**,
-64.5% on MMAU test-mini. Omni-R1 ([arXiv 2505.09439](https://arxiv.org/abs/2505.09439)): much of the gain came from
-text reasoning. Emotion RL: EMO-RL ([EMNLP 2025 Findings](https://arxiv.org/abs/2509.15654)), EmotionThinker
-([ICLR 2026 oral](https://arxiv.org/abs/2601.15668)), R1-Omni ([arXiv 2503.05379](https://arxiv.org/abs/2503.05379)),
-Yu et al. ([arXiv 2603.08230](https://arxiv.org/abs/2603.08230)), FSA-GRPO ([arXiv 2606.02615](https://arxiv.org/abs/2606.02615)).
-On our Mac it is not realistic: ≈ 17 GB for the model alone, no vLLM on Apple GPUs, and 24,000 rollouts are 7–10 h of
-sampling before any training.
-
-**Decision.** Always: cite the RL numbers (marked as other setups) and list GRPO as future work. Only if a CUDA GPU is
-free by early December: one **LoRA-SFT** run (ordinary fine-tuning on the label) on Qwen2-Audio with **the same
-labelled clips GEPA sees**, ≈ 1–2 GPU hours. It asks "same data: prompt or weights?". For one right/wrong label, GRPO
-is close to training a classifier, so SFT is the simpler reference.
-
----
-
-## 🧱 0. The zero-shot benchmark
-
-**In one sentence:** 10 models × 13 corpora with one fixed prompt; everything else builds on it.
-
-**Why it matters.** Not new alone, but it measures the gap A and B try to close (RQ1), and its per-clip outputs feed C,
-D, F, G and H. **Status**: 3 SER models done on all 13; Vox-Profile running; the 3 local LLMs next (phase 2, ≈ 36 h);
-GPT Realtime and Gemini in phase 3 on the company computer.
-
-**🆕 What phase 2 saves besides the answer**, from the same model call (no extra runs; `config/llm.yaml`):
-
-- **first-token scores for the dataset's candidate labels** (`token_p_*`) and their total vocabulary mass
-  (`token_mass`): generation-side probability proxies, not full-label probabilities; see F;
-- the **mean-pooled hidden states**: language-model hidden vectors averaged over audio-token positions, one per
-  saved layer, from 4 layers (float16, ≈ 20–33 kB per clip, git-ignored). These depend on the prompt and context.
-
-With complete paired outputs, F needs no new LLM inference, but still requires separate CPU probe fitting and
-aligned readout comparisons. Prior correction is not implemented yet.
-
----
-
-## 🥉 C. What do SER benchmarks measure? Training-data overlap and family trees
-
-**In one sentence:** emotion2vec+ scores 28 points higher on corpora it trained on than on new ones, so many
-"zero-shot" numbers are partly memory.
-
-**Why it matters.** Contamination = the test data was in the training data, like a student who saw the exam. Without
-a seen/unseen split, nobody can judge the gains of A and B. Nobody has audited released SER models this way (closest:
-ASR test sets, [arXiv 2505.22251](https://arxiv.org/abs/2505.22251); speaker leakage,
-[arXiv 2610.33952](https://arxiv.org/abs/2610.33952)).
-
-**How.**
-
-- **Seen vs unseen.** Only **MCAE-SPPS, MESS, THAI-SER and nEMO** are unseen by every model with published training
-  data ([experimental_design.md](experimental_design.md) §2.4). emotion2vec+ saw the other 9; MERaLiON saw CREMA-D and
-  MELD; Melati saw JL-Corpus and Emozionalmente; Vox-Profile none. The audio LLMs publish no training data, and "not
-  published" is not "unseen".
-- **Family trees.** Several models learned from labels made by emotion2vec, acting as a teacher: emotion2vec+
-  ([card](https://huggingface.co/emotion2vec/emotion2vec_plus_large)), SenseVoice ([arXiv 2407.04051](https://arxiv.org/abs/2407.04051)),
-  MERaLiON-SER ([arXiv 2511.04914](https://arxiv.org/abs/2511.04914)), C²SER ([arXiv 2502.18186](https://arxiv.org/abs/2502.18186)).
-  A model that never saw CREMA-D can still inherit the habits of a teacher that did.
-- 🆕 **Release-date test** for the LLMs: a corpus published after a model came out cannot be in its training data
-  (MCAE-SPPS, 2025/26, is newer than Qwen2-Audio, 2024-07).
-
-**Preliminary numbers** (3 of 5 SER models, `reports/*/summary.json`, 2026-11-06, mean accuracy):
-
-| Model | 9 corpora seen by emotion2vec+ | 4 unseen corpora | Difference |
-|---|---|---|---|
-| emotion2vec+ large (saw the 9) | 84.5% | 56.2% | **+28.3** |
-| MERaLiON-SER-v1 (saw 2 of 9) | 54.0% | 60.4% | −6.4 |
-| Melati (saw 2 of 9) | 56.8% | 56.4% | +0.4 |
-
-For the other models the 9 corpora are not easier, so the gap is exposure, not difficulty (chance-adjusted: 0.82 vs
-0.45). Single corpora agree: CREMA-D 86.5% and 84.7% (seen) vs 51.4% (Melati, unseen); JL-Corpus 99.5% (Melati, seen)
-vs 75.9%; Emozionalmente 86.9% and 85.0% (seen) vs 47.4%. Family is not fate: on MESS, MERaLiON (74.5%) far beats its
-teacher emotion2vec+ (40.8%). Final design: a "who saw what" table, a family-tree figure, and the 4 unseen corpora as
-the recommended clean test set.
-
-**Compute and time:** none. **Risks:** the unseen group has two 4-class corpora (chance 20.2% vs 15.6%); the seen
-group includes MELD (TV speech); no significance tests yet.
-
----
-
-## 🥉 D. Same clip, same prompt: does the answer change?
-
-**In one sentence:** send each clip 10 times, count how often the answer changes, and check whether the model wavers
-on the clips where listeners disagree.
-
-**Why it matters.** Both APIs are random by design: GPT Realtime has no temperature setting at all, and
-gemini-3.8-flash runs at temperature 1.0 by default with thinking that cannot be turned off (lowest level: LOW). So
-one API run is noisy, and since neither API returns logprobs, repeating the call is also our only way to get label
-probabilities for them (see F). Gains from A or B must beat this **noise floor**. Nobody has compared audio-LLM answer flips with
-per-clip listener votes (close: "Scaling Ambiguity", [arXiv 2601.14620](https://arxiv.org/abs/2601.14620); errors grow
-with listener disagreement, [arXiv 2602.03873](https://arxiv.org/abs/2602.03873); GPT-4o on music metadata,
-[arXiv 2508.12626](https://arxiv.org/abs/2508.12626)).
-
-**How.** APIs: 10 identical calls per clip. Open models: the label probabilities from F, plus 10 real samples on one
-model as a check. Humans: votes in CREMA-D (mean 9.2 per clip), MCAE-SPPS (40), THAI-SER (3–11), Emozionalmente (5).
-Measures:
-
-- **flip rate** = 1 − share of the most common answer (10 × angry = 0; 6 angry + 4 neutral = 0.4);
-- **wavering vs disagreement**: Spearman correlation, and AUROC for spotting disputed clips (0.5 = guessing,
-  1 = perfect);
-- **Jensen–Shannon divergence** between model and vote distributions (0 = identical);
-- **Fleiss' κ** (agreement beyond chance: 0 = chance, 1 = always agree) across the 10 runs, next to the listeners' κ;
-- one call vs majority of 10; do flips cluster on "neutral"?
-
-**Compute and time.** 2,000 clips (500 × 4 corpora). APIs: 20,000 calls per model (GPT Realtime ≈ $38). Open models:
-probabilities free from phase 2; 10 samples ≈ 2.6 / 3.7 / 5.6 h.
-
-**Risks:** the link with human disagreement may be weak; then D stays a noise floor.
-
----
-
-## 🔹 E. Words-only control: speech-to-text, then a text LLM
-
-**In one sentence:** turn each clip into text and let a text LLM guess the emotion: how much do the words alone give
-away?
-
-**Why it matters.** A model that "solves" a corpus from the words is reading, not listening. LISTEN showed this with
-gold transcripts (text-only answers "neutral" 82.5–96.6% of the time). New for us: a real Whisper → text-LLM pipeline
-on all 13 corpora, including Mandarin, Thai, Polish and Italian; a per-corpus **word-clue score** for corpora that are
-not fully parallel (MEAD, MELD, SAVEE, THAI-SER improvised); and a check on A and B. AHELM ranked such a pipeline 6th
-among audio models ([arXiv 2508.21376](https://arxiv.org/abs/2508.21376)).
-
-**Compute and time:** Whisper on ≈ 6,500 clips, about an hour. **Risks:** low; speech-to-text quality on Thai and
-Polish.
-
----
-
-## 🔹 F. 🆕 Label probabilities, removing the neutral bias, and three readouts
-
-**In one sentence:** compare what the model says, which label its generation scores favour, and what a supervised
-linear classifier can recover from its saved representations. These readouts help locate gaps; none alone proves
-that the model did or did not "hear" emotion.
-
-**What the three readouts measure.**
-
-| Readout | How it is obtained | Question |
+| Condition | Input | Purpose |
 |---|---|---|
-| (a) **One-word answer** | Parse the model's generated answer | How well does the model perform directly under this prompt? This is the original zero-shot readout. |
-| (b) **Label scores** (`token_p_*`, with prior correction planned) | Rank label-related token scores at the first generated position, renormalised across labels | Does the correct label score highly despite a different final answer? How much can changing relative label preferences help? |
-| (c) **Linear probe** | Freeze the large model; train a small classifier on hidden vectors and labelled training clips | How much label information is accessible with supervised linear readout under this representation and data protocol? |
+| H0 | Target audio only | Single-utterance baseline |
+| H1 | Real past audio turns + target | Effect of real audio history |
+| H2 | Transcripts of the same history + target audio | Whether linguistic content explains the benefit |
+| H3 | Duration/turn-count matched audio history from another dialogue + target | Relevance and sensitivity to unrelated information |
 
-**What a linear probe learns.** Treat each saved hidden vector as notes already written by the large model. The
-probe leaves those notes and all large-model parameters unchanged. It learns a weight for each vector dimension
-and class, plus a bias: `score_k = w_k · z + b_k`. Softmax converts these scores into multiclass probabilities.
-"Linear" describes this single weighted-sum scoring layer, with no additional hidden layers.
+Begin with a fixed short window, for example the immediately preceding turn. Decide any three-turn extension on
+design data. Mark speakers and the target explicitly; ask for the **target's emotion only**. Use past turns, no
+future turns, and no gold emotions of history or target. Keep target audio, candidates and scoring fixed across
+conditions. H3 measures sensitivity; it is not automatically a test with an objectively wrong new answer.
 
-The implementation uses L2-regularised `LogisticRegression` on standardised saved features. Training emotion labels
-teach this new classifier how to read the vectors. Thus the large model is frozen, but the readout **is trained
-with supervision**. This is a supervised representation diagnostic, not the LLM's zero-shot performance or a free
-output-format change. The exported `probe_p_*` columns are probabilities from this new classifier.
+Use consistent anonymous speaker markers so that only history conditions do not additionally reveal character
+names or show-specific knowledge. If target markers change the prompt, recompute H0 in the matching format rather
+than reusing a baseline cache with a different input format.
 
-**What is being probed?** Saved features are language-model prefill hidden states, averaged over audio-token
-positions at selected layers. They have passed through the language model and depend on the prompt and context;
-they are not pure audio-encoder outputs. The default requires `pooling=audio` and rejects fallback pooling over the
-whole prompt. Averaging only audio positions still does not remove prompt influence.
+### Do existing labels show how humans change with context?
 
-**Protocol and fair comparisons.**
+No. Hearing “Fine” alone may suggest acceptance or irritation. Learning that it answers a complaint may change the
+interpretation; alternatively, the voice may already be clear enough. That is a change to measure, not assume.
 
-1. Freeze speaker-disjoint train/validation/test manifests before fitting, and reuse each dataset's manifest across
-   models. Labels may be used for stratification; features and predictions are not. Missing features must not lead
-   to a different test subset for one model.
-2. Fit `StandardScaler` and the classifier on train only. Select regularisation `C` and then the layer by validation
-   UAR only. Do not refit on train+validation or select the best-looking test layer.
-3. Evaluate on test. Align (a), (b), probe and SER predictions by audio ID on the **same eligible test clips, target
-   labels and scoring rules**. A probe test-subset score cannot be subtracted from a full-corpus LLM/SER score.
-   Composite-target exclusions, for example, require recomputing all compared readouts on matching test items and
-   targets. Alignment does not make the tasks identical: after excluding excited in JL-Corpus, the probe has four
-   supervised classes while the original LLM still had five inference candidates. Filtering test clips cannot
-   remove that candidate-set difference; retain and report it. Also disclose the probe's extra supervision.
+MELD has one set of labels involving video and transcripts. It does not provide independent votes for H0/H1/H2 on
+the same target. Initial model scores against the existing labels are useful, but a gain does not establish better
+alignment with humans under the same evidence.
 
-TESS is skipped by default because it has only two speakers. MELD is also skipped because current features cover
-official test only: training on those features would consume the official test. Input requirements, explicitly
-marked diagnostic exceptions, commands and exports are in the
-[linear-probe guide](../../emotion_recognition/scripts/analysis/README.md).
+If the pilot merits further work, collect votes on a small target subset under two or more evidence conditions.
+Different rater groups receive the same targets with different evidence and the same question. Retain class vote
+counts. Sample multiple dialogues/classes, ordinary turns and short responses, not just model errors. The sample,
+number of raters and budget remain decisions. Assess both agreement in changes and residual human disagreement.
+Use the votes for each evidence condition as its reference rather than forcing every condition to share the old
+hard label. Avoid asking someone who already heard the history to act as an uninformed no-history listener.
 
-**Label-score caveats and planned prior correction.** Original LLM `p_*` columns are one-hot encodings of the
-answer, not confidence. Use `token_p_*` together with `token_mass`: the former renormalises label-related
-first-token probability mass across labels, while the latter records their total share of the vocabulary mass.
-An angry score of 60% when all label tokens jointly receive only 1% of vocabulary mass is not a 60% probability
-that the clip is angry. First-token scores are also not exact full-label sequence probabilities; shared first
-tokens, later tokens, formatting and retries can affect their relation to the final answer.
+Changing history can legitimately change perceived emotion. **An answer change does not automatically mean the
+model was misled.** Human judgments under the same conditions are needed to distinguish appropriate reinterpretation
+from interference. Labels also do not reveal an unobservable true psychological state.
 
-**Prior correction is not implemented yet** and is not performed by the probe script. One planned baseline would
-estimate average `token_p_*` on train, adjust each clip's relative scores using those averages, then renormalise
-and rank labels again. Fix the rule and any parameters on train/validation, never test. High average scores may
-reflect output preference, actual class prevalence or clip difficulty; equal shares are not automatically the
-right target. A gain would show that this readout adjustment helps. Matching an A/B gain would not establish that
-A/B only removed a neutral habit.
+### Data and comparison boundaries
 
-**Reading the result.** A strong probe with a weak answer supports the presence of label information accessible to
-a supervised linear classifier in these saved representations. It motivates studying the native readout, but
-does not establish emotion understanding or a purely output-side failure. Better first-token or corrected scores
-show a gap between readout rules, with tokenisation, format and class preferences still to check. A weak probe
-only limits this combination of layers, pooling, training data, split and linear classifier; it does not prove
-that the encoder lacks emotion information or that no prompt could help.
+- Only MELD official test is local now. It supports interface checks and exploration. Do not repeatedly use it to choose prompts/history windows and then call it an untouched final test. Prepare train/dev or independent design data; validate on data not used for design and on another corpus.
+- IEMOCAP and MSP-Conversation are [survey candidates](../../emotion_recognition/docs/datasets_survey.md), not downloaded or added to the current 13 evaluation datasets. IEMOCAP is closer to utterance classification; MSP-Conversation mainly has continuous V/A/D traces and needs a separate task, not an invented official seven-class mapping.
+  DailyTalk and EmotionTalk have both been fully audited and retained for English and Mandarin past-turn pilots. Public ECSS categories exactly match inherited text labels and are not a second independent perceptual gold set. EmotionTalk offers 18,306 dyadic history targets, including 1,830 test targets; use audio gold and completed past turns, noting validation/test speaker-ID overlap. RESD remains metadata-only without audio download. See survey section 3b; none was automatically added to formal evaluation.
+- The original five SER baselines see only target audio. History can test changes within an LLM, but extra LLM inputs do not establish equal-information superiority over those SER models.
+- Characters, laughter, music, duration, class priors and possible familiarity with the show may influence MELD results. Stratify and replicate on another conversation source.
 
-**API models** give no hidden states, so no (c). They give no answer probabilities either (checked 2026-11-06, see
-[api_logprobs.md](api_logprobs.md)). GPT Realtime has no logprobs for its answer: its only `include` option gives the
-probabilities of the input-audio transcript, made by a separate model. gemini-3.8-flash returns no logprobs at all;
-Google dropped them for 3.x models on purpose. So for the APIs we use D's repeated sampling instead (e.g. N = 10 on a
-subset): 6 "angry" out of 10 ≈ 60%.
+## 4. How small should the pilot be, and when do we expand?
 
-**Compute and time:** with complete paired features already saved, probe analysis needs no new LLM inference,
-audio loading or GPU. CPU time and RAM depend on sample count, dimensions, layers and the `C` search; "minutes"
-is not a general guarantee. Linear-probe fitting and export are implemented; paired three-readout comparisons and
-prior correction remain separate analysis work. Few-speaker corpora may overfit; report multiple seeds and
-speaker/dialogue-grouped uncertainty.
-
----
-
-## 🔹 G. Actor's intended emotion vs what listeners heard
-
-**In one sentence:** do models reproduce what the actor meant or what listeners heard, and does the ranking change?
-
-**Why it matters.** Acted labels are not the whole truth; a model that "fails" a clip may hear what people hear.
-CREMA-D: the listener majority matches the actor for only 45.6% of 6,798 clips; on 3,699 disputed clips, actor-trained
-models follow the actor in 77–82%, podcast-trained Vox-Profile follows the listeners in 62–65%. MCAE-SPPS: majority =
-acted label for **100%** of clips, so use the **vote shares**. THAI-SER: even in the high-agreement subset the majority
-differs from the label for **2,698** of 11,848 clips (1,676 "frustrated", 904 "neutral"). Emozionalmente: human UAR
-66%. Closest work: Label Authority in SER ([arXiv 2610.26446](https://arxiv.org/abs/2610.26446)).
-
-**Compute and time:** none. **Risks:** low; one paragraph and a table.
-
----
-
-## 🔹 H. Are the confidence numbers honest? (calibration)
-
-**In one sentence:** when a model says "80% angry", is it right about 80% of the time, and do its probabilities look
-like the listeners' vote shares?
-
-**Why it matters.** A model that is confidently wrong is worse than one that knows when it is unsure. **How**: compare
-SER outputs, F and D with the votes of 4 corpora, using **ECE** (expected calibration error: the average gap between
-"how sure" and "how often right"; 0 = honest) and Jensen–Shannon divergence. Partly covered:
-[Chou et al., Interspeech 2023](https://www.isca-archive.org/interspeech_2023/chou23_interspeech.html),
-[Kuan et al. 2026](https://arxiv.org/abs/2604.25591).
-
-**Compute and time:** none (uses D and F). **Risks:** low; one table.
-
----
-
-## 💤 I. JEV-style structured outputs: set aside for now (2026-11-06)
-
-JEV is a closed text and image product without audio, and a JEV-style speech model already exists (ASOM,
-[arXiv 2610.22401](https://arxiv.org/abs/2610.22401)). What we keep is analysis F (the three-readout comparison).
-Background: [jev_analysis.md](jev_analysis.md).
-
-## 💤 J. Telephone audio
-
-Loss on phone-quality audio (G.711, AMR-NB, 8 kHz)? Mostly open (EMO-Codec, [APSIPA 2024](https://arxiv.org/abs/2407.15458));
-our G.711 simulation exists. On hold: the user doubts a clear result, and it does not fit the prompting story.
-
-## 📎 K. Clip length and padding
-
-Whisper-based SER models pad every clip to 30 s (or 15 s), and MERaLiON averages over the padding; 31,249 of our 56,264
-clips are under 3 s. One sentence in Limitations.
-
-**Dropped**: prompt sensitivity alone (VoxEmo; "Hearing the Order", [arXiv 2510.00628](https://arxiv.org/abs/2510.00628));
-cross-language alone; chain of thought (now a B baseline); LLM-as-judge ([EMNLP 2025 Findings](https://aclanthology.org/2025.findings-emnlp.25/));
-giving the LLM a SER model's prediction as a hint (product-like).
-
----
-
-## What still has to be built
-
-| Item | For | Status |
+| Step | Work | Decision afterwards |
 |---|---|---|
-| Finish the benchmark (Vox-Profile, phase 2 ≈ 36 h, phase 3 APIs) | all | running |
-| Save candidate-label first-token scores, `token_mass` and mean-pooled hidden states per clip (3 local LLMs) | F, D, H | 🆕 set, runs with phase 2 |
-| Logprobs check for GPT Realtime and Gemini ([api_logprobs.md](api_logprobs.md)) | F, D | 🆕 done: neither gives them; use repeated sampling |
-| Pin the GPT Realtime model: `gpt-realtime` shuts down on 2027-01-20; the official successor is `gpt-realtime-2.1` | all | 🆕 decision pending with the user |
-| Neutral rate, accuracy without neutral, bootstrap and paired tests in `evaluate.py` | all | open |
-| Split files and 500-clip test lists; multi-audio loaders; example pickers | A, B | new |
-| Group-disjoint probe splits, CPU fitting and CSV/JSON export | F | implemented; formal runs need complete features |
-| Prior correction and paired three-readout comparisons | F | pending |
-| GEPA adapter around `Predictor`; coach access; transcripts, eGeMAPS, vote tables | B, E, G | new |
-| LoRA-SFT reference on a CUDA GPU | GRPO question | optional |
-| Release code, splits, prompts, per-clip predictions; no restricted audio | paper | at submission |
+| 0 | Check multiple-audio handling and target identification with verifiable questions and target-position changes | Fix the input before interpreting emotion results; processor acceptance is insufficient |
+| 1 | Complete MELD single-utterance baselines: three models, 2,608 clips; check protocol, invalid answers, UAR/macro-F1/confusions | Establish reusable H0; one metric reversal does not establish a dialogue advantage |
+| 2 | Compare H0–H3 on targets spanning multiple dialogues; separately run S0–S3 on one small controlled-corpus sample | Treat this as interface/phenomenon exploration, not final statistical design |
+| 3 | Decide whether to collect matched-evidence human votes or use a more suitable dataset | Human benefit can be informative even if the model does not improve |
+| 4 | Select one question to expand, adding independent data and model checks | Prioritise B only after identifying a clear failure |
 
-## Open decisions
+**Implementation status (2026-11-09).** `config/evaluation.yaml` selects local MELD and three open LLMs, with
+`limit: null`, run sequentially. Existing `evaluate.py` still sends **one independent clip at a time**, without
+demonstrations or dialogue history. H1–H3/S1–S3 input construction, cache identities and result alignment are not
+implemented. Running that configuration does not complete the context pilot. New conditions need separate
+experiment identities to avoid overwriting or reusing the baseline incorrectly.
 
-1. ACL 2027 (ARR deadline 2027-01-04) or EMNLP 2027 (ARR May 2027) for more time.
-2. Which text and audio LLM as coaches; company policy per API (all 13 corpora allowed; ESD never).
-3. All three open models or the best two for A Stage 2 and B (Gemma 4's constant "neutral" is the most interesting case).
-4. 500 clips per corpus or full corpora for the final tables.
-5. LoRA-SFT only with a CUDA GPU by early December.
-6. SAVEE in or out ([experimental_design.md](experimental_design.md) §7.1).
-7. GEPA on GPT Realtime, or only transfer prompts to it.
-8. Company approval process and timeline.
+Use this run and multiple-audio smoke tests for timing; the old full-grid few-shot estimates are no longer a
+scheduling commitment.
 
-## Timeline to ACL 2027 (estimate)
+## 5. B: Can GEPA improve a demonstrated failure?
 
-| Weeks | Work |
+GEPA lets a coach inspect instructions, answers and feedback, then propose revised instructions without changing
+model weights. It is an existing optimiser ([GEPA, ICLR 2026](https://arxiv.org/abs/2507.19457)); applying it to SER
+does not automatically constitute a main contribution. Related multimodal-interface work exists
+([AVQA interfaces](https://arxiv.org/abs/2610.20085), currently submitted to ICASSP 2027, not verified accepted).
+
+The sharper question is: **does a coach that hears error audio learn different, more transferable rules than the
+same coach reading textual feedback?**
+
+| Condition | Coach input |
 |---|---|
-| Nov 6–13 | phase 2 on the Mac (with probabilities and hidden states); splits; multi-audio loaders; Stage 0; phase 3 |
-| Nov 13–20 | A Stage 1; GEPA adapter and pilot; first F analysis |
-| Nov 20 – Dec 4 | B grid and transfer; A Stage 2; D on the APIs |
-| Dec 4–18 | C, E, G tables; figures; statistics |
-| Dec 18 – Jan 4 | writing, Limitations, checklist; designated service contributor ([venues.md](venues.md) §2.3) |
+| B-text | Instructions, predictions, training labels, the same transcripts and structured feedback |
+| B-audio | Exactly B-text, plus error audio |
+| Rewrite control | Ordinary rewrite search at a comparable candidate/evaluation budget |
 
-Tight but possible if the Mac is free from about 10 November; if A or B slips, EMNLP 2027 reuses the plan.
+Use **the same multimodal coach model** for B-text/B-audio; vary audio access only. Match feedback counts, search
+budgets, candidate selection and validation data; record calls and input costs. Feedback and selection cannot use
+final test labels. Neither coach receives the answers to target test items.
+
+Start with a small budget, then test held-out speakers/dialogues and corpus transfer. Validation-only gains or
+changed neutral preference do not establish general acoustic rules. Prompts may change input processing as well
+as output behaviour; do not assume their effects are restricted to the final readout. GRPO, LoRA and a large B grid
+are not mandatory in this round.
+
+## 6. How does this differ from nearby work?
+
+| Work | Already covers | Consequence for our plan |
+|---|---|---|
+| [When Demonstrations Fail](https://arxiv.org/html/2603.20433v2), accepted SLT 2026 | Six LALMs, four tasks; CREMA-D supplies emotion demonstrations, evaluation uses Speech-IFEval subsets; balanced examples, label shuffling and attention knockout | Ordinary ICL failure, label reliance or the first controlled SER ICL study cannot simply be claimed as our discovery |
+| [Ihori et al.](https://arxiv.org/abs/2509.08344), ASRU 2025 | Speaker-personalised ICL with dedicated training | Check the A1 setting difference; do not claim speaker references have never been studied |
+| [MELD](https://aclanthology.org/P19-1050/), ACL 2019 | Conversational emotion data and context benefits | Adding earlier turns is not new by itself |
+| [EAA](https://www.isca-archive.org/interspeech_2025/du25b_interspeech.html), Interspeech 2025 | Context-aware instruction tuning with the current and preceding utterances | A2 should investigate evidence and perception changes, not merely context gains |
+| [CP-Bench](https://aclanthology.org/2025.findings-emnlp.760/), Findings EMNLP 2025 | Contextual content/paralinguistic QA, including a small conflict-emotion-word analysis | Specify the fixed-target, changed-history, matched-human-vote design; do not claim the first context study |
+| [EmotionTalk](https://aclanthology.org/2026.findings-acl.440/), Findings ACL 2026 | Mandarin dyadic dialogue with separate text/audio/video/audiovisual perceptual labels; raters can replay history | Modality-specific perception comparisons already exist; verify visible history and do not treat current audio labels as independent H0/H1 ratings |
+| [AVQA interfaces](https://arxiv.org/abs/2610.20085), submitted ICASSP 2027 | GEPA/COPRO and feedback interfaces for multimodal systems | B needs a specific feedback question and transferable evidence, not just a tool combination |
+
+These are the nearest checked examples, not a comprehensive novelty proof. Recheck the literature and versions
+before fixing a submission claim.
+
+## 7. Supporting analyses: one necessary question each
+
+### 0. Benchmark: what is the starting point?
+
+Keep completed five-SER results and ongoing audio LLM results. Match candidates and scoring; report Accuracy, UAR,
+macro-F1, class recall and neutral rate. A model need not lead or trail on every metric. A MELD metric reversal is
+a clue. Preserve old prompt/protocol outputs, but do not mix them into the current formal table.
+
+### C. Provenance: what do models publicly declare seeing?
+
+Record corpus/version/split, backbone and pseudo-label sources. Distinguish **corpus-level training exposure**,
+**test-file leakage** and **unknown**; source information is in the
+[model survey](../../emotion_recognition/docs/models_survey.md). Corpus use does not establish test leakage; seen/unseen performance also
+mixes language, labels, recording and domain differences, so it does not identify memorisation. Absence from a
+published list does not prove non-exposure. Later dataset publication is a timeline clue; recording, acquisition
+and model versions still need checking. Teacher relationships can motivate correlation checks, not establish an
+individual error's cause. This section limits claims rather than presupposing contamination.
+
+### D. Repetition: are changes stable?
+
+On representative subsets, fix inputs, record decoding settings and repeat calls; compare single calls, empirical
+distributions and voting. Greedy local repetition generally does not create a useful sampling distribution.
+Generation randomness is not human perceptual disagreement. Studying their relationship requires class-prior
+controls and simple baselines. `token_p_*` is a first-token label-score proxy, not a substitute for repeated answer
+distributions. Estimate paired changes with speaker/dialogue grouping; many turns in one conversation are not
+independent observations. Non-significance alone does not establish no effect.
+
+### E. Text: what content explains a benefit?
+
+Compare target and history transcripts. Separate human transcripts, an idealised semantic condition, from ASR
+transcripts with recognition errors. Text use is not automatically a failure: conversational emotion can depend
+on meaning. It limits claims that a gain comes from acoustic information. Start with needed pilot items rather
+than assuming an ASR pass over all 13 corpora.
+
+### G. Labels: acted instruction or listener perception?
+
+The requested portrayal and perceived emotion of the same recording can differ. On corpora with votes, score the
+same targets against each definition; report disagreement, class strata and neutral baselines. A neutral-biased
+model can look human-like on neutral-heavy listener subsets without better perception. MELD labels involve video
+and transcripts, not audio-only listener votes; other corpora are not uniformly actor-label-only either. A2's
+matched-evidence human votes are new material, not present in existing exports.
+
+### F/H. Optional: probes, label scores and calibration
+
+[Probe code and guide](../../emotion_recognition/scripts/analysis/README.md) are implemented: freeze saved vectors,
+train a small supervised linear classifier, select C/layer with validation and evaluate on test. This tests whether
+representations support supervised linear prediction; it does not locate the cause of native generation failure.
+It is not zero-shot performance and cannot prove the model understood emotion but only failed in its last layer.
+Keep it optional, possibly in an appendix; having code does not require every combination to be run.
+
+`probe_p_*` comes from the new classifier; original LLM `p_*` is answer one-hot; `token_p_*`/`token_mass` are
+first-token proxies. Calibration and prior correction need their own rule and independent data. Prior correction
+is not implemented, and equal class shares should not be assumed correct. Checked API logprob boundaries are in
+[api_logprobs.md](api_logprobs.md); models and interfaces may change, so recheck before execution.
+
+### I/J/K. Deferred work and limitations
+
+Structured JEV-style outputs and telephone codecs are outside this round; see [jev_analysis.md](jev_analysis.md)
+and the old design for background. Record length, cropping, padding, background sounds and multiple speakers.
+A model silently truncating longer history does not receive equivalent information.
+
+## 8. What would make a paper worth writing?
+
+Seek evidence that changes the interpretation, not just another score table. Candidate findings include:
+
+- Same-speaker references help while matched labels from another speaker do not: supports a role for individual vocal baselines.
+- Humans benefit from true history but models do not change accordingly: limits these models' use of dialogue evidence.
+- Model/human changes agree, but textual history explains the benefit: locate the claim in semantic context, not pure acoustic improvement.
+- A benefit replicates on another corpus and different models: more persuasive than a development-only improvement.
+
+These are possible outcomes. If pilots repeat ordinary ICL failure or yield intervals too wide to distinguish
+explanations, stop expanding, revise the question or defer it. A negative result needs a clear comparator,
+adequate precision and a meaningful capability boundary; controls alone do not make it a contribution.
+
+**Working titles:** *What Context Helps Audio LLMs Judge Emotion?*; *Speaker References or Dialogue History?
+Studying Emotion Judgments in Audio LLMs*. Let findings narrow the title and final RQs. Do not present A/B/C/D as
+four established contributions, or promise an acceptance tier in advance.
+
+## 9. Decisions and next work
+
+| Item | Current status / decision |
+|---|---|
+| MELD three-model single-utterance baseline | Local configuration prepared; update from actual run status; this is H0, not the complete context pilot |
+| Multiple-audio and target-boundary checks; history/reference inputs and cache identities | Not implemented; start with verifiable small examples |
+| MELD design/test data and history window | Freeze before formal evaluation; do not select by repeatedly viewing test |
+| A1 controlled corpus and support/query sentences | Choose one first |
+| Matched-evidence human votes | Decide whether, how many targets/raters and budget; not yet collected |
+| New corpus candidates | DailyTalk and EmotionTalk fully audited/retained; RESD audio deferred by the user; IEMOCAP/MSP-Conversation surveyed only. Formal evaluation integration and context inputs remain unimplemented |
+| GEPA | Decide after a clear A finding; new adapter not implemented; no original full grid now |
+| Linear probe | Tool available, running optional; does not block the main question |
+| Formal statistics, independent-corpus validation and release | Arrange after selecting the core question; no restricted audio release |
+
+Schedule by gates: baseline → two small pilots → choose one main question → independent validation → writing.
+The old grid-hour estimates are not commitments. See [venues.md](venues.md) for target venues and checked deadlines.
+Choose a venue after assessing the evidence; account for publication processes, author-service requirements and
+data access when scheduling.
