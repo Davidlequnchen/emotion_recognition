@@ -74,5 +74,3 @@ emotion_recognition/presentation/render/
 # Presentation: candidate clips that the deck does not use (regenerate with scripts/make_candidates.py)
 emotion_recognition/presentation/assets/audio_candidates/
 emotion_recognition/presentation/scripts/__pycache__/
-# Paper preparation: unpublished research plans stay local until submission
-research_paper/
