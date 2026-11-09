@@ -205,7 +205,7 @@ FunASR licence is the safe choice (not legal advice).
 
 ## 6. Main sources
 
-- Local files: `config.yaml`, `model.pt`, `tokens.txt`, `README.md` in `models/emotion2vec_plus_large/` (present after download, not in git); the same files: https://huggingface.co/emotion2vec/emotion2vec_plus_large/tree/main
+- Local files: `config.yaml`, `model.pt`, `tokens.txt`, `README.md` in `models/emotion2vec_plus_large/`. Configuration and the original model card come from the models submodule; `python3 scripts/common/setup_models.py emotion2vec_plus_large` restores and verifies the weights from its pinned GitHub Release. Original upstream files: https://huggingface.co/emotion2vec/emotion2vec_plus_large/tree/main
 - FunASR 1.4.16 code: https://github.com/modelscope/FunASR/tree/main/funasr/models/emotion2vec (`model.py`, `audio.py`, `base.py`, `modules.py`)
 - Model cards: https://huggingface.co/emotion2vec/emotion2vec_plus_large , https://huggingface.co/emotion2vec/emotion2vec_plus_base , https://huggingface.co/emotion2vec/emotion2vec_plus_seed , https://huggingface.co/emotion2vec/emotion2vec_base ; ModelScope: https://modelscope.cn/models/iic/emotion2vec_plus_large , https://www.modelscope.cn/models/iic/emotion2vec_base_finetuned
 - Official GitHub: https://github.com/ddlBoJack/emotion2vec ; issues #7, #30, #46, #64, #77

@@ -231,8 +231,8 @@ def load(model_dir, device):
     cfg, base = settings(model_dir)
     weights = SLIM if cfg["pretrain_model"] == "whisper_large" else "model.safetensors"
     if not (model_dir / weights).exists() and not (model_dir / "model.safetensors").exists():
-        sys.exit(f"ERROR: {model_dir / weights} not found; run python scripts/common/join_parts.py (or "
-                 "download_model.py)")
+        sys.exit(f"ERROR: {model_dir / weights} not found; run python scripts/common/setup_models.py "
+                 f"{model_dir.name} (see models/README.md)")
     if not (base / "preprocessor_config.json").exists():
         sys.exit(f"ERROR: {base} not found; run python scripts/common/download_model.py")
     return Predictor(model_dir, device)

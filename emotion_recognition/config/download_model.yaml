@@ -6,4 +6,5 @@
 models: all       # what download_model.py gets: all registered models (except the API models, which have nothing to
                   # download; all includes the three open-weight audio LLMs, 55.2 GB), or a list such as
                   # [meralion_ser_v1]
-hub: hf           # hf (Hugging Face) | ms (ModelScope, faster in mainland China; only models with an ms_repo)
+hub: github       # github (pinned models submodule + Release weights; default, no HF/ModelScope required)
+                  # hf (Hugging Face) | ms (ModelScope; only models with an ms_repo)

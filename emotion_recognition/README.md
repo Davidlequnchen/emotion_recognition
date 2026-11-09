@@ -25,7 +25,7 @@ conda activate emotion_recognition
 cd emotion_recognition                         # this folder of the repository
 pip install -r requirements-mac.txt            # NVIDIA server: pip install -r requirements-cuda121.txt
 pip install -r requirements.txt
-python scripts/common/download_model.py        # the five models -> models/<key>/ (server: see section 2)
+python scripts/common/download_model.py        # default hub: github; all eight local models -> models/<key>/
 python scripts/emotion2vec/inference.py        # the six test clips, on the GPU it finds (section 5)
 # optional (first set `dataset: all` in config/download_data.yaml): the evaluation datasets -> data/,
 # every model's accuracy on each -> reports/, and a web page with the results and examples -> outputs/viewer.html
@@ -34,10 +34,11 @@ python scripts/evaluation/evaluate.py
 python scripts/viewer/make_viewer.py
 ```
 
-The scripts have no command-line options. Each script reads its settings from its own YAML file in
+Most pipeline scripts read their settings from their own YAML file in
 [`config/`](config/), and the models are registered in `config/models.yaml`; the two small scripts
 `scripts/emotion2vec/inference.py` and `scripts/common/split_parts.py` have their few settings at the top of the
-script instead. Each step is explained below.
+script instead. `scripts/common/setup_models.py` also supports model keys, `--verify-only` and `--workers` without
+requiring PyYAML or a model environment. Each step is explained below.
 
 ## Layout
 
@@ -68,12 +69,11 @@ emotion_recognition/
 │   ├── data_preparation_call_centre_audio.md # how to cut call recordings into segments for labelling and training
 │   └── figures/                # the architecture diagram (PowerPoint and PNG), data-preparation figures and their script
 ├── features/                   # local audio LLM hidden states, <model>/<dataset>/<prompt_hash>/ (not in git)
-├── models/
-│   ├── README.md               # every model's files, size and licence; how to get, split and add models
-│   ├── emotion2vec_plus_large/ # model.pt, config.yaml, configuration.json, tokens.txt (downloaded, not in git)
-│   ├── meralion_ser_v1/        # MERaLiON-SER-v1: its Hugging Face repository; weights in git as 90 MiB parts
-│   ├── melati_emotion/         # Melati: the same
-│   └── vox_profile_whisper/ vox_profile_wavlm/  # the two Vox-Profile models: the same
+├── models/                     # pinned emotion_recognition_models Git submodule; small files, no weight blobs in Git
+│   ├── README.md               # model sources, licences and Release restoration instructions
+│   ├── manifest.json           # pinned Release assets, file sizes and SHA-256 checksums
+│   ├── download.py             # standalone resumable weight downloader (Python standard library)
+│   └── <model>/                # model configuration/tokenizer files; Release weights are downloaded beside them
 ├── outputs/                    # per-clip predictions (outputs/<model>/, in git); viewer.html, the local page (not in git)
 ├── reports/
 │   ├── summary.md              # every model on every dataset (.json: the same numbers)
@@ -84,8 +84,9 @@ emotion_recognition/
 │   ├── common/                 # shared by the pipelines
 │   │   ├── download_data.py    # downloads CREMA-D (test clips or full) and eight more datasets, checks every file
 │   │   ├── download_model.py   # downloads the models into models/<key>/, ready to load without the network
-│   │   ├── split_parts.py      # cuts large files (model weights) into 90 MiB parts that git can take
-│   │   ├── join_parts.py       # joins such parts after git pull (models and datasets), checks their SHA-256
+│   │   ├── setup_models.py     # initializes models submodule, preserves/reuses old weights, restores Release files
+│   │   ├── split_parts.py      # maintains nEMO dataset's legacy 90 MiB Git transfer parts
+│   │   ├── join_parts.py       # joins legacy parts (nEMO and older model checkouts), checks their SHA-256
 │   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> the project's classes)
 │   ├── models/                 # one loader per model: emotion2vec.py, meralion_ser.py, melati.py, vox_profile.py
 │   │                           # (+ vox_profile_LICENSE.txt); audio_io.py reads audio as 16 kHz mono;
@@ -109,16 +110,16 @@ emotion_recognition/
 └── requirements-llm-mac.txt, requirements-llm-cuda118.txt  # PyTorch 2.7.1 for the audio-LLM environment (Gemma 4)
 ```
 
-Git tracks the code, configuration, documentation and the six small test clips. Model files and datasets stay
-in `.gitignore` by default, with selected copies force-added for machines that cannot reach their source hosts
-(such as the NVIDIA server, which cannot reach Hugging Face).
-These copies include the weights of the four new models with their small files (about 6.9 GB, see section 2),
+Git tracks the code, configuration, documentation and the six small test clips. The `models/` submodule pins a
+small model repository; its weights are GitHub Release attachments and are restored by `setup_models.py` (section 2).
+The old SER weight parts remain in existing main-repository history, but new weights are not added to that history.
+Datasets stay ignored by default, with selected copies force-added for machines that cannot reach their source hosts:
 MCAE-SPPS, TESS, the JL-Corpus recordings (`JL(wav+txt)/`; not the rest of its zip), nEMO, EMOVO, THAI-SER, MEAD,
 MELD and SAVEE. [data/README.md](data/README.md) lists their exact scope, checksums and sources; THAI-SER contains
 the four evaluated emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS,
 RAVDESS and Emozionalmente can be downloaded separately from Zenodo.
-Files over 100 MB (the model weights and nEMO Parquet files) are committed in 90 MiB parts; after `git pull`,
-`python scripts/common/join_parts.py` joins and checks them. The five newly committed audio copies need no join step.
+The nEMO Parquet files are committed in 90 MiB parts; after `git pull`, `python scripts/common/join_parts.py` joins
+and checks them. The five newly committed audio copies need no join step.
 
 ## 1. Set up the environment
 
@@ -216,35 +217,42 @@ message). Run all three audio LLMs here, so that their results come from one PyT
 
 ## 2. Download the models
 
-**On the Mac, or any machine that reaches Hugging Face:**
+**Default: the pinned GitHub models repository and Releases**, on the Mac or the NVIDIA server:
 
 ```bash
-python scripts/common/download_model.py   # every model in `models` of config/download_model.yaml (default: all)
+python3 scripts/common/setup_models.py                      # all eight local models, about 64 GB
+python3 scripts/common/setup_models.py emotion2vec_plus_large  # or only the named model(s)
+python3 scripts/common/setup_models.py --verify-only        # check existing weights without downloading them
 ```
 
-The script downloads each model's Hugging Face repository into its folder (about 14 GB for the five speech emotion
-models, the Vox-Profile Whisper release alone 6.19 GB; another 55.2 GB for the three audio LLMs). Then it runs the loader's `prepare()`, which saves the few extra files the model
-needs to load offline (for Vox-Profile Whisper it also writes a 1.29 GB weights file without the unused text decoder),
-and checks the file sizes against Hugging Face. Files that are already complete are skipped, so the script can simply
-be re-run. In `config/download_model.yaml`, `models: [meralion_ser_v1]` gets one model only; `hub: ms` uses ModelScope
-(faster in mainland China; emotion2vec+ large and the three audio LLMs are there). The "unauthenticated requests" warning from Hugging Face is
-harmless: the models are public and need no token.
+`setup_models.py` needs only Python 3.9+ and Git. It initializes the `emotion-models` submodule at `models/` and
+uses its pinned `manifest.json` to download missing weights from GitHub Releases, resume interrupted downloads,
+reassemble large files and check SHA-256. Correct files are skipped. The five SER models use about 8.9 GB and the
+three audio LLMs about 55.2 GB. Only the smaller Vox-Profile Whisper weights are included. The configuration,
+tokenizers, remote model code, original model cards and licences come through the submodule.
 
-**On the NVIDIA server, which cannot reach Hugging Face:** the four new models come through git, in 90 MiB parts
-(about 6.9 GB: MERaLiON-SER-v1 33 parts, Melati 14, Vox-Profile Whisper 14, Vox-Profile WavLM 14).
+For a new computer, clone the main repository with its model metadata, then run setup:
 
 ```bash
-git pull
-python scripts/common/join_parts.py       # joins the parts under data/ and models/, checks each file's SHA-256
+git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/Davidlequnchen/emotion_recognition.git
+cd emotion_recognition/emotion_recognition
+python3 scripts/common/setup_models.py
 ```
 
-The audio LLMs are not in git either (55.2 GB): use `download_model.py` with `hub: ms`. emotion2vec+ large is not in
-git: get it with `download_model.py` (`models: [emotion2vec_plus_large]` in
-`config/download_model.yaml`, and `hub: ms` if only ModelScope is reachable).
+An ordinary `git clone` does not initialize submodules, and even a recursive clone does not download Release
+attachments. The optional shallow-clone flags avoid downloading the old SER weights in main-repository history.
+Setup performs the remaining steps. On an existing computer, run `git pull` and the same setup
+command. If an older checkout left a non-Git models directory, setup preserves it as
+`models.before-submodule-<timestamp>/`, initializes the submodule and reuses complete weights whose SHA-256
+matches the manifest. Other files remain in the backup. If initialization fails, the backup remains available
+and the error reports its location.
 
-Every file a model loads is then in its folder; the evaluation never touches the network. On the Mac, after
-downloading or changing weights, `python scripts/common/split_parts.py` cuts the files listed in FILES at the top of
-the script into parts for git. [models/README.md](models/README.md) lists every model's files and licence, and how to commit the parts.
+`python scripts/common/download_model.py` uses the same GitHub setup by default and selects the models listed in
+`config/download_model.yaml`. Alternatively set `hub: hf` to download from Hugging Face and run each loader's
+`prepare()`, or `hub: ms` for ModelScope (available for emotion2vec+ large and the three audio LLMs). These source
+options require their respective libraries and the model environment. Every file a model loads ends up in the
+same `models/<key>/` directory; the evaluation remains offline. [models/README.md](models/README.md) documents the
+model repository, Release version, original licences and maintenance workflow.
 
 ## 3. Download the data (CREMA-D)
 
@@ -992,10 +1000,10 @@ cache) loads and runs all four.
 | `MPS ... available=False` on the Mac | Python is x86_64 (Rosetta). `platform.machine()` must print `arm64`: reinstall Miniconda for Apple Silicon. |
 | `CUDA ... available=False` on the server | `torch.__version__` must end in `+cu121`: reinstall with `requirements-cuda121.txt`. Otherwise the driver is too old: check `nvidia-smi`. |
 | `ERROR: .../model.pt not found` | emotion2vec+ large is not downloaded: run `python scripts/common/download_model.py` (section 2). |
-| `ERROR: ...safetensors not found`, or `not ready ... still in parts` from `evaluate.py` | The weights came through git in parts: run `python scripts/common/join_parts.py` (after `git pull`). On a machine that reaches Hugging Face, `download_model.py` also works. |
+| `ERROR: ...safetensors not found`, or missing weights from `evaluate.py` | Run `python3 scripts/common/setup_models.py <model-key>` to initialize the models submodule and restore the pinned Release weights. Legacy 90 MiB model parts can still be joined with `join_parts.py`. |
 | `parts are missing` or `SHA-256 does not match` from `join_parts.py` | The parts are incomplete: run `git pull` again, then the script again. |
 | `module 'torch' has no attribute 'accelerator'` | transformers is newer than 5.18.0, which is the newest release that works with PyTorch 2.5.1 (5.19.0 calls `torch.accelerator`, new in PyTorch 2.6). Run `pip install -r requirements.txt` again to get 5.18.0. |
 | `ERROR: no audio files found` | Run `python scripts/common/download_data.py`. |
 | `ERROR: ... file(s) failed` from `download_data.py` | A network error, or GitHub sent an error page instead of the audio (for example a temporary LFS bandwidth limit). Run the same command again: correct files are skipped. |
-| Download from Hugging Face is slow or blocked | Set `hub: ms` in `config/download_model.yaml` and run `python scripts/common/download_model.py` again. Only emotion2vec+ large is on ModelScope; the other models also come through git (section 2). |
+| Download from Hugging Face is slow or blocked | Use the default `hub: github`, or run `python3 scripts/common/setup_models.py <model-key>`. `hub: ms` is another option for emotion2vec+ large and the three audio LLMs (section 2). |
 | `Notice: ffmpeg is not installed ...` | Printed by FunASR on machines without ffmpeg. Harmless: wav, flac, mp3 and ogg are read without it. To silence it: `conda install -c conda-forge ffmpeg`. |

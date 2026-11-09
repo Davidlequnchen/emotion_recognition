@@ -173,7 +173,7 @@ FunASR 的 `inference()`（`model.py`）对每个文件做这几步：
 
 ## 6. 主要来源
 
-- 本地文件：`models/emotion2vec_plus_large/` 下的 `config.yaml`、`model.pt`、`tokens.txt`、`README.md`（下载后才有，不在 git 里）；同样的文件：https://huggingface.co/emotion2vec/emotion2vec_plus_large/tree/main
+- 本地文件：`models/emotion2vec_plus_large/` 下的 `config.yaml`、`model.pt`、`tokens.txt`、`README.md`。配置和原始模型卡来自 models 子仓库，权重由 `python3 scripts/common/setup_models.py emotion2vec_plus_large` 从固定的 GitHub Release 恢复并校验；上游原始文件：https://huggingface.co/emotion2vec/emotion2vec_plus_large/tree/main
 - FunASR 1.4.16 代码：https://github.com/modelscope/FunASR/tree/main/funasr/models/emotion2vec （`model.py`、`audio.py`、`base.py`、`modules.py`）
 - 模型卡：https://huggingface.co/emotion2vec/emotion2vec_plus_large 、https://huggingface.co/emotion2vec/emotion2vec_plus_base 、https://huggingface.co/emotion2vec/emotion2vec_plus_seed 、https://huggingface.co/emotion2vec/emotion2vec_base ；ModelScope：https://modelscope.cn/models/iic/emotion2vec_plus_large 、https://www.modelscope.cn/models/iic/emotion2vec_base_finetuned
 - 官方 GitHub：https://github.com/ddlBoJack/emotion2vec ；issues #7、#30、#46、#64、#77

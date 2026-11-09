@@ -13,13 +13,10 @@ __pycache__/
 .idea/
 .vscode/
 
-# Models: model files are ignored (model.pt alone is ~1.9 GB, xlsr_1b.ckpt 3.86 GB); download them with
-# emotion_recognition/scripts/common/download_model.py, antideepfake/scripts/antideepfake/download_model.py
-# and antideepfake/scripts/voice_clone/download_models.py. Exception, for a machine
-# without Hugging Face: the weights of some emotion recognition models are committed as 90 MiB parts with their small
-# files (force-added with `git add -f`, see emotion_recognition/models/README.md); the joined weights stay ignored.
-emotion_recognition/models/*/*
-!emotion_recognition/models/*/.gitkeep
+# Emotion models: models/ is a Git submodule with small files and a GitHub Release downloader.
+# setup_models.py retains previous local model folders here when upgrading an older checkout.
+emotion_recognition/models.before-submodule-*/
+# Anti-deepfake model weights are downloaded by that project's own scripts and stay local.
 antideepfake/models/*/*
 !antideepfake/models/*/.gitkeep
 # The voice-cloning model files: a clone of the public repository Davidlequnchen/voice_clone_models (a git repository of its own)

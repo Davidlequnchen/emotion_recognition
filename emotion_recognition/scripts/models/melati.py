@@ -83,6 +83,6 @@ class Predictor:
 def load(model_dir, device):
     """Melati from the files in model_dir (never the network), in eval mode on `device`."""
     if not (model_dir / "model.safetensors").exists():
-        sys.exit(f"ERROR: {model_dir / 'model.safetensors'} not found; run python scripts/common/join_parts.py after "
-                 "git pull, or download_model.py (see models/README.md)")
+        sys.exit(f"ERROR: {model_dir / 'model.safetensors'} not found; run python scripts/common/setup_models.py "
+                 "melati_emotion (see models/README.md)")
     return Predictor(model_dir, device)

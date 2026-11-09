@@ -198,9 +198,10 @@ def not_ready(entry):
             return f"its loader {loader.relative_to(ROOT)} could not be imported ({e})"
         return module.ready() if hasattr(module, "ready") else None
     if any(p.suffix == ".part000" for p in files):
-        return f"its weights in {entry['dir']}/ are still in parts: run python scripts/common/join_parts.py"
-    return (f"no weights in {entry['dir']}/ yet: run python scripts/common/download_model.py (or "
-            "scripts/common/join_parts.py if the weights came as parts through git)")
+        return (f"its weights in {entry['dir']}/ are still in legacy parts: run python "
+                f"scripts/common/setup_models.py {folder.name}, or scripts/common/join_parts.py")
+    return (f"no weights in {entry['dir']}/ yet: run python scripts/common/setup_models.py {folder.name} "
+            "(or scripts/common/download_model.py with the chosen hub)")
 
 
 @functools.cache

@@ -6,6 +6,7 @@ the `.env` file at the repository root (git-ignored), and never print it.
 
 | Script | What it does | Cost |
 |---|---|---|
+| `test_model_setup.py` | Tests model submodule initialization, safe preservation and reuse of existing weights, failed initialization recovery, path boundaries and GitHub download dispatch. Uses temporary local Git repositories and tiny fixtures | free (local; no inference or remote downloads) |
 | `test_dataset_label_choices.py` | Offline regression tests for dataset-specific choices, retries, cache/protocol isolation, result reuse, and consistent summary/viewer/plot selection. Uses fake models and API calls plus temporary files; no weights, keys or existing outputs are needed | free (no inference or network) |
 | `check_openai.py` | Lists the models the key can use (free), then sends one test clip to an audio model (`gpt-audio-mini`) through Chat Completions | one request, a fraction of a cent |
 | `check_openai_realtime.py` | Sends the same clip to each Realtime model (`gpt-realtime`, `gpt-realtime-2.1`) over WebSocket, as 24 kHz 16-bit mono PCM, and prints the answer and token usage | one request per model, a fraction of a cent each |
@@ -41,3 +42,9 @@ and a resume every clip has one valid answer and one features row. In a control 
 generate() calls after a model load gave slightly different label probabilities (up to 0.02) and hidden states (up to
 2 of a largest value of 112) on MPS, with the same answers; the clips run right after a reload differ from the clean
 run by as much.
+
+Run the model setup tests with Python 3.9+ and Git (no model environment needed):
+
+```bash
+python3 -m unittest discover -s test_scripts -p 'test_model_setup.py' -v
+```

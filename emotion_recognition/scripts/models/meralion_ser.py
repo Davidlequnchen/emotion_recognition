@@ -94,8 +94,8 @@ class Predictor:
 
 def load(model_dir, device):
     """MERaLiON-SER-v1 from the files in model_dir (never the network), in eval mode on `device`."""
-    for need, fix in [("model.safetensors", "python scripts/common/join_parts.py after git pull, or download_model.py"),
-                      ("whisper-medium/config.json", "git pull, or python scripts/common/download_model.py")]:
+    for need, fix in [("model.safetensors", "python scripts/common/setup_models.py meralion_ser_v1"),
+                      ("whisper-medium/config.json", "python scripts/common/setup_models.py meralion_ser_v1")]:
         if not (model_dir / need).exists():
             sys.exit(f"ERROR: {model_dir / need} not found; run {fix} (see models/README.md)")
     return Predictor(model_dir, device)

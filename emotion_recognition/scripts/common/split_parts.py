@@ -1,5 +1,7 @@
-"""Cut large files into parts that git can take, for a machine that cannot download them (e.g. a server without access
-to Hugging Face). GitHub refuses files over 100 MB, so model weights travel through git as 90 MiB parts.
+"""Cut large dataset files into 90 MiB parts for legacy ordinary-Git transfer (currently nEMO Parquet).
+
+New model weights belong in the models repository's GitHub Releases, not in Git file parts; restore them with
+scripts/common/setup_models.py. This utility only maintains the existing dataset-transfer format.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/common/split_parts.py
@@ -11,10 +13,10 @@ When to run it: after downloading or changing one of these files, before committ
 already there and match its SHA-256 is skipped, the old parts of a changed file are replaced, and a file that does
 not exist yet is skipped with a message, so the script can simply be re-run.
 
-Then commit the parts and the .sha256 files, never the whole file. git ignores models/ and data/, so add them with
+Then commit the dataset parts and the .sha256 files, never the whole file. git ignores data/, so add them with
 `git add -f`, and push in batches of at most about 1.5 GB (GitHub refuses a push over 2 GB). On the other machine,
 `git pull` and then `python scripts/common/join_parts.py` puts each file back together and checks its SHA-256
-(see models/README.md).
+(see data/README.md).
 """
 import hashlib
 import sys
@@ -24,10 +26,8 @@ from pathlib import Path
 # Settings (paths are relative to the emotion_recognition/ folder)
 # ======================================================================
 FILES = [  # the files to cut, each into <file>.part000, .part001, ... and <file>.sha256
-    "models/meralion_ser_v1/model.safetensors",
-    "models/melati_emotion/model.safetensors",
-    "models/vox_profile_whisper/model_slim.safetensors",
-    "models/vox_profile_wavlm/model.safetensors",
+    "data/nemo/data/train-00000-of-00002.parquet",
+    "data/nemo/data/train-00001-of-00002.parquet",
 ]
 PART_MIB = 90  # size of each part, in MiB (GitHub refuses files over 100 MB)
 
@@ -108,7 +108,7 @@ def main():
           f"{sum(nbytes for _, _, nbytes in done) / 1e9:>6.2f} GB")
     if missing:
         print(f"  not there yet: {', '.join(missing)}")
-    print("\nCommit the parts and the .sha256 files, never the whole files (git ignores models/ and data/: use")
+    print("\nCommit the dataset parts and the .sha256 files, never the whole files (git ignores data/: use")
     print(f"`git add -f`). GitHub limits: each file under 100 MB (a part is {size / 1e6:.1f} MB), each push under 2 GB,")
     print(f"so push in batches of at most about 1.5 GB ({int(1.5e9 // size)} parts). On the other machine: git pull, then")
     print("python scripts/common/join_parts.py.")
