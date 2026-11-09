@@ -55,6 +55,20 @@
       "summary": "vox_profile_wavlm/summary.md"
     },
     {
+      "model": "qwen2_5_omni_7b",
+      "name": "Qwen2.5-Omni 7B",
+      "training_source": "not published (Alibaba)",
+      "training_data": [],
+      "summary": "qwen2_5_omni_7b/summary.md"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "name": "Qwen2-Audio 7B Instruct",
+      "training_source": "not published (Alibaba)",
+      "training_data": [],
+      "summary": "qwen2_audio_7b/summary.md"
+    },
+    {
       "model": "gemma4_e4b",
       "name": "Gemma 4 E4B",
       "training_source": "not published (Google)",
@@ -159,8 +173,8 @@
         "unweighted_accuracy": 0.865401,
         "macro_f1": 0.865683,
         "shared_clips": 4900,
-        "shared_accuracy": 0.932041,
-        "shared_unweighted_accuracy": 0.931004
+        "shared_accuracy": 0.89,
+        "shared_unweighted_accuracy": 0.890352
       },
       "mcae_spps": {
         "clips": 6675,
@@ -171,8 +185,8 @@
         "unweighted_accuracy": 0.541993,
         "macro_f1": 0.500753,
         "shared_clips": 4297,
-        "shared_accuracy": 0.877822,
-        "shared_unweighted_accuracy": 0.85327
+        "shared_accuracy": 0.8606,
+        "shared_unweighted_accuracy": 0.834444
       },
       "thai_ser": {
         "clips": 11848,
@@ -195,8 +209,8 @@
         "unweighted_accuracy": 0.505879,
         "macro_f1": 0.473726,
         "shared_clips": 3076,
-        "shared_accuracy": 0.678153,
-        "shared_unweighted_accuracy": 0.673508
+        "shared_accuracy": 0.66645,
+        "shared_unweighted_accuracy": 0.661634
       },
       "mess": {
         "clips": 1800,
@@ -219,8 +233,8 @@
         "unweighted_accuracy": 0.922867,
         "macro_f1": 0.922045,
         "shared_clips": 864,
-        "shared_accuracy": 0.924769,
-        "shared_unweighted_accuracy": 0.928819
+        "shared_accuracy": 0.914352,
+        "shared_unweighted_accuracy": 0.917101
       },
       "tess": {
         "clips": 2800,
@@ -255,8 +269,8 @@
         "unweighted_accuracy": 0.89681,
         "macro_f1": 0.890151,
         "shared_clips": 4280,
-        "shared_accuracy": 0.953037,
-        "shared_unweighted_accuracy": 0.944009
+        "shared_accuracy": 0.92757,
+        "shared_unweighted_accuracy": 0.916778
       },
       "meld": {
         "clips": 2608,
@@ -267,8 +281,8 @@
         "unweighted_accuracy": 0.298381,
         "macro_f1": 0.284932,
         "shared_clips": 2210,
-        "shared_accuracy": 0.525339,
-        "shared_unweighted_accuracy": 0.460437
+        "shared_accuracy": 0.486878,
+        "shared_unweighted_accuracy": 0.417523
       },
       "emovo": {
         "clips": 588,
@@ -279,8 +293,8 @@
         "unweighted_accuracy": 0.87585,
         "macro_f1": 0.876219,
         "shared_clips": 336,
-        "shared_accuracy": 0.958333,
-        "shared_unweighted_accuracy": 0.958333
+        "shared_accuracy": 0.895833,
+        "shared_unweighted_accuracy": 0.895833
       },
       "emozionalmente": {
         "clips": 6902,
@@ -291,8 +305,8 @@
         "unweighted_accuracy": 0.869458,
         "macro_f1": 0.869253,
         "shared_clips": 3944,
-        "shared_accuracy": 0.925203,
-        "shared_unweighted_accuracy": 0.925203
+        "shared_accuracy": 0.869675,
+        "shared_unweighted_accuracy": 0.869675
       },
       "savee": {
         "clips": 480,
@@ -303,8 +317,8 @@
         "unweighted_accuracy": 0.925,
         "macro_f1": 0.928172,
         "shared_clips": 300,
-        "shared_accuracy": 0.97,
-        "shared_unweighted_accuracy": 0.964583
+        "shared_accuracy": 0.946667,
+        "shared_unweighted_accuracy": 0.935417
       }
     },
     "meralion_ser_v1": {
@@ -317,8 +331,8 @@
         "unweighted_accuracy": 0.848713,
         "macro_f1": 0.847376,
         "shared_clips": 4900,
-        "shared_accuracy": 0.931633,
-        "shared_unweighted_accuracy": 0.93171
+        "shared_accuracy": 0.831429,
+        "shared_unweighted_accuracy": 0.834833
       },
       "mcae_spps": {
         "clips": 6675,
@@ -329,8 +343,8 @@
         "unweighted_accuracy": 0.577856,
         "macro_f1": 0.544171,
         "shared_clips": 4297,
-        "shared_accuracy": 0.884338,
-        "shared_unweighted_accuracy": 0.864542
+        "shared_accuracy": 0.867582,
+        "shared_unweighted_accuracy": 0.844102
       },
       "thai_ser": {
         "clips": 11848,
@@ -353,8 +367,8 @@
         "unweighted_accuracy": 0.537699,
         "macro_f1": 0.480564,
         "shared_clips": 3076,
-        "shared_accuracy": 0.770481,
-        "shared_unweighted_accuracy": 0.767972
+        "shared_accuracy": 0.762029,
+        "shared_unweighted_accuracy": 0.759294
       },
       "mess": {
         "clips": 1800,
@@ -377,8 +391,8 @@
         "unweighted_accuracy": 0.612599,
         "macro_f1": 0.59684,
         "shared_clips": 864,
-        "shared_accuracy": 0.653935,
-        "shared_unweighted_accuracy": 0.695747
+        "shared_accuracy": 0.62037,
+        "shared_unweighted_accuracy": 0.657986
       },
       "tess": {
         "clips": 2800,
@@ -389,8 +403,8 @@
         "unweighted_accuracy": 0.4925,
         "macro_f1": 0.378642,
         "shared_clips": 1600,
-        "shared_accuracy": 0.738125,
-        "shared_unweighted_accuracy": 0.738125
+        "shared_accuracy": 0.634375,
+        "shared_unweighted_accuracy": 0.634375
       },
       "jl_corpus": {
         "clips": 1200,
@@ -401,8 +415,8 @@
         "unweighted_accuracy": 0.759167,
         "macro_f1": 0.772844,
         "shared_clips": 960,
-        "shared_accuracy": 0.745833,
-        "shared_unweighted_accuracy": 0.745833
+        "shared_accuracy": 0.740625,
+        "shared_unweighted_accuracy": 0.740625
       },
       "mead": {
         "clips": 8000,
@@ -413,8 +427,8 @@
         "unweighted_accuracy": 0.322761,
         "macro_f1": 0.250345,
         "shared_clips": 4280,
-        "shared_accuracy": 0.490187,
-        "shared_unweighted_accuracy": 0.531456
+        "shared_accuracy": 0.48271,
+        "shared_unweighted_accuracy": 0.524507
       },
       "meld": {
         "clips": 2608,
@@ -425,8 +439,8 @@
         "unweighted_accuracy": 0.383758,
         "macro_f1": 0.27999,
         "shared_clips": 2210,
-        "shared_accuracy": 0.336199,
-        "shared_unweighted_accuracy": 0.501145
+        "shared_accuracy": 0.263801,
+        "shared_unweighted_accuracy": 0.391972
       },
       "emovo": {
         "clips": 588,
@@ -437,8 +451,8 @@
         "unweighted_accuracy": 0.528912,
         "macro_f1": 0.468719,
         "shared_clips": 336,
-        "shared_accuracy": 0.77381,
-        "shared_unweighted_accuracy": 0.77381
+        "shared_accuracy": 0.761905,
+        "shared_unweighted_accuracy": 0.761905
       },
       "emozionalmente": {
         "clips": 6902,
@@ -449,8 +463,8 @@
         "unweighted_accuracy": 0.474355,
         "macro_f1": 0.417475,
         "shared_clips": 3944,
-        "shared_accuracy": 0.74645,
-        "shared_unweighted_accuracy": 0.74645
+        "shared_accuracy": 0.740365,
+        "shared_unweighted_accuracy": 0.740365
       },
       "savee": {
         "clips": 480,
@@ -461,8 +475,8 @@
         "unweighted_accuracy": 0.546429,
         "macro_f1": 0.483262,
         "shared_clips": 300,
-        "shared_accuracy": 0.823333,
-        "shared_unweighted_accuracy": 0.83125
+        "shared_accuracy": 0.773333,
+        "shared_unweighted_accuracy": 0.76875
       }
     },
     "melati_emotion": {
@@ -475,8 +489,8 @@
         "unweighted_accuracy": 0.524463,
         "macro_f1": 0.46725,
         "shared_clips": 4900,
-        "shared_accuracy": 0.665102,
-        "shared_unweighted_accuracy": 0.675824
+        "shared_accuracy": 0.643469,
+        "shared_unweighted_accuracy": 0.654908
       },
       "mcae_spps": {
         "clips": 6675,
@@ -487,8 +501,8 @@
         "unweighted_accuracy": 0.480546,
         "macro_f1": 0.433239,
         "shared_clips": 4297,
-        "shared_accuracy": 0.662323,
-        "shared_unweighted_accuracy": 0.687002
+        "shared_accuracy": 0.657901,
+        "shared_unweighted_accuracy": 0.683005
       },
       "thai_ser": {
         "clips": 11848,
@@ -511,8 +525,8 @@
         "unweighted_accuracy": 0.625128,
         "macro_f1": 0.595246,
         "shared_clips": 3076,
-        "shared_accuracy": 0.817945,
-        "shared_unweighted_accuracy": 0.819766
+        "shared_accuracy": 0.809493,
+        "shared_unweighted_accuracy": 0.811296
       },
       "mess": {
         "clips": 1800,
@@ -535,8 +549,8 @@
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.466076,
         "shared_clips": 864,
-        "shared_accuracy": 0.642361,
-        "shared_unweighted_accuracy": 0.678385
+        "shared_accuracy": 0.634259,
+        "shared_unweighted_accuracy": 0.669271
       },
       "tess": {
         "clips": 2800,
@@ -547,8 +561,8 @@
         "unweighted_accuracy": 0.504286,
         "macro_f1": 0.434398,
         "shared_clips": 1600,
-        "shared_accuracy": 0.75375,
-        "shared_unweighted_accuracy": 0.75375
+        "shared_accuracy": 0.748125,
+        "shared_unweighted_accuracy": 0.748125
       },
       "jl_corpus": {
         "clips": 1200,
@@ -571,8 +585,8 @@
         "unweighted_accuracy": 0.349443,
         "macro_f1": 0.275936,
         "shared_clips": 4280,
-        "shared_accuracy": 0.511215,
-        "shared_unweighted_accuracy": 0.559158
+        "shared_accuracy": 0.486215,
+        "shared_unweighted_accuracy": 0.535863
       },
       "meld": {
         "clips": 2608,
@@ -583,8 +597,8 @@
         "unweighted_accuracy": 0.230016,
         "macro_f1": 0.18684,
         "shared_clips": 2210,
-        "shared_accuracy": 0.356561,
-        "shared_unweighted_accuracy": 0.397641
+        "shared_accuracy": 0.333937,
+        "shared_unweighted_accuracy": 0.368459
       },
       "emovo": {
         "clips": 588,
@@ -595,8 +609,8 @@
         "unweighted_accuracy": 0.559524,
         "macro_f1": 0.537645,
         "shared_clips": 336,
-        "shared_accuracy": 0.678571,
-        "shared_unweighted_accuracy": 0.678571
+        "shared_accuracy": 0.630952,
+        "shared_unweighted_accuracy": 0.630952
       },
       "emozionalmente": {
         "clips": 6902,
@@ -607,8 +621,8 @@
         "unweighted_accuracy": 0.850188,
         "macro_f1": 0.850221,
         "shared_clips": 3944,
-        "shared_accuracy": 0.928245,
-        "shared_unweighted_accuracy": 0.928245
+        "shared_accuracy": 0.867901,
+        "shared_unweighted_accuracy": 0.867901
       },
       "savee": {
         "clips": 480,
@@ -619,8 +633,8 @@
         "unweighted_accuracy": 0.564286,
         "macro_f1": 0.532112,
         "shared_clips": 300,
-        "shared_accuracy": 0.88,
-        "shared_unweighted_accuracy": 0.8625
+        "shared_accuracy": 0.85,
+        "shared_unweighted_accuracy": 0.825
       }
     },
     "vox_profile_whisper": {
@@ -633,8 +647,8 @@
         "unweighted_accuracy": 0.351988,
         "macro_f1": 0.299302,
         "shared_clips": 4900,
-        "shared_accuracy": 0.498163,
-        "shared_unweighted_accuracy": 0.515393
+        "shared_accuracy": 0.467959,
+        "shared_unweighted_accuracy": 0.486283
       },
       "mcae_spps": {
         "clips": 6675,
@@ -645,8 +659,8 @@
         "unweighted_accuracy": 0.409409,
         "macro_f1": 0.351958,
         "shared_clips": 4297,
-        "shared_accuracy": 0.586688,
-        "shared_unweighted_accuracy": 0.543384
+        "shared_accuracy": 0.56458,
+        "shared_unweighted_accuracy": 0.521962
       },
       "thai_ser": {
         "clips": 11848,
@@ -669,8 +683,8 @@
         "unweighted_accuracy": 0.319992,
         "macro_f1": 0.287864,
         "shared_clips": 3076,
-        "shared_accuracy": 0.438882,
-        "shared_unweighted_accuracy": 0.434312
+        "shared_accuracy": 0.392718,
+        "shared_unweighted_accuracy": 0.387353
       },
       "mess": {
         "clips": 1800,
@@ -693,8 +707,8 @@
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.445022,
         "shared_clips": 864,
-        "shared_accuracy": 0.590278,
-        "shared_unweighted_accuracy": 0.575521
+        "shared_accuracy": 0.530093,
+        "shared_unweighted_accuracy": 0.507812
       },
       "tess": {
         "clips": 2800,
@@ -717,8 +731,8 @@
         "unweighted_accuracy": 0.450833,
         "macro_f1": 0.473273,
         "shared_clips": 960,
-        "shared_accuracy": 0.426042,
-        "shared_unweighted_accuracy": 0.426042
+        "shared_accuracy": 0.40625,
+        "shared_unweighted_accuracy": 0.40625
       },
       "mead": {
         "clips": 8000,
@@ -729,8 +743,8 @@
         "unweighted_accuracy": 0.22891,
         "macro_f1": 0.172989,
         "shared_clips": 4280,
-        "shared_accuracy": 0.342991,
-        "shared_unweighted_accuracy": 0.389591
+        "shared_accuracy": 0.323598,
+        "shared_unweighted_accuracy": 0.370363
       },
       "meld": {
         "clips": 2608,
@@ -741,8 +755,8 @@
         "unweighted_accuracy": 0.296001,
         "macro_f1": 0.261093,
         "shared_clips": 2210,
-        "shared_accuracy": 0.410407,
-        "shared_unweighted_accuracy": 0.440535
+        "shared_accuracy": 0.331222,
+        "shared_unweighted_accuracy": 0.342838
       },
       "emovo": {
         "clips": 588,
@@ -753,8 +767,8 @@
         "unweighted_accuracy": 0.358844,
         "macro_f1": 0.313627,
         "shared_clips": 336,
-        "shared_accuracy": 0.571429,
-        "shared_unweighted_accuracy": 0.571429
+        "shared_accuracy": 0.5,
+        "shared_unweighted_accuracy": 0.5
       },
       "emozionalmente": {
         "clips": 6902,
@@ -765,8 +779,8 @@
         "unweighted_accuracy": 0.369313,
         "macro_f1": 0.319599,
         "shared_clips": 3944,
-        "shared_accuracy": 0.5786,
-        "shared_unweighted_accuracy": 0.5786
+        "shared_accuracy": 0.509888,
+        "shared_unweighted_accuracy": 0.509888
       },
       "savee": {
         "clips": 480,
@@ -777,8 +791,8 @@
         "unweighted_accuracy": 0.315476,
         "macro_f1": 0.293572,
         "shared_clips": 300,
-        "shared_accuracy": 0.546667,
-        "shared_unweighted_accuracy": 0.4875
+        "shared_accuracy": 0.493333,
+        "shared_unweighted_accuracy": 0.422917
       }
     },
     "vox_profile_wavlm": {
@@ -791,8 +805,8 @@
         "unweighted_accuracy": 0.320936,
         "macro_f1": 0.274098,
         "shared_clips": 4900,
-        "shared_accuracy": 0.44,
-        "shared_unweighted_accuracy": 0.455473
+        "shared_accuracy": 0.430612,
+        "shared_unweighted_accuracy": 0.446392
       },
       "mcae_spps": {
         "clips": 6675,
@@ -803,8 +817,8 @@
         "unweighted_accuracy": 0.367027,
         "macro_f1": 0.336439,
         "shared_clips": 4297,
-        "shared_accuracy": 0.570863,
-        "shared_unweighted_accuracy": 0.555164
+        "shared_accuracy": 0.471026,
+        "shared_unweighted_accuracy": 0.446658
       },
       "thai_ser": {
         "clips": 11848,
@@ -827,8 +841,8 @@
         "unweighted_accuracy": 0.269846,
         "macro_f1": 0.215033,
         "shared_clips": 3076,
-        "shared_accuracy": 0.39857,
-        "shared_unweighted_accuracy": 0.387106
+        "shared_accuracy": 0.394993,
+        "shared_unweighted_accuracy": 0.383435
       },
       "mess": {
         "clips": 1800,
@@ -851,8 +865,8 @@
         "unweighted_accuracy": 0.424107,
         "macro_f1": 0.384374,
         "shared_clips": 864,
-        "shared_accuracy": 0.592593,
-        "shared_unweighted_accuracy": 0.565538
+        "shared_accuracy": 0.509259,
+        "shared_unweighted_accuracy": 0.477865
       },
       "tess": {
         "clips": 2800,
@@ -863,8 +877,8 @@
         "unweighted_accuracy": 0.401429,
         "macro_f1": 0.315539,
         "shared_clips": 1600,
-        "shared_accuracy": 0.56375,
-        "shared_unweighted_accuracy": 0.56375
+        "shared_accuracy": 0.55,
+        "shared_unweighted_accuracy": 0.55
       },
       "jl_corpus": {
         "clips": 1200,
@@ -875,8 +889,8 @@
         "unweighted_accuracy": 0.483333,
         "macro_f1": 0.504985,
         "shared_clips": 960,
-        "shared_accuracy": 0.482292,
-        "shared_unweighted_accuracy": 0.482292
+        "shared_accuracy": 0.455208,
+        "shared_unweighted_accuracy": 0.455208
       },
       "mead": {
         "clips": 8000,
@@ -887,8 +901,8 @@
         "unweighted_accuracy": 0.230536,
         "macro_f1": 0.182348,
         "shared_clips": 4280,
-        "shared_accuracy": 0.330607,
-        "shared_unweighted_accuracy": 0.380642
+        "shared_accuracy": 0.289953,
+        "shared_unweighted_accuracy": 0.341035
       },
       "meld": {
         "clips": 2608,
@@ -899,8 +913,8 @@
         "unweighted_accuracy": 0.294204,
         "macro_f1": 0.267992,
         "shared_clips": 2210,
-        "shared_accuracy": 0.445701,
-        "shared_unweighted_accuracy": 0.47181
+        "shared_accuracy": 0.362896,
+        "shared_unweighted_accuracy": 0.384293
       },
       "emovo": {
         "clips": 588,
@@ -911,8 +925,8 @@
         "unweighted_accuracy": 0.292517,
         "macro_f1": 0.225029,
         "shared_clips": 336,
-        "shared_accuracy": 0.482143,
-        "shared_unweighted_accuracy": 0.482143
+        "shared_accuracy": 0.473214,
+        "shared_unweighted_accuracy": 0.473214
       },
       "emozionalmente": {
         "clips": 6902,
@@ -923,8 +937,8 @@
         "unweighted_accuracy": 0.278325,
         "macro_f1": 0.237179,
         "shared_clips": 3944,
-        "shared_accuracy": 0.447769,
-        "shared_unweighted_accuracy": 0.447769
+        "shared_accuracy": 0.434838,
+        "shared_unweighted_accuracy": 0.434838
       },
       "savee": {
         "clips": 480,
@@ -935,166 +949,50 @@
         "unweighted_accuracy": 0.290476,
         "macro_f1": 0.286691,
         "shared_clips": 300,
-        "shared_accuracy": 0.53,
-        "shared_unweighted_accuracy": 0.475
+        "shared_accuracy": 0.426667,
+        "shared_unweighted_accuracy": 0.366667
       }
     },
-    "gemma4_e4b": {
-      "crema_d": {
-        "clips": 7442,
-        "total_clips": 7442,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.161381,
-        "unweighted_accuracy": 0.179662,
-        "macro_f1": 0.091898,
-        "shared_clips": 4900,
-        "shared_accuracy": 0.230816,
-        "shared_unweighted_accuracy": 0.255725
-      },
-      "mcae_spps": {
-        "clips": 6675,
-        "total_clips": 6675,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.195655,
-        "unweighted_accuracy": 0.158279,
-        "macro_f1": 0.088082,
-        "shared_clips": 4297,
-        "shared_accuracy": 0.298813,
-        "shared_unweighted_accuracy": 0.270989
-      },
-      "thai_ser": {
-        "clips": 11848,
-        "total_clips": 11848,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.444801,
-        "unweighted_accuracy": 0.442076,
-        "macro_f1": 0.430145,
-        "shared_clips": 11848,
-        "shared_accuracy": 0.444801,
-        "shared_unweighted_accuracy": 0.442076
-      },
-      "nemo": {
-        "clips": 4481,
-        "total_clips": 4481,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.181433,
-        "unweighted_accuracy": 0.172502,
-        "macro_f1": 0.121189,
-        "shared_clips": 3076,
-        "shared_accuracy": 0.260078,
-        "shared_unweighted_accuracy": 0.253895
-      },
-      "mess": {
-        "clips": 1800,
-        "total_clips": 1800,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.139444,
-        "unweighted_accuracy": 0.139444,
-        "macro_f1": 0.077625,
-        "shared_clips": 1800,
-        "shared_accuracy": 0.139444,
-        "shared_unweighted_accuracy": 0.139444
-      },
-      "ravdess": {
-        "clips": 1440,
-        "total_clips": 1440,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.260417,
-        "unweighted_accuracy": 0.226438,
-        "macro_f1": 0.177881,
-        "shared_clips": 864,
-        "shared_accuracy": 0.305556,
-        "shared_unweighted_accuracy": 0.251736
-      },
-      "tess": {
-        "clips": 2800,
-        "total_clips": 2800,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.145,
-        "unweighted_accuracy": 0.145,
-        "macro_f1": 0.04905,
-        "shared_clips": 1600,
-        "shared_accuracy": 0.249375,
-        "shared_unweighted_accuracy": 0.249375
-      },
-      "jl_corpus": {
-        "clips": 1200,
-        "total_clips": 1200,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.249167,
-        "unweighted_accuracy": 0.249167,
-        "macro_f1": 0.33652,
-        "shared_clips": 960,
-        "shared_accuracy": 0.266667,
-        "shared_unweighted_accuracy": 0.266667
-      },
-      "mead": {
-        "clips": 8000,
-        "total_clips": 8000,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.158875,
-        "unweighted_accuracy": 0.188792,
-        "macro_f1": 0.141319,
-        "shared_clips": 4280,
-        "shared_accuracy": 0.270794,
-        "shared_unweighted_accuracy": 0.307821
-      },
+    "qwen2_5_omni_7b": {
       "meld": {
         "clips": 2608,
         "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
-        "accuracy": 0.448236,
-        "unweighted_accuracy": 0.323909,
-        "macro_f1": 0.32536,
+        "accuracy": 0.512653,
+        "unweighted_accuracy": 0.434526,
+        "macro_f1": 0.40434,
         "shared_clips": 2210,
-        "shared_accuracy": 0.487783,
-        "shared_unweighted_accuracy": 0.437217
-      },
-      "emovo": {
-        "clips": 588,
-        "total_clips": 588,
+        "shared_accuracy": 0.528507,
+        "shared_unweighted_accuracy": 0.465037
+      }
+    },
+    "qwen2_audio_7b": {
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
-        "accuracy": 0.163265,
-        "unweighted_accuracy": 0.163265,
-        "macro_f1": 0.090541,
-        "shared_clips": 336,
-        "shared_accuracy": 0.279762,
-        "shared_unweighted_accuracy": 0.279762
-      },
-      "emozionalmente": {
-        "clips": 6902,
-        "total_clips": 6902,
+        "accuracy": 0.307132,
+        "unweighted_accuracy": 0.395469,
+        "macro_f1": 0.293543,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.288235,
+        "shared_unweighted_accuracy": 0.374901
+      }
+    },
+    "gemma4_e4b": {
+      "meld": {
+        "clips": 2608,
+        "total_clips": 2608,
         "sample": false,
         "in_training_data": false,
-        "accuracy": 0.171979,
-        "unweighted_accuracy": 0.171979,
-        "macro_f1": 0.111907,
-        "shared_clips": 3944,
-        "shared_accuracy": 0.275355,
-        "shared_unweighted_accuracy": 0.275355
-      },
-      "savee": {
-        "clips": 480,
-        "total_clips": 480,
-        "sample": false,
-        "in_training_data": false,
-        "accuracy": 0.225,
-        "unweighted_accuracy": 0.183333,
-        "macro_f1": 0.167424,
-        "shared_clips": 300,
-        "shared_accuracy": 0.323333,
-        "shared_unweighted_accuracy": 0.275
+        "accuracy": 0.478144,
+        "unweighted_accuracy": 0.296598,
+        "macro_f1": 0.308557,
+        "shared_clips": 2210,
+        "shared_accuracy": 0.530769,
+        "shared_unweighted_accuracy": 0.415608
       }
     }
   }

@@ -44,7 +44,7 @@ The zero-shot benchmark is the starting point. C/D support reliability; E/G help
 | Direction | Role now | Status |
 |---|---|---|
 | **A1: Speaker references** | One candidate core question | Pilot design; reference inputs not implemented |
-| **A2: Real dialogue history** | One candidate core question; start with MELD | Three-model single-utterance baseline being prepared/run; context conditions not implemented |
+| **A2: Real dialogue history** | One candidate core question; start with MELD | Three-model MELD single-utterance baseline complete; context conditions not implemented |
 | **B: GEPA and feedback** | Improvement experiment after a clear finding | Keep the question; defer the large grid |
 | **0: 13-corpus benchmark** | Existing foundation | Five SER models complete; audio LLM evaluation in progress |
 | **C: Training provenance** | Necessary background stratification | Check public sources; performance alone does not establish contamination |
@@ -304,7 +304,7 @@ four established contributions, or promise an acceptance tier in advance.
 
 | Item | Current status / decision |
 |---|---|
-| MELD three-model single-utterance baseline | Local configuration prepared; update from actual run status; this is H0, not the complete context pilot |
+| MELD three-model single-utterance baseline | Complete on the same 2,608 targets and seven candidates; this is H0, not the complete context pilot |
 | Multiple-audio and target-boundary checks; history/reference inputs and cache identities | Not implemented; start with verifiable small examples |
 | MELD design/test data and history window | Freeze before formal evaluation; do not select by repeatedly viewing test |
 | A1 controlled corpus and support/query sentences | Choose one first |
@@ -315,6 +315,10 @@ four established contributions, or promise an acceptance tier in advance.
 | Formal statistics, independent-corpus validation and release | Arrange after selecting the core question; no restricted audio release |
 
 Schedule by gates: baseline → two small pilots → choose one main question → independent validation → writing.
-The old grid-hour estimates are not commitments. See [venues.md](venues.md) for target venues and checked deadlines.
+The old grid-hour estimates are not commitments.
+
+**H0 observation, 2026-11-09.** Gemma 4, Qwen2.5-Omni and Qwen2-Audio obtain macro-F1 **30.86 / 40.43 / 29.35%**, with neutral prediction rates **54.45 / 40.57 / 10.58%**. Omni has higher Accuracy/UAR/macro-F1 point estimates than all five current SER baselines; this is not a significance or context-effect conclusion. Model differences are large, so neutral bias is not a common explanation for all audio LLMs. The next step remains paired H0/H1/H2/H3 conditions on fixed targets.
+
+See [venues.md](venues.md) for target venues and checked deadlines.
 Choose a venue after assessing the evidence; account for publication processes, author-service requirements and
 data access when scheduling.

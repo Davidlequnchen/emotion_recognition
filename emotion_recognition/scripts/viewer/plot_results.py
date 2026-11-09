@@ -1,9 +1,9 @@
 """
-Bar plots that compare every model on every dataset, for papers and slides.
+Dataset panels and compact score matrices for comparing models, for papers and slides.
 
 Reads the results that the evaluations left in outputs/ and draws, for each metric in config/plots.yaml:
     reports/figures/<metric>_by_dataset.png (300 dpi) and .pdf   one panel per dataset, one bar per model
-    reports/figures/overview_<metric>.png and .pdf                every dataset side by side, a group of bars each
+    reports/figures/overview_<metric>.png and .pdf                dataset-by-model annotated score matrix
 Bars with a hatch: the dataset is in that model's training data, so its result is optimistic. The dashed line in each
 panel: chance level. A value marked * comes from a sample of the dataset (evaluation limit), not every clip.
 
@@ -26,6 +26,7 @@ import json
 import hashlib
 import math
 import sys
+import textwrap
 from pathlib import Path
 
 import yaml
@@ -40,7 +41,7 @@ from prompts import configured_protocol
 
 # One colour per model, in this order (Okabe-Ito: distinguishable with colour-vision deficiencies and in grey print)
 COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999"]
-METRIC_NAMES = {"accuracy": "Accuracy (acted emotion)", "unweighted_accuracy": "Unweighted accuracy",
+METRIC_NAMES = {"accuracy": "Accuracy", "unweighted_accuracy": "UAR",
                 "macro_f1": "Macro F1", "accuracy_all_classes": "Accuracy (all model classes)",
                 "accuracy_acted_or_listener": "Accuracy (acted emotion or listeners' vote)"}
 INK, INK_2, GRID = "#111111", "#444444", "#d9d9d9"
@@ -93,8 +94,8 @@ def setup_matplotlib():
     fonts = {f.name for f in font_manager.fontManager.ttflist}
     plt.rcParams.update({
         "font.family": next((f for f in ("Helvetica Neue", "Helvetica", "Arial") if f in fonts), "DejaVu Sans"),
-        "font.size": 14, "axes.titlesize": 17, "axes.labelsize": 15, "xtick.labelsize": 14, "ytick.labelsize": 13,
-        "legend.fontsize": 14, "axes.edgecolor": INK_2, "axes.linewidth": 1.0, "axes.titleweight": "bold",
+        "font.size": 14, "axes.titlesize": 16, "axes.labelsize": 17, "xtick.labelsize": 14, "ytick.labelsize": 13,
+        "legend.fontsize": 13, "axes.edgecolor": INK_2, "axes.linewidth": 1.0, "axes.titleweight": "bold",
         "pdf.fonttype": 42, "ps.fonttype": 42,  # embed real fonts (journals ask for it)
     })
     return plt
@@ -125,7 +126,14 @@ def bar_label(ax, x, value, run):
 def per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out):
     """One panel per dataset, one bar per model."""
     rows = math.ceil(len(datasets) / columns)
-    fig, axes = plt.subplots(rows, columns, figsize=(5.6 * columns, 4.9 * rows + 1.2), squeeze=False)
+    any_trained = any(run.get("in_training_data") and metric in run["metrics"]
+                      for per_model in results.values() for run in per_model.values())
+    legend_columns = min(4, len(models) + int(any_trained) + int(metric != "macro_f1"))
+    # Use physical margins: a percentage of a tall canvas used to leave several inches below the panels.
+    legend_rows = math.ceil((len(models) + int(any_trained) + int(metric != "macro_f1")) / legend_columns)
+    legend_height = 0.32 * legend_rows + 0.18
+    height = 4.0 * rows + legend_height + 1.0
+    fig, axes = plt.subplots(rows, columns, figsize=(5.6 * columns, height), squeeze=False)
     trained = False
     for k, key in enumerate(datasets):
         ax = axes[k // columns][k % columns]
@@ -142,7 +150,10 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
         chance = chance_of(first)
         if chance and metric != "macro_f1":
             ax.axhline(100 * chance, color=INK_2, linestyle="--", linewidth=1.6, zorder=4)
-        ax.set_title(f"{first['dataset']} – {first['language']}" if first.get("language") else first["dataset"])
+        title = textwrap.fill(first["dataset"], width=37)
+        if first.get("language"):
+            title += "\n" + first["language"]
+        ax.set_title(title, pad=8, linespacing=1.05)
         ax.set_xticks([])
         ax.set_xlim(-0.6, len(models) - 0.4)
         ax.set_ylim(0, 108)
@@ -153,45 +164,88 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
             ax.set_ylabel(f"{METRIC_NAMES.get(metric, metric)} (%)")
     for k in range(len(datasets), rows * columns):
         axes[k // columns][k % columns].axis("off")
-    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} of every model on every dataset", fontsize=20,
-                 fontweight="bold", color=INK, y=0.995)
+    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=21,
+                 fontweight="bold", color=INK, y=1 - 0.10 / height)
     fig.legend(handles=legend_handles(plt, names, colours, trained, metric != "macro_f1"), loc="lower center",
-               ncol=min(4, len(models) + 2), frameon=False, bbox_to_anchor=(0.5, 0.0))
-    fig.tight_layout(rect=(0, 0.09 + 0.03 * (len(models) > 4), 1, 0.96))
+               ncol=legend_columns, frameon=False, bbox_to_anchor=(0.5, 0.08 / height), borderaxespad=0,
+               columnspacing=1.7, handletextpad=0.6, labelspacing=0.55)
+    fig.subplots_adjust(left=0.045, right=0.992, top=1 - 1.28 / height,
+                        bottom=(legend_height + 0.16) / height, wspace=0.19, hspace=0.34)
     return save(fig, plt, out / f"{metric}_by_dataset")
 
 
 def overview_figure(plt, metric, results, models, names, colours, datasets, out):
-    """Every dataset side by side: a group of bars (one per model) for each dataset."""
-    width = 0.8 / len(models)
-    fig, ax = plt.subplots(figsize=(max(12, 2.3 * len(datasets) + 2), 6.4))
-    trained = False
-    for i, m in enumerate(models):
-        for j, key in enumerate(datasets):
-            run = results.get(m, {}).get(key)
-            if run is None or metric not in run["metrics"]:
-                continue
-            x, value = j - 0.4 + width * (i + 0.5), run["metrics"][metric]
-            hatch = "///" if run.get("in_training_data") else None
-            trained |= bool(hatch)
-            ax.bar(x, 100 * value, width=width * 0.92, color=colours[m], edgecolor=INK, linewidth=1.1, hatch=hatch,
-                   zorder=3)
+    """A readable matrix that grows by one column, rather than thirteen bars, for each added model."""
+    import numpy as np
+    from matplotlib.patches import Rectangle
+
+    has_chance = metric != "macro_f1"
+    ncols = len(models) + int(has_chance)
+    values = np.full((len(datasets), ncols), np.nan)
+    trained, sampled = False, False
     first = {key: next(results[m][key] for m in models if key in results.get(m, {})) for key in datasets}
-    # A name with a subset in brackets, e.g. "THAI-SER (high-agreement subset)", on two lines so the names do not touch
-    ax.set_xticks(range(len(datasets)), [first[key]["dataset"].replace(" (", "\n(") for key in datasets])
-    ax.set_ylim(0, 100)
-    ax.set_ylabel(f"{METRIC_NAMES.get(metric, metric)} (%)")
-    ax.yaxis.grid(True, color=GRID, linewidth=0.8, zorder=0)
-    ax.spines[["top", "right"]].set_visible(False)
-    if metric != "macro_f1":  # chance level of each dataset, as a short dashed line over its group
-        for j, key in enumerate(datasets):
-            if chance_of(first[key]):
-                ax.hlines(100 * chance_of(first[key]), j - 0.45, j + 0.45, colors=INK_2, linestyles="--",
-                          linewidth=1.6, zorder=4)
-    ax.set_title(f"{METRIC_NAMES.get(metric, metric)}: every model on every dataset", fontsize=18, pad=12)
-    ax.legend(handles=legend_handles(plt, names, colours, trained, metric != "macro_f1"), loc="upper center", bbox_to_anchor=(0.5, -0.1),
-              ncol=min(4, len(models) + 2), frameon=False)
-    fig.tight_layout()
+    for row, key in enumerate(datasets):
+        for col, model in enumerate(models):
+            run = results.get(model, {}).get(key)
+            if run is not None and metric in run["metrics"]:
+                values[row, col] = 100 * run["metrics"][metric]
+
+    width, height = max(11.5, 1.60 * ncols + 3.6), max(5.0, 0.55 * len(datasets) + 1.65)
+    fig, ax = plt.subplots(figsize=(width, height))
+    cmap = plt.get_cmap("cividis").copy()
+    cmap.set_bad("#f1f2f4")
+    plotted = ax.imshow(np.ma.masked_invalid(values), cmap=cmap, vmin=0, vmax=100, aspect="auto")
+    headers = [names[m].replace("emotion2vec+ ", "emotion2vec+\n")
+               .replace("MERaLiON-", "MERaLiON\n").replace("Vox-Profile ", "Vox-Profile\n")
+               for m in models]
+    headers = ["\n".join(textwrap.fill(line, width=15) for line in name.splitlines()) for name in headers]
+    if has_chance:
+        headers.append("Chance\nreference")
+    ax.set_xticks(range(ncols), headers, fontsize=12.5)
+    ax.tick_params(axis="x", top=True, labeltop=True, bottom=False, labelbottom=False, length=0, pad=11)
+    ax.set_yticks(range(len(datasets)), [first[key]["dataset"].replace(" (", "\n(") for key in datasets],
+                  fontsize=12.5)
+    ax.tick_params(axis="y", length=0, pad=8)
+    ax.set_xticks(np.arange(-0.5, ncols, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, len(datasets), 1), minor=True)
+    ax.grid(which="minor", color="white", linewidth=1.3)
+    ax.tick_params(which="minor", bottom=False, left=False)
+    ax.spines[:].set_visible(False)
+    # Match the panel colours without requiring a long model legend beneath the overview.
+    for col, model in enumerate(models):
+        ax.add_patch(Rectangle((col - 0.5, -0.64), 1, 0.07, facecolor=colours[model], edgecolor="none",
+                               clip_on=False))
+    for row, key in enumerate(datasets):
+        for col, model in enumerate(models):
+            value, run = values[row, col], results.get(model, {}).get(key)
+            if np.isnan(value):
+                text, colour = "—", "#858b94"
+            else:
+                in_training = bool(run.get("in_training_data"))
+                is_sample = run["clips"] < run.get("total_clips", run["clips"])
+                trained |= in_training
+                sampled |= is_sample
+                text = f"{value:.1f}" + ("†" if in_training else "") + ("*" if is_sample else "")
+                r, g, b, _ = cmap(value / 100)
+                colour = "white" if 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.49 else INK
+            ax.text(col, row, text, ha="center", va="center", fontsize=13, color=colour)
+        if has_chance:
+            chance = chance_of(first[key])
+            ax.text(len(models), row, f"{100 * chance:.1f}" if chance is not None else "—",
+                    ha="center", va="center", fontsize=12.5, color=INK_2)
+    if has_chance:
+        ax.axvline(len(models) - 0.5, color="#c8ccd1", linewidth=1.5)
+    colourbar = fig.colorbar(plotted, ax=ax, fraction=0.026, pad=0.025, shrink=0.94)
+    colourbar.set_label(f"{METRIC_NAMES.get(metric, metric)} (%)", fontsize=17, labelpad=11)
+    colourbar.ax.tick_params(labelsize=12)
+    notes = (["† Dataset in the model's training data"] if trained else [])
+    notes += ["* Sampled evaluation"] if sampled else []
+    notes.append("— No compatible result")
+    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} across models and datasets", fontsize=20,
+                 fontweight="bold", color=INK, y=0.985)
+    fig.text(0.5, 0.025, "    ".join(notes), ha="center", va="bottom", fontsize=12.5, color=INK_2)
+    fig.subplots_adjust(left=3.15 / width, right=1 - 0.85 / width,
+                        top=1 - 1.0 / height, bottom=0.55 / height)
     return save(fig, plt, out / f"overview_{metric}")
 
 
@@ -212,7 +266,7 @@ def main():
     step("Step 1/3 | Load configuration")
     settings = yaml.safe_load(CONFIG.read_text()) or {}
     registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
-    metrics, columns = as_list(settings.get("metrics", ["accuracy"])), int(settings.get("columns", 3))
+    metrics, columns = as_list(settings.get("metrics", ["accuracy"])), int(settings.get("columns", 4))
     wanted_models = settings.get("models", "all")
     wanted_models = wanted_models if wanted_models == "all" else as_list(wanted_models)
     wanted_datasets = settings.get("datasets", "all")

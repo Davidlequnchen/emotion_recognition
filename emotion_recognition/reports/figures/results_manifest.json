@@ -1,0 +1,8 @@
+{
+  "fingerprint": "a189e4b1e549e00b73939f2ee5f928e451af1b05b4e9e83722ab8d8f730dd73d",
+  "metrics": [
+    "accuracy",
+    "unweighted_accuracy",
+    "macro_f1"
+  ]
+}

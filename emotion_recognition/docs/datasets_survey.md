@@ -257,8 +257,8 @@ ID 如 `5_1_d2136` 表示第 2136 段对话的第 5 轮、speaker 1，数字轮�
 | Emozionalmente ✅ | `emozionalmente` | `data/emozionalmente/` | Zenodo 上的 zip（v1.1，下载大小 0.559 GB，解压后删除），解压到 `audio/emozionalmente/`（解压后的 WAV 0.71 GB）：`audio/` 里 6,902 个 WAV（16 kHz 单声道，0.75–13.9 秒，共 6.3 h），文件名是一串数字；`metadata/samples.csv`（文件、句子、说话人、想表达的情绪；每种情绪 986 条）、`metadata/evaluations.csv`（每条 5 位听众：听出的情绪和音质评价）、`metadata/users.csv`（说话人和听众的性别、年龄、母语，已匿名化），以及作者划分的说话人独立数据集切分 `metadata/split/` | 按 Zenodo 的 MD5 核对 |
 | SAVEE ✅ | `savee` | `data/savee/` | Kaggle 上的非官方 zip（0.113 GB，解压后删除），解压在 `audio/ALL/`：480 个 WAV（44.1 kHz 单声道，1.6–7.1 秒，共 0.51 h，0.16 GB）；文件名为"说话人_情绪+句子编号"，如 `DC_a01.wav`：说话人 `DC`、`JE`、`JK`、`KL`（都是男性，各 120 条），情绪 `a` anger、`d` disgust、`f` fear、`h` happiness、`sa` sadness、`su` surprise（各 60 条，即 15 句）和 `n` neutral（120 条，30 句）。官方版需要注册，许可禁止再分发：这些文件不要转发 | Kaggle 不公布校验值：先用 zip 自带的 CRC 自检，再核对脚本里固定的 SHA-256 |
 
-这十四个数据集在本地共占用约 30 GB（13 个评估用的约 27 GB，加上 ESD 3.2 GB；最大的是 THAI-SER 16 GB、MEAD 4.1 GB、ESD 3.2 GB、nEMO 1.5 GB，2026-11-06 实测）。zip 完整解压后就删除，所以 MCAE-SPPS、MESS、ESD、RAVDESS、JL-Corpus、Emozionalmente 和 SAVEE 只占解压后的大小；每个数据集的 `unpacked.json` 列出已解压 zip 里的文件，之后再运行下载，只有其中有文件缺失时才会重新下载 zip；
-THAI-SER 和 nEMO 是 parquet 格式（读取需要 `pyarrow`），`scripts/evaluation/evaluate.py` 第一次运行时会把评估要用的音频解压到各自的 `audio/` 文件夹（THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音）。
+2026-11-09 清理下载/打包临时文件后，整个 `data/` 实测约 **41.2 GB**，包括已保留的 DailyTalk / EmotionTalk（原文件约 **21.7 GB**）以及本地 ESD。旧下载布局在 2026-11-06 为约 30 GB，不能继续当作当前磁盘占用；Release 镜像的范围也不同于上表官方全集。zip 完整解压后就删除；每个数据集的 `unpacked.json` 列出已解压文件，原源下载时通常只有文件缺失才会重下。
+官方源下载路线中的 THAI-SER 和 nEMO 使用 parquet（需要 `pyarrow`），评估时缓存所需 WAV；THAI-SER 取录音棚电容麦那一路，线上 session 取 Zoom 录音。当前 THAI-SER Release 镜像直接保留四个评估类别的选定 WAV，不需保留完整原始 parquet；nEMO 镜像保留两个原始 parquet，评估时提取音频。以 [data/README.md](../data/README.md) 的逐项范围为准。
 MEAD 和 MELD 转换成 WAV 需要 ffmpeg。MELD 转换完成后再运行下载，只有缺少 WAV 时才会重新下载 10.88 GB 的压缩包。
 ESD 仅限研究使用：使用前要按它的 [GitHub 页面](https://github.com/HLTSingapore/Emotional-Speech-Data)的说明填写许可表，并发邮件给作者。
 ESD 🗄️ 还在本地，但已移出评估范围，被 `config/evaluation.yaml` 的 `exclude` 排除（许可仅限研究，禁止向第三方转让任何部分，并把"测试商业系统"列为商业用途）；它之前的评估报告在 `reports/archive/`。THAI-SER 和 nEMO 曾被排除，2026-11-05 起重新参与评估。

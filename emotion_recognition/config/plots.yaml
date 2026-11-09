@@ -1,5 +1,5 @@
 # =====================================================================
-# Settings of scripts/viewer/plot_results.py: bar plots that compare every model on every dataset.
+# Settings of scripts/viewer/plot_results.py: dataset bar panels and compact model-by-dataset score matrices.
 # Run from the emotion_recognition/ folder:  python scripts/viewer/plot_results.py
 # It also runs at the end of scripts/evaluation/evaluate.py when `plots: true` is set in config/evaluation.yaml.
 # Paths are relative to the emotion_recognition/ folder.
@@ -11,4 +11,4 @@ models: all       # all = every folder in outputs/ with results (local models an
 datasets: all     # all datasets with results, or a list such as [crema_d, mess]
 exclude: [esd]        # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
 out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .pdf, plus overview_<metric>.*
-columns: 3        # panels per row in the per-dataset figures (13 datasets: 3 = four full rows and one panel)
+columns: 4        # panels per row in the dataset figures; 13 datasets use four rows

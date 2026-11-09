@@ -1,0 +1,40 @@
+{
+  "model": "qwen2_5_omni_7b",
+  "name": "Qwen2.5-Omni 7B",
+  "date": "2026-11-09",
+  "training_source": "not published (Alibaba)",
+  "datasets": [
+    {
+      "dataset": "MELD",
+      "key": "meld",
+      "language": "English",
+      "clips": 2608,
+      "total_clips": 2608,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "metrics": {
+        "accuracy": 0.512653,
+        "unweighted_accuracy": 0.434526,
+        "macro_f1": 0.40434,
+        "accuracy_all_classes": 0.512653
+      }
+    }
+  ],
+  "figure": "figures/summary_confusion.png",
+  "figure_datasets": [
+    "MELD"
+  ],
+  "acted_or_listener": [],
+  "shared_emotions": [],
+  "shared": []
+}
