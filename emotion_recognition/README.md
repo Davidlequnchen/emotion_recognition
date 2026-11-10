@@ -823,13 +823,13 @@ clips it got right and wrong to add to the examples; default 10 and 10), `seed` 
 clips), `link_audio`, `out` (the page for this machine), `site` (the public page, see 7.1) and `exclude` (datasets
 left out of both pages; default ESD).
 
-The script writes one self-contained page, `outputs/viewer.html` (audio embedded as 16 kHz MP3: about 2.5 MB with one
-model, and expected to stay under 10 MB with all five; open it in any browser). It has three tabs:
+The script writes one self-contained page, `outputs/viewer.html`, with embedded 16 kHz MP3 and plots; its size
+depends on the selected examples and figures. Open it in any browser. It has three tabs:
 
 - **Results** (opens first), with a model switch; values are coloured by level (green for 80% or more, amber for 60
   to 80%, red under 60%):
   - **All models**: one row per dataset and one column per model, as in [reports/summary.md](reports/summary.md), with
-    a switch between accuracy, unweighted accuracy and macro F1; † marks confirmed training-corpus exposure; no marker means exposure not established.
+    a switch between accuracy, unweighted accuracy and macro F1; † marks Part of the training process; the other display group is No recorded training use. Detailed evidence grades and table footnotes are omitted from the HTML.
   - **One model**: its results table, as in `reports/<model>/summary.md` (read from the JSON file next to it), with
     the datasets in its training data first, then the others, each group sorted by accuracy; then its confusion
     matrices (click the figure to enlarge it) and the table of the emotions that every dataset has.
@@ -886,8 +886,8 @@ For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, 
 - `overview_<metric>`: a dataset-by-model score matrix with numeric percentages and a shared colour scale, so additional models do not crowd grouped bars. Missing compatible results appear as a grey dash, and chance reference values have a separate column.
 
 Each model keeps its colour (colour-blind-safe) in the bar panels and overview header. Bars have black outlines;
-a hatch in the panels or a dagger (†) in the overview means **Confirmed training-corpus exposure** according to the
-current registry. Unhatched/unmarked means **exposure not established**, not verified unseen; corpus exposure does
+a hatch in the panels or a dagger (†) in the overview means **Part of the training process** according to the
+current registry, counting direct and upstream use alike. Unhatched/unmarked means **exposure not established**, not verified unseen; corpus exposure does
 not prove test-clip leakage. A dashed line
 in the panels shows chance level, and a value with * comes from a sample of the dataset. The script
 reads `outputs/<model>/<dataset>_predictions.json`, with audio LLMs restricted to the current `inference_protocol`
@@ -1096,5 +1096,16 @@ libraries; only its explicit `run` command loads weights. Inputs, condition iden
 CSV/JSON analysis are isolated from the existing single-utterance evaluation outputs; hidden-state extraction is off.
 
 Paper plots keep four columns, one training-process hatch, and reserved GPT Realtime/Gemini 3.8 Flash positions.
+Panel titles use one line, `Dataset (Language)`, without subset/cohort descriptions. The legend is always below
+the grid, in two text rows, including when all 16 datasets form a 4×4 grid.
 Panel value labels round percentages to integers for readability; bar heights and saved metrics are unchanged,
 and overview matrices retain one decimal. The explanatory provenance footnote is omitted from the figures.
+
+
+With `datasets: all`, the ordinary evaluator selects all 16 downloaded adopted datasets after excluding ESD.
+The active model list still contains only the three open audio LLMs; compatible MELD results are reused and
+the other 45 model–dataset combinations remain to be evaluated. This is single-utterance evaluation, separate
+from H0–H3. The active configuration is still `[meld]`, `mode: mac`, `plots: false`: no larger run is enabled
+automatically. Use `mode: auto`/`cuda` on a CUDA server, and `plots: true` or run `plot_results.py` manually
+to regenerate the completed 4×4 comparison. Canonical dialogue split/cohort scopes now pass finished-run checks
+on resume, while other scopes remain isolated.

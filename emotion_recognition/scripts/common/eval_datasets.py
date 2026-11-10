@@ -27,6 +27,23 @@ DATA = ROOT / "data"
 # The fixed subsets (`subsets` in config/evaluation.yaml), e.g. {"thai_ser": "high_agreement", "mead":
 # "stratified_8000"}; a dataset that is not listed (or set to null) is used in full
 SUBSETS = (yaml.safe_load((ROOT / "config" / "evaluation.yaml").read_text()) or {}).get("subsets") or {}
+DEFAULT_DIALOGUE_SPLITS = {"emotiontalk": "test", "dailytalk": "validation"}
+DEFAULT_MULTIDIALOG_SPLITS = ("test_freq", "test_rare")
+DEFAULT_MULTIDIALOG_COHORT = "gold_both"
+DEFAULT_EVALUATION_SUBSETS = {**{key: f"split:{split}" for key, split in DEFAULT_DIALOGUE_SPLITS.items()},
+                              "multidialog": f"cohort:{DEFAULT_MULTIDIALOG_COHORT}"}
+
+
+def default_evaluation_subset(key, subsets=None):
+    """Expected scope of a default loader, without loading data or decoding/extracting audio.
+
+    Dialogue loaders have canonical nonempty split/cohort provenance. Their optional function
+    arguments are for explicit development experiments, not hidden config overrides. Existing
+    datasets retain their original `subsets` configuration semantics.
+    """
+    if key in DEFAULT_EVALUATION_SUBSETS:
+        return DEFAULT_EVALUATION_SUBSETS[key]
+    return (SUBSETS if subsets is None else subsets).get(key) or ""
 
 
 @dataclass
@@ -567,20 +584,21 @@ def _dialogue_evalset(key, split, subset, primary_only):
                    "DailyTalk provides numeric turn order, not session timestamps. Context helpers do not invent "
                    "start/end times. primary_only=True excludes the documented d175/d1451 irregularities."]
     return EvalSet(key, f"{title} ({scope})", language, list(CLASSES), clips, ground_truth=ground,
-                   notes=notes, caveats=caveats, subset=f"split:{scope}" + (";clip_ids" if subset is not None else ""))
+                   notes=notes, caveats=caveats, subset=f"split:{scope}"
+                   + (";primary_dyadic" if primary_only else "") + (";clip_ids" if subset is not None else ""))
 
 
-def emotiontalk(split="test", subset=None, *, primary_only=False):
+def emotiontalk(split=DEFAULT_DIALOGUE_SPLITS["emotiontalk"], subset=None, *, primary_only=False):
     """Official test by default; split=train/validation/test/all, subset=explicit clip IDs."""
     return _dialogue_evalset("emotiontalk", split, subset, primary_only)
 
 
-def dailytalk(split="validation", subset=None, *, primary_only=False):
+def dailytalk(split=DEFAULT_DIALOGUE_SPLITS["dailytalk"], subset=None, *, primary_only=False):
     """Pinned ECSS validation by default; no invented test split. subset selects explicit clip IDs."""
     return _dialogue_evalset("dailytalk", split, subset, primary_only)
 
 
-def multidialog(splits=("test_freq", "test_rare"), cohort="gold_both", subset=None):
+def multidialog(splits=DEFAULT_MULTIDIALOG_SPLITS, cohort=DEFAULT_MULTIDIALOG_COHORT, subset=None):
     """Lazy MultiDialog wrapper: the default cohort keeps complete dialogues with both actors in the gold list."""
     from dialogue_datasets import CLASSES, canonical_emotion, select_records
     from multidialog_dataset import load_multidialog_records
@@ -592,6 +610,9 @@ def multidialog(splits=("test_freq", "test_rare"), cohort="gold_both", subset=No
         raise FileNotFoundError("No MultiDialog clips in the selected cohort; restore/audit data/multidialog first")
     clips = [{"audio": Path(record["path"]), "acted": canonical_emotion(record["emotion"]), "listener": ""}
              for record in records]
+    selected_splits = (splits,) if isinstance(splits, str) else tuple(splits)
+    split_scope = (";splits:" + ",".join(sorted(selected_splits))
+                   if set(selected_splits) != set(DEFAULT_MULTIDIALOG_SPLITS) else "")
     return EvalSet(
         "multidialog", f"MultiDialog ({cohort})", "English", list(CLASSES), clips,
         ground_truth="the emotion prescribed for the performed TopicalChat utterance, under the project's canonical labels",
@@ -602,7 +623,7 @@ def multidialog(splits=("test_freq", "test_rare"), cohort="gold_both", subset=No
                "category is retained in the audited metadata. Explicit subsets select clip IDs after cohort filtering."],
         caveats=["The gold actor cohort is a conservative released-data selection, not an independent proof that "
                  "all utterance emotions were validated by listeners. Keep cohort and split explicit when comparing results."],
-        subset=f"cohort:{cohort}" + (";clip_ids" if subset is not None else ""))
+        subset=f"cohort:{cohort}" + split_scope + (";clip_ids" if subset is not None else ""))
 
 
 LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "nemo": nemo, "mess": mess, "esd": esd,

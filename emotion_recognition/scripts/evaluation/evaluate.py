@@ -95,7 +95,7 @@ LLM_CONFIG = ROOT / "config" / "llm.yaml"
 sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, imported by name (`loader` in the registry)
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
-from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, sample, truth_labels
+from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, default_evaluation_subset, sample, truth_labels
 from prompts import configured_protocol
 from training_provenance import (EXPOSURE_LABEL, EXPOSURE_LEVELS, EXPOSURE_NOTE, training_marker,
                                  training_metadata, with_training_provenance)
@@ -1169,9 +1169,12 @@ def finished_run(model, key, limit, protocol=None):
     # A run on another subset of the dataset (`subsets` in config/evaluation.yaml) would be replaced by this one:
     # stop, so that no finished result is lost; move it to outputs/archive/<model>/ first (its report and figures to
     # reports/archive/<model>/), under another name such as <key>_full_predictions.*
-    if found and json.loads(found.read_text(encoding="utf-8")).get("subset", "") != (SUBSETS.get(key) or ""):
-        sys.exit(f"ERROR: {found.relative_to(ROOT)} holds a run on another subset of {key} than `subsets` in "
-                 "config/evaluation.yaml sets. Move it (CSV and JSON) to outputs/archive/<model>/ under another name, "
+    expected_subset = default_evaluation_subset(key, SUBSETS)
+    saved_subset = json.loads(found.read_text(encoding="utf-8")).get("subset", "") if found else None
+    if found and saved_subset != expected_subset:
+        sys.exit(f"ERROR: {found.relative_to(ROOT)} holds a run on another subset/split/cohort of {key} "
+                 f"(saved {saved_subset!r}; current {expected_subset!r}). Move it (CSV and JSON) "
+                 "to outputs/archive/<model>/ under another name, "
                  "e.g. <key>_full_predictions.*, and its report to reports/archive/<model>/; the new run then reuses "
                  "its predictions of the clips it holds.")
     if found and (not found.with_suffix(".csv").exists()

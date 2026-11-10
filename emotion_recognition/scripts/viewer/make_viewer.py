@@ -66,7 +66,7 @@ from PIL import Image, features
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
 from eval_datasets import SOURCES
-from training_provenance import (EXPOSURE_LEVELS, EXPOSURE_NOTE, training_marker,
+from training_provenance import (EXPOSURE_LEVELS, training_marker,
                                  training_metadata, with_training_provenance)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "llm_eval"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -460,7 +460,7 @@ def main():
     plots = load_plots()  # the bar plots of plot_results.py, if they have been drawn
     print(f"  bar plots   : {', '.join(p['metric'] for p in plots) or 'none (run scripts/viewer/plot_results.py)'}")
     data = {"seed": seed, "picks": {"correct": n_correct, "wrong": n_wrong}, "models": page_models, "sources": sources,
-            "plots": plots, "training_evidence_levels": EXPOSURE_LEVELS, "training_evidence_note": EXPOSURE_NOTE}
+            "plots": plots}
     write_page(out, data, datasets, link_audio)
     if site:
         public = [d for d in datasets if SOURCES.get(d["key"], {}).get("public_audio")]

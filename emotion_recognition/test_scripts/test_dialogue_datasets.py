@@ -92,10 +92,12 @@ class DialogueDatasetTests(unittest.TestCase):
         self.assertEqual({c["audio"].stem for c in emotion.clips}, {"test0", "test1"})
         self.assertEqual({c["acted"] for c in emotion.clips}, {"happy"})
         self.assertTrue(all(c["listener"] == "" for c in emotion.clips))
+        self.assertEqual(emotion.subset, evaluation.default_evaluation_subset("emotiontalk"))
         daily = evaluation.dailytalk()
         self.assertEqual({c["audio"].stem for c in daily.clips}, {"0_0_d1", "1_1_d1"})
         self.assertEqual({c["acted"] for c in daily.clips}, {"fearful", "disgusted"})
         self.assertEqual(daily.classes, dialogue.CLASSES)
+        self.assertEqual(daily.subset, evaluation.default_evaluation_subset("dailytalk"))
         self.assertIn("independent", " ".join(daily.caveats))
 
     def test_all_splits_aliases_and_primary_dyads(self):
@@ -178,7 +180,11 @@ class DialogueDatasetTests(unittest.TestCase):
         with mock.patch.dict(sys.modules, {"multidialog_dataset": SimpleNamespace(load_multidialog_records=provider)}):
             result = evaluation.multidialog()
         self.assertEqual(result.clips[0]["audio"], audio)
+        self.assertEqual(result.subset, evaluation.default_evaluation_subset("multidialog"))
         provider.assert_called_once_with(self.data / "multidialog", splits=("test_freq", "test_rare"), cohort="gold_both")
+        with mock.patch.dict(sys.modules, {"multidialog_dataset": SimpleNamespace(load_multidialog_records=provider)}):
+            self.assertNotEqual(evaluation.multidialog(splits="test_freq").subset, result.subset)
+            self.assertNotEqual(evaluation.multidialog(cohort="all").subset, result.subset)
 
     def test_registration_appends_new_datasets_and_disables_public_and_api_audio(self):
         previous = ["crema_d", "mcae_spps", "thai_ser", "nemo", "mess", "esd", "ravdess", "tess",

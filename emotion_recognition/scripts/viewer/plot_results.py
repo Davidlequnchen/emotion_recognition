@@ -9,6 +9,7 @@ The detailed source/stage evidence stays in the registry and reports rather than
 The dashed line in each panel: chance level. A value marked * comes from a sample, not every clip.
 Panel labels are rounded to whole percentage points for print legibility; overview matrices keep one decimal.
 This is display rounding only: saved predictions, metric values and bar heights retain their precision.
+Panel titles show only dataset and language; subset/cohort scopes stay in the formal reports and metadata.
 
 Which results it reads: every outputs/<model>/<dataset>[_sample<N>]_predictions.json that has `metrics` (for a model
 and dataset with several compatible runs, the one with the most clips). Registered audio LLMs require the current
@@ -52,6 +53,33 @@ METRIC_NAMES = {"accuracy": "Accuracy", "unweighted_accuracy": "UAR",
                 "accuracy_acted_or_listener": "Accuracy (acted emotion or listeners' vote)"}
 INK, INK_2, GRID = "#111111", "#444444", "#d9d9d9"
 TRAINING_HATCH, TRAINING_LABEL = "///", "Part of the training process"
+DATASET_DISPLAY = {
+    "crema_d": ("CREMA-D", "English"), "mcae_spps": ("MCAE-SPPS", "Mandarin"),
+    "thai_ser": ("THAI-SER", "Thai"), "nemo": ("nEMO", "Polish"), "mess": ("MESS", "English"),
+    "ravdess": ("RAVDESS", "English"), "tess": ("TESS", "English"), "jl_corpus": ("JL-Corpus", "English"),
+    "mead": ("MEAD", "English"), "meld": ("MELD", "English"), "emovo": ("EMOVO", "Italian"),
+    "emozionalmente": ("Emozionalmente", "Italian"), "savee": ("SAVEE", "English"),
+    "emotiontalk": ("EmotionTalk", "Mandarin"), "dailytalk": ("DailyTalk", "English"),
+    "multidialog": ("MultiDialog", "English"),
+}
+
+
+def dataset_display(key, run):
+    """Presentation-only short name/language; never replace the run's recorded evaluation scope."""
+    if key in DATASET_DISPLAY:
+        return DATASET_DISPLAY[key]
+    name = " ".join(str(run.get("dataset", key)).split(" (", 1)[0].split())
+    language = " ".join(str(run.get("language", "")).split())
+    if "english" in language.lower() or language.lower() in {"british", "american"}:
+        language = "English"
+    elif "mandarin" in language.lower():
+        language = "Mandarin"
+    return name, language
+
+
+def panel_title(key, run):
+    name, language = dataset_display(key, run)
+    return f"{name} ({language})" if language else name
 
 
 def part_of_training(run):
@@ -152,17 +180,15 @@ def bar_label(ax, x, value, run):
 
 
 def per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out):
-    """One panel per dataset, one bar per model."""
+    """One panel per dataset, with a fixed bottom legend (ten models + two keys fit two rows)."""
     rows = math.ceil(len(datasets) / columns)
     legend_count = len(models) + 1 + int(metric != "macro_f1")
-    legend_columns = min(4, legend_count)
-    # Reuse the last row's empty panels instead of adding another strip of white canvas.
-    empty = rows * columns - len(datasets)
-    inset_legend = empty >= 2
+    legend_columns = min(6, legend_count)
     pending = {m for m in models if not results.get(m)}
     legend_rows = math.ceil(legend_count / legend_columns)
-    legend_height = 0 if inset_legend else 0.31 * legend_rows + 0.12
-    height = 2.85 * rows + legend_height + 0.90
+    # Compact handles leave room for unbroken names: two item rows are also two text lines.
+    legend_height = 0.31 * legend_rows + 0.08
+    height = 2.65 * rows + legend_height + 0.90
     fig, axes = plt.subplots(rows, columns, figsize=(4.4 * columns, height), squeeze=False)
     positions = [i * 0.78 for i in range(len(models))]
     for k, key in enumerate(datasets):
@@ -181,10 +207,7 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
         chance = chance_of(first)
         if chance and metric != "macro_f1":
             ax.axhline(100 * chance, color=INK_2, linestyle="--", linewidth=1.6, zorder=4)
-        title = textwrap.fill(first["dataset"], width=32)
-        if first.get("language"):
-            title += "\n" + first["language"]
-        ax.set_title(title, pad=6, linespacing=1.0)
+        ax.set_title(panel_title(key, first), pad=6)
         ax.set_xticks([])
         ax.set_xlim(-0.48, positions[-1] + 0.48)
         ax.set_ylim(0, 108)
@@ -197,19 +220,12 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
         axes[k // columns][k % columns].axis("off")
     fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=22,
                  fontweight="bold", color=INK, y=1 - 0.04 / height)
-    fig.subplots_adjust(left=0.052, right=0.995, top=1 - 1.20 / height,
-                        bottom=(legend_height + 0.22) / height, wspace=0.17, hspace=0.44)
+    fig.subplots_adjust(left=0.052, right=0.995, top=1 - 1.00 / height,
+                        bottom=(legend_height + 0.22) / height, wspace=0.17, hspace=0.34)
     handles = legend_handles(plt, names, colours, metric != "macro_f1", pending)
-    if inset_legend:
-        first_empty = axes[-1][columns - empty].get_position()
-        last_empty = axes[-1][-1].get_position()
-        fig.legend(handles=handles, loc="center", ncol=min(empty, legend_columns), frameon=False,
-                   bbox_to_anchor=((first_empty.x0 + last_empty.x1) / 2, (first_empty.y0 + first_empty.y1) / 2),
-                   borderaxespad=0, columnspacing=1.4, handletextpad=0.5, labelspacing=0.9)
-    else:
-        fig.legend(handles=handles, loc="lower center", ncol=legend_columns, frameon=False,
-                   bbox_to_anchor=(0.5, 0.035 / height), borderaxespad=0,
-                   columnspacing=1.4, handletextpad=0.5, labelspacing=0.45)
+    fig.legend(handles=handles, loc="lower center", ncol=legend_columns, frameon=False,
+               bbox_to_anchor=(0.5, 0.035 / height), borderaxespad=0, borderpad=0.2,
+               handlelength=1.4, columnspacing=0.8, handletextpad=0.35, labelspacing=0.45)
     return save(fig, plt, out / f"{metric}_by_dataset")
 
 
@@ -245,7 +261,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
         headers.append("Chance\nreference")
     ax.set_xticks(range(ncols), headers, fontsize=13)
     ax.tick_params(axis="x", top=True, labeltop=True, bottom=False, labelbottom=False, length=0, pad=9)
-    ax.set_yticks(range(len(datasets)), [first[key]["dataset"].replace(" (", "\n(") for key in datasets],
+    ax.set_yticks(range(len(datasets)), [dataset_display(key, first[key])[0] for key in datasets],
                   fontsize=14)
     ax.tick_params(axis="y", length=0, pad=8)
     ax.set_xticks(np.arange(-0.5, ncols, 1), minor=True)
@@ -359,7 +375,7 @@ def main():
     (out / "results_manifest.json").write_text(json.dumps({"fingerprint": results_fingerprint(results),
                                                          "metrics": rendered, "models": models,
                                                          "pending_models": [m for m in models if not results.get(m)],
-                                                         "style": "compact_single_training_hatch_v1"}, indent=2), encoding="utf-8")
+                                                         "style": "compact_two_text_line_legend_v4"}, indent=2), encoding="utf-8")
     print("Done.")
 
 

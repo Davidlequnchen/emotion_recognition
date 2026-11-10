@@ -157,16 +157,12 @@
   .legend .swatch { width: 14px; height: 14px; border-radius: 4px; background: var(--lv); box-shadow: inset 0 0 0 1px var(--lv-edge); }
   .legend .dag { width: auto; padding: 0; }
 
-  .notes { color: var(--ink-2); font-size: 12.5px; margin: 10px 0 0; padding-left: 18px; max-width: 92ch; }
-  .notes li { margin: 3px 0; }
-  .notes b { color: var(--ink); font-weight: 600; }
   .figure { margin: 0; background: #fcfcfb; border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; }
   .figure img { display: block; width: 100%; height: auto; cursor: zoom-in; }
   .figure.zoomed img { width: auto; max-width: none; cursor: zoom-out; }
   .figure:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .caption { color: var(--ink-2); font-size: 12.5px; margin: 8px 0 0; max-width: 92ch; }
   .caption + .legend { margin-top: 12px; }
-  footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
   code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
 </style>
 </head>
@@ -206,25 +202,20 @@
   </table></div>
   </section>
   <section class="panel" id="panel-datasets" role="tabpanel" aria-labelledby="tab-datasets" tabindex="0" hidden></section>
-  <footer id="footer"></footer>
 </main>
 
 <script id="data" type="application/json">__DATA__</script>
 <script>
   const DATA = JSON.parse(document.getElementById("data").textContent);
-  const EVIDENCE_LEVELS = DATA.training_evidence_levels || {
-    confirmed_exposure: { label: "Used directly", marker: "†", hatch: "///" },
-    probable_exposure: { label: "Used via upstream training", marker: "‡", hatch: "..." },
-    possible_exposure: { label: "Possible association", marker: "?", hatch: "xx" },
-    not_established: { label: "No corpus-specific evidence", marker: "", hatch: "" },
-  };
-  const EVIDENCE_ORDER = Object.keys(EVIDENCE_LEVELS);
-  const evidenceStatus = (row) => row?.training_status in EVIDENCE_LEVELS ? row.training_status
-    : row?.in_training_data ? "confirmed_exposure" : "not_established"; // legacy external page data only
-  const evidenceLevel = (row) => EVIDENCE_LEVELS[evidenceStatus(row)];
-  const evidenceMarker = (row) => evidenceLevel(row).marker;
-  const evidenceRank = (row) => EVIDENCE_ORDER.indexOf(evidenceStatus(row));
-  const evidenceNote = DATA.training_evidence_note || "No pattern: no corpus-specific evidence, not verified unseen. Source links do not establish test-clip leakage.";
+  const TRAINING_GROUPS = [
+    { seen: true, label: "Part of the training process" },
+    { seen: false, label: "No recorded training use" },
+  ];
+  const partOfTraining = (row) => row?.training_status
+    ? ["confirmed_exposure", "probable_exposure"].includes(row.training_status)
+    : Boolean(row?.in_training_data);
+  const trainingLabel = (row) => TRAINING_GROUPS[partOfTraining(row) ? 0 : 1].label;
+  const trainingMarker = (row) => partOfTraining(row) ? "†" : "";
   // Results: the model shown ("all" = every model side by side) and the value in the comparison table.
   // Examples: the dataset (index in DATA.datasets), the model, and the filters, which stay when the model changes.
   const state = { view: "all", metric: "accuracy", plot: null, dataset: 0, model: null, criterion: null, status: "all", emotion: "all" };
@@ -382,7 +373,7 @@
       ...run.criteria.map((c) => el("div", { className: `tile${c.column === state.criterion ? " active" : ""}` },
         el("div", { className: "label", textContent: `${model.name}: matches the ${c.name}` }),
         el("div", { className: "value" }, levelValue(c.accuracy)),
-        el("div", { className: "note", textContent: sample + `; training-source evidence: ${evidenceLevel(run).label}` }))),
+        el("div", { className: "note", textContent: sample + `; ${trainingLabel(run)}` }))),
       el("div", { className: "tile" },
         el("div", { className: "label", textContent: "Clips on this page" }),
         el("div", { className: "value", textContent: String(clips.length) }),
@@ -437,8 +428,8 @@
     const key = (cls, text) => el("span", { className: "key" }, el("i", { className: `swatch ${cls}`, attrs: { "aria-hidden": "true" } }), text);
     return el("div", { className: "legend" }, el("span", { textContent: "Colour of a value:" }),
       key("lv-high", "80% or more"), key("lv-mid", "60 to 80%"), key("lv-low", "under 60%"),
-      ...Object.values(EVIDENCE_LEVELS).map((level) => el("span", { className: "key" },
-        el("span", { className: "dag", textContent: level.marker || "no marker" }), level.label)));
+      ...TRAINING_GROUPS.map((group) => el("span", { className: "key" },
+        el("span", { className: "dag", textContent: group.seen ? "†" : "–" }), group.label)));
   }
   const sampleOf = (d) => d.total_clips > d.clips ? ` of ${d.total_clips.toLocaleString()}` : "";
   // Ground-truth labels in the order of the confusion-matrix rows; a composite label names the classes it accepts
@@ -455,8 +446,8 @@
   // Rows split into the datasets in the model's training data (first) and the others, each from the best value down
   function byTraining(model, items, value) {
     const sort = (list) => [...list].sort((a, b) => (value(b) ?? -1) - (value(a) ?? -1));
-    return EVIDENCE_ORDER.map((status) => [`${EVIDENCE_LEVELS[status].label}: ${model.name}`,
-      sort(items.filter((item) => evidenceStatus(item) === status))]).filter(([, list]) => list.length);
+    return TRAINING_GROUPS.map((group) => [group.label,
+      sort(items.filter((item) => partOfTraining(item) === group.seen))]).filter(([, list]) => list.length);
   }
 
   const METRICS = [["accuracy", "Accuracy: acted emotion"], ["unweighted_accuracy", "Unweighted accuracy"], ["macro_f1", "Macro F1"]];
@@ -465,25 +456,24 @@
     const datasets = keys.map((key) => {
       const results = models.map((m) => m.summary.datasets.find((d) => d.key === key));
       return { first: results.find(Boolean), results,
-        evidence: Math.min(...results.filter(Boolean).map(evidenceRank)) };
+        training: results.filter(Boolean).some(partOfTraining) };
     });
     const values = (row) => row.results.map((d) => d?.metrics?.[state.metric]).filter((x) => typeof x === "number");
     const mean = (row) => values(row).length ? values(row).reduce((a, b) => a + b, 0) / values(row).length : -1;
     const cell = (d, m) => {
       if (!d) return el("td", { className: "n", title: `No results of ${m.name} on this dataset` }, el("span", { className: "level", textContent: "–" }), el("span", { className: "dag" }));
-      const notes = [`${evidenceLevel(d).label} for ${m.name}`, d.training_reason || "", d.total_clips > d.clips ? `on a sample of ${d.clips.toLocaleString()} of ${d.total_clips.toLocaleString()} clips` : ""].filter(Boolean);
+      const notes = [`${trainingLabel(d)} for ${m.name}`, d.total_clips > d.clips ? `on a sample of ${d.clips.toLocaleString()} of ${d.total_clips.toLocaleString()} clips` : ""].filter(Boolean);
       return el("td", { className: "n", title: notes.join("; ") }, levelValue(d.metrics?.[state.metric]),
-        el("span", { className: "dag", textContent: evidenceMarker(d) }),
-        evidenceMarker(d) ? el("span", { className: "sr", textContent: evidenceLevel(d).label }) : null);
+        el("span", { className: "dag", textContent: trainingMarker(d) }),
+        trainingMarker(d) ? el("span", { className: "sr", textContent: trainingLabel(d) }) : null);
     };
     const switcher = el("div", { className: "seg", attrs: { role: "group", "aria-label": "Value in the table" } });
     const box = el("div");
     const draw = () => {
       segmented(switcher, METRICS, state.metric, (v) => { state.metric = v; draw(); });
       const name = METRICS.find(([k]) => k === state.metric)[1];
-      const groups = EVIDENCE_ORDER.map((status, rank) => [
-        `Strongest evidence across these models: ${EVIDENCE_LEVELS[status].label}`,
-        datasets.filter((row) => row.evidence === rank)]);
+      const groups = TRAINING_GROUPS.map((group) => [group.label,
+        datasets.filter((row) => row.training === group.seen)]);
       box.replaceChildren(resultsTable(
         [["Dataset"], ["Language"], ["Chance", "n"], ...models.map((m) => [m.name, "n model"])],
         groups.filter(([, rs]) => rs.length).map(([title, rs]) => [title, [...rs].sort((a, b) => mean(b) - mean(a)).map((r) =>
@@ -492,23 +482,10 @@
         `${name} of every model on every dataset`));
     };
     draw();
-    const sampled = models.some((m) => m.summary.datasets.some((d) => d.total_clips > d.clips));
     return [el("h2", { textContent: "Every model on every dataset" }),
-      el("p", { className: "sub", textContent: `${models.length} models, ${keys.length} datasets. One prediction per clip, each model as released (no fine-tuning). Rows grouped by the strongest training-source evidence among these models, each group from the best average down.` }),
+      el("p", { className: "sub", textContent: `${models.length} models, ${keys.length} datasets. One prediction per clip, each model as released.` }),
       el("div", { className: "toolbar" }, el("div", { className: "control" }, "Value", switcher)),
-      legend(), box,
-      el("ul", { className: "notes" },
-        ...models.map((m) => {
-          const marked = m.summary.datasets.filter((d) => evidenceMarker(d))
-            .map((d) => `${evidenceMarker(d)} ${d.dataset} (${evidenceLevel(d).label})`);
-          return el("li", {}, el("b", { textContent: m.name }), `: ${m.training_source || "sources not stated"}` +
-            (marked.length ? `; ${marked.join(", ")}.` : "; no corpus-specific evidence for these datasets."));
-        }),
-        el("li", { textContent: evidenceNote + " Indirect support means inferred upstream influence, not confirmed raw-corpus training." }),
-        el("li", { textContent: "Accuracy: acted emotion: the share of clips whose prediction matches the emotion the speaker was asked to portray. The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many emotions it has." }),
-        el("li", { textContent: "Unweighted accuracy: the mean of the per-emotion accuracies, so every emotion counts the same. Macro F1: the mean of the per-emotion F1 scores." }),
-        el("li", { textContent: "Chance: the accuracy of a random guess among the dataset's emotions. Each model's own tab has the details: ground-truth labels, clips, the confusion matrices." }),
-        sampled ? el("li", { textContent: "Some results are on a sample of a dataset's clips (taken at even intervals within each emotion); point at a value to see." }) : null)];
+      legend(), box];
   }
 
   function modelResults(m) {
@@ -527,19 +504,9 @@
         ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), "n")] : []), td(pct(d.metrics.unweighted_accuracy), "n"),
         td(pct(d.metrics.macro_f1), "n")]))]),
       `Results of ${m.name} on every dataset`);
-     const notes = el("ul", { className: "notes" },
-      el("li", { textContent: `Rows grouped by training-source evidence level, each group from the highest accuracy (acted emotion) down; the row takes the colour of that accuracy.` }),
-      el("li", { textContent: "Ground-truth labels: the emotions the speakers were asked to portray, under the project's names for them, in the order of the rows of the confusion matrices." }),
-      composite.length ? el("li", { textContent: `Composite labels (no model class; a prediction of any class in brackets counts as correct): ${composite.join(", ")}. Chance level counts these classes, so it is higher than 1 in the number of emotions.` }) : null,
-      el("li", { textContent: `Training sources of ${m.name}: ${m.training_source || "not stated"}. ` + evidenceNote
-        + " Indirect support means inferred upstream influence, not confirmed raw-corpus training." }),
-      el("li", { textContent: "Accuracy: acted emotion compares the prediction with the emotion the speaker was asked to portray. The prediction is the most probable of the emotions that the dataset has, so chance level depends on how many emotions it has." }),
-      listeners ? el("li", { textContent: "Accuracy: acted or listeners' vote also accepts the listeners' majority vote; only datasets that publish listeners' labels have it." }) : null,
-      el("li", { textContent: "Unweighted accuracy: the mean of the per-emotion accuracies, so every emotion counts the same. Macro F1: the mean of the per-emotion F1 scores." }),
-      s.datasets.some((d) => d.total_clips > d.clips) ? el("li", { textContent: "Clips such as 14 of 1,800: evaluated on a sample taken at even intervals within each emotion (limit in config/evaluation.yaml), not on every clip." }) : null);
     const parts = [el("h2", { textContent: `${m.name} on every dataset` }),
       el("p", { className: "sub", textContent: `${s.datasets.length} datasets, summary of ${s.date}. One prediction per clip, the model as released (no fine-tuning).` }),
-      legend(), main, notes];
+      legend(), main];
     if (s.figure) {
       const figure = el("figure", { className: "figure", tabIndex: 0, title: "Click, or press Enter, to enlarge or shrink" },
         el("img", { src: s.figure, alt: `Confusion matrices of ${m.name} on every dataset` }));
@@ -662,9 +629,6 @@
   $("model-control").hidden = exampleModels.length < 2;
   $("dataset").addEventListener("change", (e) => selectDataset(Number(e.target.value)));
   $("emotion").addEventListener("change", (e) => { state.emotion = e.target.value; renderExamples(); });
-  $("footer").append("Generated by ", el("code", { textContent: "scripts/viewer/make_viewer.py" }),
-    ". To get the same clips again, set ", el("code", { textContent: `seed: ${DATA.seed}` }), " in ",
-    el("code", { textContent: "config/viewer.yaml" }), ".");
   $("tab-examples").hidden = !DATA.datasets.length;
   $("tab-datasets").hidden = !Object.keys(DATA.sources).length;
   if (DATA.datasets.length) {

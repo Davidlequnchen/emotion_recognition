@@ -16,10 +16,10 @@ models: [gemma4_e4b, qwen2_5_omni_7b, qwen2_audio_7b]
 api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
                   # requests, key in the .env file at the repository root); false: skip them, also when listed
                   # in `models`
-datasets: [meld]  # single-utterance baseline only; dialogue history and ICL are separate future pilot conditions
-                  # all = all downloaded datasets, or a list such as [crema_d, ravdess]
+datasets: [meld]  # ordinary single-utterance evaluation; H0–H3 uses scripts/evaluation/context_pilot.py
+                  # all = all 16 downloaded adopted datasets (after exclude), including the three dialogue additions
                   # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus | mead | meld
-                  # | emovo | emozionalmente | savee)
+                  # | emovo | emozionalmente | savee | emotiontalk | dailytalk | multidialog)
 subsets:          # fixed subsets of two large datasets, to save compute (decided 2026-11-06). Every model and every
                   # script (evaluate.py, the LLM data loader, the viewer) uses the same clips, because the subset is
                   # part of the dataset's loader (scripts/common/eval_datasets.py); null or absent = every clip

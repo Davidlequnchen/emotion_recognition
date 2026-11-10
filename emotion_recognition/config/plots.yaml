@@ -5,6 +5,8 @@
 # Paths are relative to the emotion_recognition/ folder.
 # Panel labels round percentages to integers for print; overview matrices keep one decimal.
 # The underlying scores and bar heights retain full precision.
+# The model legend stays below the grid: six columns, exactly two text lines, with unbroken model names.
+# Titles use one line, Dataset (Language); the complete subset/cohort scope remains in result metadata and reports.
 # =====================================================================
 
 metrics: [accuracy, unweighted_accuracy, macro_f1]  # one figure per metric (keys of `metrics` in the predictions JSON);
@@ -16,4 +18,4 @@ placeholders:     # reserve these model positions until compatible results arriv
 datasets: all     # all datasets with results, or a list such as [crema_d, mess]
 exclude: [esd]        # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
 out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .pdf, plus overview_<metric>.*
-columns: 4        # panels per row in the dataset figures; 13 datasets use four rows
+columns: 4        # panels per row; 16 completed datasets form a 4x4 grid (missing datasets are not fabricated)

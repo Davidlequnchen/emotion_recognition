@@ -677,7 +677,7 @@ class EvaluationReuseTests(Fixture):
             self.assertEqual([p.get_hatch() or "" for p in patches], ["///", "///", "", ""])
             self.assertEqual([p.get_height() for p in patches], [50.0] * 4)
             self.assertLess(patches[1].get_x() - (patches[0].get_x() + patches[0].get_width()), .1)
-            labels = [t.get_text() for t in panels.legends[0].texts]
+            labels = [" ".join(t.get_text().split()) for t in panels.legends[0].texts]
             self.assertEqual(labels.count(plot_results.TRAINING_LABEL), 1)
             self.assertIn("gpt_realtime (pending)", labels)
             self.assertIn("gemini (pending)", labels)
@@ -714,6 +714,98 @@ class EvaluationReuseTests(Fixture):
         self.assertEqual(plot_results.chart_models(results, registry, placeholders=placeholders)[0], models)
         self.assertEqual(plot_results.chart_models(results, registry, wanted=["ser"],
                                                     placeholders=placeholders)[0], ["ser"])
+
+    def test_sixteen_dataset_grid_keeps_a_two_row_legend_below_all_panels(self):
+        models = ["emotion2vec_plus_large", "meralion_ser_v1", "melati_emotion", "vox_profile_whisper",
+                  "vox_profile_wavlm", "qwen2_5_omni_7b", "qwen2_audio_7b", "gemma4_e4b",
+                  "gpt_realtime", "gemini"]
+        names = dict(zip(models, ["emotion2vec+ large", "MERaLiON-SER-v1", "Melati", "Vox-Profile Whisper",
+                    "Vox-Profile WavLM", "Qwen2.5-Omni 7B", "Qwen2-Audio 7B Instruct", "Gemma 4 E4B",
+                    "GPT Realtime", "Gemini 3.8 Flash"]))
+        datasets = [f"fixture{i}" for i in range(16)]
+        colours = dict(zip(models, plot_results.COLOURS))
+        # Synthetic artist fixtures only; no prediction files or real missing-dataset results are written.
+        results = {m: {key: {"key": key, "dataset": f"Fixture {i}", "classes": FOUR, "clips": 2,
+                            "metrics": {"accuracy": .64, "macro_f1": .61}, "in_training_data": False}
+                       for i, key in enumerate(datasets)} for m in models[:-2]}
+        plt = plot_results.setup_matplotlib()
+        captured = []
+        def capture(figure, _plt, stem):
+            captured.append(figure)
+            return stem
+        try:
+            for metric, entries in (("accuracy", 12), ("macro_f1", 11)):
+                with self.subTest(metric=metric), mock.patch.object(plot_results, "save", side_effect=capture):
+                    plot_results.per_dataset_figure(plt, metric, results, models, names, colours,
+                                                    datasets, 4, self.root)
+                    figure = captured[-1]
+                    self.assertEqual(len(figure.axes), 16)
+                    self.assertEqual(len({round(ax.get_position().x0, 5) for ax in figure.axes}), 4)
+                    self.assertEqual(len({round(ax.get_position().y0, 5) for ax in figure.axes}), 4)
+                    self.assertTrue(all(ax.axison for ax in figure.axes))
+                    legend = figure.legends[0]
+                    self.assertEqual(legend._ncols, 6)
+                    self.assertEqual(len(legend.texts), entries)
+                    self.assertEqual((entries + legend._ncols - 1) // legend._ncols, 2)
+                    self.assertTrue(all("\n" not in text.get_text() for text in legend.texts))
+                    figure.canvas.draw()
+                    baselines = {round(text.get_transform().transform(text.get_position())[1], 3)
+                                 for text in legend.texts}
+                    self.assertEqual(len(baselines), 2)  # two actual text lines, not two rows of wrapped items
+                    box = legend.get_window_extent(figure.canvas.get_renderer())
+                    self.assertGreaterEqual(box.x0, 0)
+                    self.assertLessEqual(box.x1, figure.bbox.width)
+                    self.assertGreaterEqual(box.y0, 0)
+                    self.assertLess(box.y1, min(ax.bbox.y0 for ax in figure.axes))
+                    self.assertEqual(len(figure.texts), 1)  # no explanatory footer under the model legend
+        finally:
+            for figure in captured:
+                plt.close(figure)
+
+    def test_dataset_titles_are_one_line_without_changing_formal_scope(self):
+        cases = {
+            "crema_d": ("CREMA-D", "American English", "CREMA-D (English)"),
+            "mcae_spps": ("MCAE-SPPS", "Mandarin Chinese", "MCAE-SPPS (Mandarin)"),
+            "thai_ser": ("THAI-SER (high-agreement subset)", "Thai", "THAI-SER (Thai)"),
+            "mead": ("MEAD (8,000-clip subset)", "English", "MEAD (English)"),
+            "jl_corpus": ("JL-Corpus (five main emotions)", "English (New Zealand)", "JL-Corpus (English)"),
+            "savee": ("SAVEE", "British English", "SAVEE (English)"),
+            "emozionalmente": ("Emozionalmente", "Italian", "Emozionalmente (Italian)"),
+            "dailytalk": ("DailyTalk (validation)", "English", "DailyTalk (English)"),
+            "emotiontalk": ("EmotionTalk (test)", "Mandarin", "EmotionTalk (Mandarin)"),
+            "multidialog": ("MultiDialog (gold_both)", "English", "MultiDialog (English)"),
+        }
+        models, names, colours = ["fixture"], {"fixture": "Fixture"}, {"fixture": plot_results.COLOURS[0]}
+        results = {"fixture": {key: {"key": key, "dataset": full, "language": language, "classes": FOUR,
+                           "clips": 2, "metrics": {"accuracy": .54}, "in_training_data": False}
+                    for key, (full, language, _) in cases.items()}}
+        before = json.dumps(results, sort_keys=True)
+        plt = plot_results.setup_matplotlib()
+        captured = []
+        def capture(figure, _plt, stem):
+            captured.append(figure)
+            return stem
+        try:
+            with mock.patch.object(plot_results, "save", side_effect=capture):
+                plot_results.per_dataset_figure(plt, "accuracy", results, models, names, colours,
+                                                list(cases), 4, self.root)
+                plot_results.overview_figure(plt, "accuracy", results, models, names, colours,
+                                            list(cases), self.root)
+            panels, overview = captured
+            panels.canvas.draw()
+            renderer = panels.canvas.get_renderer()
+            for ax, (_, (_, _, expected)) in zip(panels.axes, cases.items()):
+                self.assertEqual(ax.get_title(), expected)
+                self.assertNotIn("\n", ax.get_title())
+                box = ax.title.get_window_extent(renderer)
+                self.assertGreaterEqual(box.x0, ax.bbox.x0 - 4)
+                self.assertLessEqual(box.x1, ax.bbox.x1 + 4)
+            self.assertEqual([label.get_text() for label in overview.axes[0].get_yticklabels()],
+                             [plot_results.DATASET_DISPLAY[key][0] for key in cases])
+            self.assertEqual(json.dumps(results, sort_keys=True), before)
+        finally:
+            for figure in captured:
+                plt.close(figure)
 
 
 if __name__ == "__main__":
