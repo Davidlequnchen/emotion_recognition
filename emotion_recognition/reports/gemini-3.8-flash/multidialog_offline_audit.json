@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.556409+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "multidialog",
+  "clips": 7672,
+  "unique_audio_paths": 7672,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/multidialog_predictions.csv",
+      "sha256": "bb7b6aedda6496231391a784eb485d6424efc016501732c9fcba9252799c213a",
+      "bytes": 1565328
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/multidialog_predictions.json",
+      "sha256": "ef00358e3df80cf6874e1ee17d55160735d3701a3c2a7be30f591b7393a5fe32",
+      "bytes": 3201
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.566345,
+    "unweighted_accuracy": 0.298606,
+    "macro_f1": 0.27302,
+    "accuracy_all_classes": 0.566345
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5663451511991658,
+    "unweighted_accuracy": 0.29860553247350025,
+    "macro_f1": 0.2730203380711815,
+    "accuracy_all_classes": 0.5663451511991658
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

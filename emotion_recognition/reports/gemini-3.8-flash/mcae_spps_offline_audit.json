@@ -1,0 +1,56 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.376898+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "mcae_spps",
+  "clips": 6675,
+  "unique_audio_paths": 6675,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.csv",
+      "sha256": "0c4259a52336449fd53720db0b89334e9a6842aa25d808e42bf9815f08e06e6f",
+      "bytes": 902062
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.json",
+      "sha256": "3833017667569df50b842a94600717138bb043c862629d08989a19217fce3e41",
+      "bytes": 3395
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.334831,
+    "unweighted_accuracy": 0.30073,
+    "macro_f1": 0.281403,
+    "accuracy_all_classes": 0.334831,
+    "accuracy_acted_or_listener": 0.334831,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.334831
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3348314606741573,
+    "unweighted_accuracy": 0.3007304422225066,
+    "macro_f1": 0.2814029164120125,
+    "accuracy_all_classes": 0.3348314606741573,
+    "accuracy_acted_or_listener": 0.3348314606741573,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.3348314606741573
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

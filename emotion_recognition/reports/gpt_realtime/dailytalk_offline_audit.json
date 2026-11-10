@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.825811+00:00",
+  "model": "gpt_realtime",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/dailytalk_predictions.csv",
+      "sha256": "720a6fdca1e8785f8fa46819b50a6b6638afd571fe2556719afb4c8562835b09",
+      "bytes": 147393
+    },
+    {
+      "path": "outputs/gpt_realtime/dailytalk_predictions.json",
+      "sha256": "2510e01b1532c4eb7004c79a6529ee61b753d5cfa603044a70fdb60ddc4e2d58",
+      "bytes": 2995
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.745196,
+    "unweighted_accuracy": 0.484325,
+    "macro_f1": 0.350804,
+    "accuracy_all_classes": 0.745196
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.7451963241436925,
+    "unweighted_accuracy": 0.4843253024535724,
+    "macro_f1": 0.35080432584689775,
+    "accuracy_all_classes": 0.7451963241436925
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

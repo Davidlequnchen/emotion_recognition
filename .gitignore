@@ -56,6 +56,9 @@ outputs/
 !emotion_recognition/outputs/
 emotion_recognition/outputs/*.html
 emotion_recognition/outputs/*.log
+# Temporary transport attachments; recovered CSV/JSON/JSONL remain eligible for Git.
+emotion_recognition/outputs/**/*.txt
+emotion_recognition/outputs/**/*.zip
 emotion_recognition/outputs/**/esd_*
 
 # labeling_tool: labels written by the tool (company data folders live outside this repository)

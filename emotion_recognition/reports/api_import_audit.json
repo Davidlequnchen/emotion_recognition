@@ -1,0 +1,1114 @@
+{
+  "imported_at_utc": "2026-11-10T13:10:40.254710+00:00",
+  "source_page": "https://app.notion.com/p/4149f1cd78278005b0dfe12588223ea5",
+  "source_archives": [
+    {
+      "model": "gemini-3.8-flash",
+      "file": "gemini-3.8-flash_predictions.zip",
+      "bytes": 2678793,
+      "sha256": "4732830072b5c114fd3f2081e0bb9035f82eca0705cb23530fb746c5439ebf0c"
+    },
+    {
+      "model": "gpt_realtime",
+      "file": "gpt_realtime_predictions.zip",
+      "bytes": 1555530,
+      "sha256": "7aa8fc0b63a72f14c9fe71b51b896d3d0737c91e851f9482a1669d1859025fab"
+    }
+  ],
+  "prediction_audit": {
+    "gemini-3.8-flash": {
+      "datasets": {
+        "crema_d": {
+          "clips": 7442,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.32679387261488846,
+            "unweighted_accuracy": 0.3393523005473697,
+            "macro_f1": 0.3023780810920556,
+            "accuracy_all_classes": 0.32679387261488846,
+            "accuracy_acted_or_listener": 0.6225477022305832,
+            "listeners_vs_acted": 0.4558693733451015,
+            "model_vs_listeners": 0.5329508679023243
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "7876beea268cb541aa6f1b32a59722bfdce4114648080bb44b490aa7d03926d6",
+          "json_sha256": "5d054851c9e6d87c3f08eab0c8a4d8d020dffe1a8e095115894692f083953671",
+          "invalid_predictions": 0
+        },
+        "dailytalk": {
+          "clips": 1197,
+          "scope": "split:validation",
+          "metrics": {
+            "accuracy": 0.5730994152046783,
+            "unweighted_accuracy": 0.485076927161401,
+            "macro_f1": 0.2500609451732986,
+            "accuracy_all_classes": 0.5730994152046783
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "eab90a5798058920d2dda15971a07209afcf2c9263e3cb959c6fb62a34de0b72",
+          "json_sha256": "9620d1f1fa801c8e3272a7f2ac34c74365a96723408d0d590e5e67b2c49eac3b",
+          "invalid_predictions": 0
+        },
+        "emotiontalk": {
+          "clips": 1929,
+          "scope": "split:test",
+          "metrics": {
+            "accuracy": 0.5199585277345775,
+            "unweighted_accuracy": 0.5595610884960857,
+            "macro_f1": 0.46396109652225165,
+            "accuracy_all_classes": 0.5199585277345775
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "aab36f2f9152804c8fdbc1336f0e285f58a5b2f1de1c1125d54c7ec11d3ee87a",
+          "json_sha256": "8ea0443b6c8e45ac28ec3377761f02113fd84d6cf4d47da7187324542e3de622",
+          "invalid_predictions": 0
+        },
+        "emovo": {
+          "clips": 588,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.3112244897959184,
+            "unweighted_accuracy": 0.3112244897959184,
+            "macro_f1": 0.27742748508096987,
+            "accuracy_all_classes": 0.3112244897959184
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "a31b4b90df28e30603be66804a1f44d939007363c62c8e877b99cab7ff18e8dc",
+          "json_sha256": "190efbf8a55a1dde799326bf982d929287bf853c18568abdbc342da146492c91",
+          "invalid_predictions": 0
+        },
+        "emozionalmente": {
+          "clips": 6902,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.3403361344537815,
+            "unweighted_accuracy": 0.3403361344537816,
+            "macro_f1": 0.3003702205207975,
+            "accuracy_all_classes": 0.3403361344537815,
+            "accuracy_acted_or_listener": 0.45972181976238774,
+            "listeners_vs_acted": 0.8121868433812833,
+            "model_vs_listeners": 0.4123161467593341
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "95cfdb0733b83a7c907292e0abd41fddd13fa6a2f4906ac2f15ff09e39307cb6",
+          "json_sha256": "6d6db483c7b0df51c47ac7af485d9b2b6ac836021f756d80e532f0a4a5ab0a02",
+          "invalid_predictions": 0
+        },
+        "jl_corpus": {
+          "clips": 1200,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.37833333333333335,
+            "unweighted_accuracy": 0.3783333333333333,
+            "macro_f1": 0.42327661096300967,
+            "accuracy_all_classes": 0.37833333333333335
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "d005ca1d22af01de7757864b32bda10832548397f8dbf946df7b6b76076ed45b",
+          "json_sha256": "e439a5b93614cd7067e71f9941d27c5512bf0a562d27b1a9eb0c75531059e965",
+          "invalid_predictions": 0
+        },
+        "mcae_spps": {
+          "clips": 6675,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.3348314606741573,
+            "unweighted_accuracy": 0.3007304422225066,
+            "macro_f1": 0.2814029164120125,
+            "accuracy_all_classes": 0.3348314606741573,
+            "accuracy_acted_or_listener": 0.3348314606741573,
+            "listeners_vs_acted": 1.0,
+            "model_vs_listeners": 0.3348314606741573
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "neutral",
+            "happy",
+            "angry",
+            "fearful",
+            "sad",
+            "disgusted",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "0c4259a52336449fd53720db0b89334e9a6842aa25d808e42bf9815f08e06e6f",
+          "json_sha256": "3833017667569df50b842a94600717138bb043c862629d08989a19217fce3e41",
+          "invalid_predictions": 0
+        },
+        "mead": {
+          "clips": 8000,
+          "scope": "stratified_8000",
+          "metrics": {
+            "accuracy": 0.179625,
+            "unweighted_accuracy": 0.2213394528382964,
+            "macro_f1": 0.17511194279898543,
+            "accuracy_all_classes": 0.179625
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "327d1a0d08e64b8c3460b78d1e6ed52a7b4e9c9b44e5777db431b5f350ae0e10",
+          "json_sha256": "33ece5c7d724c8d7ef56d08a6bd4f84767b7ef2f6081f9a5aff6cb10e8d2fc0d",
+          "invalid_predictions": 10
+        },
+        "meld": {
+          "clips": 2608,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.4003067484662577,
+            "unweighted_accuracy": 0.4159116353325717,
+            "macro_f1": 0.3516287347283643,
+            "accuracy_all_classes": 0.4003067484662577
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "777dccf4a67f4736c1d6b342f7c42c22fce700b7a4cf660c124e01b86204d4e7",
+          "json_sha256": "0545c845047841f89495f6e273cfa4f68dd9e1932acd1e4bc3964b090c53a339",
+          "invalid_predictions": 0
+        },
+        "mess": {
+          "clips": 1800,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.2966666666666667,
+            "unweighted_accuracy": 0.2966666666666667,
+            "macro_f1": 0.2188491279963305,
+            "accuracy_all_classes": 0.2966666666666667
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "happy",
+            "neutral",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "1b305a0194b27b82ee1047e0fad3f0600b8c5bd4585ad4731ba6d3f2d97b8da3",
+          "json_sha256": "9599b667e3277dc017ca5314264935a287d73e6a2992df27ae203ad817286e90",
+          "invalid_predictions": 0
+        },
+        "multidialog": {
+          "clips": 7672,
+          "scope": "cohort:gold_both",
+          "metrics": {
+            "accuracy": 0.5663451511991658,
+            "unweighted_accuracy": 0.29860553247350025,
+            "macro_f1": 0.2730203380711815,
+            "accuracy_all_classes": 0.5663451511991658
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "bb7b6aedda6496231391a784eb485d6424efc016501732c9fcba9252799c213a",
+          "json_sha256": "ef00358e3df80cf6874e1ee17d55160735d3701a3c2a7be30f591b7393a5fe32",
+          "invalid_predictions": 9
+        },
+        "nemo": {
+          "clips": 4481,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.21490738674403034,
+            "unweighted_accuracy": 0.20354652968743966,
+            "macro_f1": 0.14359604881462304,
+            "accuracy_all_classes": 0.21490738674403034
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "1e3b167d14f47f92e80815e36d14ed73319110f54d66df1cf28a51426c5e32f7",
+          "json_sha256": "d0b40601dced2cc248128db94fc9142ef6cda589f21c4a93a58f3125aad53c13",
+          "invalid_predictions": 3
+        },
+        "ravdess": {
+          "clips": 1440,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.46944444444444444,
+            "unweighted_accuracy": 0.4575892857142857,
+            "macro_f1": 0.4612799453618095,
+            "accuracy_all_classes": 0.46944444444444444
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "neutral",
+            "happy",
+            "sad",
+            "angry",
+            "fearful",
+            "disgusted",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "771315a1c1c70a06b6f0be3a43b80365c0544e3c568fc3c2c8955ddec7804b33",
+          "json_sha256": "f2f583cf67e9faed35c2cdf3eba67cb6f3f92027464bc76ae1514992aba5a8d2",
+          "invalid_predictions": 0
+        },
+        "savee": {
+          "clips": 480,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.33125,
+            "unweighted_accuracy": 0.26071428571428573,
+            "macro_f1": 0.24991853879545292,
+            "accuracy_all_classes": 0.33125
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "25eb9f88e48bd4dd283789771177b4e9e11e7364c7602b461d91f7cf61177ad9",
+          "json_sha256": "d3bcd4063e1da6552d6306d9f85d8f82869cbc88460c9c4cf2851af44e6cab1a",
+          "invalid_predictions": 0
+        },
+        "tess": {
+          "clips": 2800,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.29892857142857143,
+            "unweighted_accuracy": 0.2989285714285715,
+            "macro_f1": 0.24128668743063542,
+            "accuracy_all_classes": 0.29892857142857143
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "surprised",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "05e42a3b85c01e684e3d88befd98e06669918ecef25de87ee8d7256e87aba066",
+          "json_sha256": "f70686e859886a86aaeaff843b39d0ce61dda96653cf90e1e460006f1ddca525",
+          "invalid_predictions": 0
+        },
+        "thai_ser": {
+          "clips": 11848,
+          "scope": "high_agreement",
+          "metrics": {
+            "accuracy": 0.6839128966914247,
+            "unweighted_accuracy": 0.6785142685683171,
+            "macro_f1": 0.6842926581511233,
+            "accuracy_all_classes": 0.6839128966914247,
+            "accuracy_acted_or_listener": 0.7424881836596894,
+            "listeners_vs_acted": 0.7722822417285617,
+            "model_vs_listeners": 0.6477886563133018
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "neutral",
+            "angry",
+            "happy",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "4868770f4773556f5747e5ea6a1aec85b0751b02a00ff4a4c6dbb4ac42fb1c89",
+          "json_sha256": "0540d4c988c42e139425ec765dd261b3f6a14f0ab29426e7e806673165613c15",
+          "invalid_predictions": 12
+        }
+      },
+      "dataset_count": 16,
+      "total_clips": 67062
+    },
+    "gpt_realtime": {
+      "datasets": {
+        "crema_d": {
+          "clips": 7442,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.1600376242945445,
+            "unweighted_accuracy": 0.18021543497032735,
+            "macro_f1": 0.07000389407789638,
+            "accuracy_all_classes": 0.1600376242945445,
+            "accuracy_acted_or_listener": 0.6030636925557645,
+            "listeners_vs_acted": 0.4558693733451015,
+            "model_vs_listeners": 0.5854663136216535
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "e4ce68b8f41d5c59d356b6f510aedec701eabcbc16074629a6b6d34ed8b5c4bc",
+          "json_sha256": "58308a83ea2a49afb43ee1480ea50ffbdacaddb3d32b3b9898a7024fb942edd4",
+          "invalid_predictions": 1
+        },
+        "dailytalk": {
+          "clips": 1197,
+          "scope": "split:validation",
+          "metrics": {
+            "accuracy": 0.7451963241436925,
+            "unweighted_accuracy": 0.4843253024535724,
+            "macro_f1": 0.35080432584689775,
+            "accuracy_all_classes": 0.7451963241436925
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "720a6fdca1e8785f8fa46819b50a6b6638afd571fe2556719afb4c8562835b09",
+          "json_sha256": "2510e01b1532c4eb7004c79a6529ee61b753d5cfa603044a70fdb60ddc4e2d58",
+          "invalid_predictions": 6
+        },
+        "emotiontalk": {
+          "clips": 1929,
+          "scope": "split:test",
+          "metrics": {
+            "accuracy": 0.5717988595127009,
+            "unweighted_accuracy": 0.4704993377963074,
+            "macro_f1": 0.4435084314944505,
+            "accuracy_all_classes": 0.5717988595127009
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "08e96150eb83dfdf191fca40c7e23b92dac42187ce685d0b9b3f61c1fb859c26",
+          "json_sha256": "67ed6c9cbf2679b2436c9a103f4f720fb5b4e448e89156a0563b684b3f5643ae",
+          "invalid_predictions": 20
+        },
+        "emovo": {
+          "clips": 588,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.17517006802721088,
+            "unweighted_accuracy": 0.17517006802721088,
+            "macro_f1": 0.09725628317963232,
+            "accuracy_all_classes": 0.17517006802721088
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "f64084bf6445f37750d0e931b944c65ff7b53ff53c775bd4dda9de9e0d48fbd8",
+          "json_sha256": "45a20840634f99d9ec97c822eb17dc3f31f1f317ce5c1bab7582626c81496b7e",
+          "invalid_predictions": 1
+        },
+        "emozionalmente": {
+          "clips": 6902,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.1874818893074471,
+            "unweighted_accuracy": 0.1874818893074471,
+            "macro_f1": 0.10734841313929169,
+            "accuracy_all_classes": 0.1874818893074471,
+            "accuracy_acted_or_listener": 0.2747029846421327,
+            "listeners_vs_acted": 0.8121868433812833,
+            "model_vs_listeners": 0.2403426539518345
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "3ebd09175e8a864ea68cbdeb9842509a3cd50dd91374d96a356b7d4c84e920b3",
+          "json_sha256": "67dbfea2831e64679ce7c8e1e7020189ba8db289b8e30cd460593071f28fb773",
+          "invalid_predictions": 0
+        },
+        "jl_corpus": {
+          "clips": 1200,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.30083333333333334,
+            "unweighted_accuracy": 0.30083333333333334,
+            "macro_f1": 0.3153514082785152,
+            "accuracy_all_classes": 0.30083333333333334
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "a2a55805afd6ad23be7b0498cf6af3345386b8b14b2b7b51d21c707c3bd136c4",
+          "json_sha256": "3852bb18b820eae26068351d6459f271c29de413a9a094d884c0b66a4b7cf09f",
+          "invalid_predictions": 0
+        },
+        "mcae_spps": {
+          "clips": 6675,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.19850187265917604,
+            "unweighted_accuracy": 0.16702197591832638,
+            "macro_f1": 0.09025023364057168,
+            "accuracy_all_classes": 0.19850187265917604,
+            "accuracy_acted_or_listener": 0.19850187265917604,
+            "listeners_vs_acted": 1.0,
+            "model_vs_listeners": 0.19850187265917604
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "neutral",
+            "happy",
+            "angry",
+            "fearful",
+            "sad",
+            "disgusted",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "e6c0f361bb0d07adae76e7529fa66d55f4bb0327e78e2d68d3f76e9cf4e4b3aa",
+          "json_sha256": "26c7bbe14466027c1d26e7a1f74d5a8081a405d4f053733fd1e6eb98cdb14317",
+          "invalid_predictions": 2
+        },
+        "mead": {
+          "clips": 8000,
+          "scope": "stratified_8000",
+          "metrics": {
+            "accuracy": 0.131375,
+            "unweighted_accuracy": 0.184409406056742,
+            "macro_f1": 0.11141444316724754,
+            "accuracy_all_classes": 0.131375
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "02befd2230fd2c223439d334de71842b56ce76f65335f72b884f69b0da786119",
+          "json_sha256": "194d24b0884ea17d97d69bcb40b6d7ca4068a6efd8fc0f9e377af487803678ab",
+          "invalid_predictions": 22
+        },
+        "meld": {
+          "clips": 2608,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.4662576687116564,
+            "unweighted_accuracy": 0.3494103476229378,
+            "macro_f1": 0.3636266548896843,
+            "accuracy_all_classes": 0.4662576687116564
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "e610efed5c8c44160eb661a8f28441af1fc17f923208ce5e1a336675a8e8abed",
+          "json_sha256": "191f700a3fa214e3f55a16f30b8764e1842e288f4122a23fe81c159b6210d9ea",
+          "invalid_predictions": 29
+        },
+        "mess": {
+          "clips": 1800,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.25222222222222224,
+            "unweighted_accuracy": 0.2522222222222222,
+            "macro_f1": 0.11985985618006825,
+            "accuracy_all_classes": 0.25222222222222224
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "happy",
+            "neutral",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "b63cfd9e8c476b668ed0035a8124b755e36b1c9e3dc8b869501e615b1324c588",
+          "json_sha256": "1a4973f024ecc88191efe2e8b96ddf7c142e05c894a0a4a8b0f55de9a41a5bb7",
+          "invalid_predictions": 2
+        },
+        "multidialog": {
+          "clips": 7672,
+          "scope": "cohort:gold_both",
+          "metrics": {
+            "accuracy": 0.5964546402502607,
+            "unweighted_accuracy": 0.3147726559211717,
+            "macro_f1": 0.3048184228004694,
+            "accuracy_all_classes": 0.5964546402502607
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "cc80e9ca49e6e0fbcb6a6e169a052827e4ad9c2fd82039760aaff4b4aaa6220c",
+          "json_sha256": "0e1c5496e70ee7aff65255f668e9fa0973711aedf4b4d449fe13887b645a2600",
+          "invalid_predictions": 41
+        },
+        "nemo": {
+          "clips": 4481,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.19236777505021202,
+            "unweighted_accuracy": 0.18132658525673698,
+            "macro_f1": 0.10102961144509472,
+            "accuracy_all_classes": 0.19236777505021202
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "88c3ccb8e90170ea8d743e2aa9e5958bbcef0602fbec4f237d74991fdd3d0655",
+          "json_sha256": "e375ba1c00b590f977199f935eb664d8eeab616d752be1ce3f6fb7c2e26bb5bf",
+          "invalid_predictions": 0
+        },
+        "ravdess": {
+          "clips": 1440,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.2701388888888889,
+            "unweighted_accuracy": 0.21825396825396823,
+            "macro_f1": 0.17764660400975765,
+            "accuracy_all_classes": 0.2701388888888889
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "neutral",
+            "happy",
+            "sad",
+            "angry",
+            "fearful",
+            "disgusted",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "f76443a27122883777b8656925806c10517e3724ef6223dcf1d9d24acc1221f8",
+          "json_sha256": "1bc36c34c718922aba5f4b37ae5ce49b9f4b7298f458dda932e24a833cba9eee",
+          "invalid_predictions": 0
+        },
+        "savee": {
+          "clips": 480,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.27291666666666664,
+            "unweighted_accuracy": 0.1976190476190476,
+            "macro_f1": 0.17144053056333616,
+            "accuracy_all_classes": 0.27291666666666664
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "sad",
+            "surprised"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "0c0772c19ad7879aa3de2f6ea3a32d128459f80bc36afa104a6b34655a89d657",
+          "json_sha256": "5a2bdd24be403ad75563b134344c499b4101333d32d908f738d749a601883dee",
+          "invalid_predictions": 1
+        },
+        "tess": {
+          "clips": 2800,
+          "scope": "",
+          "metrics": {
+            "accuracy": 0.14357142857142857,
+            "unweighted_accuracy": 0.14357142857142854,
+            "macro_f1": 0.038546290521263,
+            "accuracy_all_classes": 0.14357142857142857
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "angry",
+            "disgusted",
+            "fearful",
+            "happy",
+            "neutral",
+            "surprised",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "4346b6fc67addabde32359fba62ad9b4b15e3c579fe4a4dbd3125ac51f92efbb",
+          "json_sha256": "59ae3316e87d02a45933bd4949530c51eb5266926b4ba821a810b14b13677a3f",
+          "invalid_predictions": 0
+        },
+        "thai_ser": {
+          "clips": 11848,
+          "scope": "high_agreement",
+          "metrics": {
+            "accuracy": 0.5447332883187036,
+            "unweighted_accuracy": 0.5277915924570409,
+            "macro_f1": 0.5399832240513873,
+            "accuracy_all_classes": 0.5447332883187036,
+            "accuracy_acted_or_listener": 0.6027177582714383,
+            "listeners_vs_acted": 0.7722822417285617,
+            "model_vs_listeners": 0.5430452397029034
+          },
+          "exact_source_path_gold_listener_match": true,
+          "correctness_and_protocol_validated": true,
+          "classes": [
+            "neutral",
+            "angry",
+            "happy",
+            "sad"
+          ],
+          "probability_encoding": "one-hot answer encoding",
+          "csv_sha256": "ceb97d2a92880b3597a0b29da5445e488eab016f5f47aec7bc4cd7dd63b563bd",
+          "json_sha256": "7266e0a39448518e1cb386f8690a0b520813713e40553300a89793f48488afc7",
+          "invalid_predictions": 10
+        }
+      },
+      "dataset_count": 16,
+      "total_clips": 67062
+    }
+  },
+  "journal_audit": {
+    "gemini-3.8-flash": {
+      "journal_bytes": 54196477,
+      "journal_sha256": "3dd7ea7f82efbacf60398050797c8d75ec122782082766339342fc87b28c51c4",
+      "valid_json_objects": 67062,
+      "datasets": {
+        "crema_d": 7442,
+        "mcae_spps": 6675,
+        "thai_ser": 11848,
+        "nemo": 4481,
+        "mess": 1800,
+        "ravdess": 1440,
+        "tess": 2800,
+        "jl_corpus": 1200,
+        "mead": 8000,
+        "meld": 2608,
+        "emovo": 588,
+        "emozionalmente": 6902,
+        "savee": 480,
+        "emotiontalk": 1929,
+        "dailytalk": 1197,
+        "multidialog": 7672
+      },
+      "unique_cache_keys": 67062,
+      "duplicate_cache_keys": 0,
+      "duplicate_model_audio_identities": 0,
+      "path_model_missing_total": 0,
+      "path_model_label_mismatches_total": 0,
+      "path_model_label_scope_or_candidates_mismatches_total": 0,
+      "final_raw_answer_local_parser_label_mismatches": 0,
+      "empty_answers_records": 0,
+      "error_field_records": 0,
+      "actual_model_snapshot_counts": {
+        "gemini-3.8-flash": 67062
+      },
+      "invalid_predictions": 34,
+      "hash_mapping": {
+        "crema_d": {
+          "exported_protocol_prompt_hash": "4ff3d2e97612",
+          "journal_cache_fingerprints": {
+            "dc320d9532bb": 7442
+          }
+        },
+        "dailytalk": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 1197
+          }
+        },
+        "emotiontalk": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 1929
+          }
+        },
+        "emovo": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 588
+          }
+        },
+        "emozionalmente": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 6902
+          }
+        },
+        "jl_corpus": {
+          "exported_protocol_prompt_hash": "810c234fb672",
+          "journal_cache_fingerprints": {
+            "6912a69b351d": 1200
+          }
+        },
+        "mcae_spps": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 6675
+          }
+        },
+        "mead": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 8000
+          }
+        },
+        "meld": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 2608
+          }
+        },
+        "mess": {
+          "exported_protocol_prompt_hash": "58c572e3aa38",
+          "journal_cache_fingerprints": {
+            "435170ee2387": 1800
+          }
+        },
+        "multidialog": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 7672
+          }
+        },
+        "nemo": {
+          "exported_protocol_prompt_hash": "f9ee39cb12fd",
+          "journal_cache_fingerprints": {
+            "11f1310bdf84": 4481
+          }
+        },
+        "ravdess": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 1440
+          }
+        },
+        "savee": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 480
+          }
+        },
+        "tess": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "0a0ed456ab52": 2800
+          }
+        },
+        "thai_ser": {
+          "exported_protocol_prompt_hash": "58c572e3aa38",
+          "journal_cache_fingerprints": {
+            "435170ee2387": 11848
+          }
+        }
+      }
+    },
+    "gpt_realtime": {
+      "journal_bytes": 52115520,
+      "journal_sha256": "f90e145910bc59e164a05731999b1c4fdad2abc5d360ecb922d6c6759a953738",
+      "valid_json_objects": 67062,
+      "datasets": {
+        "crema_d": 7442,
+        "mcae_spps": 6675,
+        "thai_ser": 11848,
+        "nemo": 4481,
+        "mess": 1800,
+        "ravdess": 1440,
+        "tess": 2800,
+        "jl_corpus": 1200,
+        "mead": 8000,
+        "meld": 2608,
+        "emovo": 588,
+        "emozionalmente": 6902,
+        "savee": 480,
+        "emotiontalk": 1929,
+        "dailytalk": 1197,
+        "multidialog": 7672
+      },
+      "unique_cache_keys": 67062,
+      "duplicate_cache_keys": 0,
+      "duplicate_model_audio_identities": 0,
+      "path_model_missing_total": 0,
+      "path_model_label_mismatches_total": 0,
+      "path_model_label_scope_or_candidates_mismatches_total": 0,
+      "final_raw_answer_local_parser_label_mismatches": 0,
+      "empty_answers_records": 0,
+      "error_field_records": 0,
+      "actual_model_snapshot_counts": {
+        "gpt-realtime": 67062
+      },
+      "invalid_predictions": 135,
+      "hash_mapping": {
+        "crema_d": {
+          "exported_protocol_prompt_hash": "4ff3d2e97612",
+          "journal_cache_fingerprints": {
+            "867156f6461e": 7442
+          }
+        },
+        "dailytalk": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 1197
+          }
+        },
+        "emotiontalk": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 1929
+          }
+        },
+        "emovo": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 588
+          }
+        },
+        "emozionalmente": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 6902
+          }
+        },
+        "jl_corpus": {
+          "exported_protocol_prompt_hash": "810c234fb672",
+          "journal_cache_fingerprints": {
+            "04b947bdef5d": 1200
+          }
+        },
+        "mcae_spps": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 6675
+          }
+        },
+        "mead": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 8000
+          }
+        },
+        "meld": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 2608
+          }
+        },
+        "mess": {
+          "exported_protocol_prompt_hash": "58c572e3aa38",
+          "journal_cache_fingerprints": {
+            "497f88a8252d": 1800
+          }
+        },
+        "multidialog": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 7672
+          }
+        },
+        "nemo": {
+          "exported_protocol_prompt_hash": "f9ee39cb12fd",
+          "journal_cache_fingerprints": {
+            "d5b6ad15f366": 4481
+          }
+        },
+        "ravdess": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 1440
+          }
+        },
+        "savee": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 480
+          }
+        },
+        "tess": {
+          "exported_protocol_prompt_hash": "dc84c979c561",
+          "journal_cache_fingerprints": {
+            "731fca433059": 2800
+          }
+        },
+        "thai_ser": {
+          "exported_protocol_prompt_hash": "58c572e3aa38",
+          "journal_cache_fingerprints": {
+            "497f88a8252d": 11848
+          }
+        }
+      }
+    }
+  },
+  "both_models_use_identical_clips_gold_listener_and_scope": true,
+  "excluded_esd": true,
+  "original_zip_member_bytes_preserved": true,
+  "no_inference_or_api_requests_in_this_import": true,
+  "reproducibility_limits": [
+    "Journal prompts values differ from the shared inference_protocol.prompt_hash. They are retained as separate cache fingerprints; the company runner/hash definition and filled prompt text are needed to verify exact prompt equivalence.",
+    "Raw journals return model aliases rather than dated provider snapshots."
+  ]
+}

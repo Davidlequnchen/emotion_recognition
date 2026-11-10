@@ -34,6 +34,7 @@ import plot_results
 import prompts
 from eval_datasets import EvalSet, accepted
 from parsing import parse_label
+from prediction_io import read_prediction_rows
 from training_provenance import (EXPOSURE_LEVELS, training_hatch, training_marker,
                                  with_training_provenance)
 
@@ -343,6 +344,44 @@ class EvaluationReuseTests(Fixture):
         reused = evaluation.earlier_run("fake", "fixture", None, protocol=self.protocol)
         self.assertEqual(reused["csv"], good.with_suffix(".csv"))
 
+    def test_imported_bom_yes_no_results_keep_scores_and_viewer_correctness(self):
+        path = self.write_run(self.protocol)
+        csv_path = path.with_suffix(".csv")
+        rows = read_prediction_rows(csv_path)
+        for i, row in enumerate(rows):
+            label = "angry" if i == 0 else "happy"
+            row.update(prediction=label, prediction_all_classes=label,
+                       correct="Yes" if i == 0 else "No")
+            row.update({f"p_{lab}": int(lab == label) for lab in LABELS + ["invalid"]})
+        with csv_path.open("w", newline="", encoding="utf-8-sig") as fh:
+            writer = csv.DictWriter(fh, list(rows[0]))
+            writer.writeheader()
+            writer.writerows(rows)
+        original = csv_path.read_bytes()
+        reused = evaluation.earlier_run("fake", "fixture", None, protocol=self.protocol)
+        self.assertEqual(reused["scores"][:, :4].argmax(1).tolist(), [0, 3])
+        run = make_viewer.load_run(csv_path, json.loads(path.read_text()))
+        self.assertEqual(run["criteria"][0]["accuracy"], .5)
+        self.assertEqual(len(run["rows"]), 2)
+        picked, counts = make_viewer.pick_clips("fixture", {"fake": run}, 1, 1, 7)
+        self.assertEqual(len(picked), 2)
+        self.assertEqual(counts["fake"], (1, 1))
+        audio = self.ds.clips[0]["audio"]
+        audio.parent.mkdir(parents=True, exist_ok=True)
+        audio.touch()
+        with mock.patch.object(make_viewer, "ROOT", self.root), \
+                mock.patch.object(make_viewer.sf, "info", return_value=SimpleNamespace(duration=1.0)):
+            clip = make_viewer.make_clip(audio.relative_to(self.root).as_posix(), {"fake": run})
+        self.assertTrue(clip["models"]["fake"]["correct"]["correct"])
+        self.assertEqual(clip["models"]["fake"]["score_kind"], "answer_indicator")
+        self.assertEqual(csv_path.read_bytes(), original)
+
+    def test_imported_unknown_correctness_flag_is_rejected(self):
+        csv_path = self.root / "invalid.csv"
+        csv_path.write_text("audio_path,correct\na.wav,maybe\n", encoding="utf-8-sig")
+        with self.assertRaisesRegex(ValueError, "invalid.csv:2, correct"):
+            read_prediction_rows(csv_path)
+
     def test_main_summary_excludes_larger_run_with_old_protocol(self):
         old = self.write_run()
         old.write_text(json.dumps(json.loads(old.read_text()) | {"clips": 100}))
@@ -453,10 +492,30 @@ class EvaluationReuseTests(Fixture):
                 mock.patch.object(make_viewer, "embed_image", return_value="embedded"):
             self.assertEqual(make_viewer.load_plots(), [])
             selected = plot_results.load_results("all", "all", [], root=self.root)
-            manifest = {"fingerprint": plot_results.results_fingerprint(selected), "metrics": ["accuracy"]}
+            manifest = {"fingerprint": plot_results.results_fingerprint(selected), "metrics": ["accuracy"],
+                        "presentation_fingerprint": plot_results.presentation_fingerprint(
+                            yaml.safe_load((config / "plots.yaml").read_text()))}
             (folder / "results_manifest.json").write_text(json.dumps(manifest))
             self.assertEqual(make_viewer.load_plots()[0]["by_dataset"], "embedded")
             (folder / "results_manifest.json").write_text(json.dumps(manifest | {"fingerprint": "old"}))
+            self.assertEqual(make_viewer.load_plots(), [])
+
+    def test_viewer_rejects_figure_with_stale_dataset_order(self):
+        config = self.viewer_config()
+        self.write_run(self.protocol)
+        folder = self.root / "reports" / "figures"
+        folder.mkdir(parents=True)
+        (folder / "accuracy_by_dataset.png").write_bytes(b"mock image")
+        settings = yaml.safe_load((config / "plots.yaml").read_text())
+        selected = plot_results.load_results("all", "all", [], root=self.root)
+        manifest = {"fingerprint": plot_results.results_fingerprint(selected), "metrics": ["accuracy"],
+                    "presentation_fingerprint": plot_results.presentation_fingerprint(settings)}
+        (folder / "results_manifest.json").write_text(json.dumps(manifest))
+        with mock.patch.object(make_viewer, "ROOT", self.root), \
+                mock.patch.object(make_viewer, "MODELS_CONFIG", config / "models.yaml"), \
+                mock.patch.object(make_viewer, "embed_image", return_value="embedded"):
+            self.assertEqual(len(make_viewer.load_plots()), 1)
+            (config / "plots.yaml").write_text(yaml.safe_dump(settings | {"dataset_order": ["fixture"]}))
             self.assertEqual(make_viewer.load_plots(), [])
 
     def test_viewer_rebuilds_ser_shared_scores_from_original_predictions(self):
@@ -527,7 +586,9 @@ class EvaluationReuseTests(Fixture):
         folder.mkdir(parents=True)
         (folder / "accuracy_by_dataset.png").write_bytes(b"mock image")
         old = plot_results.load_results("all", "all", [], root=self.root)
-        manifest = {"fingerprint": plot_results.results_fingerprint(old), "metrics": ["accuracy"]}
+        manifest = {"fingerprint": plot_results.results_fingerprint(old), "metrics": ["accuracy"],
+                    "presentation_fingerprint": plot_results.presentation_fingerprint(
+                        yaml.safe_load((config / "plots.yaml").read_text()))}
         (folder / "results_manifest.json").write_text(json.dumps(manifest))
         with mock.patch.object(make_viewer, "ROOT", self.root), \
                 mock.patch.object(make_viewer, "MODELS_CONFIG", config / "models.yaml"), \
@@ -676,7 +737,8 @@ class EvaluationReuseTests(Fixture):
             self.assertEqual(len(patches), 4)  # no dummy zero bars for reserved model slots
             self.assertEqual([p.get_hatch() or "" for p in patches], ["///", "///", "", ""])
             self.assertEqual([p.get_height() for p in patches], [50.0] * 4)
-            self.assertLess(patches[1].get_x() - (patches[0].get_x() + patches[0].get_width()), .1)
+            self.assertLess(patches[1].get_x() - (patches[0].get_x() + patches[0].get_width()), .2)
+            self.assertAlmostEqual(patches[0].get_width(), plot_results.PANEL_LAYOUT["bar_width"])
             labels = [" ".join(t.get_text().split()) for t in panels.legends[0].texts]
             self.assertEqual(labels.count(plot_results.TRAINING_LABEL), 1)
             self.assertIn("gpt_realtime (pending)", labels)
@@ -722,12 +784,14 @@ class EvaluationReuseTests(Fixture):
         names = dict(zip(models, ["emotion2vec+ large", "MERaLiON-SER-v1", "Melati", "Vox-Profile Whisper",
                     "Vox-Profile WavLM", "Qwen2.5-Omni 7B", "Qwen2-Audio 7B Instruct", "Gemma 4 E4B",
                     "GPT Realtime", "Gemini 3.8 Flash"]))
-        datasets = [f"fixture{i}" for i in range(16)]
+        datasets = ["meld", "emotiontalk", "dailytalk", "multidialog", "crema_d", "ravdess", "savee", "jl_corpus",
+                    "tess", "mead", "mess", "mcae_spps", "thai_ser", "nemo", "emovo", "emozionalmente"]
         colours = dict(zip(models, plot_results.COLOURS))
         # Synthetic artist fixtures only; no prediction files or real missing-dataset results are written.
         results = {m: {key: {"key": key, "dataset": f"Fixture {i}", "classes": FOUR, "clips": 2,
-                            "metrics": {"accuracy": .64, "macro_f1": .61}, "in_training_data": False}
-                       for i, key in enumerate(datasets)} for m in models[:-2]}
+                            "metrics": {"accuracy": 1.0 if mi == 2 else .64,
+                                        "macro_f1": .99 if mi == 2 else .61}, "in_training_data": False}
+                       for i, key in enumerate(datasets)} for mi, m in enumerate(models[:-2])}
         plt = plot_results.setup_matplotlib()
         captured = []
         def capture(figure, _plt, stem):
@@ -743,12 +807,26 @@ class EvaluationReuseTests(Fixture):
                     self.assertEqual(len({round(ax.get_position().x0, 5) for ax in figure.axes}), 4)
                     self.assertEqual(len({round(ax.get_position().y0, 5) for ax in figure.axes}), 4)
                     self.assertTrue(all(ax.axison for ax in figure.axes))
+                    self.assertEqual([ax.get_title() for ax in figure.axes],
+                                     [plot_results.panel_title(key, {}) for key in datasets])
                     legend = figure.legends[0]
                     self.assertEqual(legend._ncols, 6)
                     self.assertEqual(len(legend.texts), entries)
                     self.assertEqual((entries + legend._ncols - 1) // legend._ncols, 2)
                     self.assertTrue(all("\n" not in text.get_text() for text in legend.texts))
                     figure.canvas.draw()
+                    renderer = figure.canvas.get_renderer()
+                    for ax in figure.axes:
+                        title_box = ax.title.get_window_extent(renderer)
+                        numbers = [text for text in ax.texts if text.get_text().rstrip("*").isdigit()]
+                        for text in numbers:
+                            self.assertFalse(title_box.overlaps(text.get_window_extent(renderer)))
+                        for first, second in zip(numbers, numbers[1:]):
+                            self.assertFalse(first.get_window_extent(renderer).overlaps(
+                                             second.get_window_extent(renderer)))
+                    for ax in figure.axes[:4]:
+                        self.assertFalse(ax.title.get_window_extent(renderer).overlaps(
+                                         figure._suptitle.get_window_extent(renderer)))
                     baselines = {round(text.get_transform().transform(text.get_position())[1], 3)
                                  for text in legend.texts}
                     self.assertEqual(len(baselines), 2)  # two actual text lines, not two rows of wrapped items
@@ -757,10 +835,34 @@ class EvaluationReuseTests(Fixture):
                     self.assertLessEqual(box.x1, figure.bbox.width)
                     self.assertGreaterEqual(box.y0, 0)
                     self.assertLess(box.y1, min(ax.bbox.y0 for ax in figure.axes))
+                    self.assertEqual([bool(ax.get_yticklabels()) for ax in figure.axes],
+                                     [i % 4 == 0 for i in range(16)])
                     self.assertEqual(len(figure.texts), 1)  # no explanatory footer under the model legend
         finally:
             for figure in captured:
                 plt.close(figure)
+
+    def test_dataset_order_and_layout_are_configured_without_losing_future_results(self):
+        settings = yaml.safe_load((PROJECT / "config/plots.yaml").read_text())
+        expected = ["meld", "emotiontalk", "dailytalk", "multidialog", "crema_d", "ravdess", "savee", "jl_corpus",
+                    "tess", "mead", "mess", "mcae_spps", "thai_ser", "nemo", "emovo", "emozionalmente"]
+        self.assertEqual(settings["dataset_order"], expected)
+        results = {"fixture": dict.fromkeys(reversed(expected), {})}
+        self.assertEqual(plot_results.chart_datasets(results, settings["dataset_order"]), expected)
+        results["fixture"]["future_dataset"] = {}
+        self.assertEqual(plot_results.chart_datasets(results, settings["dataset_order"]),
+                         expected + ["future_dataset"])
+        result_fingerprint = plot_results.results_fingerprint(results)
+        fingerprint = plot_results.presentation_fingerprint(settings)
+        reordered = settings | {"dataset_order": expected[1:] + expected[:1]}
+        restyled = settings | {"layout": settings["layout"] | {"panel_height": 2.25}}
+        self.assertNotEqual(fingerprint, plot_results.presentation_fingerprint(reordered))
+        self.assertNotEqual(fingerprint, plot_results.presentation_fingerprint(restyled))
+        self.assertEqual(result_fingerprint, plot_results.results_fingerprint(results))
+        with self.assertRaises(ValueError):
+            plot_results.chart_datasets(results, ["meld", "meld"])
+        with self.assertRaises(ValueError):
+            plot_results.panel_layout({"bar_width": .8, "bar_spacing": .7})
 
     def test_dataset_titles_are_one_line_without_changing_formal_scope(self):
         cases = {

@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.075471+00:00",
+  "model": "gpt_realtime",
+  "key": "mess",
+  "clips": 1800,
+  "unique_audio_paths": 1800,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/mess_predictions.csv",
+      "sha256": "b63cfd9e8c476b668ed0035a8124b755e36b1c9e3dc8b869501e615b1324c588",
+      "bytes": 208268
+    },
+    {
+      "path": "outputs/gpt_realtime/mess_predictions.json",
+      "sha256": "1a4973f024ecc88191efe2e8b96ddf7c142e05c894a0a4a8b0f55de9a41a5bb7",
+      "bytes": 2667
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.252222,
+    "unweighted_accuracy": 0.252222,
+    "macro_f1": 0.11986,
+    "accuracy_all_classes": 0.252222
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.25222222222222224,
+    "unweighted_accuracy": 0.2522222222222222,
+    "macro_f1": 0.11985985618006825,
+    "accuracy_all_classes": 0.25222222222222224
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "58c572e3aa38",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

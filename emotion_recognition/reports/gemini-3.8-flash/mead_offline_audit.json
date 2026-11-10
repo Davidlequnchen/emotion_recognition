@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.440790+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/mead_predictions.csv",
+      "sha256": "327d1a0d08e64b8c3460b78d1e6ed52a7b4e9c9b44e5777db431b5f350ae0e10",
+      "bytes": 1028030
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mead_predictions.json",
+      "sha256": "33ece5c7d724c8d7ef56d08a6bd4f84767b7ef2f6081f9a5aff6cb10e8d2fc0d",
+      "bytes": 3231
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.179625,
+    "unweighted_accuracy": 0.221339,
+    "macro_f1": 0.175112,
+    "accuracy_all_classes": 0.179625
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.179625,
+    "unweighted_accuracy": 0.2213394528382964,
+    "macro_f1": 0.17511194279898543,
+    "accuracy_all_classes": 0.179625
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.187513+00:00",
+  "model": "gpt_realtime",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/ravdess_predictions.csv",
+      "sha256": "f76443a27122883777b8656925806c10517e3724ef6223dcf1d9d24acc1221f8",
+      "bytes": 200231
+    },
+    {
+      "path": "outputs/gpt_realtime/ravdess_predictions.json",
+      "sha256": "1bc36c34c718922aba5f4b37ae5ce49b9f4b7298f458dda932e24a833cba9eee",
+      "bytes": 2889
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.270139,
+    "unweighted_accuracy": 0.218254,
+    "macro_f1": 0.177647,
+    "accuracy_all_classes": 0.270139
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2701388888888889,
+    "unweighted_accuracy": 0.21825396825396823,
+    "macro_f1": 0.17764660400975765,
+    "accuracy_all_classes": 0.2701388888888889
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,53 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.335807+00:00",
+  "model": "gpt_realtime",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/thai_ser_predictions.csv",
+      "sha256": "ceb97d2a92880b3597a0b29da5445e488eab016f5f47aec7bc4cd7dd63b563bd",
+      "bytes": 1765332
+    },
+    {
+      "path": "outputs/gpt_realtime/thai_ser_predictions.json",
+      "sha256": "7266e0a39448518e1cb386f8690a0b520813713e40553300a89793f48488afc7",
+      "bytes": 3107
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.544733,
+    "unweighted_accuracy": 0.527792,
+    "macro_f1": 0.539983,
+    "accuracy_all_classes": 0.544733,
+    "accuracy_acted_or_listener": 0.602718,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.543045
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5447332883187036,
+    "unweighted_accuracy": 0.5277915924570409,
+    "macro_f1": 0.5399832240513873,
+    "accuracy_all_classes": 0.5447332883187036,
+    "accuracy_acted_or_listener": 0.6027177582714383,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.5430452397029034
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "58c572e3aa38",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

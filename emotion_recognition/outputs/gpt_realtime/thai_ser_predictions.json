@@ -1,0 +1,93 @@
+{
+  "dataset": "THAI-SER (high-agreement subset)",
+  "key": "thai_ser",
+  "language": "Thai",
+  "model": "gpt_realtime",
+  "model_name": "GPT Realtime",
+  "date": "2026-11-09",
+  "clips": 11848,
+  "total_clips": 11848,
+  "classes": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "labels": [
+    "neutral",
+    "angry",
+    "happy",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.25,
+  "in_training_data": false,
+  "training_source": "not published (OpenAI)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "invalid"
+  ],
+  "versions": {
+    "api model": "gpt-realtime",
+    "websockets": "17.3"
+  },
+  "notes": [
+    "Amex IDaaS gateway; one pcm16_24k clip per request; text output.",
+    "Up to 30 clips evaluated concurrently; local models remain sequential.",
+    "The same reference baseline prompts and dataset-specific candidate labels as local audio LLMs.",
+    "Unparseable answers after retries are invalid, not an additional prompted emotion.",
+    "Answers become one-hot vectors, not calibrated class probabilities.",
+    "Raw answers and token usage are checkpointed in /Users/lchen65/Github/Fraud_Audio_Project/emotion_recognition/emotion_recognition_benchmarking/outputs/gpt_realtime/responses.jsonl.",
+    "Realtime has no enforced output schema; answers can vary between runs.",
+    "Allowed answers: angry, happy, neutral, sad; prompt 58c572e3aa38."
+  ],
+  "metrics": {
+    "accuracy": 0.544733,
+    "unweighted_accuracy": 0.527792,
+    "macro_f1": 0.539983,
+    "accuracy_all_classes": 0.544733,
+    "accuracy_acted_or_listener": 0.602718,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.543045
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion assigned to the actor for the scene (`assigned_emo`)",
+    "listener_vote": "the crowd-sourced majority label (`majority_emo`); clips without a majority have none; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 4 emotions evaluated (neutral, angry, happy, sad); 'other answer' when the model's answer is none of them",
+    "prediction_all_classes": "model prediction: the most probable of all 8 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 8 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "cpu",
+    "hardware": "Apple M3 Pro",
+    "seconds": 1542.6,
+    "ms_per_clip": 130.2,
+    "on_cpu": 0
+  },
+  "subset": "high_agreement",
+  "inference_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "58c572e3aa38",
+    "model_id": "gpt-realtime"
+  }
+}

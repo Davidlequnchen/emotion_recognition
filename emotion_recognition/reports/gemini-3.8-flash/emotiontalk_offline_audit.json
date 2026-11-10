@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.217447+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "emotiontalk",
+  "clips": 1929,
+  "unique_audio_paths": 1929,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/emotiontalk_predictions.csv",
+      "sha256": "aab36f2f9152804c8fdbc1336f0e285f58a5b2f1de1c1125d54c7ec11d3ee87a",
+      "bytes": 311746
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emotiontalk_predictions.json",
+      "sha256": "8ea0443b6c8e45ac28ec3377761f02113fd84d6cf4d47da7187324542e3de622",
+      "bytes": 3116
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.519959,
+    "unweighted_accuracy": 0.559561,
+    "macro_f1": 0.463961,
+    "accuracy_all_classes": 0.519959
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5199585277345775,
+    "unweighted_accuracy": 0.5595610884960857,
+    "macro_f1": 0.46396109652225165,
+    "accuracy_all_classes": 0.5199585277345775
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

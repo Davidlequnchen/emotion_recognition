@@ -1,0 +1,53 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.741623+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/thai_ser_predictions.csv",
+      "sha256": "4868770f4773556f5747e5ea6a1aec85b0751b02a00ff4a4c6dbb4ac42fb1c89",
+      "bytes": 1748773
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/thai_ser_predictions.json",
+      "sha256": "0540d4c988c42e139425ec765dd261b3f6a14f0ab29426e7e806673165613c15",
+      "bytes": 3382
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.683913,
+    "unweighted_accuracy": 0.678514,
+    "macro_f1": 0.684293,
+    "accuracy_all_classes": 0.683913,
+    "accuracy_acted_or_listener": 0.742488,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.647789
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6839128966914247,
+    "unweighted_accuracy": 0.6785142685683171,
+    "macro_f1": 0.6842926581511233,
+    "accuracy_all_classes": 0.6839128966914247,
+    "accuracy_acted_or_listener": 0.7424881836596894,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.6477886563133018
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "58c572e3aa38",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

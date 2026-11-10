@@ -97,6 +97,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, impor
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, default_evaluation_subset, sample, truth_labels
 from prompts import configured_protocol
+from prediction_io import read_prediction_rows
 from training_provenance import (EXPOSURE_LABEL, EXPOSURE_LEVELS, EXPOSURE_NOTE, training_marker,
                                  training_metadata, with_training_provenance)
 
@@ -234,8 +235,7 @@ def earlier_run(model, key, limit, protocol=None):
             continue
         if protocol is not None and meta.get("inference_protocol") != protocol:
             continue
-        with open(path.with_suffix(".csv"), newline="", encoding="utf-8") as fh:
-            rows = {r["audio_path"]: r for r in csv.DictReader(fh)}
+        rows = {r["audio_path"]: r for r in read_prediction_rows(path.with_suffix(".csv"))}
         if any(w not in rows for w in wanted):
             continue
         labels = meta["model_classes"]
@@ -831,8 +831,8 @@ def best_runs(model, exclude=(), entry=None):
     # classes and composite labels stand in, those that clips in the CSV have (JL-Corpus has no clip acted surprised)
     for r in best.values():
         if "labels" not in r:
-            with open(out / f"{r['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
-                found = {row[r["ground_truth"]] for row in csv.DictReader(fh)}
+            found = {row[r["ground_truth"]]
+                     for row in read_prediction_rows(out / f"{r['stem']}_predictions.csv")}
             r["labels"] = [x for x in [*r["classes"], *r.get("accept", {})] if x in found]
     return dict(sorted(best.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else len(order)))
 
@@ -880,8 +880,8 @@ def shared_scores(model, run, shared):
     """Clips, accuracy and unweighted accuracy of one run on the emotions every dataset has: clips of other emotions
     are left out, but every model keeps its original dataset-level prediction. This is a subset analysis, not new
     inference with a smaller candidate set; predictions outside shared count as wrong for both SER and LLMs."""
-    with open(ROOT / "outputs" / model / f"{run['stem']}_predictions.csv", newline="", encoding="utf-8") as fh:
-        rows = [r for r in csv.DictReader(fh) if r["acted_emotion"] in shared]
+    rows = [r for r in read_prediction_rows(ROOT / "outputs" / model / f"{run['stem']}_predictions.csv")
+            if r["acted_emotion"] in shared]
     if not rows:  # a small sample can miss them
         return 0, None, None
     pred = [r["prediction"] for r in rows]

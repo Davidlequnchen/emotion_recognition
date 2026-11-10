@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.060977+00:00",
+  "model": "gpt_realtime",
+  "key": "meld",
+  "clips": 2608,
+  "unique_audio_paths": 2608,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/meld_predictions.csv",
+      "sha256": "e610efed5c8c44160eb661a8f28441af1fc17f923208ce5e1a336675a8e8abed",
+      "bytes": 302703
+    },
+    {
+      "path": "outputs/gpt_realtime/meld_predictions.json",
+      "sha256": "191f700a3fa214e3f55a16f30b8764e1842e288f4122a23fe81c159b6210d9ea",
+      "bytes": 2956
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.466258,
+    "unweighted_accuracy": 0.34941,
+    "macro_f1": 0.363627,
+    "accuracy_all_classes": 0.466258
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.4662576687116564,
+    "unweighted_accuracy": 0.3494103476229378,
+    "macro_f1": 0.3636266548896843,
+    "accuracy_all_classes": 0.4662576687116564
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

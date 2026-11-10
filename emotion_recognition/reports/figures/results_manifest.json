@@ -1,5 +1,5 @@
 {
-  "fingerprint": "fcd7a004a12222d2368076eeb6b51f0d1da9b5524c788de10ee05e0d68775313",
+  "fingerprint": "f0e6b2ca67f245ec99a1ee2e7da6bd249e6d1887b35849d2f6286518cf933716",
   "metrics": [
     "accuracy",
     "unweighted_accuracy",
@@ -15,11 +15,40 @@
     "qwen2_audio_7b",
     "gemma4_e4b",
     "gpt_realtime",
-    "gemini"
+    "gemini-3.8-flash"
   ],
-  "pending_models": [
-    "gpt_realtime",
-    "gemini"
+  "pending_models": [],
+  "dataset_order": [
+    "meld",
+    "emotiontalk",
+    "dailytalk",
+    "multidialog",
+    "crema_d",
+    "ravdess",
+    "savee",
+    "jl_corpus",
+    "tess",
+    "mead",
+    "mess",
+    "mcae_spps",
+    "thai_ser",
+    "nemo",
+    "emovo",
+    "emozionalmente"
   ],
-  "style": "compact_two_text_line_legend_v4"
+  "layout": {
+    "panel_width": 4.4,
+    "panel_height": 2.15,
+    "bar_width": 0.56,
+    "bar_spacing": 0.7,
+    "x_margin": 0.42,
+    "wspace": 0.14,
+    "hspace": 0.28,
+    "title_pad": 8.0,
+    "ymax": 118.0,
+    "y_tick_labels": "left",
+    "show_title": false
+  },
+  "presentation_fingerprint": "3d617b3d11164ba67ac338d7fa6c7894f20260bb46ec4488660ebe363d1cccdf",
+  "style": "ordered_slim_panels_v5"
 }

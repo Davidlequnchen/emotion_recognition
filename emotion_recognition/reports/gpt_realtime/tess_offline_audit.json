@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.215627+00:00",
+  "model": "gpt_realtime",
+  "key": "tess",
+  "clips": 2800,
+  "unique_audio_paths": 2800,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/tess_predictions.csv",
+      "sha256": "4346b6fc67addabde32359fba62ad9b4b15e3c579fe4a4dbd3125ac51f92efbb",
+      "bytes": 322293
+    },
+    {
+      "path": "outputs/gpt_realtime/tess_predictions.json",
+      "sha256": "59ae3316e87d02a45933bd4949530c51eb5266926b4ba821a810b14b13677a3f",
+      "bytes": 2878
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.143571,
+    "unweighted_accuracy": 0.143571,
+    "macro_f1": 0.038546,
+    "accuracy_all_classes": 0.143571
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.14357142857142857,
+    "unweighted_accuracy": 0.14357142857142854,
+    "macro_f1": 0.038546290521263,
+    "accuracy_all_classes": 0.14357142857142857
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

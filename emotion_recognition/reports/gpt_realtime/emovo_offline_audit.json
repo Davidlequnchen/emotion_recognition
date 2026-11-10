@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.848624+00:00",
+  "model": "gpt_realtime",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/emovo_predictions.csv",
+      "sha256": "f64084bf6445f37750d0e931b944c65ff7b53ff53c775bd4dda9de9e0d48fbd8",
+      "bytes": 70634
+    },
+    {
+      "path": "outputs/gpt_realtime/emovo_predictions.json",
+      "sha256": "45a20840634f99d9ec97c822eb17dc3f31f1f317ce5c1bab7582626c81496b7e",
+      "bytes": 2923
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.17517,
+    "unweighted_accuracy": 0.17517,
+    "macro_f1": 0.097256,
+    "accuracy_all_classes": 0.17517
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.17517006802721088,
+    "unweighted_accuracy": 0.17517006802721088,
+    "macro_f1": 0.09725628317963232,
+    "accuracy_all_classes": 0.17517006802721088
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

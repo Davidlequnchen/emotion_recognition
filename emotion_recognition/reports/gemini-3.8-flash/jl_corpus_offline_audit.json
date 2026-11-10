@@ -1,0 +1,48 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.318120+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "jl_corpus",
+  "clips": 1200,
+  "unique_audio_paths": 1200,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.csv",
+      "sha256": "d005ca1d22af01de7757864b32bda10832548397f8dbf946df7b6b76076ed45b",
+      "bytes": 216938
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.json",
+      "sha256": "e439a5b93614cd7067e71f9941d27c5512bf0a562d27b1a9eb0c75531059e965",
+      "bytes": 3060
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.378333,
+    "unweighted_accuracy": 0.378333,
+    "macro_f1": 0.423277,
+    "accuracy_all_classes": 0.378333
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.37833333333333335,
+    "unweighted_accuracy": 0.3783333333333333,
+    "macro_f1": 0.42327661096300967,
+    "accuracy_all_classes": 0.37833333333333335
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "810c234fb672",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

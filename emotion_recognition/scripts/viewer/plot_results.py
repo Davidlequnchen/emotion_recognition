@@ -19,8 +19,8 @@ kind of JSON into outputs/<its key>/. The fields used are:
     dataset (display name), key (dataset key), model_name (display name of the model), clips, total_clips,
     chance (a fraction), metrics {accuracy, unweighted_accuracy, macro_f1, ...}
 Training markers/status/source are resolved from config/models.yaml, not historical in_training_data booleans.
-Models are ordered as in config/models.yaml, then any other model folder in alphabetical order; datasets in the order
-of scripts/common/eval_datasets.py.
+Models follow config/models.yaml; dataset_order in config/plots.yaml controls panels and overview rows.
+Other available datasets append in loader order, then alphabetical order, so new results are never dropped.
 
 Usage (from the emotion_recognition/ folder):
     python scripts/viewer/plot_results.py
@@ -53,6 +53,12 @@ METRIC_NAMES = {"accuracy": "Accuracy", "unweighted_accuracy": "UAR",
                 "accuracy_acted_or_listener": "Accuracy (acted emotion or listeners' vote)"}
 INK, INK_2, GRID = "#111111", "#444444", "#d9d9d9"
 TRAINING_HATCH, TRAINING_LABEL = "///", "Part of the training process"
+PLOT_STYLE = "ordered_slim_panels_v5"
+PANEL_LAYOUT = {
+    "panel_width": 4.4, "panel_height": 2.15, "bar_width": 0.56, "bar_spacing": 0.70,
+    "x_margin": 0.42, "wspace": 0.14, "hspace": 0.28, "title_pad": 8.0, "ymax": 118.0,
+    "y_tick_labels": "left", "show_title": True,
+}
 DATASET_DISPLAY = {
     "crema_d": ("CREMA-D", "English"), "mcae_spps": ("MCAE-SPPS", "Mandarin"),
     "thai_ser": ("THAI-SER", "Thai"), "nemo": ("nEMO", "Polish"), "mess": ("MESS", "English"),
@@ -100,6 +106,46 @@ def chart_models(results, registry, wanted="all", placeholders=None):
     names = {m: placeholders.get(m) or registry.get(m, {}).get("name") or
              next(iter(results.get(m, {}).values()), {}).get("model_name", m) for m in models}
     return models, names
+
+
+def chart_datasets(results, preferred=()):
+    """Apply the requested display order, then append every other available result key."""
+    preferred = as_list(preferred)
+    if len(preferred) != len(set(preferred)):
+        raise ValueError("dataset_order contains duplicate dataset keys")
+    available = {key for model in results.values() for key in model}
+    ordered = [key for key in preferred if key in available]
+    ordered += [key for key in LOADERS if key in available and key not in ordered]
+    return ordered + sorted(available - set(ordered))
+
+
+def panel_layout(settings=None):
+    """Physical panel dimensions and bar geometry, shared by the CLI and offline previews."""
+    settings = settings or {}
+    if not isinstance(settings, dict) or set(settings) - set(PANEL_LAYOUT):
+        raise ValueError("Unknown panel layout setting")
+    layout = PANEL_LAYOUT | settings
+    for key in ("panel_width", "panel_height", "bar_width", "bar_spacing", "x_margin", "title_pad", "ymax"):
+        if isinstance(layout[key], bool) or not isinstance(layout[key], (int, float)) or not math.isfinite(layout[key]) or layout[key] <= 0:
+            raise ValueError(f"layout.{key} must be a positive finite number")
+    for key in ("wspace", "hspace"):
+        if not isinstance(layout[key], (int, float)) or not math.isfinite(layout[key]) or layout[key] < 0:
+            raise ValueError(f"layout.{key} must be a nonnegative finite number")
+    if layout["bar_width"] >= layout["bar_spacing"] or layout["ymax"] < 100:
+        raise ValueError("Bars must have positive gaps and ymax must include 100 percent")
+    if layout["y_tick_labels"] not in ("left", "all") or not isinstance(layout["show_title"], bool):
+        raise ValueError("layout requires y_tick_labels: left/all and show_title: true/false")
+    return layout
+
+
+def presentation_fingerprint(settings):
+    """Version figure order/layout separately from the immutable prediction/result fingerprint."""
+    content = {"style": PLOT_STYLE, "renderer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               "metrics": as_list(settings.get("metrics", ["accuracy"])), "columns": int(settings.get("columns", 4)),
+               "models": settings.get("models", "all"), "datasets": settings.get("datasets", "all"),
+               "exclude": as_list(settings.get("exclude")), "placeholders": settings.get("placeholders") or {},
+               "dataset_order": as_list(settings.get("dataset_order")), "layout": panel_layout(settings.get("layout"))}
+    return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()
 
 
 def step(title):
@@ -179,8 +225,9 @@ def bar_label(ax, x, value, run):
     ax.text(x, 100 * value + 1.4, text, ha="center", va="bottom", fontsize=15.5, color=INK)
 
 
-def per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out):
+def per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out, layout=None):
     """One panel per dataset, with a fixed bottom legend (ten models + two keys fit two rows)."""
+    layout = panel_layout(layout)
     rows = math.ceil(len(datasets) / columns)
     legend_count = len(models) + 1 + int(metric != "macro_f1")
     legend_columns = min(6, legend_count)
@@ -188,9 +235,10 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
     legend_rows = math.ceil(legend_count / legend_columns)
     # Compact handles leave room for unbroken names: two item rows are also two text lines.
     legend_height = 0.31 * legend_rows + 0.08
-    height = 2.65 * rows + legend_height + 0.90
-    fig, axes = plt.subplots(rows, columns, figsize=(4.4 * columns, height), squeeze=False)
-    positions = [i * 0.78 for i in range(len(models))]
+    top_margin = 0.82 if layout["show_title"] else 0.36
+    height = layout["panel_height"] * rows + legend_height + top_margin
+    fig, axes = plt.subplots(rows, columns, figsize=(layout["panel_width"] * columns, height), squeeze=False)
+    positions = [i * layout["bar_spacing"] for i in range(len(models))]
     for k, key in enumerate(datasets):
         ax = axes[k // columns][k % columns]
         runs = [results.get(m, {}).get(key) for m in models]
@@ -201,27 +249,31 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
                         ha="center", va="bottom", fontsize=11, color=colours[m] if m in pending else INK_2)
                 continue
             value = run["metrics"][metric]
-            ax.bar(positions[i], 100 * value, width=0.72, color=colours[m], edgecolor=INK, linewidth=1.0,
+            ax.bar(positions[i], 100 * value, width=layout["bar_width"], color=colours[m], edgecolor=INK, linewidth=1.0,
                    hatch=TRAINING_HATCH if part_of_training(run) else None, zorder=3)
             bar_label(ax, positions[i], value, run)
         chance = chance_of(first)
         if chance and metric != "macro_f1":
             ax.axhline(100 * chance, color=INK_2, linestyle="--", linewidth=1.6, zorder=4)
-        ax.set_title(panel_title(key, first), pad=6)
+        ax.set_title(panel_title(key, first), pad=layout["title_pad"])
         ax.set_xticks([])
-        ax.set_xlim(-0.48, positions[-1] + 0.48)
-        ax.set_ylim(0, 108)
+        ax.set_xlim(-layout["x_margin"], positions[-1] + layout["x_margin"])
+        ax.set_ylim(0, layout["ymax"])
         ax.set_yticks(range(0, 101, 20))
+        if layout["y_tick_labels"] == "left" and k % columns:
+            ax.tick_params(axis="y", labelleft=False)
         ax.yaxis.grid(True, color=GRID, linewidth=0.7, zorder=0)
         ax.spines[["top", "right"]].set_visible(False)
         if k % columns == 0:
             ax.set_ylabel(f"{METRIC_NAMES.get(metric, metric)} (%)")
     for k in range(len(datasets), rows * columns):
         axes[k // columns][k % columns].axis("off")
-    fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=22,
-                 fontweight="bold", color=INK, y=1 - 0.04 / height)
-    fig.subplots_adjust(left=0.052, right=0.995, top=1 - 1.00 / height,
-                        bottom=(legend_height + 0.22) / height, wspace=0.17, hspace=0.34)
+    if layout["show_title"]:
+        fig.suptitle(f"{METRIC_NAMES.get(metric, metric)} by dataset", fontsize=22,
+                     fontweight="bold", color=INK, y=1 - 0.04 / height)
+    fig.subplots_adjust(left=0.052, right=0.995, top=1 - top_margin / height,
+                        bottom=(legend_height + 0.20) / height,
+                        wspace=layout["wspace"], hspace=layout["hspace"])
     handles = legend_handles(plt, names, colours, metric != "macro_f1", pending)
     fig.legend(handles=handles, loc="lower center", ncol=legend_columns, frameon=False,
                bbox_to_anchor=(0.5, 0.035 / height), borderaxespad=0, borderpad=0.2,
@@ -255,7 +307,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     headers = ["\n".join(textwrap.fill(line, width=12) for line in name.splitlines()) for name in headers]
     short_headers = {"qwen2_5_omni_7b": "Qwen2.5-\nOmni 7B", "qwen2_audio_7b": "Qwen2-Audio\n7B Instruct",
                      "gemma4_e4b": "Gemma 4\nE4B", "gpt_realtime": "GPT\nRealtime",
-                     "gemini": "Gemini 3.8\nFlash"}
+                     "gemini-3.8-flash": "Gemini 3.8\nFlash"}
     headers = [short_headers.get(model, header) for model, header in zip(models, headers)]
     if has_chance:
         headers.append("Chance\nreference")
@@ -329,6 +381,7 @@ def main():
     settings = yaml.safe_load(CONFIG.read_text()) or {}
     registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
     metrics, columns = as_list(settings.get("metrics", ["accuracy"])), int(settings.get("columns", 4))
+    layout = panel_layout(settings.get("layout"))
     wanted_models = settings.get("models", "all")
     wanted_models = wanted_models if wanted_models == "all" else as_list(wanted_models)
     wanted_datasets = settings.get("datasets", "all")
@@ -347,8 +400,7 @@ def main():
         sys.exit("ERROR: no results in outputs/<model>/ yet; run scripts/evaluation/evaluate.py first.")
     placeholders = settings.get("placeholders") or {}
     models, names = chart_models(results, registry, wanted_models, placeholders)
-    datasets = [k for k in LOADERS if any(k in results.get(m, {}) for m in models)]
-    datasets += sorted({k for m in models for k in results.get(m, {})} - set(datasets))
+    datasets = chart_datasets(results, settings.get("dataset_order"))
     colours = {m: COLOURS[i % len(COLOURS)] for i, m in enumerate(models)}
     for m in models:
         sampled = [k for k, r in results.get(m, {}).items() if r["clips"] < r.get("total_clips", r["clips"])]
@@ -367,7 +419,7 @@ def main():
         if not any(metric in r["metrics"] for m in models for r in results.get(m, {}).values()):
             print(f"  {metric}: no result has this metric, skipped")
             continue
-        for stem in (per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out),
+        for stem in (per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out, layout),
                      overview_figure(plt, metric, results, models, names, colours, datasets, out)):
             print(f"  {stem.relative_to(ROOT)}.png and .pdf")
         rendered.append(metric)
@@ -375,7 +427,9 @@ def main():
     (out / "results_manifest.json").write_text(json.dumps({"fingerprint": results_fingerprint(results),
                                                          "metrics": rendered, "models": models,
                                                          "pending_models": [m for m in models if not results.get(m)],
-                                                         "style": "compact_two_text_line_legend_v4"}, indent=2), encoding="utf-8")
+                                                         "dataset_order": datasets, "layout": layout,
+                                                         "presentation_fingerprint": presentation_fingerprint(settings),
+                                                         "style": PLOT_STYLE}, indent=2), encoding="utf-8")
     print("Done.")
 
 

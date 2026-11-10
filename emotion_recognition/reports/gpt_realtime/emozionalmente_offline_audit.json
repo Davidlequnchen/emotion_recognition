@@ -1,0 +1,56 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.908632+00:00",
+  "model": "gpt_realtime",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/emozionalmente_predictions.csv",
+      "sha256": "3ebd09175e8a864ea68cbdeb9842509a3cd50dd91374d96a356b7d4c84e920b3",
+      "bytes": 1134787
+    },
+    {
+      "path": "outputs/gpt_realtime/emozionalmente_predictions.json",
+      "sha256": "67dbfea2831e64679ce7c8e1e7020189ba8db289b8e30cd460593071f28fb773",
+      "bytes": 3322
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.187482,
+    "unweighted_accuracy": 0.187482,
+    "macro_f1": 0.107348,
+    "accuracy_all_classes": 0.187482,
+    "accuracy_acted_or_listener": 0.274703,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.240343
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.1874818893074471,
+    "unweighted_accuracy": 0.1874818893074471,
+    "macro_f1": 0.10734841313929169,
+    "accuracy_all_classes": 0.1874818893074471,
+    "accuracy_acted_or_listener": 0.2747029846421327,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.2403426539518345
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

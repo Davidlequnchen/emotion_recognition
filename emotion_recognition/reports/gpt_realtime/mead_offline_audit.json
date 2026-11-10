@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.038785+00:00",
+  "model": "gpt_realtime",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/mead_predictions.csv",
+      "sha256": "02befd2230fd2c223439d334de71842b56ce76f65335f72b884f69b0da786119",
+      "bytes": 1032592
+    },
+    {
+      "path": "outputs/gpt_realtime/mead_predictions.json",
+      "sha256": "194d24b0884ea17d97d69bcb40b6d7ca4068a6efd8fc0f9e377af487803678ab",
+      "bytes": 2956
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.131375,
+    "unweighted_accuracy": 0.184409,
+    "macro_f1": 0.111414,
+    "accuracy_all_classes": 0.131375
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.131375,
+    "unweighted_accuracy": 0.184409406056742,
+    "macro_f1": 0.11141444316724754,
+    "accuracy_all_classes": 0.131375
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

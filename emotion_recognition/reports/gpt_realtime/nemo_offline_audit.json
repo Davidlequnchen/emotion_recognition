@@ -1,0 +1,49 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.174637+00:00",
+  "model": "gpt_realtime",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/nemo_predictions.csv",
+      "sha256": "88c3ccb8e90170ea8d743e2aa9e5958bbcef0602fbec4f237d74991fdd3d0655",
+      "bytes": 534959
+    },
+    {
+      "path": "outputs/gpt_realtime/nemo_predictions.json",
+      "sha256": "e375ba1c00b590f977199f935eb664d8eeab616d752be1ce3f6fb7c2e26bb5bf",
+      "bytes": 2692
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.192368,
+    "unweighted_accuracy": 0.181327,
+    "macro_f1": 0.10103,
+    "accuracy_all_classes": 0.192368
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.19236777505021202,
+    "unweighted_accuracy": 0.18132658525673698,
+    "macro_f1": 0.10102961144509472,
+    "accuracy_all_classes": 0.19236777505021202
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "f9ee39cb12fd",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

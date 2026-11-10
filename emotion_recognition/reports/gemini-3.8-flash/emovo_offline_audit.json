@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.224570+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/emovo_predictions.csv",
+      "sha256": "a31b4b90df28e30603be66804a1f44d939007363c62c8e877b99cab7ff18e8dc",
+      "bytes": 69593
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emovo_predictions.json",
+      "sha256": "190efbf8a55a1dde799326bf982d929287bf853c18568abdbc342da146492c91",
+      "bytes": 3145
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.311224,
+    "unweighted_accuracy": 0.311224,
+    "macro_f1": 0.277427,
+    "accuracy_all_classes": 0.311224
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3112244897959184,
+    "unweighted_accuracy": 0.3112244897959184,
+    "macro_f1": 0.27742748508096987,
+    "accuracy_all_classes": 0.3112244897959184
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,49 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.595173+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/nemo_predictions.csv",
+      "sha256": "1e3b167d14f47f92e80815e36d14ed73319110f54d66df1cf28a51426c5e32f7",
+      "bytes": 532741
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/nemo_predictions.json",
+      "sha256": "d0b40601dced2cc248128db94fc9142ef6cda589f21c4a93a58f3125aad53c13",
+      "bytes": 3024
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.214907,
+    "unweighted_accuracy": 0.203547,
+    "macro_f1": 0.143596,
+    "accuracy_all_classes": 0.214907
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.21490738674403034,
+    "unweighted_accuracy": 0.20354652968743966,
+    "macro_f1": 0.14359604881462304,
+    "accuracy_all_classes": 0.21490738674403034
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "f9ee39cb12fd",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

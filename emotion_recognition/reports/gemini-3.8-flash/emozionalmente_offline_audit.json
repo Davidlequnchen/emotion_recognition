@@ -1,0 +1,56 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.304971+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/emozionalmente_predictions.csv",
+      "sha256": "95cfdb0733b83a7c907292e0abd41fddd13fa6a2f4906ac2f15ff09e39307cb6",
+      "bytes": 1117235
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emozionalmente_predictions.json",
+      "sha256": "6d6db483c7b0df51c47ac7af485d9b2b6ac836021f756d80e532f0a4a5ab0a02",
+      "bytes": 3596
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.340336,
+    "unweighted_accuracy": 0.340336,
+    "macro_f1": 0.30037,
+    "accuracy_all_classes": 0.340336,
+    "accuracy_acted_or_listener": 0.459722,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.412316
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3403361344537815,
+    "unweighted_accuracy": 0.3403361344537816,
+    "macro_f1": 0.3003702205207975,
+    "accuracy_all_classes": 0.3403361344537815,
+    "accuracy_acted_or_listener": 0.45972181976238774,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.4123161467593341
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

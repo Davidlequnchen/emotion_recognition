@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:46.193045+00:00",
+  "model": "gpt_realtime",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/savee_predictions.csv",
+      "sha256": "0c0772c19ad7879aa3de2f6ea3a32d128459f80bc36afa104a6b34655a89d657",
+      "bytes": 56562
+    },
+    {
+      "path": "outputs/gpt_realtime/savee_predictions.json",
+      "sha256": "5a2bdd24be403ad75563b134344c499b4101333d32d908f738d749a601883dee",
+      "bytes": 2949
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.272917,
+    "unweighted_accuracy": 0.197619,
+    "macro_f1": 0.171441,
+    "accuracy_all_classes": 0.272917
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.27291666666666664,
+    "unweighted_accuracy": 0.1976190476190476,
+    "macro_f1": 0.17144053056333616,
+    "accuracy_all_classes": 0.27291666666666664
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

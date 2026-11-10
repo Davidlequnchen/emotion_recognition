@@ -1,0 +1,56 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.976350+00:00",
+  "model": "gpt_realtime",
+  "key": "mcae_spps",
+  "clips": 6675,
+  "unique_audio_paths": 6675,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.csv",
+      "sha256": "e6c0f361bb0d07adae76e7529fa66d55f4bb0327e78e2d68d3f76e9cf4e4b3aa",
+      "bytes": 915388
+    },
+    {
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.json",
+      "sha256": "26c7bbe14466027c1d26e7a1f74d5a8081a405d4f053733fd1e6eb98cdb14317",
+      "bytes": 3320
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.198502,
+    "unweighted_accuracy": 0.167022,
+    "macro_f1": 0.09025,
+    "accuracy_all_classes": 0.198502,
+    "accuracy_acted_or_listener": 0.198502,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.198502
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.19850187265917604,
+    "unweighted_accuracy": 0.16702197591832638,
+    "macro_f1": 0.09025023364057168,
+    "accuracy_all_classes": 0.19850187265917604,
+    "accuracy_acted_or_listener": 0.19850187265917604,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.19850187265917604
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

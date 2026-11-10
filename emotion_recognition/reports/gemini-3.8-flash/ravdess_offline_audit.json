@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.609661+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.csv",
+      "sha256": "771315a1c1c70a06b6f0be3a43b80365c0544e3c568fc3c2c8955ddec7804b33",
+      "bytes": 197712
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.json",
+      "sha256": "f2f583cf67e9faed35c2cdf3eba67cb6f3f92027464bc76ae1514992aba5a8d2",
+      "bytes": 3163
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.469444,
+    "unweighted_accuracy": 0.457589,
+    "macro_f1": 0.46128,
+    "accuracy_all_classes": 0.469444
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.46944444444444444,
+    "unweighted_accuracy": 0.4575892857142857,
+    "macro_f1": 0.4612799453618095,
+    "accuracy_all_classes": 0.46944444444444444
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

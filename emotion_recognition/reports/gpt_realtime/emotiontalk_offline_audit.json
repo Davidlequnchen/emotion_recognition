@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.842493+00:00",
+  "model": "gpt_realtime",
+  "key": "emotiontalk",
+  "clips": 1929,
+  "unique_audio_paths": 1929,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/emotiontalk_predictions.csv",
+      "sha256": "08e96150eb83dfdf191fca40c7e23b92dac42187ce685d0b9b3f61c1fb859c26",
+      "bytes": 312514
+    },
+    {
+      "path": "outputs/gpt_realtime/emotiontalk_predictions.json",
+      "sha256": "67ed6c9cbf2679b2436c9a103f4f720fb5b4e448e89156a0563b684b3f5643ae",
+      "bytes": 2937
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.571799,
+    "unweighted_accuracy": 0.470499,
+    "macro_f1": 0.443508,
+    "accuracy_all_classes": 0.571799
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5717988595127009,
+    "unweighted_accuracy": 0.4704993377963074,
+    "macro_f1": 0.4435084314944505,
+    "accuracy_all_classes": 0.5717988595127009
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,50 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.616189+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/savee_predictions.csv",
+      "sha256": "25eb9f88e48bd4dd283789771177b4e9e11e7364c7602b461d91f7cf61177ad9",
+      "bytes": 56537
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/savee_predictions.json",
+      "sha256": "d3bcd4063e1da6552d6306d9f85d8f82869cbc88460c9c4cf2851af44e6cab1a",
+      "bytes": 3166
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.33125,
+    "unweighted_accuracy": 0.260714,
+    "macro_f1": 0.249919,
+    "accuracy_all_classes": 0.33125
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.33125,
+    "unweighted_accuracy": 0.26071428571428573,
+    "macro_f1": 0.24991853879545292,
+    "accuracy_all_classes": 0.33125
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

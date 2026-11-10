@@ -885,6 +885,18 @@ For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, 
 - `<metric>_by_dataset`: one panel per dataset, four panels per row by default (`columns` in `config/plots.yaml`), one bar per model;
 - `overview_<metric>`: a dataset-by-model score matrix with numeric percentages and a shared colour scale, so additional models do not crowd grouped bars. Missing compatible results appear as a grey dash, and chance reference values have a separate column.
 
+`dataset_order` fixes the order in both figures and HTML results tables. The first row is MELD, EmotionTalk,
+DailyTalk and MultiDialog, grouped because they retain dialogue structure. The remaining datasets place English
+standalone utterances first, then the other languages, with the two Italian corpora adjacent. This is a presentation
+order, not a claim that the four dialogue datasets are all spontaneous or share the same annotation protocol.
+New datasets not listed in the setting are appended rather than omitted. `layout` controls the canvas height,
+bar width/spacing and shared tick labels; the bottom model legend remains two lines for the current ten models.
+Grid-level metric titles are hidden (`layout.show_title: false`); the panel titles and metric axis labels remain,
+with the paper caption supplying the overall figure title.
+The HTML table groups **Dialogue datasets** before **Standalone-utterance datasets**, with a short † footnote for
+training involvement on each particular model–dataset result. MultiDialog's internal `gold_both` cohort code stays
+in the source metadata and method reports; the page displays the short dataset name.
+
 Each model keeps its colour (colour-blind-safe) in the bar panels and overview header. Bars have black outlines;
 a hatch in the panels or a dagger (†) in the overview means **Part of the training process** according to the
 current registry, counting direct and upstream use alike. Unhatched/unmarked means **exposure not established**, not verified unseen; corpus exposure does
@@ -893,7 +905,7 @@ in the panels shows chance level, and a value with * comes from a sample of the 
 reads `outputs/<model>/<dataset>_predictions.json`, with audio LLMs restricted to the current `inference_protocol`
 (section 8). Legacy outputs stay on disk but do not enter newly generated plots or result pages. Plot generation
 writes `results_manifest.json` beside the figures; the result page embeds only plots whose manifest matches the
-current compatible results, including current training-exposure metadata. After a prompt or registry-exposure
+current compatible results and the current layout/order settings, including current training-exposure metadata. After a prompt or registry-exposure
 change, redraw plots before rebuilding the page. To refresh existing summaries without inference, import
 `scripts/evaluation/evaluate.py` and call `write_summary(model, registry[model], note="", ...)` for models with saved
 results, followed by `write_comparison(registry, exclude=...)`. `refresh_training_caveats(model, entry, exclude=...)`
@@ -902,6 +914,28 @@ read saved predictions; they do not load model weights or change prediction JSON
 Shared-subset tables still use saved prediction labels under the existing rule. Summary generation may restitch
 existing confusion panels. Run `plot_results.py` and
 `make_viewer.py` afterward for current figures and pages; no evaluation rerun is needed for a provenance correction.
+
+### 7.3 Refresh reports after importing results
+
+从公司电脑带回结果时，把配对的 `<dataset>_predictions.csv` 和
+`<dataset>_predictions.json` 放在 `outputs/<model>/`。目录名及 JSON 的 `model`
+要与 `config/models.yaml` 中的模型 key 一致；Gemini 3.8 Flash 使用
+`outputs/gemini-3.8-flash/`。然后在 `emotion_recognition/` 目录运行：
+
+```bash
+python scripts/evaluation/refresh_reports.py --model gemini-3.8-flash --plots --viewer
+```
+
+这条命令只分析已保存的结果，不加载模型、不调用 API，也不改写预测 CSV/JSON。
+它先检查音频路径是否重复、样本数、候选标签、prompt 协议及重算指标，再生成该模型的
+逐数据集报告、混淆矩阵、模型汇总和总表。`--plots` 更新比较图；`--viewer` 更新本地 HTML
+和 `site/index.html`，网页示例需要本机已有相应音频。省略这两个选项即可只生成报告。
+CSV 可以使用 UTF-8 BOM，正确性列支持 True/False、Yes/No 和 1/0。
+
+仅凭 CSV 和 JSON 就能重算分类指标和画图，不需要 `.f16` features。
+建议同时带回 `responses.jsonl`，供以后核查原始回答、重试及 token 用量；这次未带回时，
+报告会注明这一点。API 的 `p_*` 若为 one-hot，表示模型最终选择了哪个标签，
+不能当作置信度；网页对此显示空缺。并发请求的总耗时除以样本数也不等于单个请求的延迟。
 
 ## 8. Audio LLMs
 

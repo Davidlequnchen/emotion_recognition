@@ -1,0 +1,97 @@
+{
+  "dataset": "EmotionTalk (test)",
+  "key": "emotiontalk",
+  "language": "Mandarin",
+  "model": "gpt_realtime",
+  "model_name": "GPT Realtime",
+  "date": "2026-11-10",
+  "clips": 1929,
+  "total_clips": 1929,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "not published (OpenAI)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "invalid"
+  ],
+  "versions": {
+    "api model": "gpt-realtime",
+    "websockets": "17.3"
+  },
+  "notes": [
+    "Amex IDaaS gateway; one pcm16_24k clip per request; text output.",
+    "Up to 30 clips evaluated concurrently; local models remain sequential.",
+    "The same reference baseline prompts and dataset-specific candidate labels as local audio LLMs.",
+    "Unparseable answers after retries are invalid, not an additional prompted emotion.",
+    "Answers become one-hot vectors, not calibrated class probabilities.",
+    "Raw answers and token usage are checkpointed in /Users/lchen65/Github/Fraud_Audio_Project/emotion_recognition/emotion_recognition_benchmarking/outputs/gpt_realtime/responses.jsonl.",
+    "Realtime has no enforced output schema; answers can vary between runs.",
+    "Allowed answers: angry, disgusted, fearful, happy, neutral, sad, surprised; prompt dc84c979c561."
+  ],
+  "metrics": {
+    "accuracy": 0.571799,
+    "unweighted_accuracy": 0.470499,
+    "macro_f1": 0.443508,
+    "accuracy_all_classes": 0.571799
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the published audio-perception gold `emotion_result` in original Audio/json files",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised); 'other answer' when the model's answer is none of them",
+    "prediction_all_classes": "model prediction: the most probable of all 8 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 8 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "cpu",
+    "hardware": "Apple M3 Pro",
+    "seconds": 270.7,
+    "ms_per_clip": 140.4,
+    "on_cpu": 0
+  },
+  "subset": "split:test",
+  "inference_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gpt-realtime"
+  }
+}

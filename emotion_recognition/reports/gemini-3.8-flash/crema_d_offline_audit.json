@@ -1,0 +1,57 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.181317+00:00",
+  "model": "gemini-3.8-flash",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.csv",
+      "sha256": "7876beea268cb541aa6f1b32a59722bfdce4114648080bb44b490aa7d03926d6",
+      "bytes": 1036341
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.json",
+      "sha256": "5d054851c9e6d87c3f08eab0c8a4d8d020dffe1a8e095115894692f083953671",
+      "bytes": 3364
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.326794,
+    "unweighted_accuracy": 0.339352,
+    "macro_f1": 0.302378,
+    "accuracy_all_classes": 0.326794,
+    "accuracy_acted_or_listener": 0.622548,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.532951
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.32679387261488846,
+    "unweighted_accuracy": 0.3393523005473697,
+    "macro_f1": 0.3023780810920556,
+    "accuracy_all_classes": 0.32679387261488846,
+    "accuracy_acted_or_listener": 0.6225477022305832,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.5329508679023243
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "4ff3d2e97612",
+    "model_id": "gemini-3.8-flash"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

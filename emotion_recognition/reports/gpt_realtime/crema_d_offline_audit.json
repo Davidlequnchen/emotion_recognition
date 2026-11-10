@@ -1,0 +1,57 @@
+{
+  "validated_at_utc": "2026-11-10T13:09:45.807186+00:00",
+  "model": "gpt_realtime",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/gpt_realtime/crema_d_predictions.csv",
+      "sha256": "e4ce68b8f41d5c59d356b6f510aedec701eabcbc16074629a6b6d34ed8b5c4bc",
+      "bytes": 1054556
+    },
+    {
+      "path": "outputs/gpt_realtime/crema_d_predictions.json",
+      "sha256": "58308a83ea2a49afb43ee1480ea50ffbdacaddb3d32b3b9898a7024fb942edd4",
+      "bytes": 3288
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.160038,
+    "unweighted_accuracy": 0.180215,
+    "macro_f1": 0.070004,
+    "accuracy_all_classes": 0.160038,
+    "accuracy_acted_or_listener": 0.603064,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.585466
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.1600376242945445,
+    "unweighted_accuracy": 0.18021543497032735,
+    "macro_f1": 0.07000389407789638,
+    "accuracy_all_classes": 0.1600376242945445,
+    "accuracy_acted_or_listener": 0.6030636925557645,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.5854663136216535
+  },
+  "metric_tolerance": 1e-06,
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "4ff3d2e97612",
+    "model_id": "gpt-realtime"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

@@ -48,7 +48,6 @@ Settings (which predictions, datasets to leave out, how many clips, seed, linked
 are in config/viewer.yaml; `site`, `exclude`, `correct` and `wrong` above are among them.
 """
 import base64
-import csv
 import functools
 import io
 import json
@@ -66,6 +65,7 @@ from PIL import Image, features
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
 from eval_datasets import SOURCES
+from prediction_io import read_prediction_rows
 from training_provenance import (EXPOSURE_LEVELS, training_marker,
                                  training_metadata, with_training_provenance)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "llm_eval"))
@@ -93,6 +93,11 @@ def rel(path):
 
 def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def display_dataset_name(key, recorded_name):
+    """Keep an internal cohort code out of the page's dataset names; source metadata stays intact."""
+    return "MultiDialog" if key == "multidialog" else recorded_name
 
 
 def embed_image(path, width=None):
@@ -123,6 +128,9 @@ def load_plots():
                                          settings.get("exclude") or [], registry=registry, root=ROOT)
     if manifest.get("fingerprint") != plot_results.results_fingerprint(selected):
         print("  WARNING     : bar plots use older results; redraw them with scripts/viewer/plot_results.py")
+        return []
+    if manifest.get("presentation_fingerprint") != plot_results.presentation_fingerprint(settings):
+        print("  WARNING     : bar plots use an older layout/order; redraw them with scripts/viewer/plot_results.py")
         return []
     names = {"accuracy": "Accuracy", "unweighted_accuracy": "Unweighted accuracy", "macro_f1": "Macro F1",
              "accuracy_all_classes": "Accuracy, all model classes",
@@ -181,7 +189,7 @@ def current_summary(model, chosen, entry):
     evidence_order = {status: i for i, status in enumerate(EXPOSURE_LEVELS)}
     ranked = sorted(chosen.items(), key=lambda item: (evidence_order[item[1]["training_status"]],
                                                       -item[1]["metrics"]["accuracy"]))
-    datasets = [{"dataset": meta["dataset"], "key": meta["key"], "language": meta.get("language", ""),
+    datasets = [{"dataset": display_dataset_name(meta["key"], meta["dataset"]), "key": meta["key"], "language": meta.get("language", ""),
                  "clips": meta["clips"], "total_clips": meta.get("total_clips", meta["clips"]),
                  "emotions": len(meta["classes"]), "labels": meta.get("labels", meta["classes"]),
                  "chance": meta.get("chance", 1 / len(meta["classes"])), "accept": meta.get("accept", {}),
@@ -191,14 +199,13 @@ def current_summary(model, chosen, entry):
     shared = sorted(set.intersection(*(set(meta["classes"]) for meta in chosen.values()))) if len(chosen) > 1 else []
     shared_rows = []
     for path, meta in ranked if shared else []:
-        with open(path, newline="", encoding="utf-8") as fh:
-            rows = [row for row in csv.DictReader(fh) if row[meta["ground_truth"]] in shared]
+        rows = [row for row in read_prediction_rows(path) if row[meta["ground_truth"]] in shared]
         ground = meta["ground_truth"]
         hits = [row["prediction"] == row[ground] for row in rows]
         recalls = [sum(row["prediction"] == emotion for row in rows if row[ground] == emotion)
                    / sum(row[ground] == emotion for row in rows)
                    for emotion in shared if any(row[ground] == emotion for row in rows)]
-        shared_rows.append({"dataset": meta["dataset"], "key": meta["key"], "language": meta.get("language", ""),
+        shared_rows.append({"dataset": display_dataset_name(meta["key"], meta["dataset"]), "key": meta["key"], "language": meta.get("language", ""),
                             "clips": len(rows), "sample": meta["clips"] < meta.get("total_clips", meta["clips"]),
                             "accuracy": sum(hits) / len(hits) if hits else None,
                             "unweighted_accuracy": sum(recalls) / len(recalls) if recalls else None,
@@ -221,9 +228,9 @@ def current_summary(model, chosen, entry):
                 thumbnail = image.convert("RGB")
             thumbnail.thumbnail((900, 900), Image.LANCZOS)
             panels.append(thumbnail)
-            figure_datasets.append(meta["dataset"])
+            figure_datasets.append(display_dataset_name(meta["key"], meta["dataset"]))
             if use_listener:
-                lenient.append(meta["dataset"])
+                lenient.append(display_dataset_name(meta["key"], meta["dataset"]))
     embedded = None
     if panels:
         columns = min(3, math.ceil(math.sqrt(len(panels))))
@@ -246,8 +253,7 @@ def current_summary(model, chosen, entry):
 
 def load_run(csv_path, meta):
     """One predictions CSV (meta: the .json next to it) -> the run: metadata, rows by audio path, accuracies."""
-    with open(csv_path, newline="", encoding="utf-8") as fh:
-        rows = list(csv.DictReader(fh))
+    rows = read_prediction_rows(csv_path)
     if not rows:
         sys.exit(f"ERROR: {rel(csv_path)} has no clips. Evaluate again: python scripts/evaluation/evaluate.py")
     checks = [c for c in rows[0] if c.startswith("correct")]  # e.g. correct, correct_acted_or_listener
@@ -307,6 +313,7 @@ def make_clip(path, runs):
         "models": {model: {
             "predictions": {k: v for k, v in r.items() if k.startswith("prediction")},
             "correct": {c: r[c] == "True" for c in runs[model]["checks"]},
+            "score_kind": "answer_indicator" if runs[model]["meta"].get("inference_protocol") else "class_probability",
             "probs": {k[2:]: round(float(v), 4) for k, v in r.items() if k.startswith("p_") and v},
         } for model, r in rows.items()},
     }
@@ -441,7 +448,7 @@ def main():
         clips = sorted((make_clip(p, runs[key]) for p in picked),
                        key=lambda c: (c["labels"].get(first["ground_truth"], ""), c["file"]))  # by ground truth, then file
         datasets.append({
-            "key": key, "dataset": first["dataset"], "language": first.get("language", ""),
+            "key": key, "dataset": display_dataset_name(key, first["dataset"]), "language": first.get("language", ""),
             "ground_truth": first["ground_truth"], "accept": first.get("accept") or {},
             "runs": {model: {"total": len(run["rows"]), "total_clips": run["meta"].get("total_clips") or len(run["rows"]),
                              "criteria": run["criteria"], **training_metadata(key, registry.get(model)),
@@ -459,7 +466,11 @@ def main():
     sources = {k: SOURCES[k] for k in order if k in SOURCES}
     plots = load_plots()  # the bar plots of plot_results.py, if they have been drawn
     print(f"  bar plots   : {', '.join(p['metric'] for p in plots) or 'none (run scripts/viewer/plot_results.py)'}")
+    plot_settings = yaml.safe_load((ROOT / "config" / "plots.yaml").read_text()) or {}
+    table_runs = {m["key"]: {d["key"]: d for d in m["summary"]["datasets"]}
+                  for m in page_models if m.get("summary")}
     data = {"seed": seed, "picks": {"correct": n_correct, "wrong": n_wrong}, "models": page_models, "sources": sources,
+            "dataset_order": plot_results.chart_datasets(table_runs, plot_settings.get("dataset_order") or []),
             "plots": plots}
     write_page(out, data, datasets, link_audio)
     if site:

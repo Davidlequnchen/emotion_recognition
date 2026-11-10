@@ -137,10 +137,11 @@
   /* The dataset column stays in view while a wide table scrolls inside its card (phones) */
   .results td.name, .results thead th:first-child { position: sticky; left: 0; z-index: 1; background-color: var(--surface); }
   .results .labels { min-width: 15em; }
-  /* A group of rows (e.g. the datasets in the model's training data) under a header row */
+  /* Dataset structure groups; training involvement is marked on individual results. */
   .results tr.group th { background: var(--page); color: var(--ink-2); padding: 8px 14px; border-top: 1px solid var(--line); }
   .results thead + tbody tr.group:first-child th { border-top: 0; }
   .results tr.group th span { display: inline-block; position: sticky; left: 14px; }
+  .training-footnote { width: 100%; max-width: none; margin: 8px 0 0; color: var(--muted); font-size: 12px; }
   .results a { color: var(--accent); }
   .results a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 
@@ -207,14 +208,18 @@
 <script id="data" type="application/json">__DATA__</script>
 <script>
   const DATA = JSON.parse(document.getElementById("data").textContent);
-  const TRAINING_GROUPS = [
-    { seen: true, label: "Part of the training process" },
-    { seen: false, label: "No recorded training use" },
+  const DATASET_GROUPS = [
+    { dialogue: true, label: "Dialogue datasets" },
+    { dialogue: false, label: "Standalone-utterance datasets" },
   ];
+  const DIALOGUE_DATASETS = new Set(["meld", "emotiontalk", "dailytalk", "multidialog"]);
+  const DATASET_RANK = new Map((DATA.dataset_order ?? ["meld", "emotiontalk", "dailytalk", "multidialog"]).map((key, i) => [key, i]));
+  const TRAINING_LABEL = "Part of this model's training process";
+  const TRAINING_FOOTNOTE = "† Dataset was part of this model's training process.";
   const partOfTraining = (row) => row?.training_status
     ? ["confirmed_exposure", "probable_exposure"].includes(row.training_status)
     : Boolean(row?.in_training_data);
-  const trainingLabel = (row) => TRAINING_GROUPS[partOfTraining(row) ? 0 : 1].label;
+  const trainingLabel = (row) => partOfTraining(row) ? TRAINING_LABEL : "";
   const trainingMarker = (row) => partOfTraining(row) ? "†" : "";
   // Results: the model shown ("all" = every model side by side) and the value in the comparison table.
   // Examples: the dataset (index in DATA.datasets), the model, and the filters, which stay when the model changes.
@@ -279,6 +284,8 @@
   const verdict = (result) => result ? (result.correct[state.criterion] ?? Object.values(result.correct)[0]) : null;
 
   function probabilities(clip, result, ds) {
+    if (result.score_kind === "answer_indicator")
+      return el("div", { className: "meta", textContent: "Label-only output; confidence unavailable." });
     const truth = clip.labels[ds.ground_truth];
     const accepted = ds.accept?.[truth] ?? [];  // the classes a composite ground truth such as excited accepts
     const prediction = result.predictions.prediction;
@@ -317,7 +324,7 @@
     const prediction = result?.predictions.prediction;
     // The prediction is the most probable of the dataset's emotions; the model's overall top class may differ
     const top = result ? Object.entries(result.predictions).find(([k]) => k !== "prediction")?.[1] : undefined;
-    const p = result?.probs[prediction];
+    const p = result?.score_kind === "answer_indicator" ? undefined : result?.probs[prediction];
     const toggle = el("button", { className: "more", type: "button", title: "Show the probabilities and every model's prediction",
       attrs: { "aria-expanded": "false", "aria-label": `Details of ${clip.file}` } }, icon("chevron"));
     const dash = () => el("span", { className: "meta", textContent: "–" });
@@ -332,7 +339,7 @@
         ? el("span", { className: "chip" }, clip.labels[key], prediction && matches(clip.labels[key], prediction, ds.accept) ? el("span", { className: "ok", textContent: "✓", title: "the prediction matches this label" }) : null)
         : dash())),
       el("td", {}, prediction ? el("span", { className: "chip pred", textContent: prediction }) : dash()),
-      el("td", {}, p === undefined ? null : el("div", { className: "conf" },
+      el("td", {}, p === undefined ? dash() : el("div", { className: "conf" },
         el("div", { className: "bar" }, el("i", { style: `width: ${100 * p}%` })), el("span", { className: "num", textContent: percent(p) })),
         top && top !== prediction ? el("div", { className: "meta", textContent: `top of all classes: ${top}` }) : null),
       el("td", {}, toggle));
@@ -373,7 +380,7 @@
       ...run.criteria.map((c) => el("div", { className: `tile${c.column === state.criterion ? " active" : ""}` },
         el("div", { className: "label", textContent: `${model.name}: matches the ${c.name}` }),
         el("div", { className: "value" }, levelValue(c.accuracy)),
-        el("div", { className: "note", textContent: sample + `; ${trainingLabel(run)}` }))),
+        el("div", { className: "note", textContent: sample + (partOfTraining(run) ? `; ${trainingLabel(run)}` : "") }))),
       el("div", { className: "tile" },
         el("div", { className: "label", textContent: "Clips on this page" }),
         el("div", { className: "value", textContent: String(clips.length) }),
@@ -427,9 +434,7 @@
   function legend() {
     const key = (cls, text) => el("span", { className: "key" }, el("i", { className: `swatch ${cls}`, attrs: { "aria-hidden": "true" } }), text);
     return el("div", { className: "legend" }, el("span", { textContent: "Colour of a value:" }),
-      key("lv-high", "80% or more"), key("lv-mid", "60 to 80%"), key("lv-low", "under 60%"),
-      ...TRAINING_GROUPS.map((group) => el("span", { className: "key" },
-        el("span", { className: "dag", textContent: group.seen ? "†" : "–" }), group.label)));
+      key("lv-high", "80% or more"), key("lv-mid", "60 to 80%"), key("lv-low", "under 60%"));
   }
   const sampleOf = (d) => d.total_clips > d.clips ? ` of ${d.total_clips.toLocaleString()}` : "";
   // Ground-truth labels in the order of the confusion-matrix rows; a composite label names the classes it accepts
@@ -437,17 +442,18 @@
   const td = (text, cls) => el("td", { className: cls ?? "", textContent: text });
   // columns: [heading, class ("n": numeric)]; groups: [title (or null), <tr> elements], each in its own <tbody>
   function resultsTable(columns, groups, label) {
-    return el("div", { className: "table-wrap" }, el("table", { className: "results", attrs: { "aria-label": label } },
+    return el("div", {}, el("div", { className: "table-wrap" }, el("table", { className: "results", attrs: { "aria-label": label } },
       el("thead", {}, el("tr", {}, ...columns.map(([text, cls]) => el("th", { className: cls ?? "", textContent: text, attrs: { scope: "col" } })))),
       ...groups.map(([title, trs]) => el("tbody", {},
         title ? el("tr", { className: "group" }, el("th", { colSpan: columns.length, attrs: { scope: "rowgroup" } }, el("span", { textContent: title }))) : null,
-        ...trs))));
+        ...trs)))), el("p", { className: "training-footnote", textContent: TRAINING_FOOTNOTE }));
   }
-  // Rows split into the datasets in the model's training data (first) and the others, each from the best value down
-  function byTraining(model, items, value) {
-    const sort = (list) => [...list].sort((a, b) => (value(b) ?? -1) - (value(a) ?? -1));
-    return TRAINING_GROUPS.map((group) => [group.label,
-      sort(items.filter((item) => partOfTraining(item) === group.seen))]).filter(([, list]) => list.length);
+  // Fixed presentation order, shared with the figures; metric changes never reshuffle dataset rows.
+  function byDatasetType(items, key = (item) => item.key) {
+    const sort = (list) => [...list].sort((a, b) =>
+      (DATASET_RANK.get(key(a)) ?? 1e9) - (DATASET_RANK.get(key(b)) ?? 1e9) || key(a).localeCompare(key(b)));
+    return DATASET_GROUPS.map((group) => [group.label,
+      sort(items.filter((item) => DIALOGUE_DATASETS.has(key(item)) === group.dialogue))]).filter(([, list]) => list.length);
   }
 
   const METRICS = [["accuracy", "Accuracy: acted emotion"], ["unweighted_accuracy", "Unweighted accuracy"], ["macro_f1", "Macro F1"]];
@@ -455,14 +461,11 @@
     const keys = [...new Set(models.flatMap((m) => m.summary.datasets.map((d) => d.key)))];
     const datasets = keys.map((key) => {
       const results = models.map((m) => m.summary.datasets.find((d) => d.key === key));
-      return { first: results.find(Boolean), results,
-        training: results.filter(Boolean).some(partOfTraining) };
+      return { first: results.find(Boolean), results };
     });
-    const values = (row) => row.results.map((d) => d?.metrics?.[state.metric]).filter((x) => typeof x === "number");
-    const mean = (row) => values(row).length ? values(row).reduce((a, b) => a + b, 0) / values(row).length : -1;
     const cell = (d, m) => {
       if (!d) return el("td", { className: "n", title: `No results of ${m.name} on this dataset` }, el("span", { className: "level", textContent: "–" }), el("span", { className: "dag" }));
-      const notes = [`${trainingLabel(d)} for ${m.name}`, d.total_clips > d.clips ? `on a sample of ${d.clips.toLocaleString()} of ${d.total_clips.toLocaleString()} clips` : ""].filter(Boolean);
+      const notes = [partOfTraining(d) ? `${trainingLabel(d)}: ${m.name}` : "", d.total_clips > d.clips ? `on a sample of ${d.clips.toLocaleString()} of ${d.total_clips.toLocaleString()} clips` : ""].filter(Boolean);
       return el("td", { className: "n", title: notes.join("; ") }, levelValue(d.metrics?.[state.metric]),
         el("span", { className: "dag", textContent: trainingMarker(d) }),
         trainingMarker(d) ? el("span", { className: "sr", textContent: trainingLabel(d) }) : null);
@@ -472,11 +475,10 @@
     const draw = () => {
       segmented(switcher, METRICS, state.metric, (v) => { state.metric = v; draw(); });
       const name = METRICS.find(([k]) => k === state.metric)[1];
-      const groups = TRAINING_GROUPS.map((group) => [group.label,
-        datasets.filter((row) => row.training === group.seen)]);
+      const groups = byDatasetType(datasets, (row) => row.first.key);
       box.replaceChildren(resultsTable(
         [["Dataset"], ["Language"], ["Chance", "n"], ...models.map((m) => [m.name, "n model"])],
-        groups.filter(([, rs]) => rs.length).map(([title, rs]) => [title, [...rs].sort((a, b) => mean(b) - mean(a)).map((r) =>
+        groups.map(([title, rs]) => [title, rs.map((r) =>
           el("tr", {}, el("td", { className: "name", textContent: r.first.dataset }), td(r.first.language, "lang"),
             td(pct(r.first.chance ?? 1 / r.first.emotions), "n"), ...r.results.map((d, i) => cell(d, models[i]))))]),
         `${name} of every model on every dataset`));
@@ -494,11 +496,12 @@
     // Composite labels, e.g. "JL-Corpus's excited (happy or surprised)"
     const composite = s.datasets.flatMap((d) => Object.entries(d.accept ?? {}).map(([label, classes]) => `${d.dataset}'s ${label} (${classes.join(" or ")})`));
     const byKey = Object.fromEntries(s.datasets.map((d) => [d.key, d]));
-    const row = (d, x, cells) => el("tr", { className: level(x) }, el("td", { className: "name", textContent: d.dataset }), ...cells);
+    const row = (d, x, cells) => el("tr", { className: level(x) }, el("td", { className: "name" },
+      d.dataset, el("span", { className: "dag", textContent: trainingMarker(d), title: trainingLabel(d) })), ...cells);
     const main = resultsTable(
       [["Dataset"], ["Language"], ["Ground-truth labels", "labels"], ["Clips", "n"], ["Emotions", "n"], ["Chance", "n"],
        ["Accuracy: acted emotion", "n"], ...(listeners ? [["Accuracy: acted or listeners' vote", "n"]] : []), ["Unweighted accuracy", "n"], ["Macro F1", "n"]],
-      byTraining(m, s.datasets, (d) => d.metrics.accuracy).map(([title, list]) => [title, list.map((d) => row(d, d.metrics.accuracy, [
+      byDatasetType(s.datasets).map(([title, list]) => [title, list.map((d) => row(d, d.metrics.accuracy, [
         td(d.language, "lang"), td(labelText(d), "labels"), td(d.clips.toLocaleString() + sampleOf(d), "n"), td(String(d.emotions), "n"),
         td(pct(d.chance ?? 1 / d.emotions), "n"), el("td", { className: "n" }, levelValue(d.metrics.accuracy)),
         ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), "n")] : []), td(pct(d.metrics.unweighted_accuracy), "n"),
@@ -526,7 +529,7 @@
         el("p", { className: "caption", textContent: `Only clips whose ground truth is one of these ${n} emotions are included. Every model keeps its original dataset-level prediction; answers outside the subset count as wrong. This is a subset analysis, not new inference with fewer choices, so there is no common chance baseline. Rows grouped and coloured as above.` }),
         legend(),
         resultsTable([["Dataset"], ["Language"], ["Ground-truth labels", "labels"], ["Clips", "n"], ["Accuracy", "n"], ["Unweighted accuracy", "n"]],
-          byTraining(m, s.shared, (d) => d.accuracy).map(([title, list]) => [title, list.map((d) => row(d, d.accuracy, [
+          byDatasetType(s.shared).map(([title, list]) => [title, list.map((d) => row(d, d.accuracy, [
             td(d.language, "lang"), td(labelText(byKey[d.key] ?? d), "labels"), td(d.clips.toLocaleString() + (d.sample ? " (sample)" : ""), "n"),
             el("td", { className: "n" }, levelValue(d.accuracy)), td(pct(d.unweighted_accuracy), "n")]))]),
           `Results of ${m.name} on the emotions every dataset has`));

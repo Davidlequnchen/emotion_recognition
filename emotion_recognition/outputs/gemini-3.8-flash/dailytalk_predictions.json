@@ -1,0 +1,99 @@
+{
+  "dataset": "DailyTalk (validation)",
+  "key": "dailytalk",
+  "language": "English",
+  "model": "gemini-3.8-flash",
+  "model_name": "Gemini 3.8 Flash",
+  "date": "2026-11-10",
+  "clips": 1197,
+  "total_clips": 1197,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "not published (Google)",
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "invalid"
+  ],
+  "versions": {
+    "api model": "gemini-3.8-flash",
+    "requests": "2.34.2"
+  },
+  "notes": [
+    "Amex IDaaS gateway; one wav24k clip per request; json-string output.",
+    "Up to 30 clips evaluated concurrently; local models remain sequential.",
+    "The same reference baseline prompts and dataset-specific candidate labels as local audio LLMs.",
+    "Unparseable answers after retries are invalid, not an additional prompted emotion.",
+    "Answers become one-hot vectors, not calibrated class probabilities.",
+    "Raw answers and token usage are checkpointed in /Users/lchen65/Github/Fraud_Audio_Project/emotion_recognition/emotion_recognition_benchmarking/outputs/gemini-3.8-flash/responses.jsonl.",
+    "Gemini output is enforced by responseSchema and validated as a literal JSON string.",
+    "HTTPS connections are reused within each worker; TLS EOF retries use staggered delays.",
+    "Gemini content blocks are checkpointed as invalid without retries; safety filters are unchanged.",
+    "Allowed answers: angry, disgusted, fearful, happy, neutral, sad, surprised; prompt dc84c979c561."
+  ],
+  "metrics": {
+    "accuracy": 0.573099,
+    "unweighted_accuracy": 0.485077,
+    "macro_f1": 0.250061,
+    "accuracy_all_classes": 0.573099
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the pinned public ECSS category; unassigned original clips, only in split='all'/'unassigned', retain the original DailyTalk category",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 8 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 8 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "cpu",
+    "hardware": "Apple M3 Pro",
+    "seconds": 248.5,
+    "ms_per_clip": 207.6,
+    "on_cpu": 0
+  },
+  "subset": "split:validation",
+  "inference_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "dc84c979c561",
+    "model_id": "gemini-3.8-flash"
+  }
+}
