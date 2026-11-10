@@ -186,14 +186,15 @@ class DialogueDatasetTests(unittest.TestCase):
             self.assertNotEqual(evaluation.multidialog(splits="test_freq").subset, result.subset)
             self.assertNotEqual(evaluation.multidialog(cohort="all").subset, result.subset)
 
-    def test_registration_appends_new_datasets_and_disables_public_and_api_audio(self):
+    def test_registration_appends_new_datasets_and_separates_api_from_public_audio(self):
         previous = ["crema_d", "mcae_spps", "thai_ser", "nemo", "mess", "esd", "ravdess", "tess",
                     "jl_corpus", "mead", "meld", "emovo", "emozionalmente", "savee"]
         self.assertEqual(list(evaluation.LOADERS)[:len(previous)], previous)
         for key in ["emotiontalk", "dailytalk", "multidialog"]:
             self.assertTrue(callable(evaluation.LOADERS[key]))
             self.assertFalse(evaluation.SOURCES[key]["public_audio"])
-            self.assertFalse(evaluation.SOURCES[key]["api_audio"])
+            self.assertTrue(evaluation.SOURCES[key]["api_audio"])
+        self.assertFalse(evaluation.SOURCES["esd"]["api_audio"])
 
 
 if __name__ == "__main__":

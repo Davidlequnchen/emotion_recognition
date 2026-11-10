@@ -1089,6 +1089,11 @@ gold-actor dialogues after segmentation QC. Source labels and split limitations 
 `config/evaluation_dialogue_baselines.yaml` is a separate, ready-to-run three-LLM baseline configuration; select it
 with `python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml`. No new inference has run.
 
+DailyTalk, EmotionTalk and MultiDialog have `api_audio: true`, matching the project's other adopted research
+datasets. This is dataset eligibility, not an instruction to send audio. Both evaluation configurations retain
+`api_models: false`, so paid API models do not run. `public_audio: false` independently keeps these datasets'
+example recordings out of the public HTML page; it does not prevent local or API evaluation.
+
 The first context pilot is Omni on 240 fixed EmotionTalk train targets, with target-only / true audio history /
 text history / unrelated audio history. It is currently **prepared only** while local memory is occupied.
 See [the Chinese explanation and commands](docs/context_pilot.md). `context_pilot.py prepare` never imports model

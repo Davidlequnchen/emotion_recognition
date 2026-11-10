@@ -73,9 +73,8 @@ def select_datasets(settings):
         sys.exit(f"ERROR: unknown dataset(s) {unknown} in config/llm.yaml; use: "
                  f"{', '.join(LOADERS)} or all")
     left_out = {k: "exclude in config/llm.yaml" for k in keys if k in exclude}
-    # Every request gives the clip to OpenAI or Google, so a dataset whose licence does not allow giving its audio to
-    # others is never used (api_audio in SOURCES of eval_datasets.py; ESD's licence forbids it)
-    left_out |= {k: "its licence does not allow giving its audio to others" for k in keys
+    # Dataset-level project eligibility is distinct from executing a paid API request. This selector sends nothing.
+    left_out |= {k: "API audio is disabled for this dataset" for k in keys
                  if k not in left_out and not SOURCES.get(k, {}).get("api_audio")}
     keys = [k for k in keys if k not in left_out]
     missing = [k for k in keys if not (ROOT / "data" / k).is_dir()]

@@ -631,13 +631,11 @@ LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "ne
            "emozionalmente": emozionalmente, "savee": savee, "emotiontalk": emotiontalk, "dailytalk": dailytalk,
            "multidialog": multidialog}
 
-# Source, licence and credit of each dataset, shown on the viewer page (scripts/viewer/make_viewer.py). public_audio:
-# the licence allows putting its clips on a public web page. api_audio: its clips may be sent to the API models (GPT
-# Realtime, Gemini) for this research evaluation; only a licence that forbids giving the data to anyone else (ESD)
-# rules this out (decided 2026-11-06; LISTEN and other benchmark papers sent such corpora to Gemini as well). A dataset
-# that is not listed here counts as not allowed for both.
-# New dialogue additions are disabled for public/API audio by project default; this is not a claim that their
-# licences categorically prohibit those uses. Enabling them is a separate, explicit project decision.
+# Source, licence and credit of each dataset, shown on the viewer page. public_audio controls public example clips;
+# api_audio records eligibility for this project's research API evaluation. These are independent flags, not a
+# universal legal determination. The three adopted dialogue datasets follow the existing research API policy.
+# Actual API execution still requires api_models: true in the evaluation config; eligibility alone sends nothing.
+# ESD remains excluded. Unregistered datasets default to disabled for both destinations.
 CC = "https://creativecommons.org/licenses/"
 SOURCES = {
     "crema_d": {"url": "https://github.com/CheyneyComputerScience/CREMA-D", "public_audio": True, "api_audio": True,
@@ -708,16 +706,16 @@ SOURCES = {
                         "here come from an unofficial Kaggle mirror "
                         "(kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee)."},
     "emotiontalk": {"url": "https://huggingface.co/datasets/BAAI/Emotiontalk", "public_audio": False,
-                    "api_audio": False, "licence": "CC BY-NC-SA 4.0", "licence_url": CC + "by-nc-sa/4.0/",
+                    "api_audio": True, "licence": "CC BY-NC-SA 4.0", "licence_url": CC + "by-nc-sa/4.0/",
                     "credit": "EmotionTalk authors. EmotionTalk. Findings of ACL, 2026. Official Audio release; "
                               "published audio-perception gold retained."},
-    "dailytalk": {"url": "https://github.com/keonlee9420/DailyTalk", "public_audio": False, "api_audio": False,
+    "dailytalk": {"url": "https://github.com/keonlee9420/DailyTalk", "public_audio": False, "api_audio": True,
                   "licence": "Audio/data CC BY-SA 4.0; ECSS files retain upstream MIT notices",
                   "licence_url": CC + "by-sa/4.0/",
                   "credit": "DailyTalk authors. DailyTalk. ICASSP 2023. ECSS supplemental annotations, AAAI 2024; "
                             "public categories preserve the inherited DailyDialog labels."},
     "multidialog": {"url": "https://huggingface.co/datasets/IVLLab/MultiDialog", "public_audio": False,
-                    "api_audio": False, "licence": "CC BY-NC 4.0", "licence_url": CC + "by-nc/4.0/",
+                    "api_audio": True, "licence": "CC BY-NC 4.0", "licence_url": CC + "by-nc/4.0/",
                     "credit": "Park et al. Let's Go Real Talk: Spoken Dialogue Model for Face-to-Face Conversation. "
                               "ACL 2024. doi:10.18653/v1/2024.acl-long.860."},
 }
