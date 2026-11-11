@@ -53,7 +53,7 @@ METRIC_NAMES = {"accuracy": "Accuracy", "unweighted_accuracy": "UAR",
                 "accuracy_acted_or_listener": "Accuracy (acted emotion or listeners' vote)"}
 INK, INK_2, GRID = "#111111", "#444444", "#d9d9d9"
 TRAINING_HATCH, TRAINING_LABEL = "///", "Part of the training process"
-PLOT_STYLE = "ordered_slim_panels_v5"
+PLOT_STYLE = "ordered_slim_panels_v6"
 PANEL_LAYOUT = {
     "panel_width": 4.4, "panel_height": 2.15, "bar_width": 0.56, "bar_spacing": 0.70,
     "x_margin": 0.42, "wspace": 0.14, "hspace": 0.28, "title_pad": 8.0, "ymax": 118.0,
@@ -284,6 +284,7 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
 def overview_figure(plt, metric, results, models, names, colours, datasets, out):
     """A readable matrix that grows by one column, rather than thirteen bars, for each added model."""
     import numpy as np
+    from matplotlib.colors import LinearSegmentedColormap
     from matplotlib.patches import Rectangle
 
     has_chance = metric != "macro_f1"
@@ -299,7 +300,11 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
 
     width, height = max(11.5, 1.23 * ncols + 3.5), max(5.0, 0.44 * len(datasets) + 1.15)
     fig, ax = plt.subplots(figsize=(width, height))
-    cmap = plt.get_cmap("cividis").with_extremes(bad="#f1f2f4")
+    # A single light-to-dark hue keeps ordered scores readable in colour and grey print.
+    # Trim the near-white/darkest endpoints; missing results remain a separate neutral grey.
+    cmap = LinearSegmentedColormap.from_list(
+        "overview_blues", plt.get_cmap("Blues")(np.linspace(0.06, 0.96, 256))
+    ).with_extremes(bad="#f1f2f4")
     plotted = ax.imshow(np.ma.masked_invalid(values), cmap=cmap, vmin=0, vmax=100, aspect="auto")
     headers = [names[m].replace("emotion2vec+ ", "emotion2vec+\n")
                .replace("MERaLiON-", "MERaLiON\n").replace("Vox-Profile ", "Vox-Profile\n")
@@ -334,8 +339,12 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
                 is_sample = run["clips"] < run.get("total_clips", run["clips"])
                 sampled |= is_sample
                 text = f"{value:.1f}" + ("†" if part_of_training(run) else "") + ("*" if is_sample else "")
-                r, g, b, _ = cmap(value / 100)
-                colour = "white" if 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.49 else INK
+                # Compare actual contrast after linearising sRGB, rather than a score/RGB threshold.
+                rgb = np.array(cmap(value / 100)[:3])
+                linear_rgb = np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+                luminance = float(linear_rgb @ [0.2126, 0.7152, 0.0722])
+                ink_luminance = ((17 / 255 + 0.055) / 1.055) ** 2.4  # INK: #111111
+                colour = "white" if 1.05 / (luminance + 0.05) >= (luminance + 0.05) / (ink_luminance + 0.05) else INK
             ax.text(col, row, text, ha="center", va="center", fontsize=14, color=colour)
         if has_chance:
             chance = chance_of(first[key])
