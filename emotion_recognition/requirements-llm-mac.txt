@@ -1,9 +1,8 @@
-# PyTorch for the audio-LLM environment (emotion_recognition_llm) on Apple Silicon Macs: Gemma 4's audio needs
-# PyTorch >= 2.6 (with 2.5.1, transformers refuses its attention mask). The same version as
-# requirements-llm-cuda118.txt.
-# Install this instead of requirements-mac.txt, then requirements.txt (the same transformers 5.18.0). All eight local
-# models were checked in this environment on the M4 Max (2026-11-05): the five speech emotion models give the stored
-# predictions, the Qwen models the same answers as in the main environment (one of 18 differs for Qwen2.5-Omni).
+# PyTorch for all eight local models in the emotion_recognition_llm environment on Apple Silicon Macs.
+# Gemma 4's audio needs PyTorch >= 2.6; the five SER models and both Qwen models also run with this stack.
+# Install together with requirements.txt (transformers 5.18.0). The Linux counterpart is requirements-llm-cuda118.txt.
+# Checked on the M4 Max (2026-11-05): the five SER models match their stored predictions; compared with the
+# former PyTorch 2.5.1 environment, Qwen2-Audio gave the same answers and Qwen2.5-Omni differed on one of 18 clips.
 torch==2.7.1
 torchaudio==2.7.1
 torchvision==0.22.1   # Gemma 4's and Qwen2.5-Omni's processors import it

@@ -12,7 +12,7 @@
 #   (torch==2.5.1 below also accepts 2.5.1+cu121):
 #     pip install torch==2.5.1+cu121 torchaudio==2.5.1+cu121 --index-url https://download.pytorch.org/whl/cu121
 #     pip install -r requirements.txt
-torch==2.5.1              # the network; 2.5.1 is the newest release with CUDA 12.1 wheels (as in emotion_recognition)
+torch==2.5.1              # the network; standalone detector stack, also available with CUDA 12.1 wheels
 torchaudio==2.5.1         # resampling to 16 kHz
 soundfile==0.14.0         # reads audio files
 pyyaml==6.0.3             # reads the config files

@@ -24,7 +24,7 @@ Other open-source detectors compared with it (architecture, size, training data,
 Run every command from this folder, `antideepfake/`: every path in this README is relative to it.
 
 ```bash
-conda create -n antideepfake python=3.11 -y   # or use the emotion_recognition environment: it has everything
+conda create -n antideepfake python=3.11 -y
 conda activate antideepfake
 cd antideepfake                               # this folder of the repository
 pip install -r requirements.txt               # NVIDIA server: first the CUDA build of PyTorch, see section 1
@@ -74,10 +74,8 @@ antideepfake/
 Python 3.11 with PyTorch 2.5.1 (tested on the M4 Max, MPS and CPU). The packages are torch, torchaudio, soundfile
 and pyyaml, pinned in [`requirements.txt`](requirements.txt); the download uses only the Python standard library.
 
-- **With the emotion_recognition environment** (see [its README](../emotion_recognition/README.md), section 1):
-  nothing to install. It already has every package at the same version; `pip install -r requirements.txt` installs
-  nothing (checked with `pip install --dry-run`).
-- **In an environment of its own** (a machine that runs only this project):
+- **Use this project's own environment**; its PyTorch 2.5.1 pins differ from the emotion recognition project's
+  unified `emotion_recognition_llm` environment:
   ```bash
   conda create -n antideepfake python=3.11 -y && conda activate antideepfake
   pip install -r requirements.txt   # MacBook (Apple Silicon): PyTorch from PyPI, MPS + CPU
@@ -94,8 +92,8 @@ Check PyTorch: `python -c "import torch; print(torch.__version__, torch.cuda.is_
 prints `2.5.1 False True` on the Mac and `2.5.1+cu121 True False` on the server.
 
 Upstream AntiDeepfake also installs fairseq and speechbrain; neither is used here. fairseq builds the network
-upstream, but installing it would downgrade hydra-core and omegaconf, which breaks FunASR in the emotion_recognition
-environment, and it has no wheel for Python 3.11; speechbrain is the training framework. Details in
+upstream, but installing it would downgrade hydra-core and omegaconf, which breaks FunASR in the speech emotion
+recognition environment, and it has no wheel for Python 3.11; speechbrain is the training framework. Details in
 `requirements.txt`.
 
 ## 2. Download the model

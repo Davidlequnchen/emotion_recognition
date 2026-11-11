@@ -1,5 +1,6 @@
 # Common dependencies, identical on the MacBook and the NVIDIA server (Python 3.11).
-# PyTorch is installed separately: requirements-mac.txt or requirements-cuda121.txt.
+# Install with requirements-llm-mac.txt (Mac) or requirements-llm-cuda118.txt (NVIDIA) for all eight local models.
+# requirements-cuda121.txt is a legacy server option for the five SER models and both Qwen models, without Gemma 4.
 funasr==1.4.16            # emotion2vec+ runtime: builds the network from config.yaml, loads model.pt
 transformers==5.18.0      # runs MERaLiON-SER-v1, Melati and Vox-Profile; also a FunASR dependency. Newest release
                           # that works with torch 2.5: 5.19.0 cannot import its models there (it calls

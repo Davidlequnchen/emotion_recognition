@@ -37,7 +37,7 @@ Neither model nor dataset setup uses Git LFS.
 
 | Folder | Project |
 |---|---|
-| [`emotion_recognition/`](emotion_recognition/README.md) | **Speech emotion recognition** (the main project): five open-source models (emotion2vec+ large, MERaLiON-SER-v1, Melati and two Vox-Profile models), run with PyTorch on an Apple Silicon Mac (MPS) or an NVIDIA server (CUDA 12.1) and evaluated by one script on emotional speech datasets in English and Mandarin, with a results page in the browser. |
+| [`emotion_recognition/`](emotion_recognition/README.md) | **Speech emotion recognition** (the main project): five SER models (emotion2vec+ large, MERaLiON-SER-v1, Melati and two Vox-Profile models) and three audio LLMs (Qwen2-Audio, Qwen2.5-Omni and Gemma 4), run in the `emotion_recognition_llm` PyTorch environment on an Apple Silicon Mac (MPS) or an NVIDIA server (CUDA 11.8), with one evaluation script and a results page in the browser. |
 | [`antideepfake/`](antideepfake/README.md) | **Deepfake detection** (a side project): XLS-R-1B-AntiDeepfake from NII Yamagishi Lab tells real speech from synthetic or converted speech; the model is defined in plain PyTorch and its checkpoint comes from Zenodo. |
 
 The public results page of the emotion recognition project, https://davidlequnchen.github.io/emotion_recognition/,

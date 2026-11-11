@@ -24,14 +24,14 @@ DESCRIPTION = ("Gemma 4 E4B (thinking off) gets one conversation per clip in its
 
 def ready():
     """Why the model cannot run in this environment, or None when it can. Called by evaluate.py. Gemma 4's audio
-    encoder builds its attention mask in a way that transformers allows only with PyTorch >= 2.6 (the main environment
-    has 2.5.1, the newest with CUDA 12.1 wheels), so it runs in the emotion_recognition_llm environment (README)."""
+    encoder builds its attention mask in a way that transformers allows only with PyTorch >= 2.6. The unified
+    emotion_recognition_llm environment supports it; the optional legacy CUDA 12.1 stack (2.5.1) does not."""
     import torch
     import transformers
 
     if tuple(int(x) for x in torch.__version__.split("+")[0].split(".")[:2]) < (2, 6):
         return (f"Gemma 4's audio needs PyTorch >= 2.6 (this environment has {torch.__version__}); run it in the "
-                "emotion_recognition_llm environment (requirements-llm-*.txt, see README section 8)")
+                "emotion_recognition_llm environment (requirements-llm-*.txt, see README section 1)")
     if not hasattr(transformers, "Gemma4ForConditionalGeneration"):
         return f"Gemma 4 needs transformers >= 5.5 (this environment has {transformers.__version__})"
     return None

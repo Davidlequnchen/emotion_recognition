@@ -11,7 +11,7 @@ question in words: GPT Realtime through its API, and three open-weight ones that
 | Mode | Machine | Device |
 |---|---|---|
 | `mac` | MacBook with Apple Silicon (tested on M4 Max, 48 GB) | Apple GPU via Metal (`mps`) or `cpu` |
-| `cuda` | Linux server with NVIDIA GPU(s), CUDA 12.1 | `cuda:0` (or another GPU index) |
+| `cuda` | Linux server with NVIDIA GPU(s) | `cuda:0` (or another GPU index) |
 
 ## Quick start
 
@@ -20,11 +20,12 @@ This folder is the main project of the repository (the deepfake detection side p
 path in this README is relative to it.
 
 ```bash
-conda create -n emotion_recognition python=3.11 -y
-conda activate emotion_recognition
+conda create -n emotion_recognition_llm python=3.11 -y
+conda activate emotion_recognition_llm
 cd emotion_recognition                         # this folder of the repository
-pip install -r requirements-mac.txt            # NVIDIA server: pip install -r requirements-cuda121.txt
-pip install -r requirements.txt
+python -m pip install -r requirements-llm-mac.txt  # NVIDIA server: use requirements-llm-cuda118.txt instead
+python -m pip install -r requirements.txt
+python -m pip check
 python scripts/common/download_model.py        # default hub: github; all eight local models -> models/<key>/
 python scripts/emotion2vec/inference.py        # the six test clips, on the GPU it finds (section 5)
 # optional: restore the Release mirrors; external sources are described in section 3
@@ -106,9 +107,9 @@ emotion_recognition/
 ├── site/index.html             # the public results page (built by make_viewer.py, published by GitHub Pages)
 ├── test_scripts/               # informal one-off checks, e.g. of the OpenAI API or the local audio LLMs (see its README)
 ├── requirements.txt            # common packages (both machines)
-├── requirements-mac.txt        # PyTorch for Apple Silicon (MPS + CPU)
-├── requirements-cuda121.txt    # PyTorch for NVIDIA GPUs, CUDA 12.1
-└── requirements-llm-mac.txt, requirements-llm-cuda118.txt  # PyTorch 2.7.1 for the audio-LLM environment (Gemma 4)
+├── requirements-llm-mac.txt    # recommended Apple Silicon stack: torch/torchaudio 2.7.1, torchvision 0.22.1
+├── requirements-llm-cuda118.txt # recommended NVIDIA stack: the same versions, CUDA 11.8 builds
+└── requirements-cuda121.txt    # optional legacy Linux stack: PyTorch 2.5.1 for SER/Qwen; no Gemma 4
 ```
 
 Git tracks the code, configuration, documentation and the six small test clips. The `models/` submodule pins a
@@ -127,9 +128,13 @@ New nEMO restores use its two original Parquet files directly; no join step is r
 
 ## 1. Set up the environment
 
-Tested with Python 3.11, PyTorch 2.5.1, FunASR 1.4.16 and transformers 5.18.0 on the M4 Max (MPS and CPU). The
-Linux + CUDA 12.1 installation was checked in a Linux x86_64 container without a GPU, before the four new models were
-added.
+Use one Python 3.11 environment, `emotion_recognition_llm`, for the five SER models and all three local audio LLMs.
+The recommended stack is PyTorch 2.7.1, torchaudio 2.7.1 and torchvision 0.22.1, with the common packages in
+`requirements.txt` (including FunASR 1.4.16 and transformers 5.18.0).
+
+Historical SER baselines used PyTorch 2.5.1 on the M4 Max (MPS and CPU). All eight local models were also checked
+with PyTorch 2.7.1 on 2026-11-05; those checks do not replace the stored benchmark runs. The legacy Linux + CUDA 12.1
+installation was checked in a Linux x86_64 container without a GPU, before the four new models were added.
 
 ### 1.1 Install conda (once per machine)
 
@@ -146,13 +151,13 @@ Skip this if `conda --version` already works.
 ### 1.2 Create and activate the environment
 
 ```bash
-conda create -n emotion_recognition python=3.11 -y
-conda activate emotion_recognition
+conda create -n emotion_recognition_llm python=3.11 -y
+conda activate emotion_recognition_llm
 python -c "import platform; print(platform.python_version(), platform.machine())"
 # Mac: 3.11.x arm64        Linux server: 3.11.x x86_64
 ```
 
-Activate the environment (`conda activate emotion_recognition`) in every new terminal before running the scripts.
+Activate the environment (`conda activate emotion_recognition_llm`) in every new terminal before running the scripts.
 
 ### 1.3 Install the requirements
 
@@ -162,62 +167,66 @@ packages.
 **MacBook (Apple Silicon)**
 
 ```bash
-pip install -r requirements-mac.txt     # torch 2.5.1 + torchaudio 2.5.1 (+ torchvision 0.20.1) from PyPI (MPS + CPU)
-pip install -r requirements.txt         # FunASR, transformers, peft, hubs, numpy, pyyaml, soundfile
+python -m pip install -r requirements-llm-mac.txt  # torch/torchaudio 2.7.1 + torchvision 0.22.1, MPS + CPU
+python -m pip install -r requirements.txt          # FunASR, transformers, peft, hubs, numpy, pyyaml, soundfile
 ```
 
-**NVIDIA GPU server (CUDA 12.1)**
+**NVIDIA GPU server (recommended CUDA 11.8 build)**
 
 ```bash
-nvidia-smi                              # "CUDA Version" (top right) must be 12.1 or higher
-pip install -r requirements-cuda121.txt # torch, torchaudio (and torchvision) for CUDA 12.1 from download.pytorch.org
-pip install -r requirements.txt         # same common packages as on the Mac
+nvidia-smi  # check the driver; the CUDA 11.8 wheels also run with drivers that support CUDA 12.1
+python -m pip install -r requirements-llm-cuda118.txt  # torch/torchaudio 2.7.1 + torchvision 0.22.1, CUDA 11.8
+python -m pip install -r requirements.txt              # same common packages as on the Mac
 ```
 
 Notes on the versions:
 
-- **PyTorch 2.5.1** is the newest release with official CUDA 12.1 wheels (2.6 dropped CUDA 12.1). The Mac uses
-  the same version, so both machines run identical code.
-- The CUDA 12.1 wheels **bundle the CUDA runtime and cuDNN**. The server only needs an NVIDIA driver that supports
-  CUDA 12.1 (Linux driver 530 or newer); a separate CUDA toolkit is not needed.
+- **torch 2.7.1, torchaudio 2.7.1 and torchvision 0.22.1 are one matched set**. Install all three from the hardware
+  requirements file; installing a different torchvision wheel alone can upgrade torch and leave torchaudio incompatible.
+- The CUDA wheels **bundle the CUDA runtime and cuDNN**. The server needs a compatible NVIDIA driver; a separate CUDA
+  toolkit is not needed. The CUDA 11.8 build supports all eight local models; the optional legacy CUDA 12.1 stack is
+  described in section 1.5.
 - PyTorch is kept in its own file because the CUDA build comes from the PyTorch package index, while everything
-  else comes from PyPI. Each `pip install` therefore uses a single index, and the order of the two commands
-  does not matter.
+  else comes from PyPI. Install the hardware file and common file in separate commands so that common packages
+  are fetched from PyPI. Use `python -m pip` to install into the active Python environment.
 - **Python 3.11** is supported by every pinned package. numpy is pinned to 2.4.6, the newest release for Python 3.11.
-- **transformers is pinned to 5.18.0**: it runs MERaLiON-SER-v1, Melati and Vox-Profile, and FunASR imports it. It is
-  the newest release that works with PyTorch 2.5: 5.19.0 cannot import any model class there (it calls
-  `torch.accelerator`, new in PyTorch 2.6), and 5.20+ requires PyTorch 2.6.
-- **torchvision** is only imported by Qwen2.5-Omni's processor (transformers' Qwen2-VL image and video code). Adding it
-  changed nothing for the five speech emotion models (checked with `test_scripts/check_existing_models.py`).
+- **transformers is pinned to 5.18.0** for the project's model loaders, including the three audio LLMs. This pin also
+  preserves compatibility with the optional legacy PyTorch 2.5.1 server stack: 5.19.0 calls `torch.accelerator`, new
+  in PyTorch 2.6, and 5.20+ requires PyTorch 2.6.
+- **torchvision** is imported by the Gemma 4 and Qwen2.5-Omni processors, including their image/video components even
+  for this project's audio workflow. The earlier addition was checked against the five SER models with
+  `test_scripts/check_existing_models.py`.
 - **peft 0.21.2 and omegaconf 2.3.1** are imported by MERaLiON-SER-v1's model code, which does not use them (its LoRA
   is already merged into the weights). **accelerate 1.15.0** is a peft dependency, pinned so that pip never upgrades
-  PyTorch for it.
+  PyTorch for it. After installation, run both checks below.
 
-### 1.4 Check PyTorch
-
-```bash
-python -c "import torch; print(torch.__version__, '| CUDA:', torch.cuda.is_available(), '| MPS:', torch.backends.mps.is_available())"
-```
-
-Expected output: on the Mac, `2.5.1 | CUDA: False | MPS: True`. On the server, `2.5.1+cu121 | CUDA: True | MPS: False`.
-
-### 1.5 A second environment for the audio LLMs (Gemma 4)
-
-Gemma 4's audio encoder needs PyTorch >= 2.6 (with 2.5.1, transformers refuses to build its attention mask), and 2.5.1
-is the newest PyTorch with CUDA 12.1 wheels. So the open-weight audio LLMs have their own environment,
-`emotion_recognition_llm`: the same packages with PyTorch 2.7.1 (the CUDA 11.8 build on the server, which runs with
-any driver that runs CUDA 12.1).
+### 1.4 Check the installed packages
 
 ```bash
-conda create -n emotion_recognition_llm python=3.11 -y
-conda activate emotion_recognition_llm
-pip install -r requirements-llm-mac.txt     # NVIDIA server: pip install -r requirements-llm-cuda118.txt
-pip install -r requirements.txt
+python -m pip check
+python -c "import torch, torchaudio, torchvision; print('torch:', torch.__version__, '| torchaudio:', torchaudio.__version__, '| torchvision:', torchvision.__version__); print('CUDA:', torch.cuda.is_available(), '| MPS:', torch.backends.mps.is_available())"
 ```
 
-On the Mac, the five speech emotion models give their stored predictions in this environment too, and both Qwen
-models also run in the main one; only Gemma 4 needs this one (in the main environment, `evaluate.py` skips it with a
-message). Run all three audio LLMs here, so that their results come from one PyTorch version.
+`pip check` should report `No broken requirements found.` The imports also check that the native libraries can load;
+package metadata alone cannot detect every binary mismatch. On the Mac, expect `2.7.1`, `2.7.1`, `0.22.1`,
+`CUDA: False` and `MPS: True`. With the recommended server stack, expect `2.7.1+cu118`, `2.7.1+cu118`,
+`0.22.1+cu118`, `CUDA: True` and `MPS: False`.
+
+### 1.5 Why PyTorch 2.7.1; optional legacy server stack
+
+Gemma 4's audio encoder needs PyTorch >= 2.6 (with 2.5.1, transformers refuses to build its attention mask). The
+matched 2.7.1 stack runs the SER and audio LLM loaders in the single environment above. Use this same environment
+for SER and audio LLM evaluation on Mac.
+
+For an older Linux server that must retain the CUDA 12.1 build, `requirements-cuda121.txt` remains available:
+torch/torchaudio `2.5.1+cu121` and torchvision `0.20.1+cu121`. It supports the SER and Qwen models, but **does not
+support Gemma 4**. Install it instead of `requirements-llm-cuda118.txt` in that server's environment, followed by
+`requirements.txt`; do not install both hardware files into the same environment. New installations should use
+the recommended CUDA 11.8 build to support all eight local models.
+
+The 2026-11-05 Mac checks preserved the five SER models' stored predictions with PyTorch 2.7.1. Qwen2-Audio gave the
+same 18 test answers with 2.5.1 and 2.7.1; Qwen2.5-Omni differed on one clip. These are historical compatibility
+checks, not a rerun of every benchmark dataset.
 
 ## 2. Download the models
 
@@ -482,7 +491,8 @@ The script runs six steps and prints each one: (1) show the settings and the dev
 (5) list the audio files, (6) predict an emotion for every file.
 If a device set in `DEVICE` is not available, it stops with an error instead of silently falling back to the CPU.
 
-Output on the M4 Max (`DEVICE = "auto"`, which picks MPS; paths shortened):
+Historical output on the M4 Max with PyTorch/torchaudio 2.5.1 (`DEVICE = "auto"`, which picks MPS; paths shortened).
+The recommended environment now reports 2.7.1 for both packages:
 
 ```
 ================================================================
@@ -1004,7 +1014,7 @@ dataset's emotions counts as wrong; training data "not known").
 1. Download them (55.2 GB): `models: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b]` in `config/download_model.yaml`,
    then `python scripts/common/download_model.py`.
 2. In `config/evaluation.yaml`: `models: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b]` (no `api_models` needed).
-3. `conda activate emotion_recognition_llm` (section 1.5), then `python scripts/evaluation/evaluate.py`.
+3. `conda activate emotion_recognition_llm` (section 1), then `python scripts/evaluation/evaluate.py`.
 
 - **What the model sees**: the same system and user templates and dataset-specific candidate labels as GPT Realtime
   (`scripts/llm_eval/prompts.yaml`), in the model's own chat template; the clip as 16 kHz mono (Qwen2-Audio and
@@ -1104,11 +1114,12 @@ cache) loads and runs all four.
 | Symptom | Cause and fix |
 |---|---|
 | `MPS ... available=False` on the Mac | Python is x86_64 (Rosetta). `platform.machine()` must print `arm64`: reinstall Miniconda for Apple Silicon. |
-| `CUDA ... available=False` on the server | `torch.__version__` must end in `+cu121`: reinstall with `requirements-cuda121.txt`. Otherwise the driver is too old: check `nvidia-smi`. |
+| `CUDA ... available=False` on the server | For the recommended stack, `torch.__version__` must end in `+cu118`: install `requirements-llm-cuda118.txt` in the active environment. Check `nvidia-smi` and GPU visibility if it still fails. The optional legacy stack uses `+cu121` (section 1.5). |
+| `libtorchaudio` / `libtorch_cpu` reports `Symbol not found`, or torchvision cannot import its operators | The torch packages may be mismatched. In an otherwise installed Mac environment, run `python -m pip install --force-reinstall --no-cache-dir -r requirements-llm-mac.txt -c requirements.txt`, then both checks in section 1.4. Reinstall all three packages together; on the server use the matching CUDA requirements file. |
 | `ERROR: .../model.pt not found` | emotion2vec+ large is not downloaded: run `python scripts/common/download_model.py` (section 2). |
 | `ERROR: ...safetensors not found`, or missing weights from `evaluate.py` | Run `python3 scripts/common/setup_models.py <model-key>` to initialize the models submodule and restore the pinned Release weights. Legacy 90 MiB model parts can still be joined with `join_parts.py`. |
 | `parts are missing` or `SHA-256 does not match` from `join_parts.py` | The parts are incomplete: run `git pull` again, then the script again. |
-| `module 'torch' has no attribute 'accelerator'` | transformers is newer than 5.18.0, which is the newest release that works with PyTorch 2.5.1 (5.19.0 calls `torch.accelerator`, new in PyTorch 2.6). Run `pip install -r requirements.txt` again to get 5.18.0. |
+| `module 'torch' has no attribute 'accelerator'` | Check the active environment: the recommended stack has torch 2.7.1 and transformers 5.18.0. Reinstall its hardware file and `requirements.txt`. On the optional legacy torch 2.5.1 server, transformers must stay at 5.18.0. |
 | `ERROR: no audio files found` | Run `python scripts/common/download_data.py`. |
 | `ERROR: ... file(s) failed` from `download_data.py` | A network error, or GitHub sent an error page instead of the audio (for example a temporary LFS bandwidth limit). Run the same command again: correct files are skipped. |
 | Download from Hugging Face is slow or blocked | Use the default `hub: github`, or run `python3 scripts/common/setup_models.py <model-key>`. `hub: ms` is another option for emotion2vec+ large and the three audio LLMs (section 2). |
