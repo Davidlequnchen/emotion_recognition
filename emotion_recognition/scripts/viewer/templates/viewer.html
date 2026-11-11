@@ -36,6 +36,7 @@
   main { max-width: 1600px; margin: 0 auto; padding: 36px 16px 56px; }
   h1 { font-size: 24px; line-height: 1.2; margin: 0; }
   .sub { color: var(--ink-2); margin: 6px 0 24px; max-width: 72ch; }
+  #intro { max-width: none; }
   .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }  /* for screen readers only */
 
   /* Tabs: Results, Examples, Datasets (the open tab is in the URL hash) */
@@ -68,6 +69,11 @@
   .seg button:focus-visible, select:focus-visible, .play:focus-visible, .more:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .hint { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
   .hint .ok-hint { color: var(--good); }
+  .metric-note { background: var(--surface); border-left: 3px solid var(--line); padding: 8px 12px; margin: 0 0 12px; }
+  .metric-note p { margin: 3px 0; }
+  .metric-formula { max-width: 100%; overflow-x: auto; padding: 4px 0; }
+  .metric-formula math { width: max-content; max-width: none; margin: 5px 0; font-size: 1.1em; }
+  .metric-terms, .metric-caveat { color: var(--ink-2); font-size: 12.5px; }
 
   /* Table */
   /* position: relative keeps the hidden screen-reader texts (.sr) inside the scrolling card, not widening the page */
@@ -456,7 +462,86 @@
       sort(items.filter((item) => DIALOGUE_DATASETS.has(key(item)) === group.dialogue))]).filter(([, list]) => list.length);
   }
 
-  const METRICS = [["accuracy", "Accuracy: acted emotion"], ["unweighted_accuracy", "Unweighted accuracy"], ["macro_f1", "Macro F1"]];
+  const METRICS = [["accuracy", "Accuracy: acted emotion"], ["unweighted_accuracy", "Unweighted accuracy"], ["macro_f1", "Macro F1"], ["weighted_f1", "Weighted F1"]];
+  const METRIC_EXPLANATIONS = {
+    accuracy: {
+      description: "The share of clips classified correctly. Every clip has equal weight, so larger emotion classes contribute more.",
+      terms: "N is the number of evaluated clips.",
+    },
+    unweighted_accuracy: {
+      description: "Unweighted average recall (UAR): average recall across ground-truth emotions. Every emotion has equal weight, regardless of its sample count.",
+      terms: "K is the number of ground-truth emotions. Class support n is the number of true clips of an emotion; TP counts those classified correctly.",
+    },
+    macro_f1: {
+      description: "The average per-emotion F1. Every scored emotion has equal weight; F1 balances missed clips and false alarms.",
+      terms: "K is the number of scored emotions. Precision P measures how often an emotion prediction is correct; recall R measures how many true clips of that emotion are found. TP, FP and FN mean true positives, false positives and false negatives. F1 is 0 when both P and R are 0.",
+    },
+    weighted_f1: {
+      description: "The support-weighted average of per-emotion F1. Emotions with more true clips contribute more to the score.",
+      terms: "Class support n counts true clips of an emotion; N is the total clip count and K is the number of scored emotions. P means precision, R means recall; TP, FP and FN mean true positives, false positives and false negatives. F1 is 0 when both P and R are 0.",
+    },
+  };
+  function mathNode(tag, ...children) {
+    const node = document.createElementNS("http://www.w3.org/1998/Math/MathML", tag);
+    node.append(...children);
+    return node;
+  }
+  function metricEquations(metric) {
+    const mi = (text) => mathNode("mi", text);
+    const mo = (text) => mathNode("mo", text);
+    const mn = (text) => mathNode("mn", String(text));
+    const row = (...nodes) => mathNode("mrow", ...nodes);
+    const fraction = (top, bottom) => mathNode("mfrac", top, bottom);
+    const sub = (name) => mathNode("msub", mi(name), mi("k"));
+    const f1 = () => mathNode("msub", mi("F"), row(mn(1), mo(","), mi("k")));
+    const sum = () => mathNode("munderover", mo("∑"), row(mi("k"), mo("="), mn(1)), mi("K"));
+    const equals = (name, value) => row(mathNode("mtext", name), mo("="), value);
+    const equation = (label, ...nodes) => {
+      const math = mathNode("math", row(...nodes));
+      math.setAttribute("display", "block");
+      math.setAttribute("alttext", label);
+      math.setAttribute("aria-label", label);
+      return math;
+    };
+    const space = () => {
+      const node = mathNode("mspace");
+      node.setAttribute("width", "1.5em");
+      return node;
+    };
+    if (metric === "accuracy") return [equation("Accuracy equals the number of correct clips divided by N.",
+      equals("Accuracy", fraction(mathNode("mtext", "correct clips"), mi("N"))))];
+    if (metric === "unweighted_accuracy") return [
+      equation("UAR equals one over K times the sum of recall R k, for k from 1 to K.",
+        equals("UAR", row(fraction(mn(1), mi("K")), sum(), sub("R")))),
+      equation("Recall R k equals true positives TP k divided by class support n k.",
+        sub("R"), mo("="), fraction(sub("TP"), sub("n"))),
+    ];
+    const main = metric === "macro_f1"
+      ? equation("Macro F1 equals one over K times the sum of class F1 scores, for k from 1 to K.",
+          equals("Macro-F1", row(fraction(mn(1), mi("K")), sum(), f1())))
+      : equation("Weighted F1 equals the sum of class support n k divided by N times class F1, for k from 1 to K.",
+          equals("Weighted-F1", row(sum(), fraction(sub("n"), mi("N")), f1())));
+    const definitions = equation(
+      "Class F1 equals two times precision P k times recall R k divided by their sum. Precision equals TP k divided by TP k plus FP k. Recall equals TP k divided by TP k plus FN k.",
+      f1(), mo("="), fraction(row(mn(2), sub("P"), sub("R")), row(sub("P"), mo("+"), sub("R"))), space(),
+      sub("P"), mo("="), fraction(sub("TP"), row(sub("TP"), mo("+"), sub("FP"))), space(),
+      sub("R"), mo("="), fraction(sub("TP"), row(sub("TP"), mo("+"), sub("FN"))));
+    return [main, definitions];
+  }
+  function metricExplanation(metric) {
+    const detail = METRIC_EXPLANATIONS[metric];
+    const name = METRICS.find(([key]) => key === metric)[1];
+    const caveat = ["macro_f1", "weighted_f1"].includes(metric)
+      ? "Composite labels use the report's resolved truth. Invalid answers count as wrong, not as an extra emotion class."
+      : "Composite labels follow the dataset's accepted-label rules. Invalid answers count as wrong.";
+    return [
+      el("p", {}, el("strong", { textContent: name }), ": ", detail.description),
+      el("div", { className: "metric-formula", tabIndex: 0,
+        attrs: { "aria-label": `${name} formula` } }, ...metricEquations(metric)),
+      el("p", { className: "metric-terms", textContent: detail.terms }),
+      el("p", { className: "metric-caveat", textContent: caveat }),
+    ];
+  }
   function comparison(models) {
     const keys = [...new Set(models.flatMap((m) => m.summary.datasets.map((d) => d.key)))];
     const datasets = keys.map((key) => {
@@ -471,23 +556,26 @@
         trainingMarker(d) ? el("span", { className: "sr", textContent: trainingLabel(d) }) : null);
     };
     const switcher = el("div", { className: "seg", attrs: { role: "group", "aria-label": "Value in the table" } });
+    const explanation = el("aside", { className: "metric-note", attrs: { "aria-label": "Selected metric explained", "aria-live": "polite" } });
     const box = el("div");
     const draw = () => {
       segmented(switcher, METRICS, state.metric, (v) => { state.metric = v; draw(); });
       const name = METRICS.find(([k]) => k === state.metric)[1];
+      explanation.replaceChildren(...metricExplanation(state.metric));
+      const hasChance = !["macro_f1", "weighted_f1"].includes(state.metric);
       const groups = byDatasetType(datasets, (row) => row.first.key);
       box.replaceChildren(resultsTable(
-        [["Dataset"], ["Language"], ["Chance", "n"], ...models.map((m) => [m.name, "n model"])],
+        [["Dataset"], ["Language"], ...(hasChance ? [["Chance", "n"]] : []), ...models.map((m) => [m.name, "n model"])],
         groups.map(([title, rs]) => [title, rs.map((r) =>
           el("tr", {}, el("td", { className: "name", textContent: r.first.dataset }), td(r.first.language, "lang"),
-            td(pct(r.first.chance ?? 1 / r.first.emotions), "n"), ...r.results.map((d, i) => cell(d, models[i]))))]),
+            ...(hasChance ? [td(pct(r.first.chance ?? 1 / r.first.emotions), "n")] : []), ...r.results.map((d, i) => cell(d, models[i]))))]),
         `${name} of every model on every dataset`));
     };
     draw();
     return [el("h2", { textContent: "Every model on every dataset" }),
       el("p", { className: "sub", textContent: `${models.length} models, ${keys.length} datasets. One prediction per clip, each model as released.` }),
       el("div", { className: "toolbar" }, el("div", { className: "control" }, "Value", switcher)),
-      legend(), box];
+      explanation, legend(), box];
   }
 
   function modelResults(m) {
@@ -500,12 +588,12 @@
       d.dataset, el("span", { className: "dag", textContent: trainingMarker(d), title: trainingLabel(d) })), ...cells);
     const main = resultsTable(
       [["Dataset"], ["Language"], ["Ground-truth labels", "labels"], ["Clips", "n"], ["Emotions", "n"], ["Chance", "n"],
-       ["Accuracy: acted emotion", "n"], ...(listeners ? [["Accuracy: acted or listeners' vote", "n"]] : []), ["Unweighted accuracy", "n"], ["Macro F1", "n"]],
+       ["Accuracy: acted emotion", "n"], ...(listeners ? [["Accuracy: acted or listeners' vote", "n"]] : []), ["Unweighted accuracy", "n"], ["Macro F1", "n"], ["Weighted F1", "n"]],
       byDatasetType(s.datasets).map(([title, list]) => [title, list.map((d) => row(d, d.metrics.accuracy, [
         td(d.language, "lang"), td(labelText(d), "labels"), td(d.clips.toLocaleString() + sampleOf(d), "n"), td(String(d.emotions), "n"),
         td(pct(d.chance ?? 1 / d.emotions), "n"), el("td", { className: "n" }, levelValue(d.metrics.accuracy)),
         ...(listeners ? [td(pct(d.metrics.accuracy_acted_or_listener), "n")] : []), td(pct(d.metrics.unweighted_accuracy), "n"),
-        td(pct(d.metrics.macro_f1), "n")]))]),
+        td(pct(d.metrics.macro_f1), "n"), td(pct(d.metrics.weighted_f1), "n")]))]),
       `Results of ${m.name} on every dataset`);
     const parts = [el("h2", { textContent: `${m.name} on every dataset` }),
       el("p", { className: "sub", textContent: `${s.datasets.length} datasets, summary of ${s.date}. One prediction per clip, the model as released (no fine-tuning).` }),

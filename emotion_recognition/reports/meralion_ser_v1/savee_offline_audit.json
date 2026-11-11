@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.297674+00:00",
+  "model": "meralion_ser_v1",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/savee_predictions.csv",
+      "sha256": "e1fde60a3cc5bdb97f01f40e7c6461cfa700abed11dacf7924be9c9e8e4da5c7",
+      "bytes": 52325
+    },
+    {
+      "path": "outputs/meralion_ser_v1/savee_predictions.json",
+      "sha256": "c29513a124cfb1a279af9bfded3c71744bf1e9da23611c948d01db1d22680649",
+      "bytes": 2749
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.577083,
+    "unweighted_accuracy": 0.546429,
+    "macro_f1": 0.483262,
+    "accuracy_all_classes": 0.577083
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5770833333333333,
+    "unweighted_accuracy": 0.5464285714285715,
+    "macro_f1": 0.4832622628707552,
+    "weighted_f1": 0.5182360061163285,
+    "accuracy_all_classes": 0.5770833333333333
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

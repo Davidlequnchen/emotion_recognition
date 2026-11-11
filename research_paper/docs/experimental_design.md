@@ -381,8 +381,25 @@ N × 175 × text-in price + N × 5 × text-out price) / 10⁶; the fixed text pr
 | Prompt sensitivity | does wording change LLM results? | subset | spread over prompt variants | **later** |
 | Repeat runs | run-to-run label flips (GPT Realtime has no temperature 0) vs human disagreement | subset with listener votes | flip rate, Fleiss' κ across runs vs vote entropy | **later** |
 | Telephone simulation | loss on narrowband audio | public corpora through G.711 / AMR-NB / 8 kHz | accuracy drop per model | **later** |
-| Bootstrap CIs and significance | are differences real? | all | bootstrap 95% CIs over clips (or speakers), paired tests | **later** |
+| Bootstrap CIs and paired differences | how stable are paired model differences? | CREMA-D, RAVDESS and MELD; optional extensions: THAI-SER, Emozionalmente and MEAD | paired speaker-cluster bootstrap; dialogue clusters for MELD | **implemented**, 10,000 percentile resamples; episode sensitivity/extensions later |
 | Cascade control (ASR + text LLM) | how much can the words alone do per corpus? | all | accuracy from transcripts only | **later** (optional) |
+
+Statistical-analysis scope agreed on 2026-11-11: begin with CREMA-D (91 speakers), RAVDESS (24 speakers) and
+MELD (280 test dialogues). MELD supports dialogue-level stability, not a claim about unseen actors; recurring
+characters and episodes may require a coarser episode-level sensitivity analysis. THAI-SER (200 actors),
+Emozionalmente (431 actor IDs) and MEAD (48 actors in the current subset) are useful extensions. These group counts
+describe the current saved-prediction coverage and can be recovered with `scripts/analysis/probe_metadata.py`.
+TESS and DailyTalk have only two actors, and MESS identities are inferred rather than author-verified, so they are
+not first choices for new-speaker uncertainty. Keep the full-test-set scores as the point estimates; resampling
+estimates their uncertainty under the selected grouping and does not rerun the models.
+
+Implemented in [scripts/bootstrap.py](../scripts/bootstrap.py). Run `python scripts/bootstrap.py` from
+`research_paper/` to regenerate [the Chinese report](../analysis_report/bootstrap_zh.md),
+[the English report](../analysis_report/bootstrap_en.md), `output/bootstrap.csv` and its source/parameter manifest.
+The four existing metrics have individual-model 95% percentile intervals; every available pair has a directly
+bootstrapped A−B interval on common clips and shared cluster draws. These fixed-prediction intervals describe
+speaker/dialogue-composition uncertainty, not proven unseen-speaker generalization, API repeatability, or
+multiplicity-adjusted significance. New compatible saved results are discovered when the script is rerun.
 
 ---
 

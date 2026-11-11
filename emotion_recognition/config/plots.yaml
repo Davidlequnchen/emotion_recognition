@@ -9,7 +9,7 @@
 # Titles use one line, Dataset (Language); the complete subset/cohort scope remains in result metadata and reports.
 # =====================================================================
 
-metrics: [accuracy, unweighted_accuracy, macro_f1]  # one figure per metric (keys of `metrics` in the predictions JSON);
+metrics: [accuracy, unweighted_accuracy, macro_f1, weighted_f1]  # one figure per metric (keys of `metrics` in the predictions JSON);
                                                      # also possible: accuracy_all_classes, accuracy_acted_or_listener
 models: all       # all = every folder in outputs/ with results (local models and API models alike), or a list of keys
 placeholders:     # reserve these model positions until compatible results arrive; never plotted as zero scores
@@ -34,7 +34,7 @@ dataset_order:    # dialogue first; English non-dialogue next; then the other la
   - emovo
   - emozionalmente
 exclude: [esd]        # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
-out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .pdf, plus overview_<metric>.*
+out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .svg, plus overview_<metric>.*
 columns: 4        # panels per row; 16 completed datasets form a 4x4 grid (missing datasets are not fabricated)
 layout:
   panel_width: 4.4     # inches per column; font sizes stay large when the overall height is reduced

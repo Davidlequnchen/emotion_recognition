@@ -2,6 +2,7 @@
 
 Run from emotion_recognition/:
     python scripts/evaluation/refresh_reports.py --model gemini-3.8-flash --plots --viewer
+    python scripts/evaluation/refresh_reports.py --all-models
 
 Every selected CSV/JSON pair is validated before any report is written. --plots and --viewer
 optionally rebuild the existing comparison figures and HTML; they never call a model/API.
@@ -25,10 +26,10 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 for folder in ("common", "llm_eval", "viewer", "evaluation"):
     sys.path.insert(0, str(ROOT / "scripts" / folder))
-from prediction_io import parse_correct, read_prediction_rows
+from prediction_io import parse_correct, read_prediction_rows, write_derived_metrics
 import evaluate as reporting
 
-METRICS = {"accuracy", "unweighted_accuracy", "macro_f1", "accuracy_all_classes",
+METRICS = {"accuracy", "unweighted_accuracy", "macro_f1", "weighted_f1", "accuracy_all_classes",
            "accuracy_acted_or_listener", "listeners_vs_acted", "model_vs_listeners"}
 METRIC_TOLERANCE = 1e-6  # existing metadata rounds to six decimals
 
@@ -238,6 +239,7 @@ def validate_pair(json_path, model, entry):
     voted = [i for i, votes in enumerate(heard) if len(votes) == 1]
     metrics = {"accuracy": float(strict.mean()), "unweighted_accuracy": float(recall.mean()),
                "macro_f1": float(f1[scored].mean()),
+               "weighted_f1": float(np.average(f1, weights=resolved_matrix.sum(1))),
                "accuracy_all_classes": float(np.mean([p in reporting.accepted(ds, a)
                                                       for p, a in zip(all_predictions, truth)]))}
     if has_listener:
@@ -256,6 +258,7 @@ def validate_pair(json_path, model, entry):
     audit = {"validated_at_utc": datetime.now(timezone.utc).isoformat(), "model": model, "key": key,
              "clips": len(records), "unique_audio_paths": len(paths), "source_artifacts": artifacts,
              "source_metrics": claimed_metrics, "recomputed_metrics": metrics, "metric_tolerance": METRIC_TOLERANCE,
+             "derived_metrics": sorted(set(metrics) - set(claimed_metrics)),
              "probability_columns": probability_kind, "candidate_protocol": metadata.get("inference_protocol"),
              "protocol_matches_configuration": expected_protocol is not None,
              "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. "
@@ -317,6 +320,7 @@ def render_report(run, entry, root=ROOT):
              f"| Clips | {len(run.records):,} |", f"| Accuracy: acted emotion | {pct(run.metrics['accuracy'])} |",
              f"| UAR: mean ground-truth-row recall | {pct(run.metrics['unweighted_accuracy'])} |",
              f"| Macro F1 | {pct(run.metrics['macro_f1'])} |",
+             f"| Weighted F1: true-support weighted | {pct(run.metrics['weighted_f1'])} |",
              f"| Accuracy: all model classes | {pct(run.metrics['accuracy_all_classes'])} |"]
     for metric, label in (("accuracy_acted_or_listener", "Accuracy: acted emotion or listener vote"),
                           ("listeners_vs_acted", "Single listener vote vs acted emotion"),
@@ -331,7 +335,10 @@ def render_report(run, entry, root=ROOT):
               f"{run.metadata['clips']:,} / {run.metadata.get('total_clips', run.metadata['clips']):,} clips.",
               f"- Ground-truth column: `{run.metadata['ground_truth']}`. Candidate classes: {', '.join(run.ds.classes)}.",
               "- Row counts, unique audio paths, correctness flags and saved metrics were checked against the CSV. "
-              "Metric agreement tolerance is 0.000001 (six-decimal metadata)."]
+              "Metric agreement tolerance is 0.000001 (six-decimal metadata).",
+              "- Weighted F1 weights each class's F1 by its true support, using the same resolved truth as macro F1; "
+              "invalid answers remain errors. New metrics absent from the source JSON are recorded in the offline "
+              "audit and summaries; the source JSON is preserved."]
     protocol = run.metadata.get("inference_protocol")
     if protocol:
         lines.append(f"- Saved candidate/prompt/model protocol matches current configuration: "
@@ -353,13 +360,15 @@ def render_report(run, entry, root=ROOT):
     if run.ds.accept:
         lines.append("- Composite labels follow the existing accepted-label rule: " + "; ".join(
                      f"{label} accepts {' or '.join(accepted)}" for label, accepted in run.ds.accept.items()) + ". "
-                     "F1 resolves a correct composite to the predicted class, otherwise to its first accepted class.")
+                     "F1 resolves a correct composite to the predicted class, otherwise to its first accepted class. "
+                     "Weighted F1 uses the resulting resolved-truth support, which can depend on the predictions.")
     lines += ["", "## Results per emotion", "",
               "| Ground-truth emotion | Clips | Recall | Acted-or-listener recall |",
               "|---|---:|---:|---:|",
               *[f"| {reporting.row_name(run.ds, label)} | {run.matrix[i].sum():,} | {pct(run.row_recall[i])} | "
                 + (pct(run.lenient_recall[i]) if run.has_listener else "—") + " |" for i, label in enumerate(run.rows)],
-              "", "Precision/F1 use the same resolved-truth convention as the evaluation script.", "",
+              "", "Precision/F1 use the same resolved-truth convention as the evaluation script. Weighted F1 uses "
+              "the resolved-truth clip counts below as weights.", "",
               "| Predicted emotion | Resolved-truth clips | Precision | Recall | F1 |", "|---|---:|---:|---:|---:|",
               *[f"| {label} | {run.resolved_support[i]:,} | "
                 + " | ".join(pct(values[i]) if i in run.scored else "—"
@@ -418,6 +427,9 @@ def _refresh(model_keys, *, root, plots, viewer):
     registry = yaml.safe_load((root / "config/models.yaml").read_text()) or {}
     settings = yaml.safe_load((root / "config/evaluation.yaml").read_text()) or {}
     exclude = settings.get("exclude") or []
+    if model_keys is None:
+        model_keys = [model for model in registry
+                      if any((root / "outputs" / model).glob("*_predictions.json"))]
     validated = []
     for model in dict.fromkeys(model_keys):
         if model not in registry or not re.fullmatch(r"[a-zA-Z0-9_.-]+", model):
@@ -437,6 +449,7 @@ def _refresh(model_keys, *, root, plots, viewer):
             if sha256(artifact["path"]) != artifact["sha256"]:
                 raise ValueError("A source artifact changed during validation; retry after copying is complete")
     reports = [render_report(run, registry[run.model], root) for run in validated]
+    write_derived_metrics(root, [run.audit for run in validated])
     figure = settings.get("summary_figure") or {}
     for model in dict.fromkeys(run.model for run in validated):
         reporting.write_summary(model, registry[model], note="Dataset reports regenerated offline from saved artifacts; "
@@ -459,8 +472,10 @@ def _refresh(model_keys, *, root, plots, viewer):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", action="append", required=True, help="registry key; repeat for multiple imports")
-    parser.add_argument("--plots", action="store_true", help="also rebuild comparison PNG/PDF figures")
+    selection = parser.add_mutually_exclusive_group(required=True)
+    selection.add_argument("--model", action="append", help="registry key; repeat for multiple imports")
+    selection.add_argument("--all-models", action="store_true", help="validate and refresh every registered model with saved predictions")
+    parser.add_argument("--plots", action="store_true", help="also rebuild comparison PNG/SVG figures")
     parser.add_argument("--viewer", action="store_true", help="also rebuild HTML; use --plots to refresh embedded figures")
     args = parser.parse_args()
     try:

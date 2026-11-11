@@ -102,9 +102,9 @@ emotion_recognition/
 │   ├── llm_eval/               # audio LLMs (GPT Realtime, Gemini): prompts, data loader, answer parser
 │   └── viewer/
 │       ├── make_viewer.py      # builds a web page with every model's results and example clips
-│       ├── plot_results.py     # bar plots of every model on every dataset (reports/figures/, PNG and PDF)
+│       ├── plot_results.py     # bar plots of every model on every dataset (reports/figures/, PNG and SVG)
 │       └── templates/          # viewer.html, the page template used by make_viewer.py
-├── site/index.html             # the public results page (built by make_viewer.py, published by GitHub Pages)
+├── site/index.html             # the site copy (built by make_viewer.py; example audio follows viewer.yaml)
 ├── test_scripts/               # informal one-off checks, e.g. of the OpenAI API or the local audio LLMs (see its README)
 ├── requirements.txt            # common packages (both machines)
 ├── requirements-llm-mac.txt    # recommended Apple Silicon stack: torch/torchaudio 2.7.1, torchvision 0.22.1
@@ -444,8 +444,9 @@ ESD is for research only: before using it, complete the licence form on its
 [GitHub page](https://github.com/HLTSingapore/Emotional-Speech-Data) and email it to the authors.
 SAVEE is free for research after registering on its [official page](http://kahlan.eps.surrey.ac.uk/savee/), and its
 licence forbids redistribution; the files used here come from an unofficial
-[Kaggle copy](https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee). The viewer does not
-embed its clips (`public_audio: False` in `SOURCES`); like every dataset except ESD, they are sent to the API models
+[Kaggle copy](https://www.kaggle.com/datasets/ejlok1/surrey-audiovisual-expressed-emotion-savee). The viewer's
+`site_audio: public` mode leaves its clips out (`public_audio: False` in `SOURCES`); the internal `all` mode includes
+them. Like every dataset except ESD, they are sent to the API models
 for this research evaluation (`api_audio`). The repository owner confirmed separate permission to upload the local
 copy on 2026-11-09; see [data/savee/README.md](data/savee/README.md).
 Several licences restrict commercial use or sharing copies. The data submodule records the selected Release
@@ -662,7 +663,7 @@ Each dataset has a loader in `scripts/common/eval_datasets.py` that reads its la
 classes; to evaluate on a new dataset, add a loader there. For each model and dataset the script writes (`<model>` is
 the model's key in the registry, e.g. `emotion2vec_plus_large`):
 
-- `reports/<model>/<dataset>.md`: accuracy, unweighted accuracy, macro F1, results per emotion, confusion matrices
+- `reports/<model>/<dataset>.md`: accuracy, unweighted accuracy, macro F1, weighted F1, results per emotion, confusion matrices
   (figures in `reports/<model>/figures/` and tables), comparison with human listeners where the dataset has their
   labels, and caveats.
 - `outputs/<model>/<dataset>_predictions.csv`: one row per clip (in git) with the audio path, the labels, the
@@ -673,7 +674,7 @@ the model's key in the registry, e.g. `emotion2vec_plus_large`):
   and whether it is in the model's training data), every dataset's confusion matrix in one figure, and a comparison
   on the emotions that every dataset has.
 - [`reports/summary.md`](reports/summary.md): every model on every dataset, with accuracy, unweighted accuracy, macro
-  F1 and the accuracy on the shared emotions; † / ‡ both count as used/seen (direct / upstream); ? means possible association; unmarked does not mean verified unseen.
+  F1, weighted F1 and the accuracy on the shared emotions; † / ‡ both count as used/seen (direct / upstream); ? means possible association; unmarked does not mean verified unseen.
 
 A sample run (`limit`) adds `_sample<N>` to the file names, e.g. `reports/meralion_ser_v1/crema_d_sample14.md`. A model
 and dataset whose results for the same `limit` are already in `outputs/<model>/` are skipped when their inference
@@ -719,6 +720,10 @@ How model outputs become a prediction:
   supply an alternative unrestricted prediction; their saved label-token probabilities are a separate analysis.
 - **Unweighted accuracy** is the mean recall of the acted emotions, so every emotion counts the same; **macro F1** is
   the mean F1 of the predicted emotions.
+- **Weighted F1** averages those same per-class F1 scores using each class's ground-truth clip count as its weight.
+  Invalid/out-of-candidate LLM answers remain errors. With composite labels, the weights use the same resolved
+  ground truth as the existing per-class F1 table, so those scores follow this project's label mapping rather than
+  an unmodified source-dataset protocol.
 - **Listeners' votes** (CREMA-D, MCAE-SPPS, THAI-SER, Emozionalmente) use the same mapping; for a tied vote, any of the tied emotions
   counts.
 - **Composite labels**: a label without a matching class can keep its name and accept several classes (`accept` in
@@ -830,7 +835,7 @@ python scripts/viewer/make_viewer.py
 Settings, in `config/viewer.yaml`: `predictions` (`all` = every
 `outputs/<model>/*_predictions.csv`, or a list of such files), `correct` and `wrong` (per dataset and model: how many
 clips it got right and wrong to add to the examples; default 10 and 10), `seed` (the same seed always picks the same
-clips), `link_audio`, `out` (the page for this machine), `site` (the public page, see 7.1) and `exclude` (datasets
+clips), `link_audio`, `out` (the page for this machine), `site` (the site copy, see 7.1), `site_audio` and `exclude` (datasets
 left out of both pages; default ESD).
 
 The script writes one self-contained page, `outputs/viewer.html`, with embedded 16 kHz MP3 and plots; its size
@@ -839,7 +844,8 @@ depends on the selected examples and figures. Open it in any browser. It has thr
 - **Results** (opens first), with a model switch; values are coloured by level (green for 80% or more, amber for 60
   to 80%, red under 60%):
   - **All models**: one row per dataset and one column per model, as in [reports/summary.md](reports/summary.md), with
-    a switch between accuracy, unweighted accuracy and macro F1; † marks Part of the training process; the other display group is No recorded training use. Detailed evidence grades and table footnotes are omitted from the HTML.
+    a switch between accuracy, unweighted accuracy, macro F1 and weighted F1; † marks Part of the training process; the other display group is No recorded training use. Detailed evidence grades and table footnotes are omitted from the HTML.
+    The selected metric's short explanation and formula appear below the switch and update with it.
   - **One model**: its results table, as in `reports/<model>/summary.md` (read from the JSON file next to it), with
     the datasets in its training data first, then the others, each group sorted by accuracy; then its confusion
     matrices (click the figure to enlarge it) and the table of the emotions that every dataset has.
@@ -870,11 +876,11 @@ format.
 
 ### 7.1 Publish the page with GitHub Pages
 
-The same run writes `site/index.html`, the page for the public: the same results, with embedded audio, but only clips
-of datasets whose licence allows putting them on a public web page (`public_audio` in `SOURCES`). ESD's licence forbids
-giving the data to anyone, so its clips never go on the public page, even if it is evaluated again; a dataset that
-is not in `SOURCES` gets no clips either. The workflow `.github/workflows/pages.yml`, at the repository root, publishes
-only this `site/` folder.
+The same run writes `site/index.html`. The current internal configuration, `site_audio: all`, includes audio examples,
+labels and model predictions for all 16 adopted datasets, just like the local page. Set `site_audio: public` to build
+the previous public-audio subset instead: only datasets marked `public_audio` in `SOURCES` contribute audio examples,
+and unknown datasets contribute none. `exclude` still applies to both versions. The workflow
+`.github/workflows/pages.yml`, at the repository root, publishes only this `site/` folder.
 
 To turn it on, once: in the repository's Settings > Pages, set Source to "GitHub Actions". After that, every push to
 `main` that changes `emotion_recognition/site/` publishes the page at
@@ -889,8 +895,8 @@ dataset's clips depend only on the seed and on that dataset's results).
 python scripts/viewer/plot_results.py   # also runs at the end of evaluate.py when `plots: true` (config/evaluation.yaml)
 ```
 
-For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, macro F1) it writes to
-`reports/figures/`, as PNG (300 dpi) and PDF:
+For each metric in `config/plots.yaml` (default: accuracy, unweighted accuracy, macro F1, weighted F1) it writes to
+`reports/figures/`, as PNG (300 dpi) and SVG:
 
 - `<metric>_by_dataset`: one panel per dataset, four panels per row by default (`columns` in `config/plots.yaml`), one bar per model;
 - `overview_<metric>`: a dataset-by-model score matrix with numeric percentages and a shared colour scale, so additional models do not crowd grouped bars. Missing compatible results appear as a grey dash, and chance reference values have a separate column.
@@ -942,10 +948,28 @@ python scripts/evaluation/refresh_reports.py --model gemini-3.8-flash --plots --
 和 `site/index.html`，网页示例需要本机已有相应音频。省略这两个选项即可只生成报告。
 CSV 可以使用 UTF-8 BOM，正确性列支持 True/False、Yes/No 和 1/0。
 
+Weighted F1 可从既有逐条预测补算，不需要重新推理。旧预测 JSON 保持原样；新指标集中存入
+`reports/derived_metrics.json`，汇总、图表和 HTML 仅在源 CSV/JSON 的 SHA-256
+仍匹配时读取该值。主报告保留 Accuracy、UAR、macro-F1，并补充按真实类别支持数加权的 F1。
+
 仅凭 CSV 和 JSON 就能重算分类指标和画图，不需要 `.f16` features。
 建议同时带回 `responses.jsonl`，供以后核查原始回答、重试及 token 用量；这次未带回时，
 报告会注明这一点。API 的 `p_*` 若为 one-hot，表示模型最终选择了哪个标签，
 不能当作置信度；网页对此显示空缺。并发请求的总耗时除以样本数也不等于单个请求的延迟。
+
+### 7.4 Model consensus and pseudo-label candidates
+
+独立的离线共识分析保存在 `research_paper/`：
+[中文报告](../research_paper/analysis_report/consensus_zh.md) · [English report](../research_paper/analysis_report/consensus_en.md)。
+
+```bash
+python ../research_paper/scripts/consensus.py
+```
+
+只比较五个 SER、Audio LLM（含两个 API）和精选模型（emotion2vec、Gemini、Qwen Omni）三组，
+用“全部一致”和“过半数同意”两种规则。表格注明实际参与模型数及待补齐状态；中间统计仅保留
+`research_paper/output/consensus.csv`。后续模型结果补齐后，重跑同一命令即可更新报告。
+公开数据上的共识只用于筛选伪标签候选；应用到公司电话音频前，需用目标域人工标注验证。
 
 ## 8. Audio LLMs
 
@@ -1136,8 +1160,9 @@ with `python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_
 
 DailyTalk, EmotionTalk and MultiDialog have `api_audio: true`, matching the project's other adopted research
 datasets. This is dataset eligibility, not an instruction to send audio. Both evaluation configurations retain
-`api_models: false`, so paid API models do not run. `public_audio: false` independently keeps these datasets'
-example recordings out of the public HTML page; it does not prevent local or API evaluation.
+`api_models: false`, so paid API models do not run. In `site_audio: public` mode, `public_audio: false` keeps these
+datasets' example recordings out of the site HTML. The current internal `site_audio: all` mode includes them;
+neither setting changes local or API evaluation.
 
 The first context pilot is Omni on 240 fixed EmotionTalk train targets, with target-only / true audio history /
 text history / unrelated audio history. It is currently **prepared only** while local memory is occupied.

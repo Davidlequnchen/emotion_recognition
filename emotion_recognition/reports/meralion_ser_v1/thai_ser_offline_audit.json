@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.397452+00:00",
+  "model": "meralion_ser_v1",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/thai_ser_predictions.csv",
+      "sha256": "072709e0393701c081211e0e886707514b01bfec462f3cd31b41222c56458ec9",
+      "bytes": 1660259
+    },
+    {
+      "path": "outputs/meralion_ser_v1/thai_ser_predictions.json",
+      "sha256": "6377cb51988ed23ac6e317ed28e18af444a52c2a7a5d8428765cccf2e099dda6",
+      "bytes": 2771
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.470459,
+    "unweighted_accuracy": 0.474735,
+    "macro_f1": 0.474074,
+    "accuracy_all_classes": 0.470206,
+    "accuracy_acted_or_listener": 0.48447,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.397029
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.47045914922349763,
+    "unweighted_accuracy": 0.4747349373146033,
+    "macro_f1": 0.4740736897893379,
+    "weighted_f1": 0.4704857743672715,
+    "accuracy_all_classes": 0.47020594193112764,
+    "accuracy_acted_or_listener": 0.4844699527346388,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.39702903443619175
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

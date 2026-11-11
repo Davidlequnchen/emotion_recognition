@@ -1,0 +1,79 @@
+{
+  "dataset": "EmotionTalk (test)",
+  "key": "emotiontalk",
+  "language": "Mandarin",
+  "model": "melati_emotion",
+  "model_name": "Melati",
+  "date": "2026-11-10",
+  "clips": 1929,
+  "total_clips": 1929,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+  "training_evidence": [
+    "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+    "https://huggingface.co/openai/whisper-large-v3#training-data"
+  ],
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "surprised",
+    "fearful",
+    "disgusted"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Each clip (at most 30 s) becomes Whisper-large-v3 log-mel features padded to 30 s; the encoder layers are averaged over the clip's own frames only (50 per second), as in the official melati_emotion.py. Precision: float16 encoder, float32 head.",
+    "The prediction is the most probable of the raw probabilities. The official thresholds (melati_emotion.py, label()) are not applied: they were set for precise tagging of podcasts, would turn most clips into neutral, and never return disgusted."
+  ],
+  "metrics": {
+    "accuracy": 0.291343,
+    "unweighted_accuracy": 0.38104,
+    "macro_f1": 0.27281,
+    "accuracy_all_classes": 0.291343
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the published audio-perception gold `emotion_result` in original Audio/json files",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M3 Pro",
+    "seconds": 1148.2,
+    "ms_per_clip": 595.3,
+    "on_cpu": 0
+  },
+  "subset": "split:test"
+}

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.821939+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "tess",
+  "clips": 2800,
+  "unique_audio_paths": 2800,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.csv",
+      "sha256": "9baa65ab7d70be9fa0ab225906d180b2c8c66f98279d813192c2fdd259b9b671",
+      "bytes": 334062
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.json",
+      "sha256": "eecdc2e527bc2945aa89e11d00d881177fb307e0c9021807a2d680a04232e0ab",
+      "bytes": 2388
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.855357,
+    "unweighted_accuracy": 0.855357,
+    "macro_f1": 0.798306,
+    "accuracy_all_classes": 0.845
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.8553571428571428,
+    "unweighted_accuracy": 0.8553571428571428,
+    "macro_f1": 0.7983061057021832,
+    "weighted_f1": 0.7983061057021832,
+    "accuracy_all_classes": 0.845
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

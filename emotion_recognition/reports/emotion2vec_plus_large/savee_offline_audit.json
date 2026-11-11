@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.802044+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/savee_predictions.csv",
+      "sha256": "fd310148c96e3efa0f66e3aa12509e38ea879e910d9826c3f12082cc38d1be93",
+      "bytes": 59676
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/savee_predictions.json",
+      "sha256": "932ef97502fe45e4ce16e73e5fdcf9f9c15b590b6c0a46e66671f09aa22b38fa",
+      "bytes": 2851
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.933333,
+    "unweighted_accuracy": 0.925,
+    "macro_f1": 0.928172,
+    "accuracy_all_classes": 0.933333
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.9333333333333333,
+    "unweighted_accuracy": 0.9249999999999999,
+    "macro_f1": 0.9281715021211523,
+    "weighted_f1": 0.9335786357845796,
+    "accuracy_all_classes": 0.9333333333333333
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

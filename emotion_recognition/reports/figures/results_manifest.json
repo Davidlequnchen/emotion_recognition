@@ -1,9 +1,10 @@
 {
-  "fingerprint": "f0e6b2ca67f245ec99a1ee2e7da6bd249e6d1887b35849d2f6286518cf933716",
+  "fingerprint": "4d537a7adc71c5783abc5a890203e92ec90066bc328eaccea91c1dbba29fe95f",
   "metrics": [
     "accuracy",
     "unweighted_accuracy",
-    "macro_f1"
+    "macro_f1",
+    "weighted_f1"
   ],
   "models": [
     "emotion2vec_plus_large",
@@ -49,6 +50,6 @@
     "y_tick_labels": "left",
     "show_title": false
   },
-  "presentation_fingerprint": "3bd4b8a926184603ff81288320ffe99637885f0b538993f63f0cf1a0fb97c8aa",
+  "presentation_fingerprint": "d2b9c2fda96d972fde5c1c41ccabac828d77010f03a08f3c2fb8aa2f601700af",
   "style": "ordered_slim_panels_v6"
 }

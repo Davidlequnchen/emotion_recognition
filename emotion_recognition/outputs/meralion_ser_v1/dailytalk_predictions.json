@@ -1,0 +1,79 @@
+{
+  "dataset": "DailyTalk (validation)",
+  "key": "dailytalk",
+  "language": "English",
+  "model": "meralion_ser_v1",
+  "model_name": "MERaLiON-SER-v1",
+  "date": "2026-11-10",
+  "clips": 1197,
+  "total_clips": 1197,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+  "training_evidence": [
+    "https://arxiv.org/html/2511.04914v1#S4.SS1",
+    "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+    "https://huggingface.co/openai/whisper-medium#training-data"
+  ],
+  "model_classes": [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "fearful",
+    "disgusted",
+    "surprised"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Each clip becomes Whisper log-mel features padded with silence to 30 s (as in the model card); the model ignores attention masks and pools over the whole 30 s window, padding included, which is its official behaviour. float32 on every device, as released."
+  ],
+  "metrics": {
+    "accuracy": 0.600668,
+    "unweighted_accuracy": 0.486451,
+    "macro_f1": 0.298175,
+    "accuracy_all_classes": 0.600668
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the pinned public ECSS category; unassigned original clips, only in split='all'/'unassigned', retain the original DailyTalk category",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 7 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 7 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M3 Pro",
+    "seconds": 550.7,
+    "ms_per_clip": 460.1,
+    "on_cpu": 0
+  },
+  "subset": "split:validation"
+}

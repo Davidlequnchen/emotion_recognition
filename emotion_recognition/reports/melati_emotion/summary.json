@@ -1,7 +1,7 @@
 {
   "model": "melati_emotion",
   "name": "Melati",
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
   "datasets": [
     {
@@ -36,7 +36,8 @@
         "accuracy": 0.995,
         "unweighted_accuracy": 0.995,
         "macro_f1": 0.994802,
-        "accuracy_all_classes": 0.993333
+        "accuracy_all_classes": 0.993333,
+        "weighted_f1": 0.9950050676992646
       }
     },
     {
@@ -70,7 +71,8 @@
         "accuracy_all_classes": 0.850188,
         "accuracy_acted_or_listener": 0.904376,
         "listeners_vs_acted": 0.812187,
-        "model_vs_listeners": 0.781801
+        "model_vs_listeners": 0.781801,
+        "weighted_f1": 0.8502210120316199
       }
     },
     {
@@ -101,7 +103,8 @@
         "accuracy": 0.636911,
         "unweighted_accuracy": 0.625128,
         "macro_f1": 0.595246,
-        "accuracy_all_classes": 0.583129
+        "accuracy_all_classes": 0.583129,
+        "weighted_f1": 0.6045344517661128
       }
     },
     {
@@ -132,7 +135,40 @@
         "accuracy_all_classes": 0.702481,
         "accuracy_acted_or_listener": 0.757343,
         "listeners_vs_acted": 0.772282,
-        "model_vs_listeners": 0.633778
+        "model_vs_listeners": 0.633778,
+        "weighted_f1": 0.7243537920086242
+      }
+    },
+    {
+      "dataset": "DailyTalk (validation)",
+      "key": "dailytalk",
+      "language": "English",
+      "clips": 1197,
+      "total_clips": 1197,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+      "training_evidence": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
+      "metrics": {
+        "accuracy": 0.650794,
+        "unweighted_accuracy": 0.288376,
+        "macro_f1": 0.245749,
+        "accuracy_all_classes": 0.650794,
+        "weighted_f1": 0.6787194194673535
       }
     },
     {
@@ -163,7 +199,40 @@
         "accuracy": 0.6125,
         "unweighted_accuracy": 0.564286,
         "macro_f1": 0.532112,
-        "accuracy_all_classes": 0.6125
+        "accuracy_all_classes": 0.6125,
+        "weighted_f1": 0.580517783785529
+      }
+    },
+    {
+      "dataset": "MultiDialog (gold_both)",
+      "key": "multidialog",
+      "language": "English",
+      "clips": 7672,
+      "total_clips": 7672,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+      "training_evidence": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
+      "metrics": {
+        "accuracy": 0.596715,
+        "unweighted_accuracy": 0.224339,
+        "macro_f1": 0.202427,
+        "accuracy_all_classes": 0.596715,
+        "weighted_f1": 0.5748606690486116
       }
     },
     {
@@ -194,7 +263,8 @@
         "accuracy": 0.559524,
         "unweighted_accuracy": 0.559524,
         "macro_f1": 0.537645,
-        "accuracy_all_classes": 0.559524
+        "accuracy_all_classes": 0.559524,
+        "weighted_f1": 0.5376453631420122
       }
     },
     {
@@ -227,7 +297,8 @@
         "accuracy_all_classes": 0.513034,
         "accuracy_acted_or_listener": 0.767267,
         "listeners_vs_acted": 0.455869,
-        "model_vs_listeners": 0.59694
+        "model_vs_listeners": 0.59694,
+        "weighted_f1": 0.46613401946193983
       }
     },
     {
@@ -258,7 +329,8 @@
         "accuracy": 0.504286,
         "unweighted_accuracy": 0.504286,
         "macro_f1": 0.434398,
-        "accuracy_all_classes": 0.504286
+        "accuracy_all_classes": 0.504286,
+        "weighted_f1": 0.43439829796305973
       }
     },
     {
@@ -292,7 +364,8 @@
         "accuracy_all_classes": 0.48839,
         "accuracy_acted_or_listener": 0.48839,
         "listeners_vs_acted": 1.0,
-        "model_vs_listeners": 0.48839
+        "model_vs_listeners": 0.48839,
+        "weighted_f1": 0.4438016527592394
       }
     },
     {
@@ -323,7 +396,8 @@
         "accuracy": 0.484028,
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.466076,
-        "accuracy_all_classes": 0.484028
+        "accuracy_all_classes": 0.484028,
+        "weighted_f1": 0.4664860586728143
       }
     },
     {
@@ -351,7 +425,8 @@
         "accuracy": 0.404444,
         "unweighted_accuracy": 0.404444,
         "macro_f1": 0.375449,
-        "accuracy_all_classes": 0.400556
+        "accuracy_all_classes": 0.400556,
+        "weighted_f1": 0.3754487443792488
       }
     },
     {
@@ -382,7 +457,40 @@
         "accuracy": 0.306875,
         "unweighted_accuracy": 0.349443,
         "macro_f1": 0.275936,
-        "accuracy_all_classes": 0.306875
+        "accuracy_all_classes": 0.306875,
+        "weighted_f1": 0.2770425598434435
+      }
+    },
+    {
+      "dataset": "EmotionTalk (test)",
+      "key": "emotiontalk",
+      "language": "Mandarin",
+      "clips": 1929,
+      "total_clips": 1929,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+      "training_evidence": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ],
+      "metrics": {
+        "accuracy": 0.291343,
+        "unweighted_accuracy": 0.38104,
+        "macro_f1": 0.27281,
+        "accuracy_all_classes": 0.291343,
+        "weighted_f1": 0.2126679925348332
       }
     },
     {
@@ -413,7 +521,8 @@
         "accuracy": 0.287577,
         "unweighted_accuracy": 0.230016,
         "macro_f1": 0.18684,
-        "accuracy_all_classes": 0.287577
+        "accuracy_all_classes": 0.287577,
+        "weighted_f1": 0.2813183911166704
       }
     }
   ],
@@ -431,7 +540,10 @@
     "MELD",
     "EMOVO",
     "Emozionalmente",
-    "SAVEE"
+    "SAVEE",
+    "EmotionTalk (test)",
+    "DailyTalk (validation)",
+    "MultiDialog (gold_both)"
   ],
   "acted_or_listener": [
     "CREMA-D"
@@ -532,6 +644,38 @@
       "sample": false,
       "accuracy": 0.727043,
       "unweighted_accuracy": 0.717556,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+      "training_evidence": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
+    },
+    {
+      "dataset": "MultiDialog (gold_both)",
+      "key": "multidialog",
+      "language": "English",
+      "clips": 6466,
+      "sample": false,
+      "accuracy": 0.706619,
+      "unweighted_accuracy": 0.336604,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+      "training_evidence": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
+    },
+    {
+      "dataset": "DailyTalk (validation)",
+      "key": "dailytalk",
+      "language": "English",
+      "clips": 1174,
+      "sample": false,
+      "accuracy": 0.660988,
+      "unweighted_accuracy": 0.465185,
       "in_training_data": false,
       "training_status": "not_established",
       "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
@@ -644,6 +788,22 @@
       "sample": false,
       "accuracy": 0.333937,
       "unweighted_accuracy": 0.368459,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+      "training_evidence": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+        "https://huggingface.co/openai/whisper-large-v3#training-data"
+      ]
+    },
+    {
+      "dataset": "EmotionTalk (test)",
+      "key": "emotiontalk",
+      "language": "Mandarin",
+      "clips": 1560,
+      "sample": false,
+      "accuracy": 0.305128,
+      "unweighted_accuracy": 0.472587,
       "in_training_data": false,
       "training_status": "not_established",
       "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",

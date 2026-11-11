@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.321763+00:00",
+  "model": "melati_emotion",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/ravdess_predictions.csv",
+      "sha256": "82a2b8d0736babf5f12bce3035c811a37d6795c8c59d0c5658b3791fbfaf8679",
+      "bytes": 184557
+    },
+    {
+      "path": "outputs/melati_emotion/ravdess_predictions.json",
+      "sha256": "1981cad44a8438da743b4e9658b849556c410b2029b2054829f84e496de82e81",
+      "bytes": 2216
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.484028,
+    "unweighted_accuracy": 0.493304,
+    "macro_f1": 0.466076,
+    "accuracy_all_classes": 0.484028
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.4840277777777778,
+    "unweighted_accuracy": 0.49330357142857134,
+    "macro_f1": 0.4660763327049996,
+    "weighted_f1": 0.4664860586728143,
+    "accuracy_all_classes": 0.4840277777777778
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

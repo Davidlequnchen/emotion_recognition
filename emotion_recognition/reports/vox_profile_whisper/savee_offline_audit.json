@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.855698+00:00",
+  "model": "vox_profile_whisper",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/savee_predictions.csv",
+      "sha256": "1ee80338bc7289e0746f2f10791c2d8f7b4632ad0275e050e1d06f358c6eb66d",
+      "bytes": 59811
+    },
+    {
+      "path": "outputs/vox_profile_whisper/savee_predictions.json",
+      "sha256": "c98d9b8223d2d8875f7f5e3223d4e5680111c1d1938549dc6a5c54012d7f6634",
+      "bytes": 2594
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.372917,
+    "unweighted_accuracy": 0.315476,
+    "macro_f1": 0.293572,
+    "accuracy_all_classes": 0.3625
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3729166666666667,
+    "unweighted_accuracy": 0.3154761904761905,
+    "macro_f1": 0.2935717233247145,
+    "weighted_f1": 0.32387813975350566,
+    "accuracy_all_classes": 0.3625
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

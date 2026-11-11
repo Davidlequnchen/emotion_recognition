@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.204187+00:00",
+  "model": "meralion_ser_v1",
+  "key": "mess",
+  "clips": 1800,
+  "unique_audio_paths": 1800,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/mess_predictions.csv",
+      "sha256": "7e4b05d3e5bfe4740c04b94ea07a674b0bc665f927ae316601fe76ca6a8180b8",
+      "bytes": 186945
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mess_predictions.json",
+      "sha256": "23303c844cf4922b76646c4ab453b4c8419d3daa819abb98f79562bea31c30df",
+      "bytes": 1994
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.745,
+    "unweighted_accuracy": 0.745,
+    "macro_f1": 0.746711,
+    "accuracy_all_classes": 0.745
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.745,
+    "unweighted_accuracy": 0.745,
+    "macro_f1": 0.7467107890646425,
+    "weighted_f1": 0.7467107890646424,
+    "accuracy_all_classes": 0.745
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

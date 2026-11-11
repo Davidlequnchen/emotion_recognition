@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.745194+00:00",
+  "model": "vox_profile_whisper",
+  "key": "mess",
+  "clips": 1800,
+  "unique_audio_paths": 1800,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/mess_predictions.csv",
+      "sha256": "b94c0bac52daef5113ff0aaeb890613bcf5e1c93d57c0e0a06d3a52620a8d91d",
+      "bytes": 219515
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mess_predictions.json",
+      "sha256": "7b7ddb2388676c7c14bd3bceb37e2db78b48df2cce1e836f52d231cbcefe4936",
+      "bytes": 1932
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.363889,
+    "unweighted_accuracy": 0.363889,
+    "macro_f1": 0.267674,
+    "accuracy_all_classes": 0.357778
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3638888888888889,
+    "unweighted_accuracy": 0.3638888888888889,
+    "macro_f1": 0.26767365757311173,
+    "weighted_f1": 0.26767365757311173,
+    "accuracy_all_classes": 0.35777777777777775
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

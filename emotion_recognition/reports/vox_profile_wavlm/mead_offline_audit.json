@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.277356+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/mead_predictions.csv",
+      "sha256": "a82225f17db4826f9995e3f99c974afd65439f9f1fbea8812008c4475ff47dd6",
+      "bytes": 1083716
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mead_predictions.json",
+      "sha256": "69843a099b7cfce68a0e394852e25b34278bf7a3d855d6e6be10363e726180c9",
+      "bytes": 2682
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.193875,
+    "unweighted_accuracy": 0.230536,
+    "macro_f1": 0.182348,
+    "accuracy_all_classes": 0.18625
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.193875,
+    "unweighted_accuracy": 0.230535999431142,
+    "macro_f1": 0.1823483569486381,
+    "weighted_f1": 0.18331087917779604,
+    "accuracy_all_classes": 0.18625
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

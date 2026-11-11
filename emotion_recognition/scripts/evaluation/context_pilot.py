@@ -317,6 +317,7 @@ def scores(rows, labels):
     return {"clips": n, "accuracy": sum(tp.values()) / n if n else None,
             "unweighted_accuracy": sum(c["recall"] for c in per_class.values()) / len(labels) if n else None,
             "macro_f1": sum(c["f1"] for c in per_class.values()) / len(labels) if n else None,
+            "weighted_f1": sum(c["support"] * c["f1"] for c in per_class.values()) / n if n else None,
             "neutral_prediction_rate": predicted["neutral"] / n if n else None,
             "invalid": predicted["invalid"], "per_class": per_class,
             "confusion": {lab: {pred: sum(r["gold"] == lab and r["prediction"] == pred for r in rows)
@@ -371,7 +372,7 @@ def analyze(manifest_path, run_dir):
                           "wrong_to_correct": sum(r["h0"] != r["gold"] == r["prediction"] for r in transitions),
                           "correct_to_wrong": sum(r["h0"] == r["gold"] != r["prediction"] for r in transitions),
                           **{f"delta_{metric}": metrics[c][metric] - metrics["H0"][metric] if paired_ids else None
-                             for metric in ("accuracy", "unweighted_accuracy", "macro_f1")}}
+                             for metric in ("accuracy", "unweighted_accuracy", "macro_f1", "weighted_f1")}}
     summary = {"prepared_hash": manifest["prepared_hash"], "execution": execution,
                "planned_targets": len(cases), "completed_per_condition": dict(Counter(r["condition"] for r in rows)),
                "paired_complete_targets": len(paired_ids), "complete": len(paired_ids) == len(cases),
@@ -384,12 +385,12 @@ def analyze(manifest_path, run_dir):
     write_json(run_dir / "summary.json", summary)
     lines = ["# EmotionTalk H0–H3 pilot", "", f"Paired targets: {len(paired_ids)} / {len(cases)}; "
              f"complete: {summary['complete']}", "", "Metrics below use the identical completed target intersection.", "",
-             "| Condition | Accuracy | UAR | Macro F1 | Neutral predictions | Invalid |",
-             "|---|---:|---:|---:|---:|---:|"]
+             "| Condition | Accuracy | UAR | Macro F1 | Weighted F1 | Neutral predictions | Invalid |",
+             "|---|---:|---:|---:|---:|---:|---:|"]
     pct = lambda v: f"{100 * v:.2f}%" if v is not None else "—"
     for c, metric in metrics.items():
         lines.append(f"| {c} | " + " | ".join(pct(metric[k]) for k in
-                    ("accuracy", "unweighted_accuracy", "macro_f1", "neutral_prediction_rate"))
+                    ("accuracy", "unweighted_accuracy", "macro_f1", "weighted_f1", "neutral_prediction_rate"))
                     + f" | {metric['invalid']} |")
     lines += ["", summary["interpretation"], "", "This report does not establish statistical significance or human agreement."]
     (run_dir / "report.md").write_text("\n".join(lines) + "\n")

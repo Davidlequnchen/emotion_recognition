@@ -12,10 +12,10 @@ prediction for the same clip. Datasets: the source, licence and credit of each d
 hash (#results, #examples, #datasets), so a tab can be linked and the browser's back button works.
 It is a single self-contained file (outputs/viewer.html; audio embedded as 16 kHz mono MP3) that opens in any browser.
 
-The same run also writes the public version for GitHub Pages (`site`, e.g. site/index.html): the same page,
-but only with the clips of datasets whose licence allows putting them on a public web page (`public_audio` in
-SOURCES of scripts/common/eval_datasets.py; a dataset missing there counts as not public). The results of all
-datasets are shown. Datasets in `exclude` are left out of both pages: no results, no clips.
+The same run also writes the site version (`site`, e.g. site/index.html). With `site_audio: all`, both pages include
+every dataset's example audio for internal use. With `site_audio: public`, the site includes only example datasets
+marked `public_audio` in SOURCES of scripts/common/eval_datasets.py (unknown datasets are left out). The results of
+all datasets are shown in either mode. Datasets in `exclude` are left out of both pages: no results, no clips.
 
 Input, written by the evaluation, scripts/evaluation/evaluate.py:
     reports/<model>/summary.json               one model on every dataset: name, training data, metrics, figure
@@ -65,7 +65,7 @@ from PIL import Image, features
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))  # eval_datasets.py is in scripts/common/
 from eval_datasets import SOURCES
-from prediction_io import read_prediction_rows
+from prediction_io import load_reported_metrics, read_prediction_rows
 from training_provenance import (EXPOSURE_LEVELS, training_marker,
                                  training_metadata, with_training_provenance)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "llm_eval"))
@@ -133,6 +133,7 @@ def load_plots():
         print("  WARNING     : bar plots use an older layout/order; redraw them with scripts/viewer/plot_results.py")
         return []
     names = {"accuracy": "Accuracy", "unweighted_accuracy": "Unweighted accuracy", "macro_f1": "Macro F1",
+             "weighted_f1": "Weighted F1",
              "accuracy_all_classes": "Accuracy, all model classes",
              "accuracy_acted_or_listener": "Accuracy, acted or listeners' vote"}
     for metric in settings.get("metrics", []):
@@ -185,7 +186,9 @@ def best_metadata(metas):
 
 def current_summary(model, chosen, entry):
     """Build a summary from selected prediction metadata/CSVs, including the current shared-subset scoring rule."""
-    chosen = {path: with_training_provenance(meta, entry) for path, meta in chosen.items()}
+    chosen = {path: with_training_provenance(meta | {
+        "metrics": load_reported_metrics(path.with_suffix(".json"), meta)}, entry)
+        for path, meta in chosen.items()}
     evidence_order = {status: i for i, status in enumerate(EXPOSURE_LEVELS)}
     ranked = sorted(chosen.items(), key=lambda item: (evidence_order[item[1]["training_status"]],
                                                       -item[1]["metrics"]["accuracy"]))
@@ -356,6 +359,15 @@ def write_page(path, data, datasets, link_audio):
     print(f"  page        : {rel(path)} ({path.stat().st_size / 1e6:.1f} MB, {clips} clips of {len(datasets)} dataset(s))")
 
 
+def site_datasets(datasets, mode):
+    """Select site examples explicitly: the complete internal page or the public-audio subset."""
+    if mode == "all":
+        return datasets
+    if mode == "public":
+        return [ds for ds in datasets if SOURCES.get(ds["key"], {}).get("public_audio")]
+    raise ValueError("site_audio must be 'all' (internal audio) or 'public' (public-audio datasets only)")
+
+
 def main():
     # Step 1: settings, config/viewer.yaml; the model order comes from the model registry, config/models.yaml
     step("Step 1/5 | Load configuration")
@@ -365,12 +377,14 @@ def main():
     exclude = set(settings["exclude"] or [])  # left out of both pages: no results, no clips
     out = (ROOT / settings["out"]).resolve()
     site = (ROOT / settings["site"]).resolve() if settings["site"] else None
+    site_audio = settings.get("site_audio", "public")
+    site_datasets([], site_audio)  # Validate before encoding audio or writing either page.
     registry = yaml.safe_load(MODELS_CONFIG.read_text()) or {}
     print(f"  config      : {CONFIG}")
     print(f"  clips       : up to {n_correct} right and {n_wrong} wrong per dataset and model (correct, wrong)")
     print(f"  seed        : {seed} (to get the same clips again, set `seed: {seed}` in config/viewer.yaml)")
     print(f"  excluded    : {', '.join(sorted(exclude)) or 'none'} (exclude)")
-    print(f"  pages       : {rel(out)}" + (f", and {rel(site)} for the public" if site else ""))
+    print(f"  pages       : {rel(out)}" + (f", and {rel(site)} (site_audio: {site_audio})" if site else ""))
 
     # Step 2: find every model (a folder with a summary or predictions), in registry order; read each one's summary
     # (name, training data, metrics, figure) without the excluded datasets
@@ -458,10 +472,10 @@ def main():
         picks = ", ".join(f"{names[model]} {right} + {wrong}" for model, (right, wrong) in counts.items())
         print(f"  {first['dataset']:<11} : {len(clips)} clips (right + wrong per model: {picks})")
 
-    # Step 5: the page for this machine, then the public one (only clips that may be shared; audio always embedded)
+    # Step 5: the local page and the configured site version; site audio is always embedded.
     step("Step 5/5 | Write the pages")
     embedded = "16 kHz mono MP3, 40 kbit/s" if MP3 else "16 kHz mono 16-bit WAV (this libsndfile cannot write MP3)"
-    print("  audio       : " + (f"linked to the original files (link_audio); the public page embeds {embedded}"
+    print("  audio       : " + (f"linked to the original files (link_audio); the site page embeds {embedded}"
                                 if link_audio else f"embedded as {embedded}"))
     sources = {k: SOURCES[k] for k in order if k in SOURCES}
     plots = load_plots()  # the bar plots of plot_results.py, if they have been drawn
@@ -474,11 +488,11 @@ def main():
             "plots": plots}
     write_page(out, data, datasets, link_audio)
     if site:
-        public = [d for d in datasets if SOURCES.get(d["key"], {}).get("public_audio")]
-        write_page(site, data, public, link_audio=False)
-        left_out = [d["dataset"] for d in datasets if d not in public]
+        selected = site_datasets(datasets, site_audio)
+        write_page(site, data, selected, link_audio=False)
+        left_out = [d["dataset"] for d in datasets if d not in selected]
         if left_out:
-            print(f"                no clips of {', '.join(left_out)} on the public page: the licence does not allow it")
+            print(f"                no clips of {', '.join(left_out)} on the site page (site_audio: public)")
     print("Done. Open the page in a browser.")
 
 

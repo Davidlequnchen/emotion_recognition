@@ -1,7 +1,7 @@
 {
   "model": "gemma4_e4b",
   "name": "Gemma 4 E4B",
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
   "datasets": [
     {
@@ -32,7 +32,8 @@
         "accuracy": 0.478144,
         "unweighted_accuracy": 0.296598,
         "macro_f1": 0.308557,
-        "accuracy_all_classes": 0.478144
+        "accuracy_all_classes": 0.478144,
+        "weighted_f1": 0.460877934433173
       }
     }
   ],

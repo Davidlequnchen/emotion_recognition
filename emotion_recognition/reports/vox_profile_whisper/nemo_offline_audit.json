@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.840048+00:00",
+  "model": "vox_profile_whisper",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/nemo_predictions.csv",
+      "sha256": "3649a8bffe37ea1c753b559b56189a485fb0152b8b8fc5832699ff32276e533a",
+      "bytes": 562771
+    },
+    {
+      "path": "outputs/vox_profile_whisper/nemo_predictions.json",
+      "sha256": "7423b56d7476446c9731f88cc434513303428f60c120b1acf1130ecc6ec3f2d3",
+      "bytes": 2425
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.327829,
+    "unweighted_accuracy": 0.319992,
+    "macro_f1": 0.287864,
+    "accuracy_all_classes": 0.325597
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3278286096853381,
+    "unweighted_accuracy": 0.3199922337399071,
+    "macro_f1": 0.2878636435382436,
+    "weighted_f1": 0.2907253457840237,
+    "accuracy_all_classes": 0.32559696496317786
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.367081+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "multidialog",
+  "clips": 7672,
+  "unique_audio_paths": 7672,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/multidialog_predictions.csv",
+      "sha256": "10ae196aad65a3fbfbba9d487d2e11affab0a1b17058986b8b7af8c6ea38efac",
+      "bytes": 1621650
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/multidialog_predictions.json",
+      "sha256": "c63921c332a51ec81bf2537fe9936048bf155d0c3c09b02d90355ca94220e18e",
+      "bytes": 2652
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.549791,
+    "unweighted_accuracy": 0.30984,
+    "macro_f1": 0.248798,
+    "accuracy_all_classes": 0.543144
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.549791449426486,
+    "unweighted_accuracy": 0.3098400739824963,
+    "macro_f1": 0.24879834667676434,
+    "weighted_f1": 0.5699178029321365,
+    "accuracy_all_classes": 0.5431438998957248
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

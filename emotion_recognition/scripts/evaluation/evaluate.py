@@ -57,7 +57,8 @@ reports/summary.json (fractions, rounded to 6 decimals):
     datasets         [{key, dataset, language, chance}]: every dataset with results, in eval_datasets.LOADERS order
     shared_emotions  the emotions every dataset has ([] with a single dataset)
     results          {model: {dataset key: {clips, total_clips, sample, in_training_data, accuracy,
-                     unweighted_accuracy, macro_f1, shared_clips, shared_accuracy, shared_unweighted_accuracy}}}:
+                     unweighted_accuracy, macro_f1, weighted_f1, shared_clips, shared_accuracy,
+                     shared_unweighted_accuracy}}}:
                      the run shown in the model's summary (the one with the most clips); the shared_* keys only when
                      there are shared emotions
 """
@@ -97,7 +98,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "models"))  # the model loaders, impor
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS, SOURCES, SUBSETS, accepted, default_evaluation_subset, sample, truth_labels
 from prompts import configured_protocol
-from prediction_io import read_prediction_rows
+from prediction_io import load_reported_metrics, read_prediction_rows
 from training_provenance import (EXPOSURE_LABEL, EXPOSURE_LEVELS, EXPOSURE_NOTE, training_marker,
                                  training_metadata, with_training_provenance)
 
@@ -370,12 +371,15 @@ def plot_confusion(cm, ds, rows, title, subtitle, ylabel, path, other=False):
     ax.set_title(title, loc="center", color=INK, fontsize=13, fontweight="bold", pad=28)
     ax.text(0.5, 1.03, subtitle, transform=ax.transAxes, ha="center", color=INK_2, fontsize=9.5)
     bar = fig.colorbar(mesh, ax=ax, fraction=0.04, pad=0.04, shrink=0.85, ticks=[0, 25, 50, 75, 100])
+    bar.solids.set_rasterized(False)
     bar.outline.set_visible(False)
     bar.ax.tick_params(length=0, colors=INK_2, labelsize=10)
     bar.set_label("Share of the row (%)", color=INK_2, fontsize=10.5)
     fig.tight_layout()
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, facecolor=SURFACE, bbox_inches="tight", pad_inches=0.25)  # keep every label inside the image
+    fig.savefig(path.with_suffix(".svg"), facecolor=SURFACE, bbox_inches="tight", pad_inches=0.25,
+                metadata={"Date": None})
     plt.close(fig)
 
 
@@ -383,10 +387,13 @@ def stitch(paths, path, columns=3, col_gap=110, row_gap=80, margin=50):
     """Put figures in a grid, row by row. The empty margin of each figure is cut off first, so the gaps set the
     spacing; each figure is centred across its cell and aligned to its top, so the titles of a row line up."""
     from PIL import Image, ImageChops
-    images = []
+    images, crops, dimensions = [], [], []
     for p in paths:
         im = Image.open(p).convert("RGB")
-        images.append(im.crop(ImageChops.difference(im, Image.new("RGB", im.size, SURFACE)).getbbox()))
+        bounds = ImageChops.difference(im, Image.new("RGB", im.size, SURFACE)).getbbox()
+        images.append(im.crop(bounds))
+        crops.append(bounds)
+        dimensions.append(im.size)
     columns = min(columns, len(images))
     rows = -(-len(images) // columns)
     w, h = max(im.width for im in images), max(im.height for im in images)
@@ -396,6 +403,41 @@ def stitch(paths, path, columns=3, col_gap=110, row_gap=80, margin=50):
         grid.paste(im, (margin + (k % columns) * (w + col_gap) + (w - im.width) // 2,
                         margin + (k // columns) * (h + row_gap)))
     grid.save(path, optimize=True)
+    # Compose the original SVG artwork with the same crop/layout; never wrap the stitched PNG in SVG.
+    if not all(Path(p).with_suffix(".svg").is_file() for p in paths):
+        Path(path).with_suffix(".svg").unlink(missing_ok=True)  # an older grid must not masquerade as current
+        print(f"  SVG grid not written for {path.name}: a source SVG is missing")
+        return
+    import xml.etree.ElementTree as ET
+    namespace = "http://www.w3.org/2000/svg"
+    ET.register_namespace("", namespace)
+    ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
+    vector = ET.Element(f"{{{namespace}}}svg", {"width": str(grid.width), "height": str(grid.height),
+                        "viewBox": f"0 0 {grid.width} {grid.height}", "version": "1.1"})
+    ET.SubElement(vector, f"{{{namespace}}}rect", {"width": "100%", "height": "100%", "fill": SURFACE})
+    for k, (source, image, bounds, size) in enumerate(zip(paths, images, crops, dimensions)):
+        artwork = ET.parse(Path(source).with_suffix(".svg")).getroot()
+        vx, vy, vw, vh = map(float, artwork.attrib["viewBox"].split())
+        left, top, right, bottom = bounds
+        artwork.attrib.update({"x": str(margin + (k % columns) * (w + col_gap) + (w - image.width) // 2),
+                               "y": str(margin + (k // columns) * (h + row_gap)),
+                               "width": str(image.width), "height": str(image.height), "overflow": "hidden",
+                               "viewBox": f"{vx + left * vw / size[0]} {vy + top * vh / size[1]} "
+                                          f"{(right - left) * vw / size[0]} {(bottom - top) * vh / size[1]}"})
+        # Matplotlib reuses clip/glyph identifiers between files; prefix ids and their fragment references.
+        identifiers = {element.attrib["id"]: f"panel{k}_{element.attrib['id']}"
+                       for element in artwork.iter() if "id" in element.attrib}
+        for element in artwork.iter():
+            for attribute, value in list(element.attrib.items()):
+                if attribute == "id":
+                    element.set(attribute, identifiers[value])
+                else:
+                    value = re.sub(r"url\(#([^)]+)\)", lambda match: f"url(#{identifiers.get(match[1], match[1])})", value)
+                    if value.startswith("#") and value[1:] in identifiers:
+                        value = "#" + identifiers[value[1:]]
+                    element.set(attribute, value)
+        vector.append(artwork)
+    ET.ElementTree(vector).write(Path(path).with_suffix(".svg"), encoding="utf-8", xml_declaration=True)
 
 
 def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
@@ -529,6 +571,8 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     scored = [k for k, n in enumerate(names) if n in rows or (pred == k).any()]
     unscored = [n for k, n in enumerate(names) if k not in scored]
     macro_f1 = f1[scored].mean()
+    # Use true support, including clips predicted OTHER; composites use the same resolved truth as macro F1.
+    weighted_f1 = np.average(f1, weights=cm_resolved.sum(1))
     acc, acc_lenient = strict.mean(), lenient.mean()
     lenient_by_emotion = [lenient[truth == k].mean() if (truth == k).any() else 0.0 for k in range(len(rows))]
     rescued = collections.Counter((acted[i], names[pred[i]]) for i in np.flatnonzero(lenient & ~strict))
@@ -549,6 +593,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     print(f"  unweighted accuracy (UA)            : {recall.mean():.1%}")
     print(f"  macro F1                            : {macro_f1:.1%}"
           + (f" ({', '.join(unscored)} left out: never predicted, no clip has this label)" if unscored else ""))
+    print(f"  weighted F1                         : {weighted_f1:.1%}")
     print(f"  {f'accuracy, all {n_all} model classes':<36}: {acc_all:.1%}")
     print(f"  chance level                        : {chance:.1%}")
     if human is not None:
@@ -575,6 +620,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
                             + [f"{p:.4f}" for p in scores[i]]
                             + [f"{clip_extras[i][k]:.6f}" if k in clip_extras[i] else "" for k in extra_columns])
     metrics = {"accuracy": acc, "unweighted_accuracy": recall.mean(), "macro_f1": macro_f1,
+               "weighted_f1": weighted_f1,
                "accuracy_all_classes": acc_all}
     if has_listener:
         metrics |= {"accuracy_acted_or_listener": acc_lenient, "listeners_vs_acted": human, "model_vs_listeners": agree}
@@ -636,7 +682,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     sentence = lambda text: text if text.endswith((".", "!", "?")) else text + "."
     versions = ", ".join(f"{lib} {v}" for lib, v in predict.versions.items())
     # Results per emotion: one table; with composite labels, one per acted emotion (the recall that unweighted accuracy
-    # averages) and one per predicted emotion (precision, recall and F1 against the resolved truth, for macro F1)
+    # averages) and one per predicted emotion (precision, recall and F1 against resolved truth, for both F1 averages)
     lenient_column = (" Correct, acted or listeners' vote |", "---|") if has_listener else ("", "")
     lenient_cell = lambda k: f" {pct(lenient_by_emotion[k])} |" if has_listener else ""
     f1_scope = (f", over {len(scored)} of the {n_cls} predicted emotions" if unscored
@@ -644,7 +690,8 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
     if not composite:
         per_emotion = [
             "Rows: acted emotion. Precision, recall and F1 compare the prediction with the acted emotion"
-            + ("; the last column also accepts the listeners' vote." if has_listener else "."),
+            + ("; the last column also accepts the listeners' vote." if has_listener else ".")
+            + " Weighted F1 weights each class's F1 by its true clip count.",
             "",
             "| Emotion | Clips | Precision | Recall | F1 |" + lenient_column[0],
             "|---|---|---|---|---|" + lenient_column[1],
@@ -667,7 +714,8 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
             + f". So a correct {composite[0]} clip counts as a clip of the emotion predicted, and a wrong one as "
             f"{ds.accept[composite[0]][0]}. Clips: the clips of each resolved truth. Macro F1 is the mean of the "
             "F1 column" + (f"; {', '.join(unscored)} is left out, because no clip has this label and the model never "
-                           "predicted it, so its F1 is undefined." if unscored else "."),
+                           "predicted it, so its F1 is undefined." if unscored else ".")
+            + " Weighted F1 weights that column by the resolved-truth clip counts, using the same resolution.",
             "",
             "| Predicted emotion | Clips | Precision | Recall | F1 |",
             "|---|---|---|---|---|",
@@ -692,6 +740,7 @@ def evaluate(ds, predict, model, entry, note, device, limit, reuse=None):
           if has_listener else []),
         f"| Unweighted accuracy (mean recall of the {len(rows)} acted emotions) | {pct(recall.mean())} |",
         f"| Macro F1 (acted emotion{f1_scope}) | {pct(macro_f1)} |",
+        f"| Weighted F1 (by {'resolved-truth ' if composite else ''}class support) | {pct(weighted_f1)} |",
         f"| Accuracy, all {n_all} model classes (acted emotion) | {pct(acc_all)} |",
         f"| Chance level ({n_cls} emotions"
         + "".join(f"; {r} accepts {len(accepted(ds, r) & set(names))}" for r in composite) + f") | {pct(chance)} |",
@@ -823,6 +872,8 @@ def best_runs(model, exclude=(), entry=None):
     best = {}
     for p in sorted(out.glob("*_predictions.json")):
         run = json.loads(p.read_text(encoding="utf-8")) | {"stem": p.name.removesuffix("_predictions.json")}
+        if "metrics" in run:
+            run["metrics"] = load_reported_metrics(p, run)
         if entry is not None and is_llm(entry) and run.get("inference_protocol") != current_protocol(entry, run["classes"]):
             continue
         if "metrics" in run and run["key"] not in exclude and run["clips"] > best.get(run["key"], {"clips": 0})["clips"]:
@@ -925,7 +976,7 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
     rows = [f"| [{r['dataset']}]({r['stem']}.md) | {r['language']} | {labels(r)} | {evidence_cell(r)} | {clips(r)} | "
             f"{len(r['classes'])} | {pct(chance(r))} | **{pct(r['metrics']['accuracy'])}** | "
             f"{pct(r['metrics'].get('accuracy_acted_or_listener'))} | {pct(r['metrics']['unweighted_accuracy'])} | "
-            f"{pct(r['metrics']['macro_f1'])} |" for r in ranked]
+            f"{pct(r['metrics']['macro_f1'])} | {pct(r['metrics'].get('weighted_f1'))} |" for r in ranked]
     summary = [
         f"# {name}: results on every dataset",
         "",
@@ -933,8 +984,8 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         "datasets are grouped by training-source evidence level, each group sorted by accuracy.",
         "",
         f"| Dataset | Language | Ground-truth labels | {column} | Clips | Emotions | Chance "
-        "| Accuracy: acted emotion | Accuracy: acted or listeners' vote | Unweighted accuracy | Macro F1 |",
-        "|---|---|---|---|---|---|---|---|---|---|---|",
+        "| Accuracy: acted emotion | Accuracy: acted or listeners' vote | Unweighted accuracy | Macro F1 | Weighted F1 |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
         *rows,
         "",
         "- **Ground-truth labels**: the emotions the speakers were asked to portray, as the project's class names (each "
@@ -951,6 +1002,9 @@ def write_summary(model, entry, note, figure_order=(), acted_or_listener=(), exc
         "many emotions it has.",
         "- **Accuracy: acted or listeners' vote** also accepts the listeners' majority vote; it exists only for "
         "datasets that publish listeners' labels.",
+        "- **Weighted F1** weights each class's F1 by its true support; composite labels use the same resolved truth "
+        "as macro F1, explained in each report. Invalid answers remain errors. A dash means this metric has not yet "
+        "been recomputed from saved predictions.",
         *(["- **(sample)**: evaluated on clips taken at even intervals within each emotion (`limit` in "
            "config/evaluation.yaml), not on every clip."]
           if sampled else []),
@@ -1110,7 +1164,15 @@ def write_comparison(registry, exclude=()):
         "The mean F1 of the predicted emotions (each report explains how a composite label such as JL-Corpus's "
         "*excited* counts).",
         "",
-        *table("macro_f1", dataset_chance),
+        *table("macro_f1", lambda k: None),
+        "",
+        "## Weighted F1",
+        "",
+        "The mean class F1 weighted by true support. Composite labels use the same resolved truth as macro F1; "
+        "invalid answers remain errors. This metric has no universal 1/K chance baseline. A dash means it has not "
+        "yet been recomputed from saved predictions.",
+        "",
+        *table("weighted_f1", lambda k: None),
         "",
     ]
     if shared:
@@ -1150,7 +1212,7 @@ def write_comparison(registry, exclude=()):
         "results": {m: {k: {"clips": r["clips"], "total_clips": r.get("total_clips", r["clips"]), "sample": sampled(r),
                             **training_metadata(k, registry[m]),
                             **{x: (v if x == "shared_clips" else rounded(v)) for x, v in values[m, k].items()
-                               if x in ("accuracy", "unweighted_accuracy", "macro_f1", "shared_clips",
+                               if x in ("accuracy", "unweighted_accuracy", "macro_f1", "weighted_f1", "shared_clips",
                                         "shared_accuracy", "shared_unweighted_accuracy")}}
                         for k, r in runs[m].items()} for m in models},
     }

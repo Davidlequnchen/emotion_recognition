@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.547374+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/emozionalmente_predictions.csv",
+      "sha256": "f659e6e567db200b2ff8d53ed656af102977ec6b52e3eaf26c26eb814ba0c454",
+      "bytes": 1174158
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emozionalmente_predictions.json",
+      "sha256": "5ee9e244934aa0f2193eb40e17427e9badac6b3808cec49444822625dc499bc5",
+      "bytes": 3282
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.869458,
+    "unweighted_accuracy": 0.869458,
+    "macro_f1": 0.869253,
+    "accuracy_all_classes": 0.869313,
+    "accuracy_acted_or_listener": 0.909881,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.77485
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.8694581280788177,
+    "unweighted_accuracy": 0.8694581280788177,
+    "macro_f1": 0.8692531074806451,
+    "weighted_f1": 0.8692531074806449,
+    "accuracy_all_classes": 0.8693132425383947,
+    "accuracy_acted_or_listener": 0.9098811938568531,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.7748504929691288
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

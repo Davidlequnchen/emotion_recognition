@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.528948+00:00",
+  "model": "vox_profile_whisper",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/emovo_predictions.csv",
+      "sha256": "c41c9bfa502e4a06a03c3da3102c79305ac5fc1a129565c101692cfdb4bf2606",
+      "bytes": 74225
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emovo_predictions.json",
+      "sha256": "a2ade23102fdbfc6aba989a4231eabf3a702b03b74505d83b180e0508c2fc29b",
+      "bytes": 2573
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.358844,
+    "unweighted_accuracy": 0.358844,
+    "macro_f1": 0.313627,
+    "accuracy_all_classes": 0.358844
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.358843537414966,
+    "unweighted_accuracy": 0.358843537414966,
+    "macro_f1": 0.31362717337937646,
+    "weighted_f1": 0.3136271733793765,
+    "accuracy_all_classes": 0.358843537414966
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

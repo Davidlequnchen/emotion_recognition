@@ -16,7 +16,7 @@ the detector (checkpoint, mode, devices, max_seconds) in config/antideepfake.yam
 Output, in outputs/antideepfake/<name>/ (not in git):
     scores.csv       one row per file and condition: group, label, P(real), logits, duration
     summary.md/json  the metrics above, per condition
-    scores.png       distribution of the scores per group and condition; roc.png: ROC curves
+    scores.png/.svg  distribution of the scores per group and condition; roc.png/.svg: ROC curves
     telephone_audio/ the telephone versions of the files (8 kHz), when telephone.save_audio is true
 """
 import csv
@@ -259,6 +259,7 @@ def main():
         ax.set_ylabel("log-odds of real (logit_real - logit_fake); > 0 = real")
     fig.tight_layout()
     fig.savefig(out_dir / "scores.png", dpi=200)
+    fig.savefig(out_dir / "scores.svg", metadata={"Date": None})
     plt.close(fig)
 
     fig, axes = plt.subplots(1, len(cfg["conditions"]), figsize=(5 * len(cfg["conditions"]), 5), squeeze=False)
@@ -275,8 +276,9 @@ def main():
         ax.legend(loc="lower right", fontsize=8)
     fig.tight_layout()
     fig.savefig(out_dir / "roc.png", dpi=200)
+    fig.savefig(out_dir / "roc.svg", metadata={"Date": None})
     plt.close(fig)
-    print(f"  plots       : {rel(out_dir / 'scores.png')}, {rel(out_dir / 'roc.png')}")
+    print(f"  plots       : {rel(out_dir / 'scores.png')}/.svg, {rel(out_dir / 'roc.png')}/.svg")
 
 
 if __name__ == "__main__":

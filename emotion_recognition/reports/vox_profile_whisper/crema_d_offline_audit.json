@@ -1,0 +1,49 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.493118+00:00",
+  "model": "vox_profile_whisper",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.csv",
+      "sha256": "939ee429750583f647a0e4e945097f7c1e2e17646345908f80a42c1b57167456",
+      "bytes": 1095221
+    },
+    {
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.json",
+      "sha256": "7a27e5e652786605b952134496f05768a2431acca117c7b8b67a0cfb85fc271e",
+      "bytes": 2496
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.336603,
+    "unweighted_accuracy": 0.351988,
+    "macro_f1": 0.299302,
+    "accuracy_all_classes": 0.307175,
+    "accuracy_acted_or_listener": 0.704515,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.63857
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.33660306369255577,
+    "unweighted_accuracy": 0.35198798184972674,
+    "macro_f1": 0.2993022322073745,
+    "weighted_f1": 0.297787365299392,
+    "accuracy_all_classes": 0.3071754904595539,
+    "accuracy_acted_or_listener": 0.7045149153453373,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.6385701676963813
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

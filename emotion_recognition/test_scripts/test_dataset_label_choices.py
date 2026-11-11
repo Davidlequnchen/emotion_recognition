@@ -10,6 +10,8 @@ import csv
 import hashlib
 import io
 import json
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -762,6 +764,189 @@ class EvaluationReuseTests(Fixture):
             for figure in captured:
                 plt.close(figure)
 
+    def test_weighted_f1_is_preserved_in_viewer_and_plots_without_filling_legacy_scores(self):
+        self.viewer_config()
+        path = self.write_run(self.protocol)
+        original = json.loads(path.read_text())
+        for metrics in ({"accuracy": .5, "weighted_f1": .72}, {"accuracy": .5}):
+            with self.subTest(metrics=metrics), mock.patch.object(make_viewer, "ROOT", self.root):
+                metadata = original | {"metrics": metrics}
+                path.write_text(json.dumps(metadata))
+                before = path.read_bytes()
+                selected = plot_results.load_results("all", "all", [], registry={"fake": self.entry}, root=self.root)
+                summary = make_viewer.current_summary("fake", {path.with_suffix(".csv"): metadata}, self.entry)
+                self.assertEqual(selected["fake"]["fixture"]["metrics"], metrics)
+                self.assertEqual(summary["datasets"][0]["metrics"], metrics)
+                self.assertEqual(path.read_bytes(), before)
+
+    def test_result_metric_switch_updates_only_the_selected_explanation_and_formula(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("Node.js is required to exercise the viewer's metric switch")
+        template = (PROJECT / "scripts/viewer/templates/viewer.html").read_text()
+        implementation = "const METRICS =" + template.split("const METRICS =", 1)[1].split("function modelResults", 1)[0]
+        harness = r'''
+const assert = require("node:assert/strict");
+const state = { metric: "accuracy" };
+function el(tag, props = {}, ...children) {
+  return { tag, ...props, children,
+    replaceChildren(...next) { this.children = next; } };
+}
+const document = {
+  createElementNS(namespaceURI, tag) {
+    return { tag, namespaceURI, children: [], attrs: {},
+      append(...children) { this.children.push(...children); },
+      setAttribute(name, value) { this.attrs[name] = value; } };
+  },
+};
+let activeSwitcher;
+function segmented(container, options, metric, onPick) {
+  activeSwitcher = container;
+  container.options = options;
+  container.metric = metric;
+  container.pick = onPick;
+}
+const pct = value => typeof value === "number" ? `${100 * value}%` : "–";
+const levelValue = value => el("span", { textContent: pct(value) });
+const td = value => el("td", { textContent: value });
+const partOfTraining = () => false;
+const trainingMarker = () => "";
+const trainingLabel = () => "";
+const byDatasetType = items => [["Fixture", items]];
+const resultsTable = (columns, groups, label) => ({ columns, groups, label });
+const legend = () => el("div", { className: "legend" });
+'''
+        assertions = r'''
+const models = [{ name: "Fixture model", summary: { datasets: [
+  { key: "fixture", dataset: "Fixture", emotions: 2, clips: 10,
+    metrics: { accuracy: .8, unweighted_accuracy: .7, macro_f1: .65, weighted_f1: .75 } },
+] } }];
+const view = comparison(models);
+const explanation = view.find(item => item.className === "metric-note");
+assert.equal(explanation.attrs["aria-live"], "polite");
+const text = item => typeof item === "string" ? item
+  : (item.textContent || "") + (item.children || []).map(text).join("");
+const descendants = item => typeof item === "string" ? []
+  : [item, ...(item.children || []).flatMap(descendants)];
+const expected = {
+  accuracy: { label: "Accuracy equals", mathCount: 1, fractionCount: 1, sumCount: 0 },
+  unweighted_accuracy: { label: "UAR equals", mathCount: 2, fractionCount: 2, sumCount: 1 },
+  macro_f1: { label: "Macro F1 equals", mathCount: 2, fractionCount: 4, sumCount: 1 },
+  weighted_f1: { label: "Weighted F1 equals", mathCount: 2, fractionCount: 4, sumCount: 1 },
+};
+assert.deepEqual(activeSwitcher.options.map(([key]) => key), Object.keys(expected));
+for (const [metric, specification] of Object.entries(expected)) {
+  activeSwitcher.pick(metric);
+  assert.equal(state.metric, metric);
+  assert.equal(activeSwitcher.metric, metric);
+  const formulaNodes = explanation.children.filter(item => item.className === "metric-formula");
+  assert.equal(formulaNodes.length, 1);
+  const nodes = descendants(formulaNodes[0]);
+  const maths = nodes.filter(item => item.tag === "math");
+  assert.equal(maths.length, specification.mathCount);
+  assert.ok(maths[0].attrs.alttext.startsWith(specification.label));
+  for (const math of maths) {
+    assert.equal(math.namespaceURI, "http://www.w3.org/1998/Math/MathML");
+    assert.equal(math.attrs.display, "block");
+    assert.equal(math.attrs["aria-label"], math.attrs.alttext);
+    assert.ok(math.attrs.alttext.length > 20);
+  }
+  assert.equal(nodes.filter(item => item.tag === "mfrac").length, specification.fractionCount);
+  const sums = nodes.filter(item => item.tag === "munderover");
+  assert.equal(sums.length, specification.sumCount);
+  for (const sum of sums) {
+    assert.deepEqual(sum.children.map(item => item.tag), ["mo", "mrow", "mi"]);
+    assert.equal(text(sum.children[0]), "∑");
+    assert.equal(text(sum.children[1]), "k=1");
+    assert.equal(text(sum.children[2]), "K");
+  }
+  if (metric !== "accuracy") assert.ok(nodes.some(item => item.tag === "msub"));
+  const firstFraction = nodes.find(item => item.tag === "mfrac");
+  if (metric === "accuracy") {
+    assert.equal(text(firstFraction.children[0]), "correct clips");
+    assert.equal(text(firstFraction.children[1]), "N");
+  } else if (metric === "weighted_f1") {
+    assert.equal(text(firstFraction.children[0]), "nk");
+    assert.equal(text(firstFraction.children[1]), "N");
+  } else {
+    assert.equal(text(firstFraction.children[0]), "1");
+    assert.equal(text(firstFraction.children[1]), "K");
+  }
+  assert.ok(text(explanation).includes("Invalid answers count as wrong"));
+  for (const [other, otherSpecification] of Object.entries(expected)) {
+    if (other !== metric) assert.ok(!maths.some(math => math.attrs.alttext.startsWith(otherSpecification.label)));
+  }
+}
+assert.ok(text(explanation).includes("Class support"));
+assert.ok(text(explanation).includes("precision"));
+assert.ok(text(explanation).includes("recall"));
+assert.ok(text(explanation).includes("resolved truth"));
+console.log("Metric explanation switching: PASS");
+'''
+        result = subprocess.run([node, "-"], input=harness + implementation + assertions,
+                                text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_weighted_f1_charts_keep_zero_and_missing_distinct_without_accuracy_chance(self):
+        models = ["scored", "zero", "legacy"]
+        names = dict(zip(models, models))
+        colours = dict(zip(models, plot_results.COLOURS))
+        results = {model: {"fixture": {"key": "fixture", "dataset": "Fixture", "classes": FOUR,
+                    "clips": 2, "metrics": metrics, "in_training_data": False}}
+                   for model, metrics in zip(models, ({"weighted_f1": .72}, {"weighted_f1": 0.0},
+                                                      {"macro_f1": .5}))}
+        plt = plot_results.setup_matplotlib()
+        captured = []
+        def capture(figure, _plt, stem):
+            captured.append(figure)
+            return stem
+        try:
+            with mock.patch.object(plot_results, "save", side_effect=capture):
+                plot_results.per_dataset_figure(plt, "weighted_f1", results, models, names, colours,
+                                                ["fixture"], 1, self.root)
+                plot_results.overview_figure(plt, "weighted_f1", results, models, names, colours,
+                                            ["fixture"], self.root)
+            panels, overview = captured
+            self.assertEqual([patch.get_height() for patch in panels.axes[0].patches], [72.0, 0.0])
+            self.assertEqual(len(panels.axes[0].lines), 0)
+            self.assertNotIn("chance level", [text.get_text() for text in panels.legends[0].texts])
+            self.assertEqual(panels.axes[0].get_ylabel(), "Weighted F1 (%)")
+            matrix = overview.axes[0].collections[0].get_array()  # vector QuadMesh, also retained in SVG
+            self.assertEqual(matrix.shape, (1, 3))
+            self.assertTrue(matrix.mask[0, 2])
+            self.assertEqual([text.get_text() for text in overview.axes[0].texts], ["72.0", "0.0", "—"])
+            self.assertNotIn("Chance\nreference", [tick.get_text() for tick in overview.axes[0].get_xticklabels()])
+        finally:
+            for figure in captured:
+                plt.close(figure)
+
+    def test_viewer_and_plots_use_audited_weighted_f1_only_for_matching_source_files(self):
+        self.viewer_config()
+        path = self.write_run(self.protocol)
+        metadata = json.loads(path.read_text())
+        audit_path = self.root / "reports/fake/fixture_offline_audit.json"
+        audit_path.parent.mkdir(parents=True)
+        audit_path.write_text(json.dumps({"model": "fake", "key": "fixture", "clips": metadata["clips"],
+            "recomputed_metrics": {"weighted_f1": .72}, "source_artifacts": [
+                {"path": source.relative_to(self.root).as_posix(),
+                 "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+                for source in (path, path.with_suffix(".csv"))]}))
+        before = path.read_bytes()
+        for changed in (False, True):
+            if changed:
+                with path.with_suffix(".csv").open("a") as output:
+                    output.write("\n")
+            with self.subTest(changed=changed), mock.patch.object(make_viewer, "ROOT", self.root):
+                selected = plot_results.load_results("all", "all", [], registry={"fake": self.entry}, root=self.root)
+                summary = make_viewer.current_summary("fake", {path.with_suffix(".csv"): metadata}, self.entry)
+                for metrics in (selected["fake"]["fixture"]["metrics"], summary["datasets"][0]["metrics"]):
+                    if changed:
+                        self.assertNotIn("weighted_f1", metrics)
+                    else:
+                        self.assertEqual(metrics["weighted_f1"], .72)
+                    self.assertEqual(metrics["accuracy"], metadata["metrics"]["accuracy"])
+                self.assertEqual(path.read_bytes(), before)
+
     def test_placeholder_order_stays_fixed_when_results_arrive_without_fabricating_records(self):
         registry = {"ser": {"name": "SER"}, "gpt_realtime": {"name": "GPT Realtime"},
                     "gemini": {"name": "Gemini"}}
@@ -908,6 +1093,90 @@ class EvaluationReuseTests(Fixture):
         finally:
             for figure in captured:
                 plt.close(figure)
+
+
+class ViewerExampleCoverageTests(Fixture):
+    DATASET_KEYS = ("crema_d", "mcae_spps", "thai_ser", "nemo", "mess", "ravdess", "tess",
+                    "jl_corpus", "mead", "meld", "emovo", "emozionalmente", "savee",
+                    "emotiontalk", "dailytalk", "multidialog")
+
+    def example_datasets(self, keys):
+        return [{"key": key, "dataset": key, "runs": {"fixture": {"total": 1}}, "clips": [{
+            "file": f"{key}.wav", "path": self.root / "data" / key / f"{key}.wav",
+            "labels": {"emotion": "happy"},
+            "models": {"fixture": {"predictions": {"prediction": "happy"}}},
+        }]} for key in keys]
+
+    def test_all_mode_keeps_all_sixteen_datasets_and_audio_paths(self):
+        datasets = self.example_datasets(self.DATASET_KEYS)
+        selected = make_viewer.site_datasets(datasets, "all")
+        self.assertEqual([dataset["key"] for dataset in selected], list(self.DATASET_KEYS))
+        self.assertEqual(selected, datasets)
+        self.assertEqual([dataset["clips"][0]["path"] for dataset in selected],
+                         [self.root / "data" / key / f"{key}.wav" for key in self.DATASET_KEYS])
+        settings = yaml.safe_load((PROJECT / "config" / "viewer.yaml").read_text())
+        self.assertEqual(settings["site_audio"], "all")
+
+    def test_public_mode_filters_restricted_and_unknown_datasets(self):
+        keys = self.DATASET_KEYS + ("unknown_dataset",)
+        datasets = self.example_datasets(keys)
+        selected = make_viewer.site_datasets(datasets, "public")
+        allowed = ["crema_d", "mcae_spps", "thai_ser", "nemo", "mess", "ravdess", "tess",
+                   "jl_corpus", "emozionalmente"]
+        self.assertEqual([dataset["key"] for dataset in selected], allowed)
+        self.assertEqual(selected, [dataset for dataset in datasets if dataset["key"] in allowed])
+        self.assertEqual([dataset["key"] for dataset in datasets], list(keys))
+
+    def test_site_audio_rejects_invalid_modes(self):
+        datasets = self.example_datasets(self.DATASET_KEYS)
+        for mode in ("private", "ALL", "", None):
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                make_viewer.site_datasets(datasets, mode)
+
+
+class FigureExportTests(unittest.TestCase):
+    def assert_vector_svg(self, path):
+        import xml.etree.ElementTree as ET
+        artwork = ET.parse(path).getroot()
+        self.assertFalse(any(element.tag.endswith("}image") for element in artwork.iter()),
+                         "SVG must contain plotted vector artwork, not an embedded PNG")
+        self.assertTrue(any(element.tag.endswith("}path") for element in artwork.iter()))
+        return artwork
+
+    def test_comparison_figures_export_png_and_vector_svg_without_pdf(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            results = {"fixture": {"meld": {"key": "meld", "dataset": "MELD", "classes": FOUR,
+                        "clips": 2, "metrics": {"accuracy": .5}, "training_status": "not_established"}}}
+            plt = plot_results.setup_matplotlib()
+            arguments = (plt, "accuracy", results, ["fixture"], {"fixture": "Fixture"},
+                         {"fixture": plot_results.COLOURS[0]}, ["meld"])
+            plot_results.per_dataset_figure(*arguments, 1, out)
+            plot_results.overview_figure(*arguments, out)
+            self.assertEqual(len(list(out.glob("*.png"))), 2)
+            self.assertEqual(len(list(out.glob("*.svg"))), 2)
+            self.assertFalse(list(out.glob("*.pdf")))
+            for path in out.glob("*.svg"):
+                self.assert_vector_svg(path)
+
+    def test_confusions_and_summary_grid_keep_vector_paths_and_unique_ids(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            ds = SimpleNamespace(classes=["angry", "neutral"], accept={})
+            paths = [out / "first.png", out / "second.png"]
+            for path, matrix in zip(paths, (np.array([[3, 1], [1, 2]]), np.array([[2, 2], [0, 3]]))):
+                evaluation.plot_confusion(matrix, ds, ds.classes, "Fixture", "Saved predictions", "Truth", path)
+                self.assertTrue(path.is_file())
+                self.assert_vector_svg(path.with_suffix(".svg"))
+            evaluation.stitch(paths, out / "summary.png", columns=2)
+            artwork = self.assert_vector_svg(out / "summary.svg")
+            identifiers = [element.attrib["id"] for element in artwork.iter() if "id" in element.attrib]
+            self.assertEqual(len(identifiers), len(set(identifiers)))
+            self.assertTrue((out / "summary.png").is_file())
+            self.assertFalse(list(out.glob("*.pdf")))
+            paths[0].with_suffix(".svg").unlink()
+            evaluation.stitch(paths, out / "summary.png", columns=2)
+            self.assertFalse((out / "summary.svg").exists())  # no stale grid or fake SVG wrapper
 
 
 if __name__ == "__main__":

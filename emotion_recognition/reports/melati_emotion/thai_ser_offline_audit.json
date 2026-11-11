@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.431679+00:00",
+  "model": "melati_emotion",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/thai_ser_predictions.csv",
+      "sha256": "5b311206fee1b7d0c527c21a23dd03e4e4c1aec838c5472b82e69975ded209e2",
+      "bytes": 1665502
+    },
+    {
+      "path": "outputs/melati_emotion/thai_ser_predictions.json",
+      "sha256": "4a0eca9683042b639bf5ac95d9f10d3b659c00710286eba9d695c1249012b52c",
+      "bytes": 3031
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.727043,
+    "unweighted_accuracy": 0.717556,
+    "macro_f1": 0.72154,
+    "accuracy_all_classes": 0.702481,
+    "accuracy_acted_or_listener": 0.757343,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.633778
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.7270425388251182,
+    "unweighted_accuracy": 0.7175558383479475,
+    "macro_f1": 0.7215400060963986,
+    "weighted_f1": 0.7243537920086242,
+    "accuracy_all_classes": 0.7024814314652262,
+    "accuracy_acted_or_listener": 0.7573430114787306,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.6337778528021607
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

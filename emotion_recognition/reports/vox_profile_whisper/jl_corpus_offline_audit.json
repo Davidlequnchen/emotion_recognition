@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.596362+00:00",
+  "model": "vox_profile_whisper",
+  "key": "jl_corpus",
+  "clips": 1200,
+  "unique_audio_paths": 1200,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/jl_corpus_predictions.csv",
+      "sha256": "f9336a964fd10364dd1f839fbf57536f417ef88a770789a3d743f6463b5c6d64",
+      "bytes": 226650
+    },
+    {
+      "path": "outputs/vox_profile_whisper/jl_corpus_predictions.json",
+      "sha256": "55555e7ef1242e014baf028ec04299d2c18aad46ca20cd231dbd63508bed4ff8",
+      "bytes": 2075
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.450833,
+    "unweighted_accuracy": 0.450833,
+    "macro_f1": 0.473273,
+    "accuracy_all_classes": 0.435833
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.4508333333333333,
+    "unweighted_accuracy": 0.4508333333333333,
+    "macro_f1": 0.4732730547214872,
+    "weighted_f1": 0.42389064390878306,
+    "accuracy_all_classes": 0.43583333333333335
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

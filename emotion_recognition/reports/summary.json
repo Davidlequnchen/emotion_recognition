@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "models": [
     {
       "model": "emotion2vec_plus_large",
@@ -221,6 +221,7 @@
         "accuracy": 0.864553,
         "unweighted_accuracy": 0.865401,
         "macro_f1": 0.865683,
+        "weighted_f1": 0.864759,
         "shared_clips": 4900,
         "shared_accuracy": 0.89,
         "shared_unweighted_accuracy": 0.890352
@@ -240,6 +241,7 @@
         "accuracy": 0.613483,
         "unweighted_accuracy": 0.541993,
         "macro_f1": 0.500753,
+        "weighted_f1": 0.546196,
         "shared_clips": 4297,
         "shared_accuracy": 0.8606,
         "shared_unweighted_accuracy": 0.834444
@@ -259,6 +261,7 @@
         "accuracy": 0.705942,
         "unweighted_accuracy": 0.687908,
         "macro_f1": 0.696642,
+        "weighted_f1": 0.702081,
         "shared_clips": 11848,
         "shared_accuracy": 0.705942,
         "shared_unweighted_accuracy": 0.687908
@@ -278,6 +281,7 @@
         "accuracy": 0.519527,
         "unweighted_accuracy": 0.505879,
         "macro_f1": 0.473726,
+        "weighted_f1": 0.480849,
         "shared_clips": 3076,
         "shared_accuracy": 0.66645,
         "shared_unweighted_accuracy": 0.661634
@@ -297,6 +301,7 @@
         "accuracy": 0.407778,
         "unweighted_accuracy": 0.407778,
         "macro_f1": 0.352239,
+        "weighted_f1": 0.352239,
         "shared_clips": 1800,
         "shared_accuracy": 0.407778,
         "shared_unweighted_accuracy": 0.407778
@@ -318,6 +323,7 @@
         "accuracy": 0.920833,
         "unweighted_accuracy": 0.922867,
         "macro_f1": 0.922045,
+        "weighted_f1": 0.92101,
         "shared_clips": 864,
         "shared_accuracy": 0.914352,
         "shared_unweighted_accuracy": 0.917101
@@ -339,6 +345,7 @@
         "accuracy": 0.855357,
         "unweighted_accuracy": 0.855357,
         "macro_f1": 0.798306,
+        "weighted_f1": 0.798306,
         "shared_clips": 1600,
         "shared_accuracy": 1.0,
         "shared_unweighted_accuracy": 1.0
@@ -360,6 +367,7 @@
         "accuracy": 0.925,
         "unweighted_accuracy": 0.925,
         "macro_f1": 0.922668,
+        "weighted_f1": 0.925274,
         "shared_clips": 960,
         "shared_accuracy": 0.946875,
         "shared_unweighted_accuracy": 0.946875
@@ -381,6 +389,7 @@
         "accuracy": 0.900875,
         "unweighted_accuracy": 0.89681,
         "macro_f1": 0.890151,
+        "weighted_f1": 0.901948,
         "shared_clips": 4280,
         "shared_accuracy": 0.92757,
         "shared_unweighted_accuracy": 0.916778
@@ -402,6 +411,7 @@
         "accuracy": 0.455905,
         "unweighted_accuracy": 0.298381,
         "macro_f1": 0.284932,
+        "weighted_f1": 0.455811,
         "shared_clips": 2210,
         "shared_accuracy": 0.486878,
         "shared_unweighted_accuracy": 0.417523
@@ -423,6 +433,7 @@
         "accuracy": 0.87585,
         "unweighted_accuracy": 0.87585,
         "macro_f1": 0.876219,
+        "weighted_f1": 0.876219,
         "shared_clips": 336,
         "shared_accuracy": 0.895833,
         "shared_unweighted_accuracy": 0.895833
@@ -444,6 +455,7 @@
         "accuracy": 0.869458,
         "unweighted_accuracy": 0.869458,
         "macro_f1": 0.869253,
+        "weighted_f1": 0.869253,
         "shared_clips": 3944,
         "shared_accuracy": 0.869675,
         "shared_unweighted_accuracy": 0.869675
@@ -465,9 +477,70 @@
         "accuracy": 0.933333,
         "unweighted_accuracy": 0.925,
         "macro_f1": 0.928172,
+        "weighted_f1": 0.933579,
         "shared_clips": 300,
         "shared_accuracy": 0.946667,
         "shared_unweighted_accuracy": 0.935417
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
+        "accuracy": 0.496112,
+        "unweighted_accuracy": 0.372677,
+        "macro_f1": 0.327983,
+        "weighted_f1": 0.491694,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.591026,
+        "shared_unweighted_accuracy": 0.585233
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
+        "accuracy": 0.584795,
+        "unweighted_accuracy": 0.325794,
+        "macro_f1": 0.245954,
+        "weighted_f1": 0.635976,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.588586,
+        "shared_unweighted_accuracy": 0.451719
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "EmoBox academic data is used for seed fine-tuning, followed by teacher pseudo-labelling and data iteration to large; this project counts those corpora as used through upstream training. Large also uses 42,526 h of industrial pseudo-labelled audio. This is distinct from a claim that every EmoBox corpus directly entered large encoder self-supervised pretraining",
+        "training_evidence": [
+          "https://huggingface.co/emotion2vec/emotion2vec_plus_large/blob/6c303ba987b86b93193de93e34bb2b077a6bedc4/README.md",
+          "https://github.com/ddlBoJack/emotion2vec/issues/73",
+          "https://github.com/ddlBoJack/emotion2vec/issues/46"
+        ],
+        "accuracy": 0.486705,
+        "unweighted_accuracy": 0.240467,
+        "macro_f1": 0.191037,
+        "weighted_f1": 0.495427,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.575008,
+        "shared_unweighted_accuracy": 0.379661
       }
     },
     "meralion_ser_v1": {
@@ -486,6 +559,7 @@
         "accuracy": 0.846815,
         "unweighted_accuracy": 0.848713,
         "macro_f1": 0.847376,
+        "weighted_f1": 0.845798,
         "shared_clips": 4900,
         "shared_accuracy": 0.831429,
         "shared_unweighted_accuracy": 0.834833
@@ -505,6 +579,7 @@
         "accuracy": 0.648989,
         "unweighted_accuracy": 0.577856,
         "macro_f1": 0.544171,
+        "weighted_f1": 0.591,
         "shared_clips": 4297,
         "shared_accuracy": 0.867582,
         "shared_unweighted_accuracy": 0.844102
@@ -524,6 +599,7 @@
         "accuracy": 0.470459,
         "unweighted_accuracy": 0.474735,
         "macro_f1": 0.474074,
+        "weighted_f1": 0.470486,
         "shared_clips": 11848,
         "shared_accuracy": 0.470459,
         "shared_unweighted_accuracy": 0.474735
@@ -543,6 +619,7 @@
         "accuracy": 0.551439,
         "unweighted_accuracy": 0.537699,
         "macro_f1": 0.480564,
+        "weighted_f1": 0.487923,
         "shared_clips": 3076,
         "shared_accuracy": 0.762029,
         "shared_unweighted_accuracy": 0.759294
@@ -562,6 +639,7 @@
         "accuracy": 0.745,
         "unweighted_accuracy": 0.745,
         "macro_f1": 0.746711,
+        "weighted_f1": 0.746711,
         "shared_clips": 1800,
         "shared_accuracy": 0.745,
         "shared_unweighted_accuracy": 0.745
@@ -583,6 +661,7 @@
         "accuracy": 0.593056,
         "unweighted_accuracy": 0.612599,
         "macro_f1": 0.59684,
+        "weighted_f1": 0.584741,
         "shared_clips": 864,
         "shared_accuracy": 0.62037,
         "shared_unweighted_accuracy": 0.657986
@@ -604,6 +683,7 @@
         "accuracy": 0.4925,
         "unweighted_accuracy": 0.4925,
         "macro_f1": 0.378642,
+        "weighted_f1": 0.378642,
         "shared_clips": 1600,
         "shared_accuracy": 0.634375,
         "shared_unweighted_accuracy": 0.634375
@@ -625,6 +705,7 @@
         "accuracy": 0.759167,
         "unweighted_accuracy": 0.759167,
         "macro_f1": 0.772844,
+        "weighted_f1": 0.760455,
         "shared_clips": 960,
         "shared_accuracy": 0.740625,
         "shared_unweighted_accuracy": 0.740625
@@ -646,6 +727,7 @@
         "accuracy": 0.28325,
         "unweighted_accuracy": 0.322761,
         "macro_f1": 0.250345,
+        "weighted_f1": 0.252865,
         "shared_clips": 4280,
         "shared_accuracy": 0.48271,
         "shared_unweighted_accuracy": 0.524507
@@ -665,6 +747,7 @@
         "accuracy": 0.300613,
         "unweighted_accuracy": 0.383758,
         "macro_f1": 0.27999,
+        "weighted_f1": 0.243121,
         "shared_clips": 2210,
         "shared_accuracy": 0.263801,
         "shared_unweighted_accuracy": 0.391972
@@ -686,6 +769,7 @@
         "accuracy": 0.528912,
         "unweighted_accuracy": 0.528912,
         "macro_f1": 0.468719,
+        "weighted_f1": 0.468719,
         "shared_clips": 336,
         "shared_accuracy": 0.761905,
         "shared_unweighted_accuracy": 0.761905
@@ -707,6 +791,7 @@
         "accuracy": 0.474355,
         "unweighted_accuracy": 0.474355,
         "macro_f1": 0.417475,
+        "weighted_f1": 0.417475,
         "shared_clips": 3944,
         "shared_accuracy": 0.740365,
         "shared_unweighted_accuracy": 0.740365
@@ -728,9 +813,70 @@
         "accuracy": 0.577083,
         "unweighted_accuracy": 0.546429,
         "macro_f1": 0.483262,
+        "weighted_f1": 0.518236,
         "shared_clips": 300,
         "shared_accuracy": 0.773333,
         "shared_unweighted_accuracy": 0.76875
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
+        "accuracy": 0.5521,
+        "unweighted_accuracy": 0.536431,
+        "macro_f1": 0.473604,
+        "weighted_f1": 0.5606,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.605128,
+        "shared_unweighted_accuracy": 0.684841
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
+        "accuracy": 0.600668,
+        "unweighted_accuracy": 0.486451,
+        "macro_f1": 0.298175,
+        "weighted_f1": 0.661811,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.597956,
+        "shared_unweighted_accuracy": 0.487255
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER training on CREMA-D, ESD, MELD, M3ED and Singaporean speech; retained Whisper-medium pretraining sources are incompletely disclosed; upstream seed/base teacher use is counted as seen",
+        "training_evidence": [
+          "https://arxiv.org/html/2511.04914v1#S4.SS1",
+          "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/blob/7e3ee6fa4534dea8316e8ca43e377e2fbb58496b/README.md",
+          "https://huggingface.co/openai/whisper-medium#training-data"
+        ],
+        "accuracy": 0.528285,
+        "unweighted_accuracy": 0.278402,
+        "macro_f1": 0.223574,
+        "weighted_f1": 0.555522,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.596041,
+        "shared_unweighted_accuracy": 0.410825
       }
     },
     "melati_emotion": {
@@ -748,6 +894,7 @@
         "accuracy": 0.513706,
         "unweighted_accuracy": 0.524463,
         "macro_f1": 0.46725,
+        "weighted_f1": 0.466134,
         "shared_clips": 4900,
         "shared_accuracy": 0.643469,
         "shared_unweighted_accuracy": 0.654908
@@ -766,6 +913,7 @@
         "accuracy": 0.48839,
         "unweighted_accuracy": 0.480546,
         "macro_f1": 0.433239,
+        "weighted_f1": 0.443802,
         "shared_clips": 4297,
         "shared_accuracy": 0.657901,
         "shared_unweighted_accuracy": 0.683005
@@ -784,6 +932,7 @@
         "accuracy": 0.727043,
         "unweighted_accuracy": 0.717556,
         "macro_f1": 0.72154,
+        "weighted_f1": 0.724354,
         "shared_clips": 11848,
         "shared_accuracy": 0.727043,
         "shared_unweighted_accuracy": 0.717556
@@ -803,6 +952,7 @@
         "accuracy": 0.636911,
         "unweighted_accuracy": 0.625128,
         "macro_f1": 0.595246,
+        "weighted_f1": 0.604534,
         "shared_clips": 3076,
         "shared_accuracy": 0.809493,
         "shared_unweighted_accuracy": 0.811296
@@ -821,6 +971,7 @@
         "accuracy": 0.404444,
         "unweighted_accuracy": 0.404444,
         "macro_f1": 0.375449,
+        "weighted_f1": 0.375449,
         "shared_clips": 1800,
         "shared_accuracy": 0.404444,
         "shared_unweighted_accuracy": 0.404444
@@ -839,6 +990,7 @@
         "accuracy": 0.484028,
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.466076,
+        "weighted_f1": 0.466486,
         "shared_clips": 864,
         "shared_accuracy": 0.634259,
         "shared_unweighted_accuracy": 0.669271
@@ -857,6 +1009,7 @@
         "accuracy": 0.504286,
         "unweighted_accuracy": 0.504286,
         "macro_f1": 0.434398,
+        "weighted_f1": 0.434398,
         "shared_clips": 1600,
         "shared_accuracy": 0.748125,
         "shared_unweighted_accuracy": 0.748125
@@ -875,6 +1028,7 @@
         "accuracy": 0.995,
         "unweighted_accuracy": 0.995,
         "macro_f1": 0.994802,
+        "weighted_f1": 0.995005,
         "shared_clips": 960,
         "shared_accuracy": 0.996875,
         "shared_unweighted_accuracy": 0.996875
@@ -893,6 +1047,7 @@
         "accuracy": 0.306875,
         "unweighted_accuracy": 0.349443,
         "macro_f1": 0.275936,
+        "weighted_f1": 0.277043,
         "shared_clips": 4280,
         "shared_accuracy": 0.486215,
         "shared_unweighted_accuracy": 0.535863
@@ -911,6 +1066,7 @@
         "accuracy": 0.287577,
         "unweighted_accuracy": 0.230016,
         "macro_f1": 0.18684,
+        "weighted_f1": 0.281318,
         "shared_clips": 2210,
         "shared_accuracy": 0.333937,
         "shared_unweighted_accuracy": 0.368459
@@ -929,6 +1085,7 @@
         "accuracy": 0.559524,
         "unweighted_accuracy": 0.559524,
         "macro_f1": 0.537645,
+        "weighted_f1": 0.537645,
         "shared_clips": 336,
         "shared_accuracy": 0.630952,
         "shared_unweighted_accuracy": 0.630952
@@ -947,6 +1104,7 @@
         "accuracy": 0.850188,
         "unweighted_accuracy": 0.850188,
         "macro_f1": 0.850221,
+        "weighted_f1": 0.850221,
         "shared_clips": 3944,
         "shared_accuracy": 0.867901,
         "shared_unweighted_accuracy": 0.867901
@@ -965,9 +1123,67 @@
         "accuracy": 0.6125,
         "unweighted_accuracy": 0.564286,
         "macro_f1": 0.532112,
+        "weighted_f1": 0.580518,
         "shared_clips": 300,
         "shared_accuracy": 0.85,
         "shared_unweighted_accuracy": 0.825
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
+        "accuracy": 0.291343,
+        "unweighted_accuracy": 0.38104,
+        "macro_f1": 0.27281,
+        "weighted_f1": 0.212668,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.305128,
+        "shared_unweighted_accuracy": 0.472587
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
+        "accuracy": 0.650794,
+        "unweighted_accuracy": 0.288376,
+        "macro_f1": 0.245749,
+        "weighted_f1": 0.678719,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.660988,
+        "shared_unweighted_accuracy": 0.465185
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Public SER head trained on nine named corpora including JL-Corpus and Emozionalmente; Whisper-v3 pretraining incompletely disclosed; author nEMO threshold calibration is counted as seen development use, although its thresholds are not applied here",
+        "training_evidence": [
+          "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3/blob/145f4eb05d07dc4d06352132787a8b4f836e7710/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
+        "accuracy": 0.596715,
+        "unweighted_accuracy": 0.224339,
+        "macro_f1": 0.202427,
+        "weighted_f1": 0.574861,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.706619,
+        "shared_unweighted_accuracy": 0.336604
       }
     },
     "vox_profile_whisper": {
@@ -985,6 +1201,7 @@
         "accuracy": 0.336603,
         "unweighted_accuracy": 0.351988,
         "macro_f1": 0.299302,
+        "weighted_f1": 0.297787,
         "shared_clips": 4900,
         "shared_accuracy": 0.467959,
         "shared_unweighted_accuracy": 0.486283
@@ -1003,6 +1220,7 @@
         "accuracy": 0.459775,
         "unweighted_accuracy": 0.409409,
         "macro_f1": 0.351958,
+        "weighted_f1": 0.382838,
         "shared_clips": 4297,
         "shared_accuracy": 0.56458,
         "shared_unweighted_accuracy": 0.521962
@@ -1021,6 +1239,7 @@
         "accuracy": 0.69286,
         "unweighted_accuracy": 0.700601,
         "macro_f1": 0.693023,
+        "weighted_f1": 0.688223,
         "shared_clips": 11848,
         "shared_accuracy": 0.69286,
         "shared_unweighted_accuracy": 0.700601
@@ -1039,6 +1258,7 @@
         "accuracy": 0.327829,
         "unweighted_accuracy": 0.319992,
         "macro_f1": 0.287864,
+        "weighted_f1": 0.290725,
         "shared_clips": 3076,
         "shared_accuracy": 0.392718,
         "shared_unweighted_accuracy": 0.387353
@@ -1057,6 +1277,7 @@
         "accuracy": 0.363889,
         "unweighted_accuracy": 0.363889,
         "macro_f1": 0.267674,
+        "weighted_f1": 0.267674,
         "shared_clips": 1800,
         "shared_accuracy": 0.363889,
         "shared_unweighted_accuracy": 0.363889
@@ -1075,6 +1296,7 @@
         "accuracy": 0.507639,
         "unweighted_accuracy": 0.493304,
         "macro_f1": 0.445022,
+        "weighted_f1": 0.451476,
         "shared_clips": 864,
         "shared_accuracy": 0.530093,
         "shared_unweighted_accuracy": 0.507812
@@ -1093,6 +1315,7 @@
         "accuracy": 0.301071,
         "unweighted_accuracy": 0.301071,
         "macro_f1": 0.174065,
+        "weighted_f1": 0.174065,
         "shared_clips": 1600,
         "shared_accuracy": 0.499375,
         "shared_unweighted_accuracy": 0.499375
@@ -1111,6 +1334,7 @@
         "accuracy": 0.450833,
         "unweighted_accuracy": 0.450833,
         "macro_f1": 0.473273,
+        "weighted_f1": 0.423891,
         "shared_clips": 960,
         "shared_accuracy": 0.40625,
         "shared_unweighted_accuracy": 0.40625
@@ -1129,6 +1353,7 @@
         "accuracy": 0.191875,
         "unweighted_accuracy": 0.22891,
         "macro_f1": 0.172989,
+        "weighted_f1": 0.173847,
         "shared_clips": 4280,
         "shared_accuracy": 0.323598,
         "shared_unweighted_accuracy": 0.370363
@@ -1147,6 +1372,7 @@
         "accuracy": 0.33819,
         "unweighted_accuracy": 0.296001,
         "macro_f1": 0.261093,
+        "weighted_f1": 0.348204,
         "shared_clips": 2210,
         "shared_accuracy": 0.331222,
         "shared_unweighted_accuracy": 0.342838
@@ -1165,6 +1391,7 @@
         "accuracy": 0.358844,
         "unweighted_accuracy": 0.358844,
         "macro_f1": 0.313627,
+        "weighted_f1": 0.313627,
         "shared_clips": 336,
         "shared_accuracy": 0.5,
         "shared_unweighted_accuracy": 0.5
@@ -1183,6 +1410,7 @@
         "accuracy": 0.369313,
         "unweighted_accuracy": 0.369313,
         "macro_f1": 0.319599,
+        "weighted_f1": 0.319599,
         "shared_clips": 3944,
         "shared_accuracy": 0.509888,
         "shared_unweighted_accuracy": 0.509888
@@ -1201,9 +1429,67 @@
         "accuracy": 0.372917,
         "unweighted_accuracy": 0.315476,
         "macro_f1": 0.293572,
+        "weighted_f1": 0.323878,
         "shared_clips": 300,
         "shared_accuracy": 0.493333,
         "shared_unweighted_accuracy": 0.422917
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
+        "accuracy": 0.417315,
+        "unweighted_accuracy": 0.462749,
+        "macro_f1": 0.354457,
+        "weighted_f1": 0.421973,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.433333,
+        "shared_unweighted_accuracy": 0.559277
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
+        "accuracy": 0.586466,
+        "unweighted_accuracy": 0.587224,
+        "macro_f1": 0.277656,
+        "weighted_f1": 0.658555,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.582624,
+        "shared_unweighted_accuracy": 0.553957
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; retained Whisper-large-v3 pretraining sources incompletely disclosed",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion/blob/b92dab65151206a603810ec8b72eb528b9dd983c/README.md",
+          "https://huggingface.co/openai/whisper-large-v3#training-data"
+        ],
+        "accuracy": 0.528806,
+        "unweighted_accuracy": 0.310186,
+        "macro_f1": 0.264629,
+        "weighted_f1": 0.562291,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.570987,
+        "shared_unweighted_accuracy": 0.369428
       }
     },
     "vox_profile_wavlm": {
@@ -1221,6 +1507,7 @@
         "accuracy": 0.307444,
         "unweighted_accuracy": 0.320936,
         "macro_f1": 0.274098,
+        "weighted_f1": 0.272965,
         "shared_clips": 4900,
         "shared_accuracy": 0.430612,
         "shared_unweighted_accuracy": 0.446392
@@ -1239,6 +1526,7 @@
         "accuracy": 0.396105,
         "unweighted_accuracy": 0.367027,
         "macro_f1": 0.336439,
+        "weighted_f1": 0.364892,
         "shared_clips": 4297,
         "shared_accuracy": 0.471026,
         "shared_unweighted_accuracy": 0.446658
@@ -1257,6 +1545,7 @@
         "accuracy": 0.573599,
         "unweighted_accuracy": 0.546096,
         "macro_f1": 0.521601,
+        "weighted_f1": 0.54191,
         "shared_clips": 11848,
         "shared_accuracy": 0.573599,
         "shared_unweighted_accuracy": 0.546096
@@ -1275,6 +1564,7 @@
         "accuracy": 0.284088,
         "unweighted_accuracy": 0.269846,
         "macro_f1": 0.215033,
+        "weighted_f1": 0.220047,
         "shared_clips": 3076,
         "shared_accuracy": 0.394993,
         "shared_unweighted_accuracy": 0.383435
@@ -1293,6 +1583,7 @@
         "accuracy": 0.363333,
         "unweighted_accuracy": 0.363333,
         "macro_f1": 0.287223,
+        "weighted_f1": 0.287223,
         "shared_clips": 1800,
         "shared_accuracy": 0.363333,
         "shared_unweighted_accuracy": 0.363333
@@ -1311,6 +1602,7 @@
         "accuracy": 0.446528,
         "unweighted_accuracy": 0.424107,
         "macro_f1": 0.384374,
+        "weighted_f1": 0.396475,
         "shared_clips": 864,
         "shared_accuracy": 0.509259,
         "shared_unweighted_accuracy": 0.477865
@@ -1329,6 +1621,7 @@
         "accuracy": 0.401429,
         "unweighted_accuracy": 0.401429,
         "macro_f1": 0.315539,
+        "weighted_f1": 0.315539,
         "shared_clips": 1600,
         "shared_accuracy": 0.55,
         "shared_unweighted_accuracy": 0.55
@@ -1347,6 +1640,7 @@
         "accuracy": 0.483333,
         "unweighted_accuracy": 0.483333,
         "macro_f1": 0.504985,
+        "weighted_f1": 0.479354,
         "shared_clips": 960,
         "shared_accuracy": 0.455208,
         "shared_unweighted_accuracy": 0.455208
@@ -1365,6 +1659,7 @@
         "accuracy": 0.193875,
         "unweighted_accuracy": 0.230536,
         "macro_f1": 0.182348,
+        "weighted_f1": 0.183311,
         "shared_clips": 4280,
         "shared_accuracy": 0.289953,
         "shared_unweighted_accuracy": 0.341035
@@ -1383,6 +1678,7 @@
         "accuracy": 0.348543,
         "unweighted_accuracy": 0.294204,
         "macro_f1": 0.267992,
+        "weighted_f1": 0.36789,
         "shared_clips": 2210,
         "shared_accuracy": 0.362896,
         "shared_unweighted_accuracy": 0.384293
@@ -1401,6 +1697,7 @@
         "accuracy": 0.292517,
         "unweighted_accuracy": 0.292517,
         "macro_f1": 0.225029,
+        "weighted_f1": 0.225029,
         "shared_clips": 336,
         "shared_accuracy": 0.473214,
         "shared_unweighted_accuracy": 0.473214
@@ -1419,6 +1716,7 @@
         "accuracy": 0.278325,
         "unweighted_accuracy": 0.278325,
         "macro_f1": 0.237179,
+        "weighted_f1": 0.237179,
         "shared_clips": 3944,
         "shared_accuracy": 0.434838,
         "shared_unweighted_accuracy": 0.434838
@@ -1437,9 +1735,67 @@
         "accuracy": 0.3375,
         "unweighted_accuracy": 0.290476,
         "macro_f1": 0.286691,
+        "weighted_f1": 0.308994,
         "shared_clips": 300,
         "shared_accuracy": 0.426667,
         "shared_unweighted_accuracy": 0.366667
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
+        "accuracy": 0.463453,
+        "unweighted_accuracy": 0.340018,
+        "macro_f1": 0.310186,
+        "weighted_f1": 0.467819,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.548077,
+        "shared_unweighted_accuracy": 0.51563
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
+        "accuracy": 0.543024,
+        "unweighted_accuracy": 0.618331,
+        "macro_f1": 0.281496,
+        "weighted_f1": 0.628601,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.541738,
+        "shared_unweighted_accuracy": 0.590851
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+        "training_evidence": [
+          "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+          "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+        ],
+        "accuracy": 0.549791,
+        "unweighted_accuracy": 0.30984,
+        "macro_f1": 0.248798,
+        "weighted_f1": 0.569918,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.615218,
+        "shared_unweighted_accuracy": 0.344299
       }
     },
     "qwen2_5_omni_7b": {
@@ -1457,6 +1813,7 @@
         "accuracy": 0.512653,
         "unweighted_accuracy": 0.434526,
         "macro_f1": 0.40434,
+        "weighted_f1": 0.523872,
         "shared_clips": 2210,
         "shared_accuracy": 0.528507,
         "shared_unweighted_accuracy": 0.465037
@@ -1477,6 +1834,7 @@
         "accuracy": 0.307132,
         "unweighted_accuracy": 0.395469,
         "macro_f1": 0.293543,
+        "weighted_f1": 0.32231,
         "shared_clips": 2210,
         "shared_accuracy": 0.288235,
         "shared_unweighted_accuracy": 0.374901
@@ -1497,6 +1855,7 @@
         "accuracy": 0.478144,
         "unweighted_accuracy": 0.296598,
         "macro_f1": 0.308557,
+        "weighted_f1": 0.460878,
         "shared_clips": 2210,
         "shared_accuracy": 0.530769,
         "shared_unweighted_accuracy": 0.415608
@@ -1513,6 +1872,7 @@
         "accuracy": 0.160038,
         "unweighted_accuracy": 0.180215,
         "macro_f1": 0.070004,
+        "weighted_f1": 0.06534,
         "shared_clips": 4900,
         "shared_accuracy": 0.241837,
         "shared_unweighted_accuracy": 0.269143
@@ -1527,6 +1887,7 @@
         "accuracy": 0.198502,
         "unweighted_accuracy": 0.167022,
         "macro_f1": 0.09025,
+        "weighted_f1": 0.102434,
         "shared_clips": 4297,
         "shared_accuracy": 0.308122,
         "shared_unweighted_accuracy": 0.29203
@@ -1541,6 +1902,7 @@
         "accuracy": 0.544733,
         "unweighted_accuracy": 0.527792,
         "macro_f1": 0.539983,
+        "weighted_f1": 0.547591,
         "shared_clips": 11848,
         "shared_accuracy": 0.544733,
         "shared_unweighted_accuracy": 0.527792
@@ -1555,6 +1917,7 @@
         "accuracy": 0.192368,
         "unweighted_accuracy": 0.181327,
         "macro_f1": 0.10103,
+        "weighted_f1": 0.105609,
         "shared_clips": 3076,
         "shared_accuracy": 0.280234,
         "shared_unweighted_accuracy": 0.27199
@@ -1569,6 +1932,7 @@
         "accuracy": 0.252222,
         "unweighted_accuracy": 0.252222,
         "macro_f1": 0.11986,
+        "weighted_f1": 0.11986,
         "shared_clips": 1800,
         "shared_accuracy": 0.252222,
         "shared_unweighted_accuracy": 0.252222
@@ -1583,6 +1947,7 @@
         "accuracy": 0.270139,
         "unweighted_accuracy": 0.218254,
         "macro_f1": 0.177647,
+        "weighted_f1": 0.190556,
         "shared_clips": 864,
         "shared_accuracy": 0.418981,
         "shared_unweighted_accuracy": 0.346788
@@ -1597,6 +1962,7 @@
         "accuracy": 0.143571,
         "unweighted_accuracy": 0.143571,
         "macro_f1": 0.038546,
+        "weighted_f1": 0.038546,
         "shared_clips": 1600,
         "shared_accuracy": 0.25125,
         "shared_unweighted_accuracy": 0.25125
@@ -1611,6 +1977,7 @@
         "accuracy": 0.300833,
         "unweighted_accuracy": 0.300833,
         "macro_f1": 0.315351,
+        "weighted_f1": 0.243444,
         "shared_clips": 960,
         "shared_accuracy": 0.280208,
         "shared_unweighted_accuracy": 0.280208
@@ -1625,6 +1992,7 @@
         "accuracy": 0.131375,
         "unweighted_accuracy": 0.184409,
         "macro_f1": 0.111414,
+        "weighted_f1": 0.109037,
         "shared_clips": 4280,
         "shared_accuracy": 0.238318,
         "shared_unweighted_accuracy": 0.316475
@@ -1639,6 +2007,7 @@
         "accuracy": 0.466258,
         "unweighted_accuracy": 0.34941,
         "macro_f1": 0.363627,
+        "weighted_f1": 0.472127,
         "shared_clips": 2210,
         "shared_accuracy": 0.506335,
         "shared_unweighted_accuracy": 0.458187
@@ -1653,6 +2022,7 @@
         "accuracy": 0.17517,
         "unweighted_accuracy": 0.17517,
         "macro_f1": 0.097256,
+        "weighted_f1": 0.097256,
         "shared_clips": 336,
         "shared_accuracy": 0.294643,
         "shared_unweighted_accuracy": 0.294643
@@ -1667,6 +2037,7 @@
         "accuracy": 0.187482,
         "unweighted_accuracy": 0.187482,
         "macro_f1": 0.107348,
+        "weighted_f1": 0.107348,
         "shared_clips": 3944,
         "shared_accuracy": 0.317191,
         "shared_unweighted_accuracy": 0.317191
@@ -1681,6 +2052,7 @@
         "accuracy": 0.272917,
         "unweighted_accuracy": 0.197619,
         "macro_f1": 0.171441,
+        "weighted_f1": 0.201074,
         "shared_clips": 300,
         "shared_accuracy": 0.41,
         "shared_unweighted_accuracy": 0.3125
@@ -1695,6 +2067,7 @@
         "accuracy": 0.571799,
         "unweighted_accuracy": 0.470499,
         "macro_f1": 0.443508,
+        "weighted_f1": 0.567941,
         "shared_clips": 1560,
         "shared_accuracy": 0.658333,
         "shared_unweighted_accuracy": 0.659811
@@ -1709,6 +2082,7 @@
         "accuracy": 0.745196,
         "unweighted_accuracy": 0.484325,
         "macro_f1": 0.350804,
+        "weighted_f1": 0.761903,
         "shared_clips": 1174,
         "shared_accuracy": 0.750426,
         "shared_unweighted_accuracy": 0.395815
@@ -1723,6 +2097,7 @@
         "accuracy": 0.596455,
         "unweighted_accuracy": 0.314773,
         "macro_f1": 0.304818,
+        "weighted_f1": 0.594249,
         "shared_clips": 6466,
         "shared_accuracy": 0.681874,
         "shared_unweighted_accuracy": 0.422048
@@ -1739,6 +2114,7 @@
         "accuracy": 0.326794,
         "unweighted_accuracy": 0.339352,
         "macro_f1": 0.302378,
+        "weighted_f1": 0.300547,
         "shared_clips": 4900,
         "shared_accuracy": 0.426939,
         "shared_unweighted_accuracy": 0.442152
@@ -1753,6 +2129,7 @@
         "accuracy": 0.334831,
         "unweighted_accuracy": 0.30073,
         "macro_f1": 0.281403,
+        "weighted_f1": 0.306883,
         "shared_clips": 4297,
         "shared_accuracy": 0.43798,
         "shared_unweighted_accuracy": 0.42339
@@ -1767,6 +2144,7 @@
         "accuracy": 0.683913,
         "unweighted_accuracy": 0.678514,
         "macro_f1": 0.684293,
+        "weighted_f1": 0.686397,
         "shared_clips": 11848,
         "shared_accuracy": 0.683913,
         "shared_unweighted_accuracy": 0.678514
@@ -1781,6 +2159,7 @@
         "accuracy": 0.214907,
         "unweighted_accuracy": 0.203547,
         "macro_f1": 0.143596,
+        "weighted_f1": 0.148611,
         "shared_clips": 3076,
         "shared_accuracy": 0.307542,
         "shared_unweighted_accuracy": 0.299205
@@ -1795,6 +2174,7 @@
         "accuracy": 0.296667,
         "unweighted_accuracy": 0.296667,
         "macro_f1": 0.218849,
+        "weighted_f1": 0.218849,
         "shared_clips": 1800,
         "shared_accuracy": 0.296667,
         "shared_unweighted_accuracy": 0.296667
@@ -1809,6 +2189,7 @@
         "accuracy": 0.469444,
         "unweighted_accuracy": 0.457589,
         "macro_f1": 0.46128,
+        "weighted_f1": 0.465138,
         "shared_clips": 864,
         "shared_accuracy": 0.5,
         "shared_unweighted_accuracy": 0.483073
@@ -1823,6 +2204,7 @@
         "accuracy": 0.298929,
         "unweighted_accuracy": 0.298929,
         "macro_f1": 0.241287,
+        "weighted_f1": 0.241287,
         "shared_clips": 1600,
         "shared_accuracy": 0.455625,
         "shared_unweighted_accuracy": 0.455625
@@ -1837,6 +2219,7 @@
         "accuracy": 0.378333,
         "unweighted_accuracy": 0.378333,
         "macro_f1": 0.423277,
+        "weighted_f1": 0.368184,
         "shared_clips": 960,
         "shared_accuracy": 0.355208,
         "shared_unweighted_accuracy": 0.355208
@@ -1851,6 +2234,7 @@
         "accuracy": 0.179625,
         "unweighted_accuracy": 0.221339,
         "macro_f1": 0.175112,
+        "weighted_f1": 0.176744,
         "shared_clips": 4280,
         "shared_accuracy": 0.272664,
         "shared_unweighted_accuracy": 0.332948
@@ -1865,6 +2249,7 @@
         "accuracy": 0.400307,
         "unweighted_accuracy": 0.415912,
         "macro_f1": 0.351629,
+        "weighted_f1": 0.412279,
         "shared_clips": 2210,
         "shared_accuracy": 0.404977,
         "shared_unweighted_accuracy": 0.460658
@@ -1879,6 +2264,7 @@
         "accuracy": 0.311224,
         "unweighted_accuracy": 0.311224,
         "macro_f1": 0.277427,
+        "weighted_f1": 0.277427,
         "shared_clips": 336,
         "shared_accuracy": 0.440476,
         "shared_unweighted_accuracy": 0.440476
@@ -1893,6 +2279,7 @@
         "accuracy": 0.340336,
         "unweighted_accuracy": 0.340336,
         "macro_f1": 0.30037,
+        "weighted_f1": 0.30037,
         "shared_clips": 3944,
         "shared_accuracy": 0.481237,
         "shared_unweighted_accuracy": 0.481237
@@ -1907,6 +2294,7 @@
         "accuracy": 0.33125,
         "unweighted_accuracy": 0.260714,
         "macro_f1": 0.249919,
+        "weighted_f1": 0.281978,
         "shared_clips": 300,
         "shared_accuracy": 0.456667,
         "shared_unweighted_accuracy": 0.364583
@@ -1921,6 +2309,7 @@
         "accuracy": 0.519959,
         "unweighted_accuracy": 0.559561,
         "macro_f1": 0.463961,
+        "weighted_f1": 0.53075,
         "shared_clips": 1560,
         "shared_accuracy": 0.553205,
         "shared_unweighted_accuracy": 0.67899
@@ -1935,6 +2324,7 @@
         "accuracy": 0.573099,
         "unweighted_accuracy": 0.485077,
         "macro_f1": 0.250061,
+        "weighted_f1": 0.62639,
         "shared_clips": 1174,
         "shared_accuracy": 0.573254,
         "shared_unweighted_accuracy": 0.44099
@@ -1949,6 +2339,7 @@
         "accuracy": 0.566345,
         "unweighted_accuracy": 0.298606,
         "macro_f1": 0.27302,
+        "weighted_f1": 0.575024,
         "shared_clips": 6466,
         "shared_accuracy": 0.642437,
         "shared_unweighted_accuracy": 0.405898

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.508642+00:00",
+  "model": "vox_profile_whisper",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/dailytalk_predictions.csv",
+      "sha256": "11247bb6cc3694992d19c15424c9f990e9d4f05dec033a7dd916c4a25a37b333",
+      "bytes": 155646
+    },
+    {
+      "path": "outputs/vox_profile_whisper/dailytalk_predictions.json",
+      "sha256": "d28bb875fc5aca7c203b772914bdd0919d28746c1cdf72ea7306d4137c73ceb5",
+      "bytes": 2600
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.586466,
+    "unweighted_accuracy": 0.587224,
+    "macro_f1": 0.277656,
+    "accuracy_all_classes": 0.557226
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5864661654135338,
+    "unweighted_accuracy": 0.5872238274182073,
+    "macro_f1": 0.2776559297806046,
+    "weighted_f1": 0.6585550116524408,
+    "accuracy_all_classes": 0.5572263993316625
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

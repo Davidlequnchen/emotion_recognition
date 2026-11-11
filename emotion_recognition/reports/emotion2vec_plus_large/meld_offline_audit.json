@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.684804+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "meld",
+  "clips": 2608,
+  "unique_audio_paths": 2608,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/meld_predictions.csv",
+      "sha256": "1c748f3e8cef598d0f02c795f2e5e1068c2c43440f33fbd0248df84b3772f56b",
+      "bytes": 321489
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/meld_predictions.json",
+      "sha256": "78104cd590438eb72839995a8e84d4950017b6588ad386ae675df421cbd2cf25",
+      "bytes": 2862
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.455905,
+    "unweighted_accuracy": 0.298381,
+    "macro_f1": 0.284932,
+    "accuracy_all_classes": 0.452454
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.4559049079754601,
+    "unweighted_accuracy": 0.2983809850902432,
+    "macro_f1": 0.2849321348288321,
+    "weighted_f1": 0.4558109894688669,
+    "accuracy_all_classes": 0.45245398773006135
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.009244+00:00",
+  "model": "melati_emotion",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/dailytalk_predictions.csv",
+      "sha256": "f2fa8774f122493789949e36bf7b0388351955f747184a9a8126e7075fd73b82",
+      "bytes": 138879
+    },
+    {
+      "path": "outputs/melati_emotion/dailytalk_predictions.json",
+      "sha256": "8fd1d095709fca94c97851550f8b7805d86771f879450fba8ba3ba26ad2f34a8",
+      "bytes": 2793
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.650794,
+    "unweighted_accuracy": 0.288376,
+    "macro_f1": 0.245749,
+    "accuracy_all_classes": 0.650794
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6507936507936508,
+    "unweighted_accuracy": 0.2883763961342701,
+    "macro_f1": 0.24574860910246085,
+    "weighted_f1": 0.6787194194673535,
+    "accuracy_all_classes": 0.6507936507936508
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

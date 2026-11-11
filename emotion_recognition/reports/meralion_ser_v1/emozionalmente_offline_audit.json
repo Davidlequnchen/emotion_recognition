@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.068822+00:00",
+  "model": "meralion_ser_v1",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/emozionalmente_predictions.csv",
+      "sha256": "86689ffa65e51977ece19ce7a028126d09fbfce36a88df06888bbb79d914a38b",
+      "bytes": 1059789
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emozionalmente_predictions.json",
+      "sha256": "c0adfb56de564c42708132ea4a6d6aa5092c33474c98b9c9162291e055a58bf2",
+      "bytes": 3177
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.474355,
+    "unweighted_accuracy": 0.474355,
+    "macro_f1": 0.417475,
+    "accuracy_all_classes": 0.474355,
+    "accuracy_acted_or_listener": 0.580411,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.52578
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.47435525934511735,
+    "unweighted_accuracy": 0.47435525934511735,
+    "macro_f1": 0.41747511991541514,
+    "weighted_f1": 0.4174751199154152,
+    "accuracy_all_classes": 0.47435525934511735,
+    "accuracy_acted_or_listener": 0.5804114749348015,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.5257798609988686
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

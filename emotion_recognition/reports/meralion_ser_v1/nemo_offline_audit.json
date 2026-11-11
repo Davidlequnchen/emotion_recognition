@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.284594+00:00",
+  "model": "meralion_ser_v1",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/nemo_predictions.csv",
+      "sha256": "273bc42ec108c6f60998e081787419714871b9ef447c5f85d632fa7e607e192d",
+      "bytes": 490289
+    },
+    {
+      "path": "outputs/meralion_ser_v1/nemo_predictions.json",
+      "sha256": "434d776043450cf6113264058a99d51902df58fa4f25872e32ed69763acd1fc2",
+      "bytes": 2357
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.551439,
+    "unweighted_accuracy": 0.537699,
+    "macro_f1": 0.480564,
+    "accuracy_all_classes": 0.5501
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5514394108457934,
+    "unweighted_accuracy": 0.5376991996683412,
+    "macro_f1": 0.4805642963957337,
+    "weighted_f1": 0.48792264584988393,
+    "accuracy_all_classes": 0.5501004240124973
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

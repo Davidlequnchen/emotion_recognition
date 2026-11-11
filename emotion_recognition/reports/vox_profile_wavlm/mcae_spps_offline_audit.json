@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.217521+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "mcae_spps",
+  "clips": 6675,
+  "unique_audio_paths": 6675,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.csv",
+      "sha256": "ad14bef1e2056ccc3fe9c0593102fdb730310322a846e5b0ef3d638366ad89b9",
+      "bytes": 956065
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.json",
+      "sha256": "caf7e0e119ebf72ae366fe013fd8ee52b79ee20f360cb92ca65d44317889cf0d",
+      "bytes": 2561
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.396105,
+    "unweighted_accuracy": 0.367027,
+    "macro_f1": 0.336439,
+    "accuracy_all_classes": 0.395506,
+    "accuracy_acted_or_listener": 0.396105,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.396105
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.39610486891385766,
+    "unweighted_accuracy": 0.3670274926858652,
+    "macro_f1": 0.33643878986754794,
+    "weighted_f1": 0.36489209897441727,
+    "accuracy_all_classes": 0.3955056179775281,
+    "accuracy_acted_or_listener": 0.39610486891385766,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.39610486891385766
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

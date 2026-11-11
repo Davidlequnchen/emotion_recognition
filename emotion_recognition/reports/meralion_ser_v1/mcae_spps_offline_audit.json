@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.124893+00:00",
+  "model": "meralion_ser_v1",
+  "key": "mcae_spps",
+  "clips": 6675,
+  "unique_audio_paths": 6675,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.csv",
+      "sha256": "ed98f6d4648c6d9de744e3ebb88769aaeb9ad6a41e58959890c6ac2ebda3fb8e",
+      "bytes": 848581
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.json",
+      "sha256": "cfc31ccfdda6ea43c2701d0903561f663624e2dbb0652b628f127ea96f26b225",
+      "bytes": 2572
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.648989,
+    "unweighted_accuracy": 0.577856,
+    "macro_f1": 0.544171,
+    "accuracy_all_classes": 0.648989,
+    "accuracy_acted_or_listener": 0.648989,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.648989
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6489887640449438,
+    "unweighted_accuracy": 0.5778564119077068,
+    "macro_f1": 0.544171040555443,
+    "weighted_f1": 0.5910003963594888,
+    "accuracy_all_classes": 0.6489887640449438,
+    "accuracy_acted_or_listener": 0.6489887640449438,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.6489887640449438
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,7 +1,7 @@
 {
   "model": "vox_profile_wavlm",
   "name": "Vox-Profile WavLM",
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
   "datasets": [
     {
@@ -32,7 +32,72 @@
         "accuracy_all_classes": 0.535955,
         "accuracy_acted_or_listener": 0.637914,
         "listeners_vs_acted": 0.772282,
-        "model_vs_listeners": 0.580858
+        "model_vs_listeners": 0.580858,
+        "weighted_f1": 0.5419101564390486
+      }
+    },
+    {
+      "dataset": "MultiDialog (gold_both)",
+      "key": "multidialog",
+      "language": "English",
+      "clips": 7672,
+      "total_clips": 7672,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+        "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+      ],
+      "metrics": {
+        "accuracy": 0.549791,
+        "unweighted_accuracy": 0.30984,
+        "macro_f1": 0.248798,
+        "accuracy_all_classes": 0.543144,
+        "weighted_f1": 0.5699178029321365
+      }
+    },
+    {
+      "dataset": "DailyTalk (validation)",
+      "key": "dailytalk",
+      "language": "English",
+      "clips": 1197,
+      "total_clips": 1197,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+        "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+      ],
+      "metrics": {
+        "accuracy": 0.543024,
+        "unweighted_accuracy": 0.618331,
+        "macro_f1": 0.281496,
+        "accuracy_all_classes": 0.502924,
+        "weighted_f1": 0.6286013395188725
       }
     },
     {
@@ -67,7 +132,40 @@
         "accuracy": 0.483333,
         "unweighted_accuracy": 0.483333,
         "macro_f1": 0.504985,
-        "accuracy_all_classes": 0.46
+        "accuracy_all_classes": 0.46,
+        "weighted_f1": 0.47935448896874033
+      }
+    },
+    {
+      "dataset": "EmotionTalk (test)",
+      "key": "emotiontalk",
+      "language": "Mandarin",
+      "clips": 1929,
+      "total_clips": 1929,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+        "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+      ],
+      "metrics": {
+        "accuracy": 0.463453,
+        "unweighted_accuracy": 0.340018,
+        "macro_f1": 0.310186,
+        "accuracy_all_classes": 0.460342,
+        "weighted_f1": 0.4678191762687396
       }
     },
     {
@@ -98,7 +196,8 @@
         "accuracy": 0.446528,
         "unweighted_accuracy": 0.424107,
         "macro_f1": 0.384374,
-        "accuracy_all_classes": 0.445833
+        "accuracy_all_classes": 0.445833,
+        "weighted_f1": 0.3964752269328651
       }
     },
     {
@@ -129,7 +228,8 @@
         "accuracy": 0.401429,
         "unweighted_accuracy": 0.401429,
         "macro_f1": 0.315539,
-        "accuracy_all_classes": 0.387857
+        "accuracy_all_classes": 0.387857,
+        "weighted_f1": 0.3155393440053821
       }
     },
     {
@@ -163,7 +263,8 @@
         "accuracy_all_classes": 0.395506,
         "accuracy_acted_or_listener": 0.396105,
         "listeners_vs_acted": 1.0,
-        "model_vs_listeners": 0.396105
+        "model_vs_listeners": 0.396105,
+        "weighted_f1": 0.36489209897441727
       }
     },
     {
@@ -191,7 +292,8 @@
         "accuracy": 0.363333,
         "unweighted_accuracy": 0.363333,
         "macro_f1": 0.287223,
-        "accuracy_all_classes": 0.33
+        "accuracy_all_classes": 0.33,
+        "weighted_f1": 0.28722257337658536
       }
     },
     {
@@ -222,7 +324,8 @@
         "accuracy": 0.348543,
         "unweighted_accuracy": 0.294204,
         "macro_f1": 0.267992,
-        "accuracy_all_classes": 0.338957
+        "accuracy_all_classes": 0.338957,
+        "weighted_f1": 0.36788989861168847
       }
     },
     {
@@ -253,7 +356,8 @@
         "accuracy": 0.3375,
         "unweighted_accuracy": 0.290476,
         "macro_f1": 0.286691,
-        "accuracy_all_classes": 0.329167
+        "accuracy_all_classes": 0.329167,
+        "weighted_f1": 0.3089938120495958
       }
     },
     {
@@ -286,7 +390,8 @@
         "accuracy_all_classes": 0.28366,
         "accuracy_acted_or_listener": 0.665816,
         "listeners_vs_acted": 0.455869,
-        "model_vs_listeners": 0.591203
+        "model_vs_listeners": 0.591203,
+        "weighted_f1": 0.27296548463288994
       }
     },
     {
@@ -317,7 +422,8 @@
         "accuracy": 0.292517,
         "unweighted_accuracy": 0.292517,
         "macro_f1": 0.225029,
-        "accuracy_all_classes": 0.292517
+        "accuracy_all_classes": 0.292517,
+        "weighted_f1": 0.22502930603247362
       }
     },
     {
@@ -347,7 +453,8 @@
         "accuracy": 0.284088,
         "unweighted_accuracy": 0.269846,
         "macro_f1": 0.215033,
-        "accuracy_all_classes": 0.28141
+        "accuracy_all_classes": 0.28141,
+        "weighted_f1": 0.22004704011589735
       }
     },
     {
@@ -381,7 +488,8 @@
         "accuracy_all_classes": 0.277166,
         "accuracy_acted_or_listener": 0.374674,
         "listeners_vs_acted": 0.812187,
-        "model_vs_listeners": 0.335866
+        "model_vs_listeners": 0.335866,
+        "weighted_f1": 0.2371792965922659
       }
     },
     {
@@ -412,7 +520,8 @@
         "accuracy": 0.193875,
         "unweighted_accuracy": 0.230536,
         "macro_f1": 0.182348,
-        "accuracy_all_classes": 0.18625
+        "accuracy_all_classes": 0.18625,
+        "weighted_f1": 0.18331087917779604
       }
     }
   ],
@@ -430,7 +539,10 @@
     "MELD",
     "EMOVO",
     "Emozionalmente",
-    "SAVEE"
+    "SAVEE",
+    "EmotionTalk (test)",
+    "DailyTalk (validation)",
+    "MultiDialog (gold_both)"
   ],
   "acted_or_listener": [
     "CREMA-D"
@@ -442,6 +554,22 @@
     "sad"
   ],
   "shared": [
+    {
+      "dataset": "MultiDialog (gold_both)",
+      "key": "multidialog",
+      "language": "English",
+      "clips": 6466,
+      "sample": false,
+      "accuracy": 0.615218,
+      "unweighted_accuracy": 0.344299,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+        "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+      ]
+    },
     {
       "dataset": "THAI-SER (high-agreement subset)",
       "key": "thai_ser",
@@ -466,6 +594,38 @@
       "sample": false,
       "accuracy": 0.55,
       "unweighted_accuracy": 0.55,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+        "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+      ]
+    },
+    {
+      "dataset": "EmotionTalk (test)",
+      "key": "emotiontalk",
+      "language": "Mandarin",
+      "clips": 1560,
+      "sample": false,
+      "accuracy": 0.548077,
+      "unweighted_accuracy": 0.51563,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+      "training_evidence": [
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+        "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+      ]
+    },
+    {
+      "dataset": "DailyTalk (validation)",
+      "key": "dailytalk",
+      "language": "English",
+      "clips": 1174,
+      "sample": false,
+      "accuracy": 0.541738,
+      "unweighted_accuracy": 0.590851,
       "in_training_data": false,
       "training_status": "not_established",
       "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",

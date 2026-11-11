@@ -1,7 +1,7 @@
 {
   "model": "qwen2_audio_7b",
   "name": "Qwen2-Audio 7B Instruct",
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
   "datasets": [
     {
@@ -32,7 +32,8 @@
         "accuracy": 0.307132,
         "unweighted_accuracy": 0.395469,
         "macro_f1": 0.293543,
-        "accuracy_all_classes": 0.307132
+        "accuracy_all_classes": 0.307132,
+        "weighted_f1": 0.32231033682977833
       }
     }
   ],

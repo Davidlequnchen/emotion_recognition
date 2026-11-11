@@ -70,7 +70,7 @@ python scripts/evaluation/context_pilot.py run --manifest outputs/context_pilot/
 
 ## 跑完会得到什么，怎样解释
 
-脚本自动生成 `predictions.csv`、`summary.json`、`report.md`，含逐音频预测、原始回答、首 token 标签分数、配置身份，以及 Accuracy/UAR/macro-F1、neutral预测率、每类支持数与混淆矩阵。H1–H3 对 H0 的变化会报告改判数、由错变对、由对变错及分数差。
+脚本自动生成 `predictions.csv`、`summary.json`、`report.md`，含逐音频预测、原始回答、首 token 标签分数、配置身份，以及 Accuracy/UAR/macro-F1/weighted-F1、neutral预测率、每类支持数与混淆矩阵。weighted-F1 按真实类别的样本数加权，invalid 仍算错误。H1–H3 对 H0 的变化会报告改判数、由错变对、由对变错及分数差。
 
 所有条件的比较都使用**四条件都完成的相同目标交集**，不会拿较多的 H0 与较少的 H1 比分。未完成时报告明确标为 partial。JSON/CSV与manifest即可用于另一台电脑上的论文分析，无需 `.f16` 或搬回原始大音频。
 

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.711306+00:00",
+  "model": "vox_profile_whisper",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/mead_predictions.csv",
+      "sha256": "acc73c3a0bd2dc0f2cb8537be83b5357e18cbe9d194ab2527bd5cf2a54788b04",
+      "bytes": 1080960
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mead_predictions.json",
+      "sha256": "f323b993949f854f9945e8b00d5fa7cfbd36d6922b14a80314fe8f9b639de685",
+      "bytes": 2601
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.191875,
+    "unweighted_accuracy": 0.22891,
+    "macro_f1": 0.172989,
+    "accuracy_all_classes": 0.181625
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.191875,
+    "unweighted_accuracy": 0.22891017956846868,
+    "macro_f1": 0.1729888912621961,
+    "weighted_f1": 0.1738468172210628,
+    "accuracy_all_classes": 0.181625
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.176081+00:00",
+  "model": "meralion_ser_v1",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/mead_predictions.csv",
+      "sha256": "f6a531579794911bc34d98073a070fed818f6d596d7ce0fffaee19f15295fc6c",
+      "bytes": 963181
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mead_predictions.json",
+      "sha256": "81cb423e196bcd11b8f7cb8cc980f8d7033e8d9b91c530f91c52d1a5c2a86b22",
+      "bytes": 2753
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.28325,
+    "unweighted_accuracy": 0.322761,
+    "macro_f1": 0.250345,
+    "accuracy_all_classes": 0.28325
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.28325,
+    "unweighted_accuracy": 0.3227611385659904,
+    "macro_f1": 0.25034536482588293,
+    "weighted_f1": 0.25286520810833124,
+    "accuracy_all_classes": 0.28325
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

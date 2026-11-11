@@ -1,7 +1,7 @@
 {
   "model": "gemini-3.8-flash",
   "name": "Gemini 3.8 Flash",
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "training_source": "not published (Google)",
   "datasets": [
     {
@@ -28,7 +28,8 @@
         "accuracy_all_classes": 0.683913,
         "accuracy_acted_or_listener": 0.742488,
         "listeners_vs_acted": 0.772282,
-        "model_vs_listeners": 0.647789
+        "model_vs_listeners": 0.647789,
+        "weighted_f1": 0.6863969631765529
       }
     },
     {
@@ -55,7 +56,8 @@
         "accuracy": 0.573099,
         "unweighted_accuracy": 0.485077,
         "macro_f1": 0.250061,
-        "accuracy_all_classes": 0.573099
+        "accuracy_all_classes": 0.573099,
+        "weighted_f1": 0.6263899205521889
       }
     },
     {
@@ -82,7 +84,8 @@
         "accuracy": 0.566345,
         "unweighted_accuracy": 0.298606,
         "macro_f1": 0.27302,
-        "accuracy_all_classes": 0.566345
+        "accuracy_all_classes": 0.566345,
+        "weighted_f1": 0.5750236663935756
       }
     },
     {
@@ -109,7 +112,8 @@
         "accuracy": 0.519959,
         "unweighted_accuracy": 0.559561,
         "macro_f1": 0.463961,
-        "accuracy_all_classes": 0.519959
+        "accuracy_all_classes": 0.519959,
+        "weighted_f1": 0.5307496599809444
       }
     },
     {
@@ -136,7 +140,8 @@
         "accuracy": 0.469444,
         "unweighted_accuracy": 0.457589,
         "macro_f1": 0.46128,
-        "accuracy_all_classes": 0.469444
+        "accuracy_all_classes": 0.469444,
+        "weighted_f1": 0.46513787808236967
       }
     },
     {
@@ -163,7 +168,8 @@
         "accuracy": 0.400307,
         "unweighted_accuracy": 0.415912,
         "macro_f1": 0.351629,
-        "accuracy_all_classes": 0.400307
+        "accuracy_all_classes": 0.400307,
+        "weighted_f1": 0.41227892249196646
       }
     },
     {
@@ -194,7 +200,8 @@
         "accuracy": 0.378333,
         "unweighted_accuracy": 0.378333,
         "macro_f1": 0.423277,
-        "accuracy_all_classes": 0.378333
+        "accuracy_all_classes": 0.378333,
+        "weighted_f1": 0.36818402142315493
       }
     },
     {
@@ -224,7 +231,8 @@
         "accuracy_all_classes": 0.340336,
         "accuracy_acted_or_listener": 0.459722,
         "listeners_vs_acted": 0.812187,
-        "model_vs_listeners": 0.412316
+        "model_vs_listeners": 0.412316,
+        "weighted_f1": 0.3003702205207975
       }
     },
     {
@@ -254,7 +262,8 @@
         "accuracy_all_classes": 0.334831,
         "accuracy_acted_or_listener": 0.334831,
         "listeners_vs_acted": 1.0,
-        "model_vs_listeners": 0.334831
+        "model_vs_listeners": 0.334831,
+        "weighted_f1": 0.30688280022162484
       }
     },
     {
@@ -281,7 +290,8 @@
         "accuracy": 0.33125,
         "unweighted_accuracy": 0.260714,
         "macro_f1": 0.249919,
-        "accuracy_all_classes": 0.33125
+        "accuracy_all_classes": 0.33125,
+        "weighted_f1": 0.28197795418259425
       }
     },
     {
@@ -310,7 +320,8 @@
         "accuracy_all_classes": 0.326794,
         "accuracy_acted_or_listener": 0.622548,
         "listeners_vs_acted": 0.455869,
-        "model_vs_listeners": 0.532951
+        "model_vs_listeners": 0.532951,
+        "weighted_f1": 0.30054653488646343
       }
     },
     {
@@ -337,7 +348,8 @@
         "accuracy": 0.311224,
         "unweighted_accuracy": 0.311224,
         "macro_f1": 0.277427,
-        "accuracy_all_classes": 0.311224
+        "accuracy_all_classes": 0.311224,
+        "weighted_f1": 0.27742748508096987
       }
     },
     {
@@ -364,7 +376,8 @@
         "accuracy": 0.298929,
         "unweighted_accuracy": 0.298929,
         "macro_f1": 0.241287,
-        "accuracy_all_classes": 0.298929
+        "accuracy_all_classes": 0.298929,
+        "weighted_f1": 0.24128668743063542
       }
     },
     {
@@ -388,7 +401,8 @@
         "accuracy": 0.296667,
         "unweighted_accuracy": 0.296667,
         "macro_f1": 0.218849,
-        "accuracy_all_classes": 0.296667
+        "accuracy_all_classes": 0.296667,
+        "weighted_f1": 0.2188491279963305
       }
     },
     {
@@ -414,7 +428,8 @@
         "accuracy": 0.214907,
         "unweighted_accuracy": 0.203547,
         "macro_f1": 0.143596,
-        "accuracy_all_classes": 0.214907
+        "accuracy_all_classes": 0.214907,
+        "weighted_f1": 0.14861104392649885
       }
     },
     {
@@ -441,7 +456,8 @@
         "accuracy": 0.179625,
         "unweighted_accuracy": 0.221339,
         "macro_f1": 0.175112,
-        "accuracy_all_classes": 0.179625
+        "accuracy_all_classes": 0.179625,
+        "weighted_f1": 0.1767444724887841
       }
     }
   ],

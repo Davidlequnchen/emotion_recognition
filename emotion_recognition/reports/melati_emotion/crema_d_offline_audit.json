@@ -1,0 +1,49 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.993928+00:00",
+  "model": "melati_emotion",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/crema_d_predictions.csv",
+      "sha256": "8580f8d4d3f9ee59f427970b9c92666b31e5244c8db1e95bca80ad5aa87a5143",
+      "bytes": 985767
+    },
+    {
+      "path": "outputs/melati_emotion/crema_d_predictions.json",
+      "sha256": "41656adde3a0a670e13bb24bfce1fad1b93517c27cfd6de9109be17339ac13d1",
+      "bytes": 2588
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.513706,
+    "unweighted_accuracy": 0.524463,
+    "macro_f1": 0.46725,
+    "accuracy_all_classes": 0.513034,
+    "accuracy_acted_or_listener": 0.767267,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.59694
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.513705993012631,
+    "unweighted_accuracy": 0.5244626249568428,
+    "macro_f1": 0.46725044042898795,
+    "weighted_f1": 0.46613401946193983,
+    "accuracy_all_classes": 0.5130341306100511,
+    "accuracy_acted_or_listener": 0.7672668637463047,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.596940276551927
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

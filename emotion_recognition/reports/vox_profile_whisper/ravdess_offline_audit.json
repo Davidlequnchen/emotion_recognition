@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.851641+00:00",
+  "model": "vox_profile_whisper",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.csv",
+      "sha256": "b3042a1b66a913dbad1785d68f00f622ffdac96214d12ccd5f72656dbd637cfb",
+      "bytes": 208645
+    },
+    {
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.json",
+      "sha256": "63697d4ab3d748546abc10bbb0415a6bcd87de02fe553cccef8b43c1e1219aa3",
+      "bytes": 2122
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.507639,
+    "unweighted_accuracy": 0.493304,
+    "macro_f1": 0.445022,
+    "accuracy_all_classes": 0.50625
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5076388888888889,
+    "unweighted_accuracy": 0.49330357142857145,
+    "macro_f1": 0.44502151424736136,
+    "weighted_f1": 0.4514755912523847,
+    "accuracy_all_classes": 0.50625
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

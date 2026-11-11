@@ -2,8 +2,8 @@
 Dataset panels and compact score matrices for comparing models, for papers and slides.
 
 Reads the results that the evaluations left in outputs/ and draws, for each metric in config/plots.yaml:
-    reports/figures/<metric>_by_dataset.png (300 dpi) and .pdf   one panel per dataset, one bar per model
-    reports/figures/overview_<metric>.png and .pdf                dataset-by-model annotated score matrix
+    reports/figures/<metric>_by_dataset.png (300 dpi) and .svg   one panel per dataset, one bar per model
+    reports/figures/overview_<metric>.png and .svg                dataset-by-model annotated score matrix
 One hatch marks all documented training involvement, including upstream teacher use.
 The detailed source/stage evidence stays in the registry and reports rather than the figure.
 The dashed line in each panel: chance level. A value marked * comes from a sample, not every clip.
@@ -43,14 +43,17 @@ sys.path.insert(0, str(ROOT / "scripts" / "common"))  # eval_datasets.py
 sys.path.insert(0, str(ROOT / "scripts" / "llm_eval"))
 from eval_datasets import LOADERS
 from prompts import configured_protocol
+from prediction_io import load_reported_metrics
 from training_provenance import with_training_provenance
 
 # One colour per model, in this order (Okabe-Ito: distinguishable with colour-vision deficiencies and in grey print)
 COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442", "#999999",
            "#332288", "#AA4499"]
 METRIC_NAMES = {"accuracy": "Accuracy", "unweighted_accuracy": "UAR",
-                "macro_f1": "Macro F1", "accuracy_all_classes": "Accuracy (all model classes)",
+                "macro_f1": "Macro F1", "weighted_f1": "Weighted F1",
+                "accuracy_all_classes": "Accuracy (all model classes)",
                 "accuracy_acted_or_listener": "Accuracy (acted emotion or listeners' vote)"}
+F1_METRICS = {"macro_f1", "weighted_f1"}
 INK, INK_2, GRID = "#111111", "#444444", "#d9d9d9"
 TRAINING_HATCH, TRAINING_LABEL = "///", "Part of the training process"
 PLOT_STYLE = "ordered_slim_panels_v6"
@@ -177,6 +180,7 @@ def load_results(models, datasets, exclude, registry=None, root=None):
                                        config=root / "config" / "llm.yaml", root=root)
         if expected is not None and run.get("inference_protocol") != expected:
             continue
+        run = run | {"metrics": load_reported_metrics(path, run)}
         run = with_training_provenance(run, registry.get(model))
         if run.get("clips", 0) > best.get(model, {}).get(key, {}).get("clips", 0):
             best.setdefault(model, {})[key] = run
@@ -198,7 +202,7 @@ def setup_matplotlib():
         "font.family": next((f for f in ("Helvetica Neue", "Helvetica", "Arial") if f in fonts), "DejaVu Sans"),
         "font.size": 15, "axes.titlesize": 17, "axes.labelsize": 19, "xtick.labelsize": 14, "ytick.labelsize": 14,
         "legend.fontsize": 14, "axes.edgecolor": INK_2, "axes.linewidth": 1.0, "axes.titleweight": "bold",
-        "pdf.fonttype": 42, "ps.fonttype": 42,  # embed real fonts (journals ask for it)
+        "svg.fonttype": "none", "svg.hashsalt": "emotion-recognition",
     })
     return plt
 
@@ -210,7 +214,7 @@ def legend_handles(plt, names, colours, chance=True, pending=()):
                      linewidth=1.2, label=names[m] + (" (pending)" if m in pending else "")) for m in names]
     handles.append(Patch(facecolor="white", edgecolor=INK, hatch=TRAINING_HATCH, linewidth=1.0,
                          label=TRAINING_LABEL))
-    if chance:  # macro F1 has no chance line
+    if chance:  # F1 metrics do not use the accuracy chance reference.
         handles.append(Line2D([0], [0], color=INK_2, linestyle="--", linewidth=1.6, label="chance level"))
     return handles
 
@@ -229,7 +233,8 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
     """One panel per dataset, with a fixed bottom legend (ten models + two keys fit two rows)."""
     layout = panel_layout(layout)
     rows = math.ceil(len(datasets) / columns)
-    legend_count = len(models) + 1 + int(metric != "macro_f1")
+    has_chance = metric not in F1_METRICS
+    legend_count = len(models) + 1 + int(has_chance)
     legend_columns = min(6, legend_count)
     pending = {m for m in models if not results.get(m)}
     legend_rows = math.ceil(legend_count / legend_columns)
@@ -244,7 +249,7 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
         runs = [results.get(m, {}).get(key) for m in models]
         first = next(r for r in runs if r)
         for i, (m, run) in enumerate(zip(models, runs)):
-            if run is None or metric not in run["metrics"]:
+            if run is None or run["metrics"].get(metric) is None:
                 ax.text(positions[i], 0.025, "—" if m in pending else "n/a", transform=ax.get_xaxis_transform(),
                         ha="center", va="bottom", fontsize=11, color=colours[m] if m in pending else INK_2)
                 continue
@@ -253,7 +258,7 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
                    hatch=TRAINING_HATCH if part_of_training(run) else None, zorder=3)
             bar_label(ax, positions[i], value, run)
         chance = chance_of(first)
-        if chance and metric != "macro_f1":
+        if chance and has_chance:
             ax.axhline(100 * chance, color=INK_2, linestyle="--", linewidth=1.6, zorder=4)
         ax.set_title(panel_title(key, first), pad=layout["title_pad"])
         ax.set_xticks([])
@@ -274,7 +279,7 @@ def per_dataset_figure(plt, metric, results, models, names, colours, datasets, c
     fig.subplots_adjust(left=0.052, right=0.995, top=1 - top_margin / height,
                         bottom=(legend_height + 0.20) / height,
                         wspace=layout["wspace"], hspace=layout["hspace"])
-    handles = legend_handles(plt, names, colours, metric != "macro_f1", pending)
+    handles = legend_handles(plt, names, colours, has_chance, pending)
     fig.legend(handles=handles, loc="lower center", ncol=legend_columns, frameon=False,
                bbox_to_anchor=(0.5, 0.035 / height), borderaxespad=0, borderpad=0.2,
                handlelength=1.4, columnspacing=0.8, handletextpad=0.35, labelspacing=0.45)
@@ -287,7 +292,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     from matplotlib.colors import LinearSegmentedColormap
     from matplotlib.patches import Rectangle
 
-    has_chance = metric != "macro_f1"
+    has_chance = metric not in F1_METRICS
     ncols = len(models) + int(has_chance)
     values = np.full((len(datasets), ncols), np.nan)
     sampled = False
@@ -295,7 +300,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     for row, key in enumerate(datasets):
         for col, model in enumerate(models):
             run = results.get(model, {}).get(key)
-            if run is not None and metric in run["metrics"]:
+            if run is not None and run["metrics"].get(metric) is not None:
                 values[row, col] = 100 * run["metrics"][metric]
 
     width, height = max(11.5, 1.23 * ncols + 3.5), max(5.0, 0.44 * len(datasets) + 1.15)
@@ -305,7 +310,11 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     cmap = LinearSegmentedColormap.from_list(
         "overview_blues", plt.get_cmap("Blues")(np.linspace(0.06, 0.96, 256))
     ).with_extremes(bad="#f1f2f4")
-    plotted = ax.imshow(np.ma.masked_invalid(values), cmap=cmap, vmin=0, vmax=100, aspect="auto")
+    # Keep cells as vector paths in SVG rather than embedding an imshow bitmap.
+    plotted = ax.pcolormesh(np.arange(ncols + 1) - 0.5, np.arange(len(datasets) + 1) - 0.5,
+                           np.ma.masked_invalid(values), cmap=cmap, vmin=0, vmax=100)
+    ax.set_xlim(-0.5, ncols - 0.5)
+    ax.set_ylim(len(datasets) - 0.5, -0.5)
     headers = [names[m].replace("emotion2vec+ ", "emotion2vec+\n")
                .replace("MERaLiON-", "MERaLiON\n").replace("Vox-Profile ", "Vox-Profile\n")
                for m in models]
@@ -353,6 +362,7 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
     if has_chance:
         ax.axvline(len(models) - 0.5, color="#c8ccd1", linewidth=1.5)
     colourbar = fig.colorbar(plotted, ax=ax, fraction=0.026, pad=0.025, shrink=0.94)
+    colourbar.solids.set_rasterized(False)
     colourbar.set_label(f"{METRIC_NAMES.get(metric, metric)} (%)", fontsize=19, labelpad=9)
     colourbar.ax.tick_params(labelsize=13)
     from matplotlib.lines import Line2D
@@ -374,8 +384,9 @@ def overview_figure(plt, metric, results, models, names, colours, datasets, out)
 
 def save(fig, plt, stem):
     stem.parent.mkdir(parents=True, exist_ok=True)
-    for suffix, dpi in ((".png", 300), (".pdf", None)):
-        fig.savefig(stem.with_suffix(suffix), dpi=dpi, bbox_inches="tight", facecolor="white")
+    for suffix, dpi in ((".png", 300), (".svg", None)):
+        fig.savefig(stem.with_suffix(suffix), dpi=dpi, bbox_inches="tight", facecolor="white",
+                    **({"metadata": {"Date": None}} if suffix == ".svg" else {}))
     plt.close(fig)
     return stem
 
@@ -419,18 +430,18 @@ def main():
     print(f"  datasets    : {', '.join(datasets)}")
 
     # ------------------------------------------------------------------
-    # Step 3: Draw the figures, PNG (300 dpi) and PDF
+    # Step 3: Draw the figures, PNG (300 dpi) and SVG
     # ------------------------------------------------------------------
     step("Step 3/3 | Draw the figures")
     plt = setup_matplotlib()
     rendered = []
     for metric in metrics:
-        if not any(metric in r["metrics"] for m in models for r in results.get(m, {}).values()):
+        if not any(r["metrics"].get(metric) is not None for m in models for r in results.get(m, {}).values()):
             print(f"  {metric}: no result has this metric, skipped")
             continue
         for stem in (per_dataset_figure(plt, metric, results, models, names, colours, datasets, columns, out, layout),
                      overview_figure(plt, metric, results, models, names, colours, datasets, out)):
-            print(f"  {stem.relative_to(ROOT)}.png and .pdf")
+            print(f"  {stem.relative_to(ROOT)}.png and .svg")
         rendered.append(metric)
     out.mkdir(parents=True, exist_ok=True)
     (out / "results_manifest.json").write_text(json.dumps({"fingerprint": results_fingerprint(results),

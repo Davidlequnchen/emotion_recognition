@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.000039+00:00",
+  "model": "meralion_ser_v1",
+  "key": "emotiontalk",
+  "clips": 1929,
+  "unique_audio_paths": 1929,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/emotiontalk_predictions.csv",
+      "sha256": "a96faa5f75ed606cc5038b33d577846d56de16ccf50557a3ffa3d88ad9179e64",
+      "bytes": 298631
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emotiontalk_predictions.json",
+      "sha256": "9d946815d4923351e84bc33deea3cfb5fe7024d8b2da7a4896957d048935b3bc",
+      "bytes": 2471
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.5521,
+    "unweighted_accuracy": 0.536431,
+    "macro_f1": 0.473604,
+    "accuracy_all_classes": 0.5521
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.552099533437014,
+    "unweighted_accuracy": 0.5364311219681912,
+    "macro_f1": 0.4736038819097613,
+    "weighted_f1": 0.5606003858067925,
+    "accuracy_all_classes": 0.552099533437014
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

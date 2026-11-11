@@ -1,0 +1,1231 @@
+{
+  "schema_version": 1,
+  "algorithm": "paired_cluster_percentile_v1",
+  "parameters": {
+    "n_resamples": 10000,
+    "seed": 20261111,
+    "confidence": 0.95,
+    "datasets": [
+      "crema_d",
+      "ravdess",
+      "meld"
+    ],
+    "models": "all",
+    "metrics": [
+      "accuracy",
+      "unweighted_accuracy",
+      "macro_f1",
+      "weighted_f1"
+    ],
+    "interval": "percentile",
+    "quantile_method": "linear",
+    "rng": "PCG64",
+    "class_policy": "fixed candidates; zero_division=0",
+    "multiplicity_adjustment": null
+  },
+  "software": {
+    "python": "3.11.17",
+    "numpy": "2.4.6",
+    "pyyaml": "6.0.3"
+  },
+  "coverage": {
+    "crema_d": {
+      "models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "missing_models": [
+        "qwen2_5_omni_7b",
+        "qwen2_audio_7b",
+        "gemma4_e4b"
+      ],
+      "sample_counts": {
+        "emotion2vec_plus_large": 7442,
+        "meralion_ser_v1": 7442,
+        "melati_emotion": 7442,
+        "vox_profile_whisper": 7442,
+        "vox_profile_wavlm": 7442,
+        "gpt_realtime": 7442,
+        "gemini-3.8-flash": 7442
+      },
+      "cluster_counts": {
+        "emotion2vec_plus_large": 91,
+        "meralion_ser_v1": 91,
+        "melati_emotion": 91,
+        "vox_profile_whisper": 91,
+        "vox_profile_wavlm": 91,
+        "gpt_realtime": 91,
+        "gemini-3.8-flash": 91
+      }
+    },
+    "ravdess": {
+      "models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "missing_models": [
+        "qwen2_5_omni_7b",
+        "qwen2_audio_7b",
+        "gemma4_e4b"
+      ],
+      "sample_counts": {
+        "emotion2vec_plus_large": 1440,
+        "meralion_ser_v1": 1440,
+        "melati_emotion": 1440,
+        "vox_profile_whisper": 1440,
+        "vox_profile_wavlm": 1440,
+        "gpt_realtime": 1440,
+        "gemini-3.8-flash": 1440
+      },
+      "cluster_counts": {
+        "emotion2vec_plus_large": 24,
+        "meralion_ser_v1": 24,
+        "melati_emotion": 24,
+        "vox_profile_whisper": 24,
+        "vox_profile_wavlm": 24,
+        "gpt_realtime": 24,
+        "gemini-3.8-flash": 24
+      }
+    },
+    "meld": {
+      "models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "qwen2_5_omni_7b",
+        "qwen2_audio_7b",
+        "gemma4_e4b",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "missing_models": [],
+      "sample_counts": {
+        "emotion2vec_plus_large": 2608,
+        "meralion_ser_v1": 2608,
+        "melati_emotion": 2608,
+        "vox_profile_whisper": 2608,
+        "vox_profile_wavlm": 2608,
+        "qwen2_5_omni_7b": 2608,
+        "qwen2_audio_7b": 2608,
+        "gemma4_e4b": 2608,
+        "gpt_realtime": 2608,
+        "gemini-3.8-flash": 2608
+      },
+      "cluster_counts": {
+        "emotion2vec_plus_large": 280,
+        "meralion_ser_v1": 280,
+        "melati_emotion": 280,
+        "vox_profile_whisper": 280,
+        "vox_profile_wavlm": 280,
+        "qwen2_5_omni_7b": 280,
+        "qwen2_audio_7b": 280,
+        "gemma4_e4b": 280,
+        "gpt_realtime": 280,
+        "gemini-3.8-flash": 280
+      }
+    }
+  },
+  "cohorts": {
+    "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c": {
+      "dataset": "crema_d",
+      "n_samples": 7442,
+      "n_clusters": 91,
+      "group_kind": "speaker",
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c",
+      "audio_paths_sha256": "dfa49d51b312674d7b78169242f038641299f1292b273bdad69c4e1e1204bd15",
+      "group_ids_sha256": "aea40af657645b8f25c6d5ea86284bd4a9f957238a61994b62185bacbc842559",
+      "grouping_sources": [
+        "filename <actor>_<sentence>_<emotion>_<intensity>; docs/datasets_survey_en.md section 6 (CREMA-D)"
+      ],
+      "cluster_sizes": {
+        "min": 76,
+        "median": 82.0,
+        "max": 82
+      },
+      "resampled_n_min": 7396,
+      "resampled_n_max": 7462,
+      "missing_class_resamples": 0
+    },
+    "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18": {
+      "dataset": "ravdess",
+      "n_samples": 1440,
+      "n_clusters": 24,
+      "group_kind": "speaker",
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18",
+      "audio_paths_sha256": "40fa47e6959c44d6d052cb11c6b015fca39d172e45a579cf97aa2516beea4401",
+      "group_ids_sha256": "34e1c0e3c110a9312dbd902ad3bd3b69dfc32ea9966555c7edfebfc2e0045a72",
+      "grouping_sources": [
+        "filename seventh field is actor 01-24; docs/datasets_survey_en.md section 6 (RAVDESS)"
+      ],
+      "cluster_sizes": {
+        "min": 60,
+        "median": 60.0,
+        "max": 60
+      },
+      "resampled_n_min": 1440,
+      "resampled_n_max": 1440,
+      "missing_class_resamples": 0
+    },
+    "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674": {
+      "dataset": "meld",
+      "n_samples": 2608,
+      "n_clusters": 280,
+      "group_kind": "dialogue",
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674",
+      "audio_paths_sha256": "e1543bf1b5bf3eea79108e300818f98b805d3e95505a373fc3a031b0ce3481c9",
+      "group_ids_sha256": "a339d8e28c863a07ea6bcb9c371f211e0d59a0e822510f911683e8d374a5736e",
+      "grouping_sources": [
+        "filename dia<Dialogue_ID>_utt<Utterance_ID>; common/eval_datasets.py:meld and data/meld/test_sent_emo.csv; only the official test split is available locally; dialogue grouping does not guarantee speaker independence"
+      ],
+      "cluster_sizes": {
+        "min": 1,
+        "median": 9.0,
+        "max": 33
+      },
+      "resampled_n_min": 2206,
+      "resampled_n_max": 2960,
+      "missing_class_resamples": 0
+    }
+  },
+  "runs": {
+    "crema_d/emotion2vec_plus_large": {
+      "sources": [
+        {
+          "path": "outputs/emotion2vec_plus_large/crema_d_predictions.json",
+          "sha256": "4bb54d0437d2a1feb8da6f8f54514ef0379b85e424cce15e0814103f716fd162",
+          "bytes": 2731
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/crema_d_predictions.csv",
+          "sha256": "f7f3dbfbabc9707d18f86cec7bceb51ba5dfcb9ac540112f6bce63391b135fb3",
+          "bytes": 1083737
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "total_not_declared",
+      "inference_protocol": null,
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "crema_d/meralion_ser_v1": {
+      "sources": [
+        {
+          "path": "outputs/meralion_ser_v1/crema_d_predictions.json",
+          "sha256": "42d192ccb5f43b98dcb8b664a118b3e08b0f8df8c49bdf78a8c104e777f9b25d",
+          "bytes": 2570
+        },
+        {
+          "path": "outputs/meralion_ser_v1/crema_d_predictions.csv",
+          "sha256": "384e24cf74d93423d88f91bf344e56d10d0b04d7fd948ea3f6c3dff4bbc6fa28",
+          "bytes": 984434
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "crema_d/melati_emotion": {
+      "sources": [
+        {
+          "path": "outputs/melati_emotion/crema_d_predictions.json",
+          "sha256": "41656adde3a0a670e13bb24bfce1fad1b93517c27cfd6de9109be17339ac13d1",
+          "bytes": 2588
+        },
+        {
+          "path": "outputs/melati_emotion/crema_d_predictions.csv",
+          "sha256": "8580f8d4d3f9ee59f427970b9c92666b31e5244c8db1e95bca80ad5aa87a5143",
+          "bytes": 985767
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "crema_d/vox_profile_whisper": {
+      "sources": [
+        {
+          "path": "outputs/vox_profile_whisper/crema_d_predictions.json",
+          "sha256": "7a27e5e652786605b952134496f05768a2431acca117c7b8b67a0cfb85fc271e",
+          "bytes": 2496
+        },
+        {
+          "path": "outputs/vox_profile_whisper/crema_d_predictions.csv",
+          "sha256": "939ee429750583f647a0e4e945097f7c1e2e17646345908f80a42c1b57167456",
+          "bytes": 1095221
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "crema_d/vox_profile_wavlm": {
+      "sources": [
+        {
+          "path": "outputs/vox_profile_wavlm/crema_d_predictions.json",
+          "sha256": "c446613681eac943a42086b859effb5cc08b55333cc4f12b7cd54bbcc8eefd38",
+          "bytes": 2555
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/crema_d_predictions.csv",
+          "sha256": "cb42026c0653127751c01512ad5426cdcb7a758849b2a98dd32544ad6aa27e98",
+          "bytes": 1094906
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "crema_d/gpt_realtime": {
+      "sources": [
+        {
+          "path": "outputs/gpt_realtime/crema_d_predictions.json",
+          "sha256": "58308a83ea2a49afb43ee1480ea50ffbdacaddb3d32b3b9898a7024fb942edd4",
+          "bytes": 3288
+        },
+        {
+          "path": "outputs/gpt_realtime/crema_d_predictions.csv",
+          "sha256": "e4ce68b8f41d5c59d356b6f510aedec701eabcbc16074629a6b6d34ed8b5c4bc",
+          "bytes": 1054556
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad"
+        ],
+        "prompt_hash": "4ff3d2e97612",
+        "model_id": "gpt-realtime"
+      },
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "crema_d/gemini-3.8-flash": {
+      "sources": [
+        {
+          "path": "outputs/gemini-3.8-flash/crema_d_predictions.json",
+          "sha256": "5d054851c9e6d87c3f08eab0c8a4d8d020dffe1a8e095115894692f083953671",
+          "bytes": 3364
+        },
+        {
+          "path": "outputs/gemini-3.8-flash/crema_d_predictions.csv",
+          "sha256": "7876beea268cb541aa6f1b32a59722bfdce4114648080bb44b490aa7d03926d6",
+          "bytes": 1036341
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad"
+        ],
+        "prompt_hash": "4ff3d2e97612",
+        "model_id": "gemini-3.8-flash"
+      },
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
+    "ravdess/emotion2vec_plus_large": {
+      "sources": [
+        {
+          "path": "outputs/emotion2vec_plus_large/ravdess_predictions.json",
+          "sha256": "977ddef8e181a8949e81861fb99a5e034f6adca8c27bb0d9db8ce872473f23e9",
+          "bytes": 2402
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/ravdess_predictions.csv",
+          "sha256": "6f3ea3f0683f8dd9d5e6af49dcab22da46936ad10ad4b1734d6ee97520aeb8e9",
+          "bytes": 208160
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/meralion_ser_v1": {
+      "sources": [
+        {
+          "path": "outputs/meralion_ser_v1/ravdess_predictions.json",
+          "sha256": "5520446d884ff25f8600109cdafcf0b817758dad4d1159b10124c9a5402c0bf3",
+          "bytes": 2413
+        },
+        {
+          "path": "outputs/meralion_ser_v1/ravdess_predictions.csv",
+          "sha256": "f7940e006f29e64db79cdfc39d804513a75b215cc70ca32cd5b79f62b46a556b",
+          "bytes": 185592
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/melati_emotion": {
+      "sources": [
+        {
+          "path": "outputs/melati_emotion/ravdess_predictions.json",
+          "sha256": "1981cad44a8438da743b4e9658b849556c410b2029b2054829f84e496de82e81",
+          "bytes": 2216
+        },
+        {
+          "path": "outputs/melati_emotion/ravdess_predictions.csv",
+          "sha256": "82a2b8d0736babf5f12bce3035c811a37d6795c8c59d0c5658b3791fbfaf8679",
+          "bytes": 184557
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/vox_profile_whisper": {
+      "sources": [
+        {
+          "path": "outputs/vox_profile_whisper/ravdess_predictions.json",
+          "sha256": "63697d4ab3d748546abc10bbb0415a6bcd87de02fe553cccef8b43c1e1219aa3",
+          "bytes": 2122
+        },
+        {
+          "path": "outputs/vox_profile_whisper/ravdess_predictions.csv",
+          "sha256": "b3042a1b66a913dbad1785d68f00f622ffdac96214d12ccd5f72656dbd637cfb",
+          "bytes": 208645
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/vox_profile_wavlm": {
+      "sources": [
+        {
+          "path": "outputs/vox_profile_wavlm/ravdess_predictions.json",
+          "sha256": "3a4e4f21ee8f3ac193056922166ca08154afa0cb8f5c57eb6846670d1db4a37e",
+          "bytes": 2182
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/ravdess_predictions.csv",
+          "sha256": "ddf53c53a7e44e7e77e5cf7cc147fb3fb9afb68bc933756caea10db9fab78c90",
+          "bytes": 208694
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/gpt_realtime": {
+      "sources": [
+        {
+          "path": "outputs/gpt_realtime/ravdess_predictions.json",
+          "sha256": "1bc36c34c718922aba5f4b37ae5ce49b9f4b7298f458dda932e24a833cba9eee",
+          "bytes": 2889
+        },
+        {
+          "path": "outputs/gpt_realtime/ravdess_predictions.csv",
+          "sha256": "f76443a27122883777b8656925806c10517e3724ef6223dcf1d9d24acc1221f8",
+          "bytes": 200231
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "dc84c979c561",
+        "model_id": "gpt-realtime"
+      },
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/gemini-3.8-flash": {
+      "sources": [
+        {
+          "path": "outputs/gemini-3.8-flash/ravdess_predictions.json",
+          "sha256": "f2f583cf67e9faed35c2cdf3eba67cb6f3f92027464bc76ae1514992aba5a8d2",
+          "bytes": 3163
+        },
+        {
+          "path": "outputs/gemini-3.8-flash/ravdess_predictions.csv",
+          "sha256": "771315a1c1c70a06b6f0be3a43b80365c0544e3c568fc3c2c8955ddec7804b33",
+          "bytes": 197712
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "dc84c979c561",
+        "model_id": "gemini-3.8-flash"
+      },
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "meld/emotion2vec_plus_large": {
+      "sources": [
+        {
+          "path": "outputs/emotion2vec_plus_large/meld_predictions.json",
+          "sha256": "78104cd590438eb72839995a8e84d4950017b6588ad386ae675df421cbd2cf25",
+          "bytes": 2862
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/meld_predictions.csv",
+          "sha256": "1c748f3e8cef598d0f02c795f2e5e1068c2c43440f33fbd0248df84b3772f56b",
+          "bytes": 321489
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/meralion_ser_v1": {
+      "sources": [
+        {
+          "path": "outputs/meralion_ser_v1/meld_predictions.json",
+          "sha256": "4c7fd6cd1b4438de9e51787d2f2b455890a6baee3a45dfbdf7ae4f06387b3670",
+          "bytes": 2537
+        },
+        {
+          "path": "outputs/meralion_ser_v1/meld_predictions.csv",
+          "sha256": "16b408c4f91a2d074857aa73f8d3e3281819b250b18e606093662817be47ae9b",
+          "bytes": 285224
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/melati_emotion": {
+      "sources": [
+        {
+          "path": "outputs/melati_emotion/meld_predictions.json",
+          "sha256": "a740041ad266de0a7d280a9f0ab8b5f5ba2f80ea0527add1be4792918969e17a",
+          "bytes": 2795
+        },
+        {
+          "path": "outputs/melati_emotion/meld_predictions.csv",
+          "sha256": "28235a6a890815080c430eeaab35c502a39318ed5fdd5592fab302dd0c4e810f",
+          "bytes": 281282
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/vox_profile_whisper": {
+      "sources": [
+        {
+          "path": "outputs/vox_profile_whisper/meld_predictions.json",
+          "sha256": "fe4c917935a8f481f3002cdc99294b9fb1b3da81822899889a96b5bbb5410570",
+          "bytes": 2602
+        },
+        {
+          "path": "outputs/vox_profile_whisper/meld_predictions.csv",
+          "sha256": "08f54c5f0d24363ba13daab3b052d487a7ff25c42df255b6f3de175023ab7457",
+          "bytes": 321962
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/vox_profile_wavlm": {
+      "sources": [
+        {
+          "path": "outputs/vox_profile_wavlm/meld_predictions.json",
+          "sha256": "a77523c2cdedf67d6d09d1279bb797e030c626f88261e43f396cc5b6eb6ed93e",
+          "bytes": 2684
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/meld_predictions.csv",
+          "sha256": "2e505413f7f2cea238e8866cdca1c5a5d8ccda08920ca69c60d01de8da55c419",
+          "bytes": 321686
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": null,
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/qwen2_5_omni_7b": {
+      "sources": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/meld_predictions.json",
+          "sha256": "2e3dba49a4183bf28d6ef57c42d10871e6f25d399780f63b22c4cfcb218d5ae8",
+          "bytes": 4023
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/meld_predictions.csv",
+          "sha256": "c1c9a9b73370402dfe441e041821ef40f346cd50137a5f82f20bc2d311f87f02",
+          "bytes": 491998
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/qwen2_audio_7b": {
+      "sources": [
+        {
+          "path": "outputs/qwen2_audio_7b/meld_predictions.json",
+          "sha256": "a6d324b8a5454fbbe96c80adedf7d1da47974f6cbb7969686945cd7f3120a97a",
+          "bytes": 4062
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/meld_predictions.csv",
+          "sha256": "660a7ddccc0a8c145fdcb603d1d9030529008bd206a51119e630a9dc5accd77c",
+          "bytes": 491204
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+      },
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/gemma4_e4b": {
+      "sources": [
+        {
+          "path": "outputs/gemma4_e4b/meld_predictions.json",
+          "sha256": "67f164b466cee23a13761122649b427e7b261b4a8e383044214290a2a5814d72",
+          "bytes": 3937
+        },
+        {
+          "path": "outputs/gemma4_e4b/meld_predictions.csv",
+          "sha256": "d14695e0250fa2544534e2af90eee8dbf58d069f18a36b12e4dab2e95f167a5e",
+          "bytes": 491434
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "google/gemma-4-E4B-it"
+      },
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/gpt_realtime": {
+      "sources": [
+        {
+          "path": "outputs/gpt_realtime/meld_predictions.json",
+          "sha256": "191f700a3fa214e3f55a16f30b8764e1842e288f4122a23fe81c159b6210d9ea",
+          "bytes": 2956
+        },
+        {
+          "path": "outputs/gpt_realtime/meld_predictions.csv",
+          "sha256": "e610efed5c8c44160eb661a8f28441af1fc17f923208ce5e1a336675a8e8abed",
+          "bytes": 302703
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "dc84c979c561",
+        "model_id": "gpt-realtime"
+      },
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    },
+    "meld/gemini-3.8-flash": {
+      "sources": [
+        {
+          "path": "outputs/gemini-3.8-flash/meld_predictions.json",
+          "sha256": "0545c845047841f89495f6e273cfa4f68dd9e1932acd1e4bc3964b090c53a339",
+          "bytes": 3176
+        },
+        {
+          "path": "outputs/gemini-3.8-flash/meld_predictions.csv",
+          "sha256": "777dccf4a67f4736c1d6b342f7c42c22fce700b7a4cf660c124e01b86204d4e7",
+          "bytes": 301482
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "dc84c979c561",
+        "model_id": "gemini-3.8-flash"
+      },
+      "cohort_sha256": "ed42d9cd88a557f9937954c8f8ebca63d34c39a2bd5b668e53b2bc3ef783f674"
+    }
+  },
+  "selection": [
+    {
+      "model": "gemma4_e4b",
+      "dataset": "crema_d",
+      "path": "outputs/gemma4_e4b/crema_d_predictions.json",
+      "status": "excluded",
+      "reason": "incompatible_inference_protocol"
+    },
+    {
+      "model": "gemma4_e4b",
+      "dataset": "ravdess",
+      "path": "outputs/gemma4_e4b/ravdess_predictions.json",
+      "status": "excluded",
+      "reason": "incompatible_inference_protocol"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "crema_d",
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "meld",
+      "path": "outputs/emotion2vec_plus_large/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "ravdess",
+      "path": "outputs/emotion2vec_plus_large/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "crema_d",
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "meld",
+      "path": "outputs/gemini-3.8-flash/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "ravdess",
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "gemma4_e4b",
+      "dataset": "meld",
+      "path": "outputs/gemma4_e4b/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "crema_d",
+      "path": "outputs/gpt_realtime/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "meld",
+      "path": "outputs/gpt_realtime/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "ravdess",
+      "path": "outputs/gpt_realtime/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "crema_d",
+      "path": "outputs/melati_emotion/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "meld",
+      "path": "outputs/melati_emotion/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "ravdess",
+      "path": "outputs/melati_emotion/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "crema_d",
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "meld",
+      "path": "outputs/meralion_ser_v1/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "ravdess",
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "meld",
+      "path": "outputs/qwen2_5_omni_7b/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "meld",
+      "path": "outputs/qwen2_audio_7b/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "crema_d",
+      "path": "outputs/vox_profile_wavlm/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "meld",
+      "path": "outputs/vox_profile_wavlm/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "ravdess",
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "crema_d",
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "meld",
+      "path": "outputs/vox_profile_whisper/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "ravdess",
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    }
+  ],
+  "implementation_sources": [
+    {
+      "path": "research_paper/scripts/bootstrap.py",
+      "sha256": "6c031dc383fb7e3a1fd82fcd2f271f5c7bf824225e6108f9f78c8a5868bf83c2"
+    },
+    {
+      "path": "research_paper/scripts/consensus.py",
+      "sha256": "c7ecfc2799a2d19318ef1c6c64fb6baa4243138b0a3e85b540afacda0aac4e57"
+    },
+    {
+      "path": "emotion_recognition/scripts/analysis/probe_metadata.py",
+      "sha256": "b7c721d0b59ecbeb9413f546c23f25699d88d2f184a1fb82c9ecef711d1fe327"
+    },
+    {
+      "path": "emotion_recognition/scripts/llm_eval/prompts.py",
+      "sha256": "cd5d9ef4ee23ad4b44948ae223af0a70cd89175755233cf2bbafc1073ed21e7f"
+    },
+    {
+      "path": "emotion_recognition/config/models.yaml",
+      "sha256": "c6477fe4a8b114fff31b7e7f98b08d1cc6c72be820fef66b16c60622e120fa01"
+    },
+    {
+      "path": "emotion_recognition/config/llm.yaml",
+      "sha256": "80a43260ad9e0f98e0a868006800767870581b431a4f3b7b57f759a2a789760c"
+    },
+    {
+      "path": "emotion_recognition/scripts/llm_eval/prompts.yaml",
+      "sha256": "bee7b98dc114634113ab1c23b96beb88554edfaf65899c554a7f6c094a09275d"
+    }
+  ],
+  "results": {
+    "csv": "output/bootstrap.csv",
+    "rows": 444,
+    "single_model_runs": 24,
+    "model_pairs": 87,
+    "sha256": "2c5cbb1b3ae6f9af81f5eef0f337f555b234bceb042fe9a2cbaac6c23f187a5e"
+  }
+}

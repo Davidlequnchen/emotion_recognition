@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.195736+00:00",
+  "model": "melati_emotion",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/mead_predictions.csv",
+      "sha256": "053d6baf763273acafe142dd4d0424b1af117b066806d427ad81ca9f2790264e",
+      "bytes": 965540
+    },
+    {
+      "path": "outputs/melati_emotion/mead_predictions.json",
+      "sha256": "7b1886bbf3fd49d1bf489d4b30734702dad6fe4638ae435e6034db4169937ad5",
+      "bytes": 2795
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.306875,
+    "unweighted_accuracy": 0.349443,
+    "macro_f1": 0.275936,
+    "accuracy_all_classes": 0.306875
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.306875,
+    "unweighted_accuracy": 0.34944260514878517,
+    "macro_f1": 0.27593646854391507,
+    "weighted_f1": 0.2770425598434435,
+    "accuracy_all_classes": 0.306875
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

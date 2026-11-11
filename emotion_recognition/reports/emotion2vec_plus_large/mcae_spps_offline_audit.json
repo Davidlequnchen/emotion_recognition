@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.609660+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "mcae_spps",
+  "clips": 6675,
+  "unique_audio_paths": 6675,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.csv",
+      "sha256": "871f1582330cfbe5eb978dc5f58dabc843940dc07302300b1c6242f8ddd4e2dc",
+      "bytes": 940639
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.json",
+      "sha256": "88a168ef0ca115cc92fca7b32088a9cae18ae47f436f833da2e5577149fbdb57",
+      "bytes": 2475
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.613483,
+    "unweighted_accuracy": 0.541993,
+    "macro_f1": 0.500753,
+    "accuracy_all_classes": 0.613483,
+    "accuracy_acted_or_listener": 0.613483,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.613483
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6134831460674157,
+    "unweighted_accuracy": 0.5419932503845851,
+    "macro_f1": 0.5007532350234717,
+    "weighted_f1": 0.5461956430392683,
+    "accuracy_all_classes": 0.6134831460674157,
+    "accuracy_acted_or_listener": 0.6134831460674157,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.6134831460674157
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

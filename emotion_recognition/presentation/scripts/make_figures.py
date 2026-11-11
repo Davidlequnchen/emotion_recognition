@@ -1,4 +1,4 @@
-"""Statistics and figures of the presentation: writes assets/stats.json and every PNG in assets/fig/.
+"""Statistics and figures of the presentation: writes assets/stats.json and PNG/SVG pairs in assets/fig/.
 
 Reads: outputs/<model>/<dataset>_predictions.csv, reports/summary.json, the audio headers in data/<dataset>/,
 data/crema_d/processedResults/tabulatedVotes.csv and data/mcae_spps/Corpus information.xlsx.
@@ -32,6 +32,13 @@ plt.rcParams.update({
     "figure.facecolor": "white", "axes.facecolor": "white", "savefig.facecolor": "white",
     "axes.spines.top": False, "axes.spines.right": False,
 })
+
+
+def save_figure(fig, name):
+    """Export the plotted objects in both raster and vector formats."""
+    fig.savefig(FIG / f"{name}.png", dpi=DPI)
+    fig.savefig(FIG / f"{name}.svg", metadata={"Date": None})
+    plt.close(fig)
 
 
 def r4(x):
@@ -193,7 +200,10 @@ def draw_cm(ax, pct, rows, cols, xlabel="Predicted", ylabel="Acted", fs=None):
     """Blues heatmap with the % in every cell, thin dark lines between cells and a dark border."""
     n = max(len(rows), len(cols))
     fs = fs or (14 if n <= 5 else (13 if n == 6 else 12))
-    im = ax.imshow(pct, cmap="Blues", vmin=0, vmax=100, aspect="auto")
+    im = ax.pcolormesh(np.arange(len(cols) + 1) - 0.5, np.arange(len(rows) + 1) - 0.5,
+                       pct, cmap="Blues", vmin=0, vmax=100)
+    ax.set_xlim(-0.5, len(cols) - 0.5)
+    ax.set_ylim(len(rows) - 0.5, -0.5)
     for i in range(len(rows)):
         for j in range(len(cols)):
             v = pct[i, j]
@@ -218,6 +228,7 @@ def draw_cm(ax, pct, rows, cols, xlabel="Predicted", ylabel="Acted", fs=None):
 
 def add_colorbar(fig, im, **kw):
     cb = fig.colorbar(im, **kw)
+    cb.solids.set_rasterized(False)
     cb.set_label("% of acted clips", fontsize=13)
     cb.ax.tick_params(labelsize=12)
     cb.outline.set_edgecolor(GRID_C)
@@ -240,8 +251,7 @@ for ds in DATASETS:
         im = draw_cm(ax, pct, rows, cols)
         add_colorbar(fig, im, ax=ax, fraction=0.046, pad=0.03)
         fig.tight_layout()
-        fig.savefig(FIG / f"cm_{m}_{ds}.png", dpi=DPI)
-        plt.close(fig)
+        save_figure(fig, f"cm_{m}_{ds}")
     fig, axes = plt.subplots(1, 2, figsize=(11.5, 5.4), constrained_layout=True)
     for ax, m in zip(axes, PAIR_MODELS):
         rows, pct = mats[m]
@@ -249,8 +259,7 @@ for ds in DATASETS:
         tag = "  (seen in training)" if ds in SEEN[m] else "  (not in training)"
         ax.set_title(f"{MODEL_NAMES[m]}\naccuracy {res[m][ds]['accuracy'] * 100:.1f}%{tag}", fontsize=14)
     add_colorbar(fig, im, ax=axes, fraction=0.035, pad=0.02)
-    fig.savefig(FIG / f"cm_pair_{ds}.png", dpi=DPI)
-    plt.close(fig)
+    save_figure(fig, f"cm_pair_{ds}")
     print(f"  {ds}: columns {cols}")
 
 # ---------------------------------------------------------------- Step 7: CREMA-D actor vs listeners matrix
@@ -259,8 +268,7 @@ fig, ax = plt.subplots(figsize=(7.0, 5.6))
 im = draw_cm(ax, row_percent(mat), cr_rows, cr_cols, xlabel="Listener majority (voice only)", ylabel="Acted")
 add_colorbar(fig, im, ax=ax, fraction=0.046, pad=0.03)
 fig.tight_layout()
-fig.savefig(FIG / "crema_acted_vs_listener.png", dpi=DPI)
-plt.close(fig)
+save_figure(fig, "crema_acted_vs_listener")
 
 # ---------------------------------------------------------------- Step 8: MCAE-SPPS recognition histogram
 print("Step 8: MCAE-SPPS recognition-rate histogram")
@@ -283,8 +291,7 @@ ax.xaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1.0, decimals=0)
 ax.grid(axis="y", color="#e6e6e6", linewidth=0.8)
 ax.set_axisbelow(True)
 fig.tight_layout()
-fig.savefig(FIG / "mcae_recognition_hist.png", dpi=DPI)
-plt.close(fig)
+save_figure(fig, "mcae_recognition_hist")
 print(f"  {n_half} clips at 50%, mean {mean * 100:.1f}%")
 
 # ---------------------------------------------------------------- Step 9: seen vs unseen bars
@@ -312,8 +319,7 @@ ax.legend(handles=[Patch(facecolor=SEEN_C, edgecolor=BAR_EDGE, label="datasets i
                    Patch(facecolor=UNSEEN_C, edgecolor=BAR_EDGE, label="datasets not in its training data")],
           loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False)
 fig.tight_layout()
-fig.savefig(FIG / "seen_vs_unseen.png", dpi=DPI)
-plt.close(fig)
+save_figure(fig, "seen_vs_unseen")
 
 # ---------------------------------------------------------------- Step 10: emotion counts
 print("Step 10: clips per acted emotion, one panel per dataset")
@@ -330,6 +336,5 @@ for ax, ds in zip(axes.flat, DATASETS):
 for ax in axes[:, 0]:
     ax.set_ylabel("Clips", fontsize=12)
 fig.tight_layout(h_pad=0.8, w_pad=0.6)
-fig.savefig(FIG / "emotion_counts.png", dpi=DPI)
-plt.close(fig)
-print(f"Done: assets/stats.json and {len(list(FIG.glob('*.png')))} figures in assets/fig/")
+save_figure(fig, "emotion_counts")
+print(f"Done: assets/stats.json and {len(list(FIG.glob('*.png')))} PNG/SVG pairs in assets/fig/")

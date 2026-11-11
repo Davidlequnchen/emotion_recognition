@@ -10,6 +10,7 @@ Regenerated offline from saved CSV/JSON by `scripts/evaluation/refresh_reports.p
 | Accuracy: acted emotion | 37.83% |
 | UAR: mean ground-truth-row recall | 37.83% |
 | Macro F1 | 42.33% |
+| Weighted F1 (by resolved-truth class support) | 36.82% |
 | Accuracy: all model classes | 37.83% |
 
 ## Imported run and verification

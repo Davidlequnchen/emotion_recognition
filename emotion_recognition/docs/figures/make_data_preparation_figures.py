@@ -1,5 +1,5 @@
 """
-Figures for docs/data_preparation_call_centre_audio.md (writes docs/figures/data_prep_*.png).
+Figures for docs/data_preparation_call_centre_audio.md (writes docs/figures/data_prep_*.png and .svg).
 
 The "customer turn" is simulated: the six CREMA-D sample clips in data/samples/ (ODbL) are trimmed and joined with
 pauses of chosen lengths, with faint noise added, so that every step of the segmentation can be shown on real speech.
@@ -28,6 +28,13 @@ TURN = [("NEU", 0.2), ("ANG", 0.8), ("DIS", 0.15), ("FEA", 0.7), ("HAP_short", 0
 
 GREEN, RED, GREY, BLUE, INK = "#2e8b57", "#c0392b", "#9aa4b1", "#0072b2", "#1b2a41"
 plt.rcParams.update({"font.size": 13, "axes.spines.top": False, "axes.spines.right": False, "figure.facecolor": "white"})
+
+
+def save_figure(fig, name):
+    """Export the same original artwork as PNG and vector SVG."""
+    fig.savefig(OUT / f"{name}.png", dpi=200)
+    fig.savefig(OUT / f"{name}.svg", metadata={"Date": None})
+    plt.close(fig)
 
 
 def build_turn():
@@ -95,7 +102,7 @@ def fig_vad(wav, iv):
             k += 1
     ax.set_xlabel("time (s)")
     ax.legend(handles=[Rectangle((0, 0), 1, 1, color=GREEN, alpha=0.3)], labels=["speech (VAD)"], loc="lower right", frameon=False)
-    fig.tight_layout(); fig.savefig(OUT / "data_prep_vad.png", dpi=200); plt.close(fig)
+    fig.tight_layout(); save_figure(fig, "data_prep_vad")
 
 
 def fig_fixed_vs_pause(wav, iv):
@@ -125,7 +132,7 @@ def fig_fixed_vs_pause(wav, iv):
     for i, (a, b) in enumerate(merged):
         axes[1].annotate(f"segment {i + 1}: {b - a:.1f} s", ((a + b) / 2, -0.95), ha="center", fontsize=11, color=GREEN, fontweight="bold")
     axes[1].set_xlabel("time (s)")
-    fig.tight_layout(); fig.savefig(OUT / "data_prep_fixed_vs_pause.png", dpi=200); plt.close(fig)
+    fig.tight_layout(); save_figure(fig, "data_prep_fixed_vs_pause")
 
 
 def bar(ax, x, w, y, label, color, h=0.55, text_color="white"):
@@ -152,7 +159,7 @@ def fig_length_rules():
     ax.text(0.33, 4.3 + 0.75, "1.2 s", ha="center", fontsize=11, color=RED, fontweight="bold")
     ax.text(0, 0.35, "before", fontsize=12, color=GREY); ax.text(15.6, 0.35, "after", fontsize=12, color=GREY)
     ax.text(0, -0.25, "Long pieces are split at their longest pauses; without any pause, every 8–10 s with 0.5 s overlap.", fontsize=11, color=INK)
-    fig.tight_layout(); fig.savefig(OUT / "data_prep_length_rules.png", dpi=200); plt.close(fig)
+    fig.tight_layout(); save_figure(fig, "data_prep_length_rules")
 
 
 def fig_pipeline():
@@ -173,7 +180,7 @@ def fig_pipeline():
         ax.add_patch(FancyBboxPatch((xe + xo - 1.25, 0.1), 3.1, 1.05, boxstyle="round,pad=0,rounding_size=0.1", facecolor="white", edgecolor=col, linewidth=1.6))
         ax.text(xe + xo + 0.3, 0.62, t, ha="center", va="center", fontsize=11, color=col, fontweight="bold")
         ax.annotate("", xy=(xe + xo + 0.3, 1.17), xytext=(xe, 1.88), arrowprops=dict(arrowstyle="->", color=col, lw=1.4, connectionstyle="angle,angleA=0,angleB=90"))
-    fig.tight_layout(); fig.savefig(OUT / "data_prep_pipeline.png", dpi=200); plt.close(fig)
+    fig.tight_layout(); save_figure(fig, "data_prep_pipeline")
 
 
 def fig_aggregation():
@@ -190,7 +197,7 @@ def fig_aggregation():
     share = (anger >= 0.5).mean()
     ax.set_title(f"Call-level summary: {share:.0%} of segments angry · peak {anger.max():.2f} at {t[anger.argmax()] / 60:.1f} min · calm at the end"
                  "   (illustrative values)", loc="left", fontsize=12, color=INK)
-    fig.tight_layout(); fig.savefig(OUT / "data_prep_aggregation.png", dpi=200); plt.close(fig)
+    fig.tight_layout(); save_figure(fig, "data_prep_aggregation")
 
 
 if __name__ == "__main__":

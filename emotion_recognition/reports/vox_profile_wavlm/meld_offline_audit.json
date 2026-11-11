@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.296678+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "meld",
+  "clips": 2608,
+  "unique_audio_paths": 2608,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/meld_predictions.csv",
+      "sha256": "2e505413f7f2cea238e8866cdca1c5a5d8ccda08920ca69c60d01de8da55c419",
+      "bytes": 321686
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/meld_predictions.json",
+      "sha256": "a77523c2cdedf67d6d09d1279bb797e030c626f88261e43f396cc5b6eb6ed93e",
+      "bytes": 2684
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.348543,
+    "unweighted_accuracy": 0.294204,
+    "macro_f1": 0.267992,
+    "accuracy_all_classes": 0.338957
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.3485429447852761,
+    "unweighted_accuracy": 0.29420436571890524,
+    "macro_f1": 0.2679916075877569,
+    "weighted_f1": 0.36788989861168847,
+    "accuracy_all_classes": 0.3389570552147239
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

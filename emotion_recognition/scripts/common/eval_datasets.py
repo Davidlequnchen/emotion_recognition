@@ -631,7 +631,8 @@ LOADERS = {"crema_d": crema_d, "mcae_spps": mcae_spps, "thai_ser": thai_ser, "ne
            "emozionalmente": emozionalmente, "savee": savee, "emotiontalk": emotiontalk, "dailytalk": dailytalk,
            "multidialog": multidialog}
 
-# Source, licence and credit of each dataset, shown on the viewer page. public_audio controls public example clips;
+# Source, licence and credit of each dataset, shown on the viewer page. public_audio controls example clips when
+# the viewer uses site_audio: public; the internal site_audio: all mode includes every adopted dataset's examples.
 # api_audio records eligibility for this project's research API evaluation. These are independent flags, not a
 # universal legal determination. The three adopted dialogue datasets follow the existing research API policy.
 # Actual API execution still requires api_models: true in the evaluation config; eligibility alone sends nothing.

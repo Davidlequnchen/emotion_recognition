@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:37.986485+00:00",
+  "model": "meralion_ser_v1",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/dailytalk_predictions.csv",
+      "sha256": "af8ae7261197b6a8658d9e5c2fdf74537f15fb4a87046933a11fb6eabf95e61d",
+      "bytes": 138943
+    },
+    {
+      "path": "outputs/meralion_ser_v1/dailytalk_predictions.json",
+      "sha256": "c8a764d597623786527ae95bd3a7703219e2b806a7ce269c6e4dc2ec20d06902",
+      "bytes": 2533
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.600668,
+    "unweighted_accuracy": 0.486451,
+    "macro_f1": 0.298175,
+    "accuracy_all_classes": 0.600668
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6006683375104428,
+    "unweighted_accuracy": 0.48645121841650024,
+    "macro_f1": 0.2981754657595488,
+    "weighted_f1": 0.6618107683303007,
+    "accuracy_all_classes": 0.6006683375104428
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

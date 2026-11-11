@@ -25,6 +25,16 @@ def utterance(key, dialogue, speaker, start, gold="neutral", duration=1.0):
 
 
 class ContextPilotTests(unittest.TestCase):
+    def test_weighted_f1_preserves_class_support_and_invalid_errors(self):
+        rows = [{"gold": "neutral", "prediction": "neutral"} for _ in range(9)]
+        rows += [{"gold": "angry", "prediction": "invalid"}]
+        result = pilot.scores(rows, ["neutral", "angry"])
+        self.assertEqual(result["invalid"], 1)
+        self.assertEqual(result["per_class"]["angry"]["support"], 1)
+        self.assertAlmostEqual(result["macro_f1"], .5)
+        self.assertAlmostEqual(result["weighted_f1"], .9)
+        self.assertIsNone(pilot.scores([], ["neutral", "angry"])["weighted_f1"])
+
     def setUp(self):
         self.config = yaml.safe_load((PROJECT / "config/context_pilot.yaml").read_text())
         self.protocol = {"labels": self.config["labels"], "prompts": self.config["prompts"]}

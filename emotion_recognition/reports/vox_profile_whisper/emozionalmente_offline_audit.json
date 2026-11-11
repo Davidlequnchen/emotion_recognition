@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.586824+00:00",
+  "model": "vox_profile_whisper",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/emozionalmente_predictions.csv",
+      "sha256": "a2d6e08822f1e7cb23aa7d09644baa4e4d1aea798937cee15e518a95f0368d1a",
+      "bytes": 1170069
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emozionalmente_predictions.json",
+      "sha256": "3990ea31266312d1310af86744b20bf7591fc8da29f24acd3cab58aea39c87ac",
+      "bytes": 3025
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.369313,
+    "unweighted_accuracy": 0.369313,
+    "macro_f1": 0.319599,
+    "accuracy_all_classes": 0.368734,
+    "accuracy_acted_or_listener": 0.489713,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.447875
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.36931324253839465,
+    "unweighted_accuracy": 0.3693132425383947,
+    "macro_f1": 0.319598937294089,
+    "weighted_f1": 0.319598937294089,
+    "accuracy_all_classes": 0.3687337003767024,
+    "accuracy_acted_or_listener": 0.4897131266299623,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.44787457572329076
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

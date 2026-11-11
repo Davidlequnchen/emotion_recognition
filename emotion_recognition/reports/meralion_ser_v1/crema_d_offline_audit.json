@@ -1,0 +1,49 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:37.972922+00:00",
+  "model": "meralion_ser_v1",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.csv",
+      "sha256": "384e24cf74d93423d88f91bf344e56d10d0b04d7fd948ea3f6c3dff4bbc6fa28",
+      "bytes": 984434
+    },
+    {
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.json",
+      "sha256": "42d192ccb5f43b98dcb8b664a118b3e08b0f8df8c49bdf78a8c104e777f9b25d",
+      "bytes": 2570
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.846815,
+    "unweighted_accuracy": 0.848713,
+    "macro_f1": 0.847376,
+    "accuracy_all_classes": 0.846815,
+    "accuracy_acted_or_listener": 0.887665,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.464548
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.8468153722117711,
+    "unweighted_accuracy": 0.8487134629485001,
+    "macro_f1": 0.8473763701694761,
+    "weighted_f1": 0.845797572191045,
+    "accuracy_all_classes": 0.8468153722117711,
+    "accuracy_acted_or_listener": 0.8876646062886321,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.4645483965872315
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

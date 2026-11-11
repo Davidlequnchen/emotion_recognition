@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.095557+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/emovo_predictions.csv",
+      "sha256": "bce7135c691493b6c6398bb77116a4ddf194f441d1372c52a2253a9d9dc01a4c",
+      "bytes": 74466
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emovo_predictions.json",
+      "sha256": "84cd3fa0846f3bab79fa5fb40dd7295098e3108b8948d1707674564d29a836de",
+      "bytes": 2653
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.292517,
+    "unweighted_accuracy": 0.292517,
+    "macro_f1": 0.225029,
+    "accuracy_all_classes": 0.292517
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2925170068027211,
+    "unweighted_accuracy": 0.2925170068027211,
+    "macro_f1": 0.22502930603247356,
+    "weighted_f1": 0.22502930603247362,
+    "accuracy_all_classes": 0.2925170068027211
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

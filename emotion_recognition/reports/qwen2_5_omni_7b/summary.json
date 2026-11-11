@@ -1,7 +1,7 @@
 {
   "model": "qwen2_5_omni_7b",
   "name": "Qwen2.5-Omni 7B",
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "training_source": "Qwen2.5 and Whisper-large-v3 initialization plus multimodal pre/post-training; complete corpus-level provenance not published",
   "datasets": [
     {
@@ -32,7 +32,8 @@
         "accuracy": 0.512653,
         "unweighted_accuracy": 0.434526,
         "macro_f1": 0.40434,
-        "accuracy_all_classes": 0.512653
+        "accuracy_all_classes": 0.512653,
+        "weighted_f1": 0.523871981449148
       }
     }
   ],

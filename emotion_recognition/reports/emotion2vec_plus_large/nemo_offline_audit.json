@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.787003+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/nemo_predictions.csv",
+      "sha256": "7efc958275e1f71e7b7ba4727e9d7ab771a7238f26899ae9ccc8cb929433979f",
+      "bytes": 557554
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/nemo_predictions.json",
+      "sha256": "86142bf180e6c706debe91830aee1565d4d51e9cfef80c405c87c8c507902f37",
+      "bytes": 1949
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.519527,
+    "unweighted_accuracy": 0.505879,
+    "macro_f1": 0.473726,
+    "accuracy_all_classes": 0.467306
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5195268913189021,
+    "unweighted_accuracy": 0.5058788903235725,
+    "macro_f1": 0.4737256541406612,
+    "weighted_f1": 0.480848762486456,
+    "accuracy_all_classes": 0.46730640482035257
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

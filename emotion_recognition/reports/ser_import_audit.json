@@ -1,0 +1,431 @@
+{
+  "source_page": "https://app.notion.com/p/4149f1cd78278005b0dfe12588223ea5",
+  "imported_at": "2026-11-11T06:28:37.393229+00:00",
+  "archives": [
+    {
+      "filename": "emotion2vec_plus_large_predictions.zip",
+      "sha256": "de0bee8d66da955777e970974dc2d2d926a4eedb0fd50e78ced4aaf6d0f8f2ed",
+      "files": [
+        {
+          "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.csv",
+          "sha256": "b7b5679365b5ad07f97d1f5db4aafd47c6d52fa9852c5d0574c7ba91c2dd98f7",
+          "bytes": 155156
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.json",
+          "sha256": "e6583e3f09d8736b2b0270f0ae7a332f2ca392c5eabf11fb84b56922e1a0db1e",
+          "bytes": 2615,
+          "dataset": "dailytalk",
+          "clips": 1197,
+          "total_clips": 1197,
+          "metrics": {
+            "accuracy": 0.584795,
+            "unweighted_accuracy": 0.325794,
+            "macro_f1": 0.245954,
+            "accuracy_all_classes": 0.53467
+          }
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/emotiontalk_predictions.csv",
+          "sha256": "828b4ca4ac06f974b3188018762ea7a9ec9620418b506f277b4e8781ec7af5e3",
+          "bytes": 326029
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/emotiontalk_predictions.json",
+          "sha256": "fab3b921dd1ca4ae02d8239f297ee42de0fb5dd10fb4f83a64cb658300f9a44f",
+          "bytes": 2558,
+          "dataset": "emotiontalk",
+          "clips": 1929,
+          "total_clips": 1929,
+          "metrics": {
+            "accuracy": 0.496112,
+            "unweighted_accuracy": 0.372677,
+            "macro_f1": 0.327983,
+            "accuracy_all_classes": 0.493002
+          }
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/multidialog_predictions.csv",
+          "sha256": "1cfaee42db4a45ff3c6c5b6bae7b729db623eba126da52ae74951ddff3259663",
+          "bytes": 1609912
+        },
+        {
+          "path": "outputs/emotion2vec_plus_large/multidialog_predictions.json",
+          "sha256": "e16fd34b75ed1cb8e30cf4701bc3cd4a8185f070ed6d55eface5a2e7dccbb0ba",
+          "bytes": 2588,
+          "dataset": "multidialog",
+          "clips": 7672,
+          "total_clips": 7672,
+          "metrics": {
+            "accuracy": 0.486705,
+            "unweighted_accuracy": 0.240467,
+            "macro_f1": 0.191037,
+            "accuracy_all_classes": 0.402503
+          }
+        }
+      ]
+    },
+    {
+      "filename": "melati_emotion_predictions.zip",
+      "sha256": "00a243532726543c110dd2603b3e190bc2e9775069cc82ffb7891be6eba199a6",
+      "files": [
+        {
+          "path": "outputs/melati_emotion/dailytalk_predictions.csv",
+          "sha256": "f2fa8774f122493789949e36bf7b0388351955f747184a9a8126e7075fd73b82",
+          "bytes": 138879
+        },
+        {
+          "path": "outputs/melati_emotion/dailytalk_predictions.json",
+          "sha256": "8fd1d095709fca94c97851550f8b7805d86771f879450fba8ba3ba26ad2f34a8",
+          "bytes": 2793,
+          "dataset": "dailytalk",
+          "clips": 1197,
+          "total_clips": 1197,
+          "metrics": {
+            "accuracy": 0.650794,
+            "unweighted_accuracy": 0.288376,
+            "macro_f1": 0.245749,
+            "accuracy_all_classes": 0.650794
+          }
+        },
+        {
+          "path": "outputs/melati_emotion/emotiontalk_predictions.csv",
+          "sha256": "194313a7d9630a3697221c36230c80aa78687622925fc2a912590580cf4bf9bc",
+          "bytes": 298118
+        },
+        {
+          "path": "outputs/melati_emotion/emotiontalk_predictions.json",
+          "sha256": "25a8a346f68f772278def11fc047d683df772e41f5e4ca9d1884e7383afa8d37",
+          "bytes": 2734,
+          "dataset": "emotiontalk",
+          "clips": 1929,
+          "total_clips": 1929,
+          "metrics": {
+            "accuracy": 0.291343,
+            "unweighted_accuracy": 0.38104,
+            "macro_f1": 0.27281,
+            "accuracy_all_classes": 0.291343
+          }
+        },
+        {
+          "path": "outputs/melati_emotion/multidialog_predictions.csv",
+          "sha256": "ae7fd58b02f6001a436fbf4d5764926791d186af2dd7b2b0425b56012e17d467",
+          "bytes": 1508944
+        },
+        {
+          "path": "outputs/melati_emotion/multidialog_predictions.json",
+          "sha256": "573230bf595f4a4562401058745ba0dfd4551f32fa696853b499d39ba578d3bc",
+          "bytes": 2765,
+          "dataset": "multidialog",
+          "clips": 7672,
+          "total_clips": 7672,
+          "metrics": {
+            "accuracy": 0.596715,
+            "unweighted_accuracy": 0.224339,
+            "macro_f1": 0.202427,
+            "accuracy_all_classes": 0.596715
+          }
+        }
+      ]
+    },
+    {
+      "filename": "meralion_ser_v1_predictions.zip",
+      "sha256": "dd07e9deb72606e588cb7f61f1feae1852998e6db609e3322898c2e850e897de",
+      "files": [
+        {
+          "path": "outputs/meralion_ser_v1/dailytalk_predictions.csv",
+          "sha256": "af8ae7261197b6a8658d9e5c2fdf74537f15fb4a87046933a11fb6eabf95e61d",
+          "bytes": 138943
+        },
+        {
+          "path": "outputs/meralion_ser_v1/dailytalk_predictions.json",
+          "sha256": "c8a764d597623786527ae95bd3a7703219e2b806a7ce269c6e4dc2ec20d06902",
+          "bytes": 2533,
+          "dataset": "dailytalk",
+          "clips": 1197,
+          "total_clips": 1197,
+          "metrics": {
+            "accuracy": 0.600668,
+            "unweighted_accuracy": 0.486451,
+            "macro_f1": 0.298175,
+            "accuracy_all_classes": 0.600668
+          }
+        },
+        {
+          "path": "outputs/meralion_ser_v1/emotiontalk_predictions.csv",
+          "sha256": "a96faa5f75ed606cc5038b33d577846d56de16ccf50557a3ffa3d88ad9179e64",
+          "bytes": 298631
+        },
+        {
+          "path": "outputs/meralion_ser_v1/emotiontalk_predictions.json",
+          "sha256": "9d946815d4923351e84bc33deea3cfb5fe7024d8b2da7a4896957d048935b3bc",
+          "bytes": 2471,
+          "dataset": "emotiontalk",
+          "clips": 1929,
+          "total_clips": 1929,
+          "metrics": {
+            "accuracy": 0.5521,
+            "unweighted_accuracy": 0.536431,
+            "macro_f1": 0.473604,
+            "accuracy_all_classes": 0.5521
+          }
+        },
+        {
+          "path": "outputs/meralion_ser_v1/multidialog_predictions.csv",
+          "sha256": "71550caa9a490e08f35edc8a07370af395aef9ceb34f386f0acd9dfb2879af10",
+          "bytes": 1510005
+        },
+        {
+          "path": "outputs/meralion_ser_v1/multidialog_predictions.json",
+          "sha256": "ded86e760e5c0cc73aba7777ab47dedb75ea1afe11f7f06ca682c8059a9d2bcc",
+          "bytes": 2505,
+          "dataset": "multidialog",
+          "clips": 7672,
+          "total_clips": 7672,
+          "metrics": {
+            "accuracy": 0.528285,
+            "unweighted_accuracy": 0.278402,
+            "macro_f1": 0.223574,
+            "accuracy_all_classes": 0.528285
+          }
+        }
+      ]
+    },
+    {
+      "filename": "vox_profile_wavlm_predictions.zip",
+      "sha256": "1b58c0ea2c7e9a9677da93a0cc12f2e3879658a8f198c160dc58371d04607d95",
+      "files": [
+        {
+          "path": "outputs/vox_profile_wavlm/dailytalk_predictions.csv",
+          "sha256": "7ed1cdc541f625defaa8ee1d07214ecee131e791a8be5dac9c00bd000d71e809",
+          "bytes": 156114
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/dailytalk_predictions.json",
+          "sha256": "c787efa8c76854699f3d3a90f7ceab2f32bdeea2cebd7cc7c750e3fd03210f72",
+          "bytes": 2681,
+          "dataset": "dailytalk",
+          "clips": 1197,
+          "total_clips": 1197,
+          "metrics": {
+            "accuracy": 0.543024,
+            "unweighted_accuracy": 0.618331,
+            "macro_f1": 0.281496,
+            "accuracy_all_classes": 0.502924
+          }
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.csv",
+          "sha256": "2181ee71f21b1ed36cf0739bdbf2802e756a72c389582796777ddcf9002b100e",
+          "bytes": 326719
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.json",
+          "sha256": "ca34efcb7ea7a9a663c529fed75eaf4f1c9d97310f33072bd60f028e752c7cbe",
+          "bytes": 2624,
+          "dataset": "emotiontalk",
+          "clips": 1929,
+          "total_clips": 1929,
+          "metrics": {
+            "accuracy": 0.463453,
+            "unweighted_accuracy": 0.340018,
+            "macro_f1": 0.310186,
+            "accuracy_all_classes": 0.460342
+          }
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/multidialog_predictions.csv",
+          "sha256": "10ae196aad65a3fbfbba9d487d2e11affab0a1b17058986b8b7af8c6ea38efac",
+          "bytes": 1621650
+        },
+        {
+          "path": "outputs/vox_profile_wavlm/multidialog_predictions.json",
+          "sha256": "c63921c332a51ec81bf2537fe9936048bf155d0c3c09b02d90355ca94220e18e",
+          "bytes": 2652,
+          "dataset": "multidialog",
+          "clips": 7672,
+          "total_clips": 7672,
+          "metrics": {
+            "accuracy": 0.549791,
+            "unweighted_accuracy": 0.30984,
+            "macro_f1": 0.248798,
+            "accuracy_all_classes": 0.543144
+          }
+        }
+      ]
+    },
+    {
+      "filename": "vox_profile_whisper_predictions.zip",
+      "sha256": "2f051365da6fa6f908ebc3d1255c498d528b971f5345d3b576d69905b3441bfa",
+      "files": [
+        {
+          "path": "outputs/vox_profile_whisper/dailytalk_predictions.csv",
+          "sha256": "11247bb6cc3694992d19c15424c9f990e9d4f05dec033a7dd916c4a25a37b333",
+          "bytes": 155646
+        },
+        {
+          "path": "outputs/vox_profile_whisper/dailytalk_predictions.json",
+          "sha256": "d28bb875fc5aca7c203b772914bdd0919d28746c1cdf72ea7306d4137c73ceb5",
+          "bytes": 2600,
+          "dataset": "dailytalk",
+          "clips": 1197,
+          "total_clips": 1197,
+          "metrics": {
+            "accuracy": 0.586466,
+            "unweighted_accuracy": 0.587224,
+            "macro_f1": 0.277656,
+            "accuracy_all_classes": 0.557226
+          }
+        },
+        {
+          "path": "outputs/vox_profile_whisper/emotiontalk_predictions.csv",
+          "sha256": "2aeeb2462bb22a697adcae310411af52a0c0f117883e39aef4434242b153a4c6",
+          "bytes": 326782
+        },
+        {
+          "path": "outputs/vox_profile_whisper/emotiontalk_predictions.json",
+          "sha256": "e443af87ba9d526caacea26d0fcfff3fabc55e4994deaa4c5a537482e52d6023",
+          "bytes": 2542,
+          "dataset": "emotiontalk",
+          "clips": 1929,
+          "total_clips": 1929,
+          "metrics": {
+            "accuracy": 0.417315,
+            "unweighted_accuracy": 0.462749,
+            "macro_f1": 0.354457,
+            "accuracy_all_classes": 0.402799
+          }
+        },
+        {
+          "path": "outputs/vox_profile_whisper/multidialog_predictions.csv",
+          "sha256": "1f580b18bdf756c9a1a617ed6f10da06b144166a88a761f2d481e6a9b8f54b5b",
+          "bytes": 1620118
+        },
+        {
+          "path": "outputs/vox_profile_whisper/multidialog_predictions.json",
+          "sha256": "d8bfdd753970a16a563d4dbde09f31f81b8978510e668b9cc716668116c4f359",
+          "bytes": 2572,
+          "dataset": "multidialog",
+          "clips": 7672,
+          "total_clips": 7672,
+          "metrics": {
+            "accuracy": 0.528806,
+            "unweighted_accuracy": 0.310186,
+            "macro_f1": 0.264629,
+            "accuracy_all_classes": 0.520594
+          }
+        }
+      ]
+    }
+  ],
+  "validation": "All 15 CSV/JSON pairs passed refresh_reports.validate_pair before import; source metrics recomputed within 1e-6.",
+  "result_pairs": 15,
+  "prediction_rows": 53990,
+  "existing_prediction_files_overwritten": 0,
+  "cohort_checks": [
+    {
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "same_paths_and_truth_across_models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "ground_truth_counts": {
+        "angry": 4,
+        "disgusted": 3,
+        "fearful": 1,
+        "happy": 217,
+        "neutral": 931,
+        "sad": 22,
+        "surprised": 19
+      },
+      "majority_label": "neutral",
+      "majority_class_accuracy": 0.7777777777777778
+    },
+    {
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "same_paths_and_truth_across_models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "ground_truth_counts": {
+        "angry": 345,
+        "disgusted": 137,
+        "fearful": 89,
+        "happy": 177,
+        "neutral": 944,
+        "sad": 94,
+        "surprised": 143
+      },
+      "majority_label": "neutral",
+      "majority_class_accuracy": 0.4893727319854847
+    },
+    {
+      "dataset": "multidialog",
+      "clips": 7672,
+      "same_paths_and_truth_across_models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "ground_truth_counts": {
+        "angry": 35,
+        "disgusted": 67,
+        "fearful": 26,
+        "happy": 1064,
+        "neutral": 5284,
+        "sad": 83,
+        "surprised": 1113
+      },
+      "majority_label": "neutral",
+      "majority_class_accuracy": 0.6887382690302398
+    }
+  ],
+  "generated_artifacts": {
+    "html": [
+      "outputs/viewer.html",
+      "site/index.html"
+    ],
+    "reports": "reports/<model>/<dataset>.md and summary.md/json",
+    "comparison": "reports/summary.md and summary.json",
+    "figures": "reports/<model>/figures/ and reports/figures/",
+    "derived_metrics": "reports/derived_metrics.json",
+    "viewer_seed": 367344
+  },
+  "validation_checks": {
+    "new_pairs_passed": 15,
+    "preserved_existing_source_files": 275,
+    "imported_files_unchanged": 30,
+    "datasets_per_ser_model": 16,
+    "comparison_metrics": [
+      "accuracy",
+      "unweighted_accuracy",
+      "macro_f1",
+      "weighted_f1"
+    ],
+    "unittest": "test_refresh_reports.py: 12 tests passed",
+    "html_embedded_metrics_match_summaries": true,
+    "png_svg_confusion_matrices_present_for_all_new_runs": true,
+    "browser_check": "Results table, Macro F1 switching, per-model summary and images verified; no image load failures. Only favicon.ico returned HTTP 404.",
+    "emotiontalk_example_browser_check": {
+      "enabled_models": 7,
+      "clips_shown": 43,
+      "all_five_ser_models_available": true
+    }
+  }
+}

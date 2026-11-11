@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.432763+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "tess",
+  "clips": 2800,
+  "unique_audio_paths": 2800,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/tess_predictions.csv",
+      "sha256": "c029f53179f70d333a2bb65a64affe592be9db269c7fbf9d657db35fb9fd206b",
+      "bytes": 337459
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/tess_predictions.json",
+      "sha256": "4f2b8b10f937f6651956b092808df8184771e6042855acb663f0d4949bf289d6",
+      "bytes": 2173
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.401429,
+    "unweighted_accuracy": 0.401429,
+    "macro_f1": 0.315539,
+    "accuracy_all_classes": 0.387857
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.4014285714285714,
+    "unweighted_accuracy": 0.4014285714285714,
+    "macro_f1": 0.3155393440053821,
+    "weighted_f1": 0.3155393440053821,
+    "accuracy_all_classes": 0.38785714285714284
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

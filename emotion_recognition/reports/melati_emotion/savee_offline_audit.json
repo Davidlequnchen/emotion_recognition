@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.325368+00:00",
+  "model": "melati_emotion",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/savee_predictions.csv",
+      "sha256": "016e6797829030b7d58fcdcad06f6b7d97ace6ce01273516256da9392265101a",
+      "bytes": 52160
+    },
+    {
+      "path": "outputs/melati_emotion/savee_predictions.json",
+      "sha256": "2d0afe3b61739da6c32c9b748492841d9a55c6ec77219921151b631115d3ace9",
+      "bytes": 2785
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.6125,
+    "unweighted_accuracy": 0.564286,
+    "macro_f1": 0.532112,
+    "accuracy_all_classes": 0.6125
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6125,
+    "unweighted_accuracy": 0.5642857142857142,
+    "macro_f1": 0.5321124902249362,
+    "weighted_f1": 0.580517783785529,
+    "accuracy_all_classes": 0.6125
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

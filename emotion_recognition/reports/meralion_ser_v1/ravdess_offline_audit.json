@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.294313+00:00",
+  "model": "meralion_ser_v1",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.csv",
+      "sha256": "f7940e006f29e64db79cdfc39d804513a75b215cc70ca32cd5b79f62b46a556b",
+      "bytes": 185592
+    },
+    {
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.json",
+      "sha256": "5520446d884ff25f8600109cdafcf0b817758dad4d1159b10124c9a5402c0bf3",
+      "bytes": 2413
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.593056,
+    "unweighted_accuracy": 0.612599,
+    "macro_f1": 0.59684,
+    "accuracy_all_classes": 0.593056
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5930555555555556,
+    "unweighted_accuracy": 0.6125992063492064,
+    "macro_f1": 0.5968402054533251,
+    "weighted_f1": 0.5847408508986489,
+    "accuracy_all_classes": 0.5930555555555556
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

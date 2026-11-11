@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.731948+00:00",
+  "model": "vox_profile_whisper",
+  "key": "meld",
+  "clips": 2608,
+  "unique_audio_paths": 2608,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_whisper/meld_predictions.csv",
+      "sha256": "08f54c5f0d24363ba13daab3b052d487a7ff25c42df255b6f3de175023ab7457",
+      "bytes": 321962
+    },
+    {
+      "path": "outputs/vox_profile_whisper/meld_predictions.json",
+      "sha256": "fe4c917935a8f481f3002cdc99294b9fb1b3da81822899889a96b5bbb5410570",
+      "bytes": 2602
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.33819,
+    "unweighted_accuracy": 0.296001,
+    "macro_f1": 0.261093,
+    "accuracy_all_classes": 0.325537
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.33819018404907975,
+    "unweighted_accuracy": 0.2960013157664945,
+    "macro_f1": 0.2610932254161699,
+    "weighted_f1": 0.3482043742999747,
+    "accuracy_all_classes": 0.3255368098159509
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

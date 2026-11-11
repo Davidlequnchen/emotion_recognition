@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.213448+00:00",
+  "model": "melati_emotion",
+  "key": "meld",
+  "clips": 2608,
+  "unique_audio_paths": 2608,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/meld_predictions.csv",
+      "sha256": "28235a6a890815080c430eeaab35c502a39318ed5fdd5592fab302dd0c4e810f",
+      "bytes": 281282
+    },
+    {
+      "path": "outputs/melati_emotion/meld_predictions.json",
+      "sha256": "a740041ad266de0a7d280a9f0ab8b5f5ba2f80ea0527add1be4792918969e17a",
+      "bytes": 2795
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.287577,
+    "unweighted_accuracy": 0.230016,
+    "macro_f1": 0.18684,
+    "accuracy_all_classes": 0.287577
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2875766871165644,
+    "unweighted_accuracy": 0.2300162836387968,
+    "macro_f1": 0.18683998175476593,
+    "weighted_f1": 0.2813183911166704,
+    "accuracy_all_classes": 0.2875766871165644
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.028008+00:00",
+  "model": "melati_emotion",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/emovo_predictions.csv",
+      "sha256": "dd354d02869f7f904e9965b75ac589954ead421fde42770327e215b88d046e13",
+      "bytes": 65561
+    },
+    {
+      "path": "outputs/melati_emotion/emovo_predictions.json",
+      "sha256": "604fc929d15bec53d2f0e2af13ecf73af11c92c867d134a6a8a9ff3c713e57fb",
+      "bytes": 2766
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.559524,
+    "unweighted_accuracy": 0.559524,
+    "macro_f1": 0.537645,
+    "accuracy_all_classes": 0.559524
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5595238095238095,
+    "unweighted_accuracy": 0.5595238095238095,
+    "macro_f1": 0.5376453631420121,
+    "weighted_f1": 0.5376453631420122,
+    "accuracy_all_classes": 0.5595238095238095
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

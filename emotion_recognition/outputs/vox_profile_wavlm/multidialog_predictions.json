@@ -1,0 +1,81 @@
+{
+  "dataset": "MultiDialog (gold_both)",
+  "key": "multidialog",
+  "language": "English",
+  "model": "vox_profile_wavlm",
+  "model_name": "Vox-Profile WavLM",
+  "date": "2026-11-11",
+  "clips": 7672,
+  "total_clips": 7672,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.142857,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "SER adaptation on MSP-Podcast v1.12; WavLM-large backbone trained on Libri-Light, GigaSpeech and VoxPopuli; no clip-level overlap audit",
+  "training_evidence": [
+    "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion/blob/621a2ceaaa2408e390e0fc9454e8c29490f689e2/README.md",
+    "https://huggingface.co/microsoft/wavlm-large/blob/c1423ed94bb01d80a3f5ce5bc39f6026a0f4828c/README.md"
+  ],
+  "model_classes": [
+    "angry",
+    "contempt",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "other"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Each clip (at most 15 s) is normalised to zero mean and unit variance and fed whole, without padding; the 25 hidden states are mixed with the model's learned layer weights and averaged over time, as in the official code. float32 on every device.",
+    "The model card warns that clips shorter than 3 s give unreliable predictions (it was trained on clips of 3-15 s); clips are used as they are, not padded to 3 s."
+  ],
+  "metrics": {
+    "accuracy": 0.549791,
+    "unweighted_accuracy": 0.30984,
+    "macro_f1": 0.248798,
+    "accuracy_all_classes": 0.543144
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion prescribed for the performed TopicalChat utterance, under the project's canonical labels",
+    "prediction": "model prediction: the most probable of the 7 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad, surprised)",
+    "prediction_all_classes": "model prediction: the most probable of all 9 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 9 classes (they add up to 1)"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M3 Pro",
+    "seconds": 1584.4,
+    "ms_per_clip": 206.5,
+    "on_cpu": 0
+  },
+  "subset": "cohort:gold_both"
+}

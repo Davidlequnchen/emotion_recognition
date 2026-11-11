@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.409895+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.csv",
+      "sha256": "ddf53c53a7e44e7e77e5cf7cc147fb3fb9afb68bc933756caea10db9fab78c90",
+      "bytes": 208694
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.json",
+      "sha256": "3a4e4f21ee8f3ac193056922166ca08154afa0cb8f5c57eb6846670d1db4a37e",
+      "bytes": 2182
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.446528,
+    "unweighted_accuracy": 0.424107,
+    "macro_f1": 0.384374,
+    "accuracy_all_classes": 0.445833
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.4465277777777778,
+    "unweighted_accuracy": 0.42410714285714285,
+    "macro_f1": 0.38437406650891137,
+    "weighted_f1": 0.3964752269328651,
+    "accuracy_all_classes": 0.44583333333333336
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

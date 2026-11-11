@@ -1,0 +1,47 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.153594+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/emozionalmente_predictions.csv",
+      "sha256": "c2785bb288f40b6b2de2ee465d76b55709c9fe57d6f8e1f77b5ff0aaffb7a6cc",
+      "bytes": 1181689
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emozionalmente_predictions.json",
+      "sha256": "4afdbfeb02039ef7ead5e8ab72dcf1879d89385a4e0b37940d23ffe76ffdc674",
+      "bytes": 3105
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.278325,
+    "unweighted_accuracy": 0.278325,
+    "macro_f1": 0.237179,
+    "accuracy_all_classes": 0.277166,
+    "accuracy_acted_or_listener": 0.374674,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.335866
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.27832512315270935,
+    "unweighted_accuracy": 0.2783251231527094,
+    "macro_f1": 0.23717929659226591,
+    "weighted_f1": 0.2371792965922659,
+    "accuracy_all_classes": 0.27716603882932483,
+    "accuracy_acted_or_listener": 0.3746740075340481,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.3358655244868272
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

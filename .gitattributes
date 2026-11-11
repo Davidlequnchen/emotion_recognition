@@ -6,3 +6,10 @@
 # Original API evaluation artifacts: preserve ZIP-member bytes and their audited SHA256 across checkouts.
 emotion_recognition/outputs/gemini-3.8-flash/* -text
 emotion_recognition/outputs/gpt_realtime/* -text
+
+# Prediction source hashes must survive Git checkouts for every model, including SER.
+emotion_recognition/outputs/**/*_predictions.csv -text whitespace=cr-at-eol
+emotion_recognition/outputs/**/*_predictions.json -text
+
+# Matplotlib-generated SVG path data contains intentional trailing spaces.
+*.svg -whitespace

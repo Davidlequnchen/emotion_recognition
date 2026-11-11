@@ -1,0 +1,49 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.457390+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.csv",
+      "sha256": "f7f3dbfbabc9707d18f86cec7bceb51ba5dfcb9ac540112f6bce63391b135fb3",
+      "bytes": 1083737
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.json",
+      "sha256": "4bb54d0437d2a1feb8da6f8f54514ef0379b85e424cce15e0814103f716fd162",
+      "bytes": 2731
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.864553,
+    "unweighted_accuracy": 0.865401,
+    "macro_f1": 0.865683,
+    "accuracy_all_classes": 0.864284,
+    "accuracy_acted_or_listener": 0.896399,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.448073
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.8645525396398818,
+    "unweighted_accuracy": 0.8654011563114711,
+    "macro_f1": 0.8656831275238209,
+    "weighted_f1": 0.8647593208380426,
+    "accuracy_all_classes": 0.8642837946788497,
+    "accuracy_acted_or_listener": 0.8963988175221714,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.44807296263606944
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

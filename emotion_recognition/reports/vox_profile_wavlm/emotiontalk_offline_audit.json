@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:40.090593+00:00",
+  "model": "vox_profile_wavlm",
+  "key": "emotiontalk",
+  "clips": 1929,
+  "unique_audio_paths": 1929,
+  "source_artifacts": [
+    {
+      "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.csv",
+      "sha256": "2181ee71f21b1ed36cf0739bdbf2802e756a72c389582796777ddcf9002b100e",
+      "bytes": 326719
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.json",
+      "sha256": "ca34efcb7ea7a9a663c529fed75eaf4f1c9d97310f33072bd60f028e752c7cbe",
+      "bytes": 2624
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.463453,
+    "unweighted_accuracy": 0.340018,
+    "macro_f1": 0.310186,
+    "accuracy_all_classes": 0.460342
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.463452566096423,
+    "unweighted_accuracy": 0.3400179999454462,
+    "macro_f1": 0.3101855316654302,
+    "weighted_f1": 0.4678191762687396,
+    "accuracy_all_classes": 0.4603421461897356
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

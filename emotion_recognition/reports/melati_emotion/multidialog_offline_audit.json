@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.280044+00:00",
+  "model": "melati_emotion",
+  "key": "multidialog",
+  "clips": 7672,
+  "unique_audio_paths": 7672,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/multidialog_predictions.csv",
+      "sha256": "ae7fd58b02f6001a436fbf4d5764926791d186af2dd7b2b0425b56012e17d467",
+      "bytes": 1508944
+    },
+    {
+      "path": "outputs/melati_emotion/multidialog_predictions.json",
+      "sha256": "573230bf595f4a4562401058745ba0dfd4551f32fa696853b499d39ba578d3bc",
+      "bytes": 2765
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.596715,
+    "unweighted_accuracy": 0.224339,
+    "macro_f1": 0.202427,
+    "accuracy_all_classes": 0.596715
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5967153284671532,
+    "unweighted_accuracy": 0.22433893783539563,
+    "macro_f1": 0.2024272070791735,
+    "weighted_f1": 0.5748606690486116,
+    "accuracy_all_classes": 0.5967153284671532
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

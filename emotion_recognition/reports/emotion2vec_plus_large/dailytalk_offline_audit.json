@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:38.472506+00:00",
+  "model": "emotion2vec_plus_large",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.csv",
+      "sha256": "b7b5679365b5ad07f97d1f5db4aafd47c6d52fa9852c5d0574c7ba91c2dd98f7",
+      "bytes": 155156
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.json",
+      "sha256": "e6583e3f09d8736b2b0270f0ae7a332f2ca392c5eabf11fb84b56922e1a0db1e",
+      "bytes": 2615
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.584795,
+    "unweighted_accuracy": 0.325794,
+    "macro_f1": 0.245954,
+    "accuracy_all_classes": 0.53467
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5847953216374269,
+    "unweighted_accuracy": 0.3257942120247654,
+    "macro_f1": 0.2459542155882317,
+    "weighted_f1": 0.6359757697473021,
+    "accuracy_all_classes": 0.5346700083542189
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

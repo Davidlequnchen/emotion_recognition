@@ -1,0 +1,41 @@
+{
+  "validated_at_utc": "2026-11-11T06:28:39.344007+00:00",
+  "model": "melati_emotion",
+  "key": "tess",
+  "clips": 2800,
+  "unique_audio_paths": 2800,
+  "source_artifacts": [
+    {
+      "path": "outputs/melati_emotion/tess_predictions.csv",
+      "sha256": "5d341b9223ecee1a513d79be6577fedd471177d38fd8c9bdd63497416e926fe9",
+      "bytes": 288281
+    },
+    {
+      "path": "outputs/melati_emotion/tess_predictions.json",
+      "sha256": "3faae61e479a08b520462e763d4b1d5b1655d7cd79f653fc0949f5b1a38eaa4f",
+      "bytes": 2206
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.504286,
+    "unweighted_accuracy": 0.504286,
+    "macro_f1": 0.434398,
+    "accuracy_all_classes": 0.504286
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5042857142857143,
+    "unweighted_accuracy": 0.5042857142857143,
+    "macro_f1": 0.4343982979630598,
+    "weighted_f1": 0.43439829796305973,
+    "accuracy_all_classes": 0.5042857142857143
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "supplied scores (not recalibrated)",
+  "candidate_protocol": null,
+  "protocol_matches_configuration": false,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}
