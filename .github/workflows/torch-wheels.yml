@@ -1,0 +1,64 @@
+name: Mirror PyTorch CUDA 11.8 wheels
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: torch-cu118-wheel-release
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: github.repository == 'Davidlequnchen/emotion_recognition'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+          architecture: x64
+      - name: Download and verify pinned upstream wheels
+        run: python download.py --source upstream
+      - name: Audit dependency closure and install order
+        run: python audit.py
+      - name: Install every wheel with networking disabled
+        run: |
+          python -m venv "$RUNNER_TEMP/torch-wheels-venv"
+          sudo unshare --net -- env PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 \
+            LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}" \
+            "$RUNNER_TEMP/torch-wheels-venv/bin/python" "$PWD/install.py"
+      - name: Check native imports and CPU operations
+        run: |
+          "$RUNNER_TEMP/torch-wheels-venv/bin/python" - <<'PY'
+          import torch
+          import torchaudio
+          import torchvision
+          import triton
+          assert torch.__version__ == '2.7.1+cu118', torch.__version__
+          assert torchaudio.__version__ == '2.7.1+cu118', torchaudio.__version__
+          assert torchvision.__version__ == '0.22.1+cu118', torchvision.__version__
+          assert torch.version.cuda == '11.8', torch.version.cuda
+          assert torch.arange(4).sum().item() == 6
+          result = torchvision.ops.nms(
+              torch.tensor([[0., 0., 1., 1.], [0., 0., 1., 1.]]),
+              torch.tensor([0.9, 0.8]), 0.5)
+          assert result.tolist() == [0], result
+          print('Verified:', torch.__version__, torchaudio.__version__, torchvision.__version__)
+          print('CUDA build:', torch.version.cuda, '| GPU available on runner:', torch.cuda.is_available())
+          print('Triton:', triton.__version__, '| CPU tensor and torchvision NMS checks passed.')
+          PY
+      - name: Mirror missing wheels and update Release metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python publish.py

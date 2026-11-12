@@ -180,10 +180,15 @@ python -m pip install -r requirements-llm-cuda118.txt  # torch/torchaudio 2.7.1 
 python -m pip install -r requirements.txt              # same common packages as on the Mac
 ```
 
-The three pinned official wheels are also mirrored in a GitHub Release and can be restored to
+The complete default runtime dependency set for the pinned CUDA stack is also mirrored in a GitHub Release:
+27 wheels (about 2.93 GB), including the NVIDIA runtime libraries, Triton and the optional `truststore` helper.
+Restore them to
 [`dependencies/torch-cu118-cp311-linux_x86_64/`](dependencies/torch-cu118-cp311-linux_x86_64/README.md)
-for Python 3.11 on Linux x86_64 with glibc >= 2.28. See that folder's README for the download command, installation
-and checksum verification. Other dependencies still require network access.
+for Python 3.11 on Linux x86_64 with glibc >= 2.28. That folder's `download.py` fetches and verifies the full set;
+`install.py` checks all files before installing one package at a time in dependency order, fully offline.
+See its README and [`INSTALL_ORDER.md`](dependencies/torch-cu118-cp311-linux_x86_64/INSTALL_ORDER.md)
+for commands, company certificates and manual installation order. This covers `requirements-llm-cuda118.txt`;
+optional package extras and the remaining common `requirements.txt` packages need a separate cache or network access.
 
 Notes on the versions:
 
