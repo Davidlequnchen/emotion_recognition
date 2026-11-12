@@ -8,15 +8,15 @@
 #   auto : cuda when PyTorch sees an NVIDIA GPU (torch.cuda.is_available()), otherwise mac
 #   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
 #   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
-mode: mac         # local MELD baseline pilot (2026-11-09); use auto/cuda again on the company server
+mode: mac         # local Apple Silicon benchmark; use auto/cuda on the company server
 
-models: [gemma4_e4b, qwen2_5_omni_7b, qwen2_audio_7b]
-                  # phase 1: the SER models; phase 2: [qwen2_5_omni_7b, qwen2_audio_7b, gemma4_e4b];
+models: [qwen2_audio_7b]
+                  # next run: Qwen2-Audio-7B-Instruct; matching completed results (including MELD) are reused
                   # all = every registered model, or any list of keys from config/models.yaml
 api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
                   # requests, key in the .env file at the repository root); false: skip them, also when listed
                   # in `models`
-datasets: [meld]  # ordinary single-utterance evaluation; H0–H3 uses scripts/evaluation/context_pilot.py
+datasets: all     # ordinary single-utterance evaluation; H0–H3 uses scripts/evaluation/context_pilot.py
                   # all = all 16 downloaded adopted datasets (after exclude), including the three dialogue additions
                   # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus | mead | meld
                   # | emovo | emozionalmente | savee | emotiontalk | dailytalk | multidialog)
@@ -34,14 +34,14 @@ limit: null       # only N clips of each dataset, taken at even intervals within
 overwrite: false  # false: skip matching finished results (same limit; LLM inference_protocol must also match);
                   # true: evaluate it again and replace them. The summaries show every result there,
                   # except those of excluded datasets
-plots: false      # local pilot: keep global comparison plots unchanged; per-model reports are still written
+plots: false      # generate global comparison plots separately; per-model reports are still written
                   # true: at the end, draw the bar plots of every model on every dataset (scripts/viewer/plot_results.py,
                   # settings in config/plots.yaml); false: run that script by hand when you want the plots
 devices:          # device per mode; a model's mac_device (in config/models.yaml) overrides devices.mac
   mac: mps
   cuda: cuda:0
 summary_figure:   # every dataset's confusion matrix in one figure, in each model's summary report
-  # panels row by row, three per row (13 datasets: 5 rows, one panel in the last); datasets not listed come last
+  # panels row by row, three per row; datasets not listed come last
   order: [crema_d, mcae_spps, mess, ravdess, tess, jl_corpus, thai_ser, nemo, mead, meld, emovo, emozionalmente, savee]
   acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
                                 # the others show the acted emotion
