@@ -60,6 +60,7 @@ emotion_recognition/
 │   ├── download.py             # safe archive restore, resumable downloads and per-file verification
 │   ├── samples/                # six CREMA-D test clips (0.4 MB, included in the submodule)
 │   └── <dataset>/              # data restored here; local external/archived datasets stay local
+├── dependencies/               # official CUDA 11.8 wheels restored from Releases (Python 3.11 / Linux x86_64)
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   ├── datasets_survey.md      # emotion recognition public dataset survey (in Chinese)
@@ -179,13 +180,18 @@ python -m pip install -r requirements-llm-cuda118.txt  # torch/torchaudio 2.7.1 
 python -m pip install -r requirements.txt              # same common packages as on the Mac
 ```
 
+The three pinned official wheels are also mirrored in a GitHub Release and can be restored to
+[`dependencies/torch-cu118-cp311-linux_x86_64/`](dependencies/torch-cu118-cp311-linux_x86_64/README.md)
+for Python 3.11 on Linux x86_64 with glibc >= 2.28. See that folder's README for the download command, installation
+and checksum verification. Other dependencies still require network access.
+
 Notes on the versions:
 
 - **torch 2.7.1, torchaudio 2.7.1 and torchvision 0.22.1 are one matched set**. Install all three from the hardware
   requirements file; installing a different torchvision wheel alone can upgrade torch and leave torchaudio incompatible.
-- The CUDA wheels **bundle the CUDA runtime and cuDNN**. The server needs a compatible NVIDIA driver; a separate CUDA
-  toolkit is not needed. The CUDA 11.8 build supports all eight local models; the optional legacy CUDA 12.1 stack is
-  described in section 1.5.
+- The CUDA wheels **install the matching CUDA runtime and cuDNN dependencies**. The server needs a compatible NVIDIA
+  driver; a separate CUDA toolkit is not needed. The CUDA 11.8 build supports all eight local models; the optional
+  legacy CUDA 12.1 stack is described in section 1.5.
 - PyTorch is kept in its own file because the CUDA build comes from the PyTorch package index, while everything
   else comes from PyPI. Install the hardware file and common file in separate commands so that common packages
   are fetched from PyPI. Use `python -m pip` to install into the active Python environment.

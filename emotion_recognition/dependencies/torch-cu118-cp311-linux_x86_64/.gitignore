@@ -1,0 +1,3 @@
+# Restore these unchanged binary files from the versioned GitHub Release.
+*.whl
+*.whl.download

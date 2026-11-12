@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "downloaded_on": "2026-11-12",
+  "requirements_file": "../../requirements-llm-cuda118.txt",
+  "index_url": "https://download.pytorch.org/whl/cu118",
+  "python": "CPython 3.11",
+  "platform_tag": "manylinux_2_28_x86_64",
+  "cuda": "11.8",
+  "scope": "Only torch, torchaudio and torchvision; transitive dependencies are not included.",
+  "files": [
+    {
+      "package": "torch",
+      "version": "2.7.1+cu118",
+      "filename": "torch-2.7.1+cu118-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "url": "https://download-r2.pytorch.org/whl/cu118/torch-2.7.1%2Bcu118-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "sha256": "a596d91c747d1fa601724e85b9c8797c8d7c62140aa1acf245773e911254bc45",
+      "size_bytes": 905345785
+    },
+    {
+      "package": "torchaudio",
+      "version": "2.7.1+cu118",
+      "filename": "torchaudio-2.7.1+cu118-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "url": "https://download-r2.pytorch.org/whl/cu118/torchaudio-2.7.1%2Bcu118-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "sha256": "76629345b5e095b5b9dd6abbeb1919e50dd8f3c2082d89b54ad5cd7d25158de9",
+      "size_bytes": 3311150
+    },
+    {
+      "package": "torchvision",
+      "version": "0.22.1+cu118",
+      "filename": "torchvision-0.22.1+cu118-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "url": "https://download-r2.pytorch.org/whl/cu118/torchvision-0.22.1%2Bcu118-cp311-cp311-manylinux_2_28_x86_64.whl",
+      "sha256": "6dd3d825fb4a75eae887665d1da812a360d69273118bfa17616c836bfb466627",
+      "size_bytes": 6732588
+    }
+  ],
+  "repository": "Davidlequnchen/emotion_recognition",
+  "release_tag": "deps-torch-cu118-cp311-linux-x86_64-v1",
+  "release_url": "https://github.com/Davidlequnchen/emotion_recognition/releases/tag/deps-torch-cu118-cp311-linux-x86_64-v1"
+}
