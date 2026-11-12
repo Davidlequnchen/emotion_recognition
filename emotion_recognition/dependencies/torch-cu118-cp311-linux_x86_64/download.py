@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Restore the pinned CUDA 11.8 wheels beside this script (Python 3.9+, standard library only).
+"""Restore the pinned CUDA 11.8 wheels beside this script (Python 3.9+).
 
 Existing verified wheels are reused. Interrupted downloads resume on rerun;
 files are renamed to .whl only after their size and SHA-256 match the manifest.
+Optional truststore support uses the operating system's certificate trust.
 """
 import argparse
 import hashlib
@@ -14,6 +15,8 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+
+from tls import create_ssl_context, certificate_error, certificate_error_message
 
 
 ROOT = Path(__file__).resolve().parent
@@ -29,7 +32,7 @@ def matches(path, item):
     return digest.hexdigest() == item["sha256"]
 
 
-def download(item, url, root=ROOT):
+def download(item, url, root=ROOT, context=None):
     target = root / item["filename"]
     if matches(target, item):
         print("Already verified: " + target.name, flush=True)
@@ -49,7 +52,9 @@ def download(item, url, root=ROOT):
         headers["Range"] = "bytes={}-".format(offset)
     print("Downloading {} ({:,}/{:,} bytes)".format(target.name, offset, expected), flush=True)
     request = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(request, timeout=60) as response:
+    if context is None:
+        context = create_ssl_context()
+    with urllib.request.urlopen(request, timeout=60, context=context) as response:
         status = response.getcode()
         if status == 206:
             content_range = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", ""))
@@ -84,11 +89,14 @@ def main(argv=None):
     parser.add_argument("--source", choices=("release", "upstream"), default="release",
                         help="download from GitHub Release (default) or the official PyTorch source")
     parser.add_argument("--verify-only", action="store_true", help="verify local wheels without network access")
+    parser.add_argument("--ca-bundle", type=Path,
+                        help="company/custom CA PEM bundle; otherwise SSL_CERT_FILE or system/default roots")
     args = parser.parse_args(argv)
     try:
         manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
         if manifest.get("schema_version") != 1:
             raise ValueError("Unsupported manifest schema")
+        context = None if args.verify_only else create_ssl_context(args.ca_bundle)
         valid = True
         for item in manifest["files"]:
             filename = item["filename"]
@@ -102,10 +110,12 @@ def main(argv=None):
                 url = item["url"] if args.source == "upstream" else "{}/{}".format(
                     manifest["release_url"].replace("/tag/", "/download/"),
                     urllib.parse.quote(filename, safe=""))
-                download(item, url)
+                download(item, url, context=context)
         return 0 if valid else 1
     except (OSError, ValueError, KeyError, urllib.error.URLError, http.client.HTTPException) as exc:
-        print("ERROR: {}. Rerun to resume, or try --source upstream.".format(exc), file=sys.stderr)
+        message = (certificate_error_message(exc) if certificate_error(exc)
+                   else "{}. Rerun to resume, or try --source upstream.".format(exc))
+        print("ERROR: " + message, file=sys.stderr)
         return 1
     except KeyboardInterrupt:
         print("Interrupted. Rerun the same command to resume.", file=sys.stderr)

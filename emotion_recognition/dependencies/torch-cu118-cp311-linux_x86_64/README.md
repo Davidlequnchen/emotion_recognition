@@ -25,7 +25,7 @@ After cloning or pulling, run from the **`emotion_recognition/` project folder**
 python dependencies/torch-cu118-cp311-linux_x86_64/download.py
 ```
 
-[`download.py`](download.py) uses Python's standard library to download the three Release wheels into this folder
+[`download.py`](download.py) uses Python 3.9+ to download the three Release wheels into this folder
 and verify their sizes and SHA-256 hashes. Matching local wheels are reused; an incomplete or failed download
 does not become a final wheel file. Git LFS is not required.
 
@@ -36,6 +36,29 @@ python dependencies/torch-cu118-cp311-linux_x86_64/download.py --source upstream
 ```
 
 Run `python dependencies/torch-cu118-cp311-linux_x86_64/download.py --help` for the available options.
+
+## Company HTTPS certificates
+
+The downloader follows the same certificate handling as the data and model repositories. When optional
+`truststore` is installed, it automatically uses the operating system's trust store, including company roots
+installed by IT. Otherwise it uses Python's default TLS roots. Install the helper once in the same Python 3.10+
+environment, then rerun the download command from the `emotion_recognition/` project folder:
+
+```bash
+python -m pip install -r dependencies/torch-cu118-cp311-linux_x86_64/requirements-download.txt
+python dependencies/torch-cu118-cp311-linux_x86_64/download.py
+```
+
+Alternatively, provide an IT-issued company root/intermediate CA PEM bundle (also supported on Python 3.9):
+
+```bash
+python dependencies/torch-cu118-cp311-linux_x86_64/download.py --ca-bundle "/path/to/company-ca.pem"
+```
+
+`SSL_CERT_FILE=/path/to/company-ca.pem` is also supported; `--ca-bundle` takes precedence. These settings apply
+to both GitHub Release downloads and `--source upstream`. Certificate and hostname verification remain enabled,
+and existing verified wheels and resumable parts are preserved. If pip itself needs the company certificate,
+use `python -m pip install --cert /path/to/company-ca.pem truststore`.
 
 ## Install on the NVIDIA server
 
