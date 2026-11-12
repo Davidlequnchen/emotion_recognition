@@ -7,6 +7,7 @@ requiring the wheel files to be present.
 """
 import argparse
 import hashlib
+import importlib
 import json
 from pathlib import Path
 import platform
@@ -17,6 +18,14 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parent
+SYNC_HINT = ("Synchronize the entire wheel directory from the current main branch, including manifest.json "
+             "and all Python helpers; keep existing .whl files, then rerun download.py.")
+
+
+def package_name(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", value):
+        raise ValueError("Invalid package name in manifest: " + repr(value))
+    return re.sub(r"[-_.]+", "-", value).lower()
 
 
 def check_platform():
@@ -30,17 +39,35 @@ def check_platform():
         raise ValueError("Installation requires glibc >= 2.28; detected {} {}.".format(libc or "unknown libc", version))
 
 
-def load_files(root):
+def load_manifest(root):
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
     if not isinstance(manifest, dict) or manifest.get("schema_version") != 1:
         raise ValueError("Unsupported manifest schema; expected 1.")
     files = manifest.get("files")
     if not isinstance(files, list) or not files:
         raise ValueError("The manifest must contain a nonempty files list.")
+    print("Wheel count: {}".format(len(files)), flush=True)
+    roots = manifest.get("root_packages")
+    if not isinstance(roots, list) or not roots:
+        raise ValueError("Outdated or incomplete manifest: missing root_packages. " + SYNC_HINT)
+    root_names = {package_name(name) for name in roots}
+    missing_roots = {"torch", "torchaudio", "torchvision"} - root_names
+    if missing_roots:
+        raise ValueError("Manifest omits required roots: {}. {}".format(
+            ", ".join(sorted(missing_roots)), SYNC_HINT))
     names = set()
+    packages = {}
     for item in files:
         if not isinstance(item, dict):
             raise ValueError("Invalid wheel entry in manifest.")
+        name = package_name(item.get("package"))
+        if name in packages:
+            raise ValueError("Repeated package in manifest: " + name)
+        packages[name] = len(packages)
+        if not isinstance(item.get("version"), str) or not item["version"]:
+            raise ValueError("Missing package version for " + name)
+        if not isinstance(item.get("requires"), list):
+            raise ValueError("Outdated or incomplete manifest: missing dependencies for {}. {}".format(name, SYNC_HINT))
         filename = item.get("filename")
         if (not isinstance(filename, str) or Path(filename).name != filename
                 or "/" in filename or "\\" in filename or not filename.endswith(".whl")):
@@ -53,7 +80,29 @@ def load_files(root):
             raise ValueError("Invalid size_bytes for " + filename)
         if not isinstance(item.get("sha256"), str) or not re.fullmatch(r"[0-9a-f]{64}", item["sha256"]):
             raise ValueError("Invalid SHA-256 for " + filename)
-    return files
+    for name in root_names:
+        if name not in packages:
+            raise ValueError("Manifest is missing root package {}. {}".format(name, SYNC_HINT))
+    for item in files:
+        name = package_name(item["package"])
+        for value in item["requires"]:
+            dependency = package_name(value)
+            if dependency not in packages:
+                raise ValueError("Incomplete manifest: {} requires missing package {}. {}".format(name, dependency, SYNC_HINT))
+            if packages[dependency] >= packages[name]:
+                raise ValueError("Manifest is not dependency-first: {} must precede {}. {}".format(dependency, name, SYNC_HINT))
+    return manifest
+
+
+def verify_dependency_closure(root, manifest):
+    """Verify actual wheel metadata, rather than trusting only declared manifest edges."""
+    if not (root / "audit.py").is_file():
+        raise ValueError("Missing dependency auditor audit.py. " + SYNC_HINT)
+    try:
+        auditor = importlib.import_module("audit")
+    except ImportError as exc:
+        raise ValueError("Cannot load the wheel dependency auditor: {}. {}".format(exc, SYNC_HINT)) from exc
+    auditor.audit(root, manifest)
 
 
 def verify_all(root, files):
@@ -84,10 +133,14 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         root = ROOT.resolve()
-        files = load_files(root)
+        print("Manifest: " + str(root / "manifest.json"), flush=True)
+        manifest = load_manifest(root)
+        files = manifest["files"]
         if not args.dry_run:
             check_platform()
             verify_all(root, files)
+            verify_dependency_closure(root, manifest)
+            print("Verified complete Linux dependency closure and install order.", flush=True)
         commands = [
             [sys.executable, "-m", "pip", "install", "--no-index", "--no-deps", str(root / item["filename"])]
             for item in files

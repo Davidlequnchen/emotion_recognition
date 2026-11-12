@@ -47,6 +47,18 @@ python dependencies/torch-cu118-cp311-linux_x86_64/download.py --source upstream
 
 Run `python dependencies/torch-cu118-cp311-linux_x86_64/download.py --help` for the available options.
 
+### Updating an older three-wheel copy
+
+Keep the scripts and `manifest.json` together from the
+[current main directory](https://github.com/Davidlequnchen/emotion_recognition/tree/main/emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64).
+The current manifest lists **27 wheels**. `download.py` downloads only the files listed in the local manifest;
+it does not replace that manifest. An older three-entry manifest therefore still downloads only three wheels.
+
+For a Git checkout, update with `git pull --ff-only`. For a manually copied project, synchronize the entire
+wheel directory from current main, including all Python helpers and metadata. Preserve the existing `.whl`
+files; verified files are reused. Then rerun `download.py` followed by `install.py`.
+The installer's startup output shows the exact manifest path and `Wheel count: 27` for this bundle.
+
 For a server without internet access, run the download on a machine that can access the Release, then copy this
 folder, including all wheels, scripts and metadata, to the server. Verify the copied files without networking:
 
@@ -98,7 +110,9 @@ python -c "import torch, torchaudio, torchvision; print(torch.__version__, torch
 ```
 
 [`install.py`](install.py) first checks the target platform and verifies the size and SHA-256 of **every wheel**
-before installing anything. It then runs one `python -m pip install --no-index --no-deps <wheel>` command per
+and audits the actual wheel metadata for complete dependencies before installing anything. Old, truncated or
+incorrectly ordered manifests are rejected; the manifest structure is also checked by `--dry-run`.
+It then runs one `python -m pip install --no-index --no-deps <wheel>` command per
 package, in the manifest's dependency-first order, followed by `python -m pip check`. It stops if a step fails.
 
 To inspect the numbered commands without installing, even on a different platform or before downloading:
