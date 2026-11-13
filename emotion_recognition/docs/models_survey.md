@@ -38,7 +38,7 @@
 
 ⭐ = 推荐优先评估：公开报告的效果好，输出类别接近本项目的 7 类，能下载并运行，再参考许可；只有推荐的模型名字加粗。
 
-指标：WA 是准确率，UA（UAR）是各类召回率的平均（类别不均衡时更公平），macro-F1 是各类 F1 的平均，CCC 是维度预测和人工评分的一致程度（1 最好）。各行数字来自不同的数据集和评测方法，不能横向比较；只有 emotion2vec+ large 在本项目的数据集上实测过。
+指标：WA 是准确率，UA（UAR）是各类召回率的平均（类别不均衡时更公平），macro-F1 是各类 F1 的平均，CCC 是维度预测和人工评分的一致程度（1 最好）。各行数字来自不同的数据集和评测方法，不能横向比较。本项目的五个 SER 模型（emotion2vec+ large、MERaLiON-SER-v1、Melati 和两个 Vox-Profile 模型）都已在 16 个基准数据集上实测，见 [reports/summary.md](../reports/summary.md)。
 
 ### 1a 基本信息和公开报告的效果
 
@@ -48,7 +48,7 @@
 
 | # | 模型 | 机构 | 年份 | 公开报告的效果 | 论文 | 下载 | 大小 | 许可 | 运行方式 |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | ⭐ **emotion2vec+ large**（本项目在用） | 上海交大、复旦、港中文、阿里巴巴 | 2024-05 | 本项目实测 8 个数据集，准确率 40.8–92.5%（[报告](../reports/emotion2vec_plus_large/summary.md)）；Melati 卡片的留出数据，7 类 UAR 0.522 | 无单独论文，见 [GitHub](https://github.com/ddlBoJack/emotion2vec) | [HF](https://huggingface.co/emotion2vec/emotion2vec_plus_large)；[ModelScope](https://modelscope.cn/models/iic/emotion2vec_plus_large) | 162.1M（卡片写约 300M）；1.95 GB（含优化器状态） | ① | FunASR |
+| 1 | ⭐ **emotion2vec+ large**（本项目在用） | 上海交大、复旦、港中文、阿里巴巴 | 2024-05 | 本项目已在全部 16 个数据集上实测（[报告](../reports/emotion2vec_plus_large/summary.md)；所有模型见 [reports/summary.md](../reports/summary.md)）；Melati 卡片的留出数据，7 类 UAR 0.522 | 无单独论文，见 [GitHub](https://github.com/ddlBoJack/emotion2vec) | [HF](https://huggingface.co/emotion2vec/emotion2vec_plus_large)；[ModelScope](https://modelscope.cn/models/iic/emotion2vec_plus_large) | 162.1M（卡片写约 300M）；1.95 GB（含优化器状态） | ① | FunASR |
 | 2 | ⭐ **MERaLiON-SER-v1** | A*STAR I²R（新加坡） | 2025-10 | MSP-Podcast、IEMOCAP、MELD 上 7 类 UAR 64–70%（论文；前两个没参与训练）；Melati 卡片的留出数据，UAR 0.464 | [arXiv 2511.04914](https://arxiv.org/abs/2511.04914) | [HF](https://huggingface.co/MERaLiON/MERaLiON-SER-v1) | 313.4M（不含解码器；卡片写 309M）；文件 770.0M、3.08 GB（含用不到的 Whisper 解码器） | MERaLiON Public Licence（MIT 加署名等条款，可商用） | transformers（`trust_remote_code`） |
 | 3 | ⭐ **Melati 情绪分类** | Scicom（马来西亚） | 2026-10 | nEMO 和 NonverbalTTS 的 VoxCeleb 部分（7,791 条，没参与训练）上 7 类 UAR 0.538，其中 nEMO 0.559（卡片） | 无（只有模型卡） | [HF](https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3) | 637.3M；1.28 GB（编码器 fp16） | 仅限非商用研究 | transformers（`trust_remote_code`） |
 | 4 | ⭐ **Vox-Profile Whisper 分类** | USC SAIL 等 | 2025-05 | MSP-Podcast v1.12 开发集 macro-F1 0.416（论文表 4） | [arXiv 2505.14648](https://arxiv.org/abs/2505.14648)（DMLR） | [HF](https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion) | 639.9M（不含用不到的解码器）；文件 1.55B、6.19 GB | OpenRAIL，但卡片写明不可商用 | [vox-profile-release](https://github.com/tiantiaf0627/vox-profile-release) + loralib |

@@ -23,7 +23,7 @@ from a primary source; "inferred" marks conclusions drawn from the files and con
   (academic data from EmoBox, 201 h) → base (pseudo-labels, 4,788 h) → large (pseudo-labels, 42,526 h, about 40k hours kept out of about 160k). The sources of the pseudo-labelled data, the filtering
   rules and the training compute are not published.
   The configuration in `model.pt` shows that the last stage of large ran 13,669 updates on 8 GPUs (type not recorded) on data named `emo_box_fix`.
-- **Measured in this project**: 85.5–92.5% accuracy on datasets that are in EmoBox, only 40.8–61.3% on datasets that are not. MPS cannot process clips longer than 20.48 s (the scripts switch to
+- **Measured in this project** on all 16 datasets ([summary report](../reports/emotion2vec_plus_large/summary.md)): accuracy is high on the acted corpora listed in EmoBox and much lower on corpora outside EmoBox and on dialogue speech. MPS cannot process clips longer than 20.48 s (the scripts switch to
   the CPU); memory grows roughly with the square of the clip length.
 - **Licence**: the Hugging Face model card points to the FunASR model licence (use, modify and share, including fine-tuned models, with attribution and keeping the model name); the ModelScope
   model card says Apache-2.0. The two do not agree.
@@ -176,7 +176,7 @@ Inferred (unverified):
 
 ## 5. Practical notes from this project
 
-**Accuracy** ([summary report](../reports/emotion2vec_plus_large/summary.md), 2026-10-27, scored against the acted emotion):
+**Accuracy**: the current results on all 16 datasets are in the [summary report](../reports/emotion2vec_plus_large/summary.md) and, next to the other models, in [reports/summary.md](../reports/summary.md). The table below is the early check on the first six datasets (2026-10-27, scored against the acted emotion); its last column used the old rule of re-picking the largest of the four shared probabilities, so it differs from the current reports:
 
 | Dataset | Language | In EmoBox | Accuracy | 4 shared emotions only |
 |---|---|---|---|---|

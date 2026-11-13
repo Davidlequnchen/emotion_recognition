@@ -1,12 +1,17 @@
 # Audio LLMs: prompts, audio and answers
 
-The audio LLMs run through `scripts/evaluation/evaluate.py`, like the speech emotion models, through their loaders
-`scripts/models/gpt_realtime.py` (GPT Realtime, over WebSocket) and `scripts/models/gemini.py` (Gemini, a placeholder
-for now), and the open-weight ones that run here (Qwen2.5-Omni, Qwen2-Audio, Gemma 4) through
-`scripts/models/audio_llm.py` with the same prompts and parser; how to run them: section 8 of the
-[README](../../README.md#8-audio-llms). They get the same clips and labels
-as the other models. This folder has the parts they share, which call no API. Run every command from the
-`emotion_recognition/` folder.
+The audio LLMs run through `scripts/evaluation/evaluate.py`, like the speech emotion models: GPT Realtime through
+`scripts/models/gpt_realtime.py` (over WebSocket), and the open-weight ones that run here (Qwen2.5-Omni, Qwen2-Audio,
+Gemma 4) through `scripts/models/audio_llm.py`, with the same prompts and parser; how to run them: section 8 of the
+[README](../../README.md#8-audio-llms). They get the same clips and labels as the other models.
+
+Gemini 3.8 Flash (`gemini-3.8-flash`) is different: in this repository `scripts/models/gemini.py` is still a
+placeholder, so the Gemini run cannot be reproduced from this repository alone. Its results, like the GPT Realtime
+results, were produced by a separate runner on another computer with the same prompts and candidate labels, and
+imported with `scripts/evaluation/refresh_reports.py` (README section 7.3).
+
+This folder has the parts the loaders share, which call no API. Run every command from the `emotion_recognition/`
+folder.
 
 | File | What it does |
 |---|---|
@@ -19,15 +24,15 @@ as the other models. This folder has the parts they share, which call no API. Ru
 
 In `config/llm.yaml`: `prompts` (the prompts file), `retries`, `retries_invalid` and `timeout_s` (read by the
 loaders), and the settings of the preview (`datasets`, `exclude`, `limit`, `audio_format`, `preview`). In a run, the
-datasets come from `config/evaluation.yaml` and the number of clips from the model's `limit` in `config/models.yaml`
-(200).
+datasets come from `config/evaluation.yaml` and the number of clips from `limit` there; no audio LLM has its own
+`limit` in `config/models.yaml`, so every model runs every clip of the 16 datasets (THAI-SER, MEAD and the three
+dialogue datasets on their fixed subsets). The preview's `limit: 200` in `config/llm.yaml` only affects the preview.
 
-The clips are the ones the model evaluation uses for the same limit: `sample(ds, limit)` in
+The clips are the ones the model evaluation uses: with a `limit`, `sample(ds, limit)` in
 `scripts/common/eval_datasets.py` takes clips at even intervals within each ground-truth label. The labels and the
 classes that count as correct also come from there (`accepted(ds, label)`), so the label decisions are the same for
 both kinds of model: RAVDESS's and MESS's *calm* count as *neutral*, TESS's *pleasant surprise* as *surprised*, and
-for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct. With the limit of 200, the eight
-datasets give 1,600 clips and 75 minutes of audio per model.
+for JL-Corpus's *excited* an answer of *happy* or *surprised* is correct.
 
 ## Prompts
 
@@ -37,9 +42,18 @@ sad, surprised. During evaluation, the dataset's `ds.classes` filters this list.
 probabilities are also normalised over that same subset. This matches the candidate restriction already used for
 the dedicated SER models' main score.
 
-For example, CREMA-D has six candidates (no surprised); MESS and THAI-SER have four (angry, happy, neutral, sad).
-JL-Corpus has five candidates: angry, happy, neutral, sad, surprised. Its *excited* ground-truth label still accepts
-happy or surprised; *excited* is not itself a model answer. All datasets retain the global vocabulary's order.
+The candidates per dataset (label scope `dataset`, recorded in each run's `inference_protocol`):
+
+| Candidates | Datasets | Chance |
+|---|---|---|
+| all seven | MCAE-SPPS, RAVDESS, TESS, MEAD, MELD, EMOVO, Emozionalmente, SAVEE, EmotionTalk, DailyTalk, MultiDialog | 14.3% |
+| six: no surprised | CREMA-D | 16.7% |
+| six: no disgusted | nEMO | 16.7% |
+| five: angry, happy, neutral, sad, surprised | JL-Corpus | 24.0% (composite *excited*) |
+| four: angry, happy, neutral, sad | MESS, THAI-SER | 25.0% |
+
+JL-Corpus's *excited* ground-truth label accepts happy or surprised; *excited* is not itself a model answer. All
+datasets retain the global vocabulary's order.
 
 The baseline templates are below; the label list shown is the full-vocabulary preview from
 `python scripts/llm_eval/prompts.py`, while evaluation substitutes each dataset's candidates:
@@ -60,7 +74,9 @@ The previous acoustic-focused prompt is preserved in [prompts_legacy_v0.yaml](pr
 all clips as acted speech with neutral words and asks the model to judge the voice rather than the words. Existing
 results from that prompt are preliminary legacy runs. Runs using the newer baseline with an unrestricted
 seven-label prompt are also a different inference protocol. Neither is reused for the dataset-specific candidate
-protocol, and they must not be mixed with its results in a final comparison.
+protocol, and they must not be mixed with its results in a final comparison. As of 2026-11-13 the results in
+`reports/summary.md` all use the dataset-specific protocol; Gemma 4 E4B's older-prompt results were removed and it
+will be run again.
 
 ### Rerunning after a prompt change
 
@@ -96,7 +112,8 @@ python scripts/llm_eval/parsing.py       # checks the parser on example answers
 The preview prints each step: (1) the settings and the chosen datasets, (2) the library versions, (3) the prompts,
 (4) for each dataset the number of clips per label and the correct answers for each, then the first items with the
 source and the prepared audio (sampling rate, length in samples and seconds) and the size of the payload. Part of
-the output on the M4 Max:
+an earlier output on the M4 Max, from when only eight datasets were downloaded (it now lists all 16 that are
+present):
 
 ```
   datasets    : crema_d, mcae_spps, thai_ser, nemo, mess, ravdess, tess, jl_corpus
@@ -138,8 +155,8 @@ Every clip is read with soundfile, its channels are averaged to mono, it is resa
 
 Checked without any API call: decoded payloads have duration × rate samples (within one sample) and match
 `torchaudio.functional.resample` on the original within half a step of the 16-bit scale; a stereo file becomes the
-mean of its channels; every WAV payload reads back with soundfile as 16 kHz, mono, PCM_16. Preparing all 1,400
-default clips takes 2 to 4 s on the M4 Max. The resampling filter for 24,414 Hz (MESS and TESS) is computed once per
+mean of its channels; every WAV payload reads back with soundfile as 16 kHz, mono, PCM_16. Preparing 1,400 preview
+clips took 2 to 4 s on the M4 Max. The resampling filter for 24,414 Hz (MESS and TESS) is computed once per
 run; for `wav16k` it is large (373 MiB, and about 1.6 GB of memory for a moment while it is computed).
 
 ## Reading the answers
@@ -165,4 +182,6 @@ prompt and reads the answer from `response.done`. `parse_label` accepts only tha
 returns a one-hot vector in the global output schema plus `invalid`, and `evaluate.py` scores it like any model.
 An answer outside the candidate list is invalid, gets the configured retry, and counts as wrong if the retry
 fails. Every answer is kept in `outputs/<model>/responses.jsonl` and reused only for the matching hash and model.
-The Gemini loader will do the same with `prepare_audio(path, "wav16k")` and the google-genai SDK.
+`gemini.py` in this repository is still a placeholder; its docstring describes the intended design
+(`prepare_audio(path, "wav16k")` and the google-genai SDK). The imported Gemini 3.8 Flash results came from a separate
+runner, as described at the top of this page.

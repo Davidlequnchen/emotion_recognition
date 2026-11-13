@@ -2,7 +2,7 @@
 
 本文介绍本项目使用的 CREMA-D 数据集：数据集概况、文件命名、两种标签（表演标签与听众感知标签）、
 `summaryTable.csv` 等标签文件各列的含义，以及我们评估时生成的文件。
-下载方法见 [README 第 3 节](../README.md#3-download-the-data-crema-d)。
+下载方法见 [README 第 3 节](../README.md#3-download-the-data)。
 
 ## 1. 概况
 
@@ -122,7 +122,7 @@ CREMA-D 的每个片段都有两类标签：
 
 ## 5. 其他标签文件
 
-把 `config/download_data.yaml` 里的 `crema_d` 设为 `full`，再运行 `python scripts/common/download_data.py`，会把以下文件和音频一起下载到 `data/crema_d/`：
+把 `config/download_data.yaml` 里的 `crema_d` 设为 `full`，再运行 `python scripts/common/download_data.py --dataset crema_d --source`（CREMA-D 不在 Release 镜像里，要从原始来源下载），会把以下文件和音频一起下载到 `data/crema_d/`：
 
 **`processedResults/tabulatedVotes.csv`**：逐片段、逐呈现方式的投票明细，共 22,326 行（7,442 × 3）。
 第一列（无列名）是编号，首位数字表示呈现方式：`1` 只听声音、`2` 只看脸、`3` 音视频；后面几位是片段序号。
@@ -146,7 +146,7 @@ CREMA-D 的每个片段都有两类标签：
 **`README.md`、`LICENSE.txt`**：官方说明和许可证。
 
 官方仓库还有原始评分（`finishedResponses.csv` 等，每条记录是一个评分者对一个片段的一次评分）、MP3 音频和视频。
-我们的下载脚本没有下载它们，需要时见 README 第 3.3 节的 git-lfs 方法。
+我们的下载脚本没有下载它们（README 第 3.3 节说明了脚本怎样下载）；需要时可以从官方仓库 CheyneyComputerScience/CREMA-D 获取，那里的大文件用 Git LFS 存放。
 
 ## 6. 已知问题
 
@@ -162,7 +162,7 @@ CREMA-D 的每个片段都有两类标签：
 | `reports/<model>/crema_d.md` | 评估报告：两种准确率、各情绪结果、两个混淆矩阵、与听众的对比 |
 | `reports/<model>/figures/crema_d_confusion.png` | 混淆矩阵图（严格标准：以表演标签为 ground truth） |
 | `reports/<model>/figures/crema_d_confusion_acted_or_listener.png` | 混淆矩阵图（宽松标准：表演标签或听众投票，命中其一即算正确） |
-| `outputs/<model>/crema_d_predictions.csv` | 每个片段一行的预测结果（不进 git） |
+| `outputs/<model>/crema_d_predictions.csv` | 每个片段一行的预测结果（在 git 里） |
 | `outputs/<model>/crema_d_predictions.json` | 上面 CSV 的说明（数据集、模型、哪一列是 ground truth、各列含义）和各项指标，供 `scripts/viewer/make_viewer.py` 读取 |
 
 **预测 CSV 各列含义：**

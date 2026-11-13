@@ -1,6 +1,6 @@
 # 训练来源与图表标记核查
 
-更新：2026-11-10。覆盖八个已评测 checkpoint ×十六个采用数据集。
+更新：2026-11-10。覆盖八个已评测 checkpoint ×十六个采用数据集。两个 API 模型（GPT Realtime、Gemini 3.8 Flash）不公布训练语料，见下文。
 
 **图表只用一种斜线 `///`，含义为 “Part of the training process”。** 直接或间接、上游预训练、seed 微调、教师伪标签传播、最终微调，均计为用过／见过；作者明确使用过的开发校准也计入并注明阶段。图中不再区分 direct/upstream/possible，也不放解释脚注。
 
@@ -61,7 +61,7 @@ SER 训练明确包括 CREMA-D、ESD、MELD、M3ED、SG-ECMT、SGTV。采用的1
 
 ### Qwen2.5-Omni 7B
 
-Qwen2.5＋Whisper-large-v3，随后多模态预训练和指令微调；未公布覆盖本项目15语料的完整清单。论文的 MELD 结果是评测证据。
+Qwen2.5＋Whisper-large-v3，随后多模态预训练和指令微调；未公布覆盖本项目16语料的完整清单。论文的 MELD 结果是评测证据。
 
 一手来源：[来源1](https://arxiv.org/html/2503.20215v1#S3)；[来源2](https://huggingface.co/Qwen/Qwen2.5-Omni-7B)。
 
@@ -76,6 +76,10 @@ Qwen-7B＋Whisper-large-v3，随后音频预训练、SFT、DPO。论文声明排
 E4B 含 USM 架构的音频编码器，预训练时冻结；随后多模态与指令训练。完整语料清单未公开。January 2025 截止日期、数据集发表时间或通用去污染声明，不足以认证这16个逐项从未使用。
 
 一手来源：[来源1](https://ai.google.dev/gemma/docs/core/model_card_4)；[来源2](https://huggingface.co/google/gemma-4-E4B-it)。
+
+### GPT Realtime 与 Gemini 3.8 Flash
+
+两者都没有公布训练语料来源（OpenAI、Google），所以对 16 个数据集都不画训练斜线；这不表示确认未见。与 [reports/summary.md](../reports/summary.md) 的 Training data 一节一致。
 
 ## DailyTalk、EmotionTalk 与 MultiDialog
 

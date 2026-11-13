@@ -4,7 +4,7 @@ Exploring speech emotion recognition (SER), from traditional machine learning to
 Current focus: five open-source SER models, run by one script on the same datasets and scored against the same labels:
 **emotion2vec+ large** (162.1M parameters), **MERaLiON-SER-v1** (313.4M), **Melati** (637.3M),
 **Vox-Profile Whisper** (639.9M) and **Vox-Profile WavLM** (316.2M); see [Models](#models). Audio LLMs answer the same
-question in words: GPT Realtime through its API, and three open-weight ones that run here, **Qwen2.5-Omni 7B**
+question in words: GPT Realtime and Gemini 3.8 Flash through their APIs, and three open-weight ones that run here, **Qwen2.5-Omni 7B**
 (Thinker, 8.93B), **Qwen2-Audio 7B Instruct** (8.40B) and **Gemma 4 E4B** (8.00B); see
 [section 8](#8-audio-llms). They run with PyTorch on two kinds of machines:
 
@@ -66,6 +66,10 @@ emotion_recognition/
 │   ├── datasets_survey.md      # emotion recognition public dataset survey (in Chinese)
 │   ├── datasets_survey_en.md   # the same survey in English
 │   ├── models_survey.md        # open-source emotion recognition model survey (English: models_survey_en.md)
+│   ├── audio_llms_survey.md    # audio LLM survey (English: audio_llms_survey_en.md)
+│   ├── training_provenance.md  # which evaluation corpora each model's training used, and the evidence (in Chinese)
+│   ├── label_mapping.md        # model and dataset labels -> the project's seven classes (in Chinese)
+│   ├── context_pilot.md        # the prepared EmotionTalk dialogue-context pilot (in Chinese; not run yet)
 │   ├── emotion2vec_plus_large.md             # the model explained: architecture, size, training (+ _en.md)
 │   ├── finetuning_emotion2vec_plus_large.md  # what fine-tuning would need: data, GPUs, which layers (+ _en.md)
 │   ├── data_preparation_call_centre_audio.md # how to cut call recordings into segments for labelling and training
@@ -93,7 +97,8 @@ emotion_recognition/
 │   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> the project's classes)
 │   ├── models/                 # one loader per model: emotion2vec.py, meralion_ser.py, melati.py, vox_profile.py
 │   │                           # (+ vox_profile_LICENSE.txt); audio_io.py reads audio as 16 kHz mono;
-│   │                           # gpt_realtime.py and gemini.py (placeholder) call the audio LLMs' APIs;
+│   │                           # gpt_realtime.py calls the GPT Realtime API; gemini.py is still a placeholder
+│   │                           # (the Gemini results were imported, see section 8);
 │   │                           # qwen2_5_omni.py, qwen2_audio.py, gemma4_audio.py run the open-weight audio LLMs
 │   │                           # here (their shared part: audio_llm.py)
 │   ├── evaluation/
@@ -118,10 +123,10 @@ small model repository; its weights are GitHub Release attachments and are resto
 Historical data/model directory contents were removed from the main repository's reachable history on
 2026-11-09; existing clones should read the [history migration notes](docs/git_history_cleanup.md).
 The `data/` submodule similarly pins metadata and a Release restore tool. MCAE-SPPS, TESS, the selected
-JL-Corpus recordings, nEMO, EMOVO, THAI-SER, MEAD, MELD and SAVEE are mirrored as Release archives, not Git blobs.
-The adopted collection contains 16 datasets: 13 have completed SER baselines; DailyTalk, EmotionTalk and
-MultiDialog are downloaded and verified, with loaders ready and baselines pending. The EmotionTalk context
-pilot is prepared only; adoption does not mean a new experiment has run. See the [dataset survey](docs/datasets_survey_en.md).
+JL-Corpus recordings, nEMO, EMOVO, THAI-SER, MEAD, MELD, SAVEE, EmotionTalk, DailyTalk and MultiDialog are
+mirrored as Release archives, not Git blobs. The adopted collection contains 16 datasets, and all 16 are evaluated
+(results status in section 6). The EmotionTalk context pilot is prepared only and has not been run. See the
+[dataset survey](docs/datasets_survey_en.md).
 [data/README.md](data/README.md) records scope, checksums and source terms; THAI-SER contains the four evaluated
 emotions, MEAD contains Part0 audio, and MELD contains only the test split. CREMA-D, MESS, RAVDESS and
 Emozionalmente retain their original/external download sources. ESD stays local and excluded.
@@ -302,7 +307,7 @@ Alternatively, supply an IT-provided CA PEM bundle using `--ca-bundle "/path/to/
 python3 scripts/common/setup_datasets.py                  # all twelve Release mirrors, including the three adopted additions
 python3 scripts/common/setup_datasets.py tess meld        # selected mirrors only
 python3 scripts/common/setup_datasets.py dailytalk emotiontalk multidialog  # adopted dialogue additions
-python3 scripts/common/setup_datasets.py --list           # all 16 registered sources and scopes; completed SER baselines remain 13
+python3 scripts/common/setup_datasets.py --list           # all 16 registered sources and scopes
 python3 scripts/common/setup_datasets.py --verify-only    # check local mirrored files without downloading
 ```
 
@@ -329,7 +334,9 @@ python scripts/common/download_data.py --dataset crema_d --source
 
 `provider: github` in `config/download_data.yaml` routes mirrored names (or `dataset: mirrors`) through the same
 setup. `--source` or `provider: source` selects the original publisher. `--dataset all --source` downloads the 13
-evaluated datasets and excludes ESD; only an explicit `--dataset esd --source` fetches the archived corpus.
+non-dialogue evaluated datasets from their publishers and excludes ESD; only an explicit `--dataset esd --source`
+fetches the archived corpus. The three dialogue datasets (EmotionTalk, DailyTalk, MultiDialog) have no
+original-source downloader here and come only from the Release mirrors.
 `python scripts/common/download_data.py` still defaults to the six CREMA-D samples and does not fetch a large
 archive. With `dataset: crema_d` (the default),
 `crema_d: samples` gets the 6 test clips into `data/samples/` (0.4 MB) and `crema_d: full` the whole dataset into
@@ -412,8 +419,12 @@ Emotional Multimodal Actors Dataset", *IEEE Transactions on Affective Computing*
 
 ### 3.4 More evaluation datasets
 
-The same script downloads thirteen more datasets. Most of them, like CREMA-D, record the same sentences in different
-emotions; MELD is the exception (in-the-wild utterances from a TV series). They were chosen from the emotion recognition public dataset survey in
+Fifteen more datasets are evaluated, so the benchmark has 16 in all; the table below also keeps ESD, which is
+archived and no longer evaluated. Most of them, like CREMA-D, record the same sentences in different emotions. The
+exceptions are MELD (in-the-wild utterances from a TV series) and the three dialogue datasets, EmotionTalk, DailyTalk
+and MultiDialog (acted conversations). The dialogue datasets come only from the Release mirrors
+(`setup_datasets.py`); the other datasets can also come from their publishers through `download_data.py --source`.
+They were chosen from the emotion recognition public dataset survey in
 [docs/datasets_survey_en.md](docs/datasets_survey_en.md) (Chinese: [docs/datasets_survey.md](docs/datasets_survey.md)),
 which has links, sizes and caveats for many more.
 
@@ -437,6 +448,9 @@ python scripts/common/download_data.py --dataset mcae_spps --source  # optional 
 | `emovo` | Italian | 588 (6 actors, 14 sentences) | 0.33 GB | WAV 48 kHz in `audio/<speaker>/`, named `<emotion>-<speaker>-<sentence>.wav` | 7 emotions (acted) | none published; unofficial copy (the official site is gone) |
 | `emozionalmente` | Italian | 6,902 (431 non-professional speakers, 18 sentences) | 0.56 GB | WAV 16 kHz in `audio/emozionalmente/audio/`; labels and the 5 listeners' votes per clip in `audio/emozionalmente/metadata/` | 7 emotions (intended; 5 listeners per clip) | CC BY 4.0 |
 | `savee` | English (British) | 480 (4 male speakers, 15 sentences per emotion, 30 in neutral) | 0.11 GB | WAV 44.1 kHz in `audio/ALL/`, named `<speaker>_<emotion><number>.wav` (e.g. `DC_a01.wav`) | 7 emotions (acted; 10 evaluators, results per clip not published) | free for research after registration, redistribution not allowed; unofficial Kaggle copy (see below) |
+| `emotiontalk` | Mandarin | 19,250 (742 dialogues); evaluated: the official test split, 1,929 clips ([subsets](#subsets)) | 14.79 GB (Release mirror) | original WAV (mostly 44.1 kHz) with one audio JSON per clip; official splits and ordered dialogue indexes | 7 emotions (`emotion_result` in the audio JSON) | CC BY-NC-SA 4.0 |
+| `dailytalk` | English | 23,773 (2,541 dialogues, 2 actors); evaluated: the ECSS validation split, 1,197 clips ([subsets](#subsets)) | 6.92 GB (Release mirror) | original WAV/TXT pairs per dialogue, `utterances.csv` and `dialogues.csv` | 7 emotions inherited from the DailyDialog text (79.8% none/neutral) | CC BY-SA 4.0 (ECSS files: MIT) |
+| `multidialog` | English | 18,141 (the two official test splits, 831 dialogues); evaluated: the `gold_both` cohort, 7,672 clips / 353 dialogues ([subsets](#subsets)) | 3.76 GB (Release mirror) | 16 kHz mono WAV, original JSONL, QC exclusions and cohort IDs | 7 emotions (performed intended emotions of TopicalChat scripts) | CC BY-NC 4.0 |
 
 Every file is checked against the checksum its host publishes (OSF SHA-256, Zenodo MD5, Hugging Face SHA-256,
 Borealis MD5). Google Drive and Kaggle publish none, so the ESD, JL-Corpus and SAVEE zips are checked with their own
@@ -608,9 +622,10 @@ models: all       # all registered models, or a list such as [emotion2vec_plus_l
 api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
                   # requests, key in the .env file at the repository root); false: skip them, also when listed
                   # in `models`
-datasets: all     # all downloaded datasets, or a list such as [crema_d, ravdess]
+datasets: all     # all = all 16 downloaded adopted datasets (after exclude), including the three dialogue
+                  # datasets, or a list such as [crema_d, ravdess]
                   # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus | mead | meld
-                  # | emovo | emozionalmente | savee)
+                  # | emovo | emozionalmente | savee | emotiontalk | dailytalk | multidialog)
 subsets:          # fixed subsets of two large datasets, to save compute (decided 2026-11-06). Every model and every
                   # script (evaluate.py, the LLM data loader, the viewer) uses the same clips, because the subset is
                   # part of the dataset's loader (scripts/common/eval_datasets.py); null or absent = every clip
@@ -631,11 +646,14 @@ devices:          # device per mode; a model's mac_device (in config/models.yaml
   mac: mps
   cuda: cuda:0
 summary_figure:   # every dataset's confusion matrix in one figure, in each model's summary report
-  # panels row by row, three per row (13 datasets: 5 rows, one panel in the last); datasets not listed come last
+  # panels row by row, three per row; datasets not listed come last
   order: [crema_d, mcae_spps, mess, ravdess, tess, jl_corpus, thai_ser, nemo, mead, meld, emovo, emozionalmente, savee]
   acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
                                 # the others show the acted emotion
 ```
+
+The excerpt shows the general settings. As of 2026-11-13 the file is set for the running Qwen2-Audio evaluation
+(`mode: mac`, `models: [qwen2_audio_7b]`, `plots: false`); matching finished results are reused.
 
 <a id="subsets"></a>**Subsets.** To save compute, two large datasets are evaluated on a fixed subset, for every model
 (SER models, local audio LLMs and API models alike; decided 2026-11-06):
@@ -646,6 +664,14 @@ summary_figure:   # every dataset's confusion matrix in one figure, in each mode
 - **MEAD**: 8,000 of the 27,514 clips, taken at even intervals over the clips sorted by actor, emotion, intensity level
   and sentence number, so each of the 912 actor/emotion/level cells keeps its share (rounded down or up: 3 to 12
   clips, at even intervals within the cell); 9.5 h instead of 32.7 h. The same clips every time.
+
+The three dialogue datasets also use one fixed split each, set by default in their loaders
+(`scripts/common/eval_datasets.py`), not in `subsets`:
+
+- **EmotionTalk**: the official test split, 1,929 clips.
+- **DailyTalk**: the pinned ECSS validation split, 1,197 clips (DailyTalk has no official test split).
+- **MultiDialog**: the `gold_both` cohort, 7,672 clips of 353 complete dialogues whose two actors are both on the
+  released gold actor list and which pass the dialogue quality checks.
 
 The subset is part of the dataset's loader, so `evaluate.py`, the LLM data loader and the viewer all see the same
 clips, and the dataset's name says so in every report and summary, e.g. *THAI-SER (high-agreement subset)*. Set a
@@ -717,6 +743,9 @@ emotion2vec+ nine (plus `other` and `<unk>`).
 | EMOVO | 7, first part of the file name: `dis`gusto, `gio`ia, `neu`trale, `pau`ra, `rab`bia, `sor`presa, `tri`stezza | rab → angry, dis → disgusted, pau → fearful, gio → happy, neu → neutral, tri → sad, sor → surprised |
 | Emozionalmente | 7, column `emotion_expressed` (listeners: `emotion_recognized`): anger, disgust, fear, joy, neutrality, sadness, surprise | anger → angry, disgust → disgusted, fear → fearful, joy → happy, neutrality → neutral, sadness → sad, surprise → surprised |
 | SAVEE | 7, letters after the speaker in the file name: `a`nger, `d`isgust, `f`ear, `h`appiness, `n`eutral, `sa`dness, `su`rprise | a → angry, d → disgusted, f → fearful, h → happy, n → neutral, sa → sad, su → surprised |
+| EmotionTalk (official test split) | 7, `emotion_result` in each clip's audio JSON: angry, disgusted, fearful, happy, neutral, sad, surprised | the same names; the published gold label is kept, not replaced by the five raters' majority |
+| DailyTalk (ECSS validation split) | 7, the pinned public ECSS category: none, anger, disgust, fear, happiness, sadness, surprise | **none → neutral**, anger → angry, disgust → disgusted, fear → fearful, happiness → happy, sadness → sad, surprise → surprised |
+| MultiDialog (`gold_both` cohort) | 8, the prescribed emotion of each performed line: Neutral, Curious to dive deeper, Happy, Sad, Angry, Fear(ful), Disgusting/Disgusted, Surprising/Surprised | **Curious to dive deeper → neutral** (as in the dataset paper's evaluation), the others to the matching class |
 
 How model outputs become a prediction:
 
@@ -751,13 +780,14 @@ How model outputs become a prediction:
   surprise* and ESD's Mandarin label for Surprise, 惊喜, both mean a pleasant surprise, while emotion2vec+'s class is
   called 吃惊 (surprised).
 
-Results: only emotion2vec+ large has full results so far. The four new models were only tested on 14 clips per
-dataset (those test results are not kept). To evaluate them on every clip, keep `models: all` (or list them) and `limit: null` in `config/evaluation.yaml`, run
-`python scripts/evaluation/evaluate.py` (about 4.5 hours on the Mac, see the speeds below), then
-`python scripts/viewer/make_viewer.py`. [reports/summary.md](reports/summary.md) compares every model on every
-dataset.
+Results status, as of 2026-11-13: the five SER models, Qwen2.5-Omni 7B, GPT Realtime and Gemini 3.8 Flash have
+results on all 16 datasets. Qwen2-Audio 7B Instruct is running (7 of 16 datasets done). Gemma 4 E4B has a
+current-protocol result on MELD only; its other results used the old prompt and were removed, so it will be run
+again. [reports/summary.md](reports/summary.md) compares every model on every dataset and is regenerated after every
+run, so this README does not copy its numbers. After a run, `python scripts/viewer/make_viewer.py` rebuilds the page.
 
-emotion2vec+ large (its [summary](reports/emotion2vec_plus_large/summary.md) adds unweighted accuracy and macro F1):
+emotion2vec+ large on the first eight datasets, kept as an example of a model summary (its
+[summary](reports/emotion2vec_plus_large/summary.md) has all 16 datasets, unweighted accuracy and macro F1):
 
 | Dataset | Language | Ground-truth labels | EmoBox membership (historical example) | Clips | Emotions (chance) | Accuracy: acted emotion | Accuracy: acted or listeners' vote |
 |---|---|---|---|---|---|---|---|
@@ -784,9 +814,8 @@ regenerated `reports/summary.md`. A disclosed task-training list does not establ
 ESD is left out of the evaluation (`exclude`): its licence is research-only and forbids sharing it, it has no
 listener test, and it is in EmoBox. Its data stays in `data/`; its earlier emotion2vec+ report is in
 [reports/archive/](reports/archive/README.md) (a 3,500-clip sample: 97.0%) and its predictions in `outputs/archive/`
-(not in git). THAI-SER (Thai) and nEMO (Polish), left out for a while, are evaluated again since 2026-11-05; so far
-only emotion2vec+ large has results on them (the runs from October). Its THAI-SER result is on the high-agreement
-subset, taken from its full October run (all 22,584 clips: 63.2%, now in
+(not in git). THAI-SER (Thai) and nEMO (Polish), left out for a while, are evaluated again since 2026-11-05.
+emotion2vec+ large's THAI-SER result is on the high-agreement subset, taken from its full October run (all 22,584 clips: 63.2%, now in
 [reports/archive/](reports/archive/emotion2vec_plus_large/thai_ser_full.md)) without running the model again.
 
 RAVDESS, TESS and JL-Corpus, the three English datasets added last, are all in EmoBox, and their results are high, as
@@ -818,19 +847,19 @@ on the four emotions. MESS
 stays low: the model takes most of its clips for neutral (85% of the angry clips and 92% of the sad ones), and its
 *calm* is scored as *neutral*.
 
-Speed on the M4 Max, and the time of a full run (21,357 clips per model: the six datasets other than THAI-SER and
-nEMO, which add 16,329 clips: THAI-SER's high-agreement subset 11,848 and nEMO 4,481; emotion2vec+ large took 52.5
-minutes on all 22,584 THAI-SER clips and 22.7 on nEMO):
+Speed of the SER models on the M4 Max (emotion2vec+ large took 52.5 minutes on all 22,584 THAI-SER clips and 22.7
+on nEMO):
 
-| Model | Device on the Mac | Time per clip | Full run |
-|---|---|---|---|
-| emotion2vec+ large | CPU (`mac_device: cpu`) | about 90 ms; 0.4 to 0.5 s on MESS and TESS | about 50 minutes |
-| MERaLiON-SER-v1 | MPS | about 180 ms | about 1 hour |
-| Melati | MPS (float16 encoder) | about 280 ms | about 1.5 hours |
-| Vox-Profile Whisper | MPS | about 150 ms | about 50 minutes |
-| Vox-Profile WavLM | MPS | 130 to 230 ms | about 1 hour |
+| Model | Device on the Mac | Time per clip |
+|---|---|---|
+| emotion2vec+ large | CPU (`mac_device: cpu`) | about 90 ms; 0.4 to 0.5 s on MESS and TESS |
+| MERaLiON-SER-v1 | MPS | about 180 ms |
+| Melati | MPS (float16 encoder) | about 280 ms |
+| Vox-Profile Whisper | MPS | about 150 ms |
+| Vox-Profile WavLM | MPS | 130 to 230 ms |
 
-The times of the four new models come from the 14-clip test, so their full-run times are rough. emotion2vec+ large runs
+The times of the four newer models come from an early 14-clip test. Each prediction JSON in `outputs/<model>/`
+records the measured run time of its dataset. emotion2vec+ large runs
 on the CPU because nearly every clip has a different length, and MPS compiles new kernels for every new length.
 FunASR, which runs it, also resamples the 24,414 Hz audio of MESS and TESS slowly; the other models read audio with
 `scripts/models/audio_io.py`, which builds each resampler only once. The Whisper-based models pad every clip to the
@@ -944,43 +973,49 @@ existing confusion panels. Run `plot_results.py` and
 
 ### 7.3 Refresh reports after importing results
 
-从公司电脑带回结果时，把配对的 `<dataset>_predictions.csv` 和
-`<dataset>_predictions.json` 放在 `outputs/<model>/`。目录名及 JSON 的 `model`
-要与 `config/models.yaml` 中的模型 key 一致；Gemini 3.8 Flash 使用
-`outputs/gemini-3.8-flash/`。然后在 `emotion_recognition/` 目录运行：
+Results produced on another computer are imported as files. Put each pair of `<dataset>_predictions.csv` and
+`<dataset>_predictions.json` in `outputs/<model>/`. The folder name and the `model` field in the JSON must match the
+model's key in `config/models.yaml`; Gemini 3.8 Flash uses `outputs/gemini-3.8-flash/`. Then run, from
+`emotion_recognition/`:
 
 ```bash
 python scripts/evaluation/refresh_reports.py --model gemini-3.8-flash --plots --viewer
 ```
 
-这条命令只分析已保存的结果，不加载模型、不调用 API，也不改写预测 CSV/JSON。
-它先检查音频路径是否重复、样本数、候选标签、prompt 协议及重算指标，再生成该模型的
-逐数据集报告、混淆矩阵、模型汇总和总表。`--plots` 更新比较图；`--viewer` 更新本地 HTML
-和 `site/index.html`，网页示例需要本机已有相应音频。省略这两个选项即可只生成报告。
-CSV 可以使用 UTF-8 BOM，正确性列支持 True/False、Yes/No 和 1/0。
+This command only reads saved results. It loads no model, calls no API and does not rewrite the prediction CSV/JSON.
+It first checks for duplicate audio paths, the number of clips, the candidate labels, the prompt protocol and the
+recomputed metrics. Then it writes the model's per-dataset reports, confusion matrices, model summary and the
+cross-model table. `--plots` also redraws the comparison figures; `--viewer` rebuilds the local HTML and
+`site/index.html`, and the page's example clips need the audio on this computer. Leave out both options to write
+only the reports. The CSV may start with a UTF-8 BOM, and the correctness column accepts True/False, Yes/No and 1/0.
+The GPT Realtime and Gemini 3.8 Flash results in this repository were imported this way.
 
-Weighted F1 可从既有逐条预测补算，不需要重新推理。旧预测 JSON 保持原样；新指标集中存入
-`reports/derived_metrics.json`，汇总、图表和 HTML 仅在源 CSV/JSON 的 SHA-256
-仍匹配时读取该值。主报告保留 Accuracy、UAR、macro-F1，并补充按真实类别支持数加权的 F1。
+Weighted F1 can be computed from saved per-clip predictions, without new inference. Old prediction JSON files stay
+as they are; the new metric is stored in `reports/derived_metrics.json`, and the summaries, plots and HTML read it
+only while the SHA-256 of the source CSV/JSON still matches. The main reports keep accuracy, UAR and macro F1, and
+add F1 weighted by each class's true clip count.
 
-仅凭 CSV 和 JSON 就能重算分类指标和画图，不需要 `.f16` features。
-建议同时带回 `responses.jsonl`，供以后核查原始回答、重试及 token 用量；这次未带回时，
-报告会注明这一点。API 的 `p_*` 若为 one-hot，表示模型最终选择了哪个标签，
-不能当作置信度；网页对此显示空缺。并发请求的总耗时除以样本数也不等于单个请求的延迟。
+The CSV and JSON are enough to recompute the metrics and draw the plots; the `.f16` features are not needed. Also
+bring back `responses.jsonl` when possible, to check raw answers, retries and token use later; when it is missing,
+the report says so. An API model's one-hot `p_*` columns only record which label it chose. They are not a
+confidence, and the page shows them as blank. For concurrent requests, total time divided by the number of clips is
+not the latency of one request.
 
 ### 7.4 Model consensus and pseudo-label candidates
 
-独立的离线共识分析保存在 `research_paper/`：
-[中文报告](../research_paper/analysis_report/consensus_zh.md) · [English report](../research_paper/analysis_report/consensus_en.md)。
+A separate offline consensus analysis lives in `research_paper/`:
+[Chinese report](../research_paper/analysis_report/consensus_zh.md) · [English report](../research_paper/analysis_report/consensus_en.md).
 
 ```bash
 python ../research_paper/scripts/consensus.py
 ```
 
-只比较五个 SER、Audio LLM（含两个 API）和精选模型（emotion2vec、Gemini、Qwen Omni）三组，
-用“全部一致”和“过半数同意”两种规则。表格注明实际参与模型数及待补齐状态；中间统计仅保留
-`research_paper/output/consensus.csv`。后续模型结果补齐后，重跑同一命令即可更新报告。
-公开数据上的共识只用于筛选伪标签候选；应用到公司电话音频前，需用目标域人工标注验证。
+It compares fixed model groups (the five SER models, the five audio LLMs including the two API models, and a
+selected group of emotion2vec+, Gemini and Qwen2.5-Omni, plus supplementary groups) under unanimous and majority
+vote rules. The tables state how many models actually took part and which results are still missing. The output
+files are listed in [research_paper/README.md](../research_paper/README.md). Rerun the same command when more model
+results arrive. Consensus on public data only selects pseudo-label candidates; before using it on call-centre audio,
+validate it with human labels from the target domain.
 
 ## 8. Audio LLMs
 
@@ -992,13 +1027,23 @@ Use the existing `emotion_recognition_llm` environment with
 `pip install -r requirements.txt`; analysis runs on CPU without loading the LLMs or using a GPU. Settings:
 `config/linear_probe.yaml`. Run `python scripts/analysis/linear_probe.py --dry-run` to audit inputs before training.
 
-GPT Realtime runs through `scripts/evaluation/evaluate.py` like the other models, through its loader
-`scripts/models/gpt_realtime.py`; Gemini (`scripts/models/gemini.py`) is a placeholder for now and is skipped with a
-message. Each clip is sent as 24 kHz 16-bit mono PCM with the prompts of `scripts/llm_eval/prompts.yaml`, which ask
-for one of that dataset's candidate emotions (`ds.classes`); the one-word answer becomes the prediction. The YAML's
-seven `labels` are the global vocabulary, filtered to the dataset's candidates in canonical order.
+Two API audio LLMs have results on all 16 datasets: GPT Realtime (`gpt-realtime`) and Gemini 3.8 Flash
+(`gemini-3.8-flash`). Both sets of results were produced by a separate runner on another computer and imported with
+`scripts/evaluation/refresh_reports.py` (section 7.3).
 
-To run it (paid):
+- **GPT Realtime** can also run through `scripts/evaluation/evaluate.py` like the other models, through its loader
+  `scripts/models/gpt_realtime.py`.
+- **Gemini 3.8 Flash**: in this repository `scripts/models/gemini.py` is still a placeholder, and `evaluate.py` skips
+  the model with a message. The Gemini run therefore cannot be reproduced from this repository alone.
+
+Each clip is sent with the prompts of `scripts/llm_eval/prompts.yaml` (GPT Realtime: 24 kHz 16-bit mono PCM), which
+ask for one of that dataset's candidate emotions (`ds.classes`, label scope `dataset`); the one-word answer becomes
+the prediction. The YAML's seven `labels` are the global vocabulary, filtered to the dataset's candidates in canonical
+order, so chance level depends on the dataset (25% on MESS, 14.3% on a seven-emotion dataset). The older
+acted-speech prompt is archived as `scripts/llm_eval/prompts_legacy_v0.yaml`; earlier seven-choice results are not
+reused.
+
+To run GPT Realtime from this repository (paid):
 
 1. Put the key in the `.env` file at the repository root (git-ignored): a line `OPENAI_API_KEY=...`.
 2. In `config/evaluation.yaml`: `api_models: true`, and `models: [gpt_realtime]` (or `all`: the local models, already
@@ -1007,12 +1052,9 @@ To run it (paid):
 
 - **Clips**: every clip, like the local models (decided 2026-11-06, for one protocol across the paper). Every dataset
   is sent except ESD, whose licence forbids giving it to anyone (`api_audio` in `scripts/common/eval_datasets.py`;
-  decided 2026-11-06, as LISTEN and other benchmarks did): 56,264 clips of 13 datasets, with THAI-SER and MEAD on their
-  [subsets](#subsets). Earlier runs used `limit: 200` (`<dataset>_sample200_*` files); cached answers can be reused
-  only when their prompt hash, model ID and dataset candidates match the current inference protocol.
-- **Cost and time**: one request per clip, one at a time. A 2 s CREMA-D clip took about 190 input tokens (about 20
-  of them audio, the rest the prompts), 3 output tokens and 5.5 s (2026-10-29), so the full run takes about 130 hours
-  per model one request at a time and, at the published gpt-realtime prices, about US$175 (docs/audio_llms_survey_en.md, section 3).
+  decided 2026-11-06, as LISTEN and other benchmarks did): 67,062 clips of the 16 datasets, with THAI-SER, MEAD and
+  the three dialogue datasets on their [subsets](#subsets). Cached answers can be reused only when their prompt hash,
+  model ID and dataset candidates match the current inference protocol.
 - **Cache**: every answer is saved at once in `outputs/gpt_realtime/responses.jsonl` (raw answer, label, tokens). A
   clip already answered with the same model, prompts and candidate choices is not sent again, so an interrupted
   matching run continues where it stopped. Changing any of these starts a new set of answers; raw answers with
@@ -1073,7 +1115,8 @@ dataset's emotions counts as wrong; training data "not known").
   to `features/<model>/<dataset>/<prompt_hash>/` (git-ignored): `hidden.f16` (one row of layers x hidden size per clip),
   `index.jsonl` (row -> audio_path, pooling, number of audio tokens) and `meta.json` (layers, shape). They are
   written clip by clip before the answer, so a stopped run resumes cleanly; read them with `load_features(folder)`
-  in `scripts/models/audio_llm.py`. About 20–33 kB per clip, about 4.6 GB for the 55,784 clips of the 3 models. Both
+  in `scripts/models/audio_llm.py`. About 20–33 kB per clip, so about 1.3–2.2 GB per model for the 67,062 clips of
+  the 16 datasets. Both
   come only from the first request (not from a follow-up) and only for clips run from now on, not for answers
   already in the cache. Check: `test_scripts/check_llm_extras.py` (2026-11-06, 19 clips per model: the same answers
   with and without them, about 0–8% more time per clip, `label_mass` 0.96–1.0).
@@ -1088,8 +1131,11 @@ dataset's emotions counts as wrong; training data "not known").
 - **Clips**: every clip, like every other model (they run only on the Mac).
 - **Speed and memory on the M4 Max** (MPS, bfloat16, 18 test clips, `test_scripts/check_local_audio_llms.py`, while
   other jobs shared the machine): about 0.6–0.9 s per clip for each model after a warm-up of 3–7 s, 10–30 s to load,
-  16–19 GB of GPU memory. The 8 datasets have 37,686 clips (THAI-SER's high-agreement subset 11,848), so one model on all
-  of them takes about 6–9 hours on the Mac; a `limit` or the CUDA server shortens that.
+  16–19 GB of GPU memory. Longer clips take longer; each prediction JSON in `outputs/<model>/` records the measured
+  run time of its dataset.
+- **Status, as of 2026-11-13**: Qwen2.5-Omni 7B has results on all 16 datasets. Qwen2-Audio 7B Instruct is running
+  (7 of 16 datasets done). Gemma 4 E4B has a current-protocol result on MELD only; its other results used the old
+  prompt and were removed, so it will be run again.
 - **MPS workaround**: transformers 5.18 checks for the end of generation with `torch.Event` on MPS, which crashes PyTorch
   2.5.1 (segmentation fault); `audio_llm.py` switches to its plain check on MPS (the same tokens; CUDA unaffected).
 
@@ -1163,25 +1209,30 @@ cache) loads and runs all four.
 
 ### Dialogue loaders and the prepared context pilot (2026-11-10)
 
-EmotionTalk, DailyTalk and MultiDialog now have loaders in the ordinary evaluation registry. Default baselines use
+EmotionTalk, DailyTalk and MultiDialog have loaders in the ordinary evaluation registry. Default baselines use
 EmotionTalk official test, DailyTalk ECSS validation (there is no official ECSS test), and MultiDialog's complete
 gold-actor dialogues after segmentation QC. Source labels and split limitations are documented in the dataset survey.
-`config/evaluation_dialogue_baselines.yaml` is a separate, ready-to-run three-LLM baseline configuration; select it
-with `python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml`. No new inference has run.
+As of 2026-11-13 their ordinary single-utterance baselines are done for the five SER models, GPT Realtime, Gemini
+3.8 Flash and Qwen2.5-Omni 7B; Qwen2-Audio and Gemma 4 are still pending.
+`config/evaluation_dialogue_baselines.yaml` is a separate three-LLM configuration for these three datasets; select it
+with `python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml` (matching finished
+results are reused).
 
 DailyTalk, EmotionTalk and MultiDialog have `api_audio: true`, matching the project's other adopted research
 datasets. This is dataset eligibility, not an instruction to send audio. Both evaluation configurations retain
-`api_models: false`, so paid API models do not run. In `site_audio: public` mode, `public_audio: false` keeps these
+`api_models: false`, so paid API models do not run from them; the API results were imported (section 7.3). In
+`site_audio: public` mode, `public_audio: false` keeps these
 datasets' example recordings out of the site HTML. The current internal `site_audio: all` mode includes them;
 neither setting changes local or API evaluation.
 
 The first context pilot is Omni on 240 fixed EmotionTalk train targets, with target-only / true audio history /
-text history / unrelated audio history. It is currently **prepared only** while local memory is occupied.
+text history / unrelated audio history. As of 2026-11-13 it is still **prepared only** and has no results.
 See [the Chinese explanation and commands](docs/context_pilot.md). `context_pilot.py prepare` never imports model
 libraries; only its explicit `run` command loads weights. Inputs, condition identities, resumable responses and
 CSV/JSON analysis are isolated from the existing single-utterance evaluation outputs; hidden-state extraction is off.
 
-Paper plots keep four columns, one training-process hatch, and reserved GPT Realtime/Gemini 3.8 Flash positions.
+Paper plots keep four columns, one training-process hatch, and fixed positions for every model, including GPT
+Realtime and Gemini 3.8 Flash.
 Panel titles use one line, `Dataset (Language)`, without subset/cohort descriptions. The legend is always below
 the grid, in two text rows, including when all 16 datasets form a 4×4 grid.
 Panel value labels round percentages to integers for readability; bar heights and saved metrics are unchanged,
@@ -1189,9 +1240,8 @@ and overview matrices retain one decimal. The explanatory provenance footnote is
 
 
 With `datasets: all`, the ordinary evaluator selects all 16 downloaded adopted datasets after excluding ESD.
-The active model list still contains only the three open audio LLMs; compatible MELD results are reused and
-the other 45 model–dataset combinations remain to be evaluated. This is single-utterance evaluation, separate
-from H0–H3. The active configuration is still `[meld]`, `mode: mac`, `plots: false`: no larger run is enabled
-automatically. Use `mode: auto`/`cuda` on a CUDA server, and `plots: true` or run `plot_results.py` manually
-to regenerate the completed 4×4 comparison. Canonical dialogue split/cohort scopes now pass finished-run checks
-on resume, while other scopes remain isolated.
+This is single-utterance evaluation, separate from H0–H3. As of 2026-11-13 the active configuration is
+`models: [qwen2_audio_7b]`, `datasets: all`, `mode: mac`, `plots: false`, for the running Qwen2-Audio evaluation;
+Gemma 4 E4B still has to be run again. Use `mode: auto`/`cuda` on a CUDA server, and `plots: true` or run `plot_results.py` manually
+to regenerate the 4×4 comparison. Canonical dialogue split/cohort scopes pass finished-run checks on resume, while
+other scopes remain isolated.

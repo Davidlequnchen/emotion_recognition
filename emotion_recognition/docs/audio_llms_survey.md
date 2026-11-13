@@ -4,6 +4,8 @@
 
 **2026-11-06 按方案 B 更新**：13 个数据集（新加 SAVEE；ESD 不在范围内），THAI-SER 只用一致率 ≥ 0.71 的片段，MEAD 分层取 8,000 条，所有模型都一样；API 模型现在跑每个数据集的全部片段（不再抽 200 条）。下面的音频量、费用和运行时间都按方案 B 算：56,264 条、52.2 小时，全部实测。
 
+**2026-11-13 更新**：基准现在有 16 个数据集。三个对话数据集 EmotionTalk（官方 test，1,929 条）、DailyTalk（validation，1,197 条）和 MultiDialog（`gold_both`，7,672 条）加入后共 67,062 条。GPT Realtime（`gpt-realtime`）、Gemini 3.8 Flash（`gemini-3.8-flash`）和 Qwen2.5-Omni 7B 已有全部 16 个数据集的结果；Qwen2-Audio 7B Instruct 正在跑，Gemma 4 E4B 会重跑（进度和数字见 [reports/summary.md](../reports/summary.md)）。GPT Realtime 和 Gemini 已经跑完，所以删去了它们的价格行和费用估算。下面的音频量和费用仍只算方案 B 的 13 个数据集；候选模型如果加跑这 10,798 条对话片段，费用会增加：API 按音频时长计费，单 MultiDialog 就有约 13.1 小时（方案 B 共 52.2 小时），所以增幅会超过 19% 的条数比例，具体没有重新估算。
+
 调研日期：2026-11-05。目标：在 5 个 SER 模型、GPT Realtime、Gemini 和正在接入的 3 个本地音频大模型（Qwen2.5-Omni-7B、Qwen2-Audio-7B-Instruct、Gemma 4 E4B-it）之后，决定本项目的基准测试下一步加哪些音频大模型：走 API 要花多少钱，在这里跑需要什么硬件，接入有多难。
 前提：只做学术研究，所以非商用许可可以接受（标出来，不排除）。硬件：Mac M4 Max 48 GB；确定有 NVIDIA L40（48 GB）；可能有 NVIDIA L4（24 GB）和 4×H100 80 GB。
 
@@ -13,9 +15,9 @@
 ## 0. 简要结论
 
 - **音频总量（方案 B）**：13 个数据集，THAI-SER 只用一致率 ≥ 0.71 的片段（11,848 条），MEAD 分层取 8,000 条：共 **56,264 条、52.2 小时**，全部读文件头实测。API 模型跑这里的每一条；ESD 从不发送。
-- **API 费用很低**（第 3 节）。方案 B 全部片段：Qwen3.5-Omni Plus **$31.25**，Qwen3.5-Omni Flash **$8.69**，qwen3-omni-flash **$14.35**，新出的 qwen3.8-omni-flash $1.84，对比 GPT Realtime **$106.15**、Gemini 2.5 Flash $9.87（国际价；中国内地便宜 20–40%）。每个数据集 200 条的试跑（2,600 条）用 Qwen 模型只要 $0.08–1.38。
+- **API 费用很低**（第 3 节）。方案 B 全部片段：Qwen3.5-Omni Plus **$31.25**，Qwen3.5-Omni Flash **$8.69**，qwen3-omni-flash **$14.35**，新出的 qwen3.8-omni-flash $1.84（国际价；中国内地便宜 20–40%）。每个数据集 200 条的试跑（2,600 条）用 Qwen 模型只要 $0.08–1.38。
   固定的文本提示词（约 175 个 token）在每个 Qwen 模型的输入 token 里占 80–90%（2.5 秒的片段只有 18–31 个音频 token），在费用里占 30–82%：缩短提示词是最主要的省钱办法。
-- **运行时间**：GPT Realtime 一次一个请求，实测每条 5.5 秒：方案 B 全部片段约 **86 小时**（3.6 天），每个这样跑的 API 模型都差不多；同时发多个请求能缩短，但不能超过各家 API 的限流。
+- **运行时间**：一次一个请求很慢（GPT Realtime 每条约 5.5 秒），所以新的 API 加载器应同时发几个请求，但不能超过各家 API 的限流。
 - **Qwen3-Omni-30B-A3B-Instruct**（开源，Apache-2.0）：API 上的 `qwen3-omni-flash` 是闭源、再训练过的 Flash 版本，不是开源权重。自己部署时只用 Thinker（关掉 talker）是 **31.72B 参数，bf16 下 63.4 GB**：**1×H100 80 GB** 放得下（偏紧），2×H100 宽裕；**L40 只能用社区的 FP8 或 4-bit 版本**（官方没有量化版）。本项目固定的 transformers 5.18.0 原生支持；vLLM 支持 Thinker。
 - **Qwen3.5-Omni**（2026-03-30，arXiv 2604.15804）：**只有 API**，`qwen3.5-omni-plus` 和 `qwen3.5-omni-flash`；Hugging Face 上没有 Qwen3.5-Omni 的仓库（2026-11-05 查过；有些博客说的“开源 Light 版”没找到）。音频按每秒 7 个 token 计费。技术报告里没有情绪识别结果。
 - **Kimi-Audio-7B-Instruct**（MIT，9.77B）：L40 和 H100 能跑，Mac 不行（CUDA、flash-attn、torch 2.6）。它自报的 MELD 59.13 是这些候选里最高的 MELD 数字，但**它的 SFT 数据里有 RAVDESS、MELD 和 SAVEE**，正是我们的三个数据集。
@@ -25,9 +27,9 @@
 
 ## 1. 候选一览
 
-各行数字来自不同的评测方法，不能跨行比较；“重叠”指模型公开的训练数据和本项目 13 个数据集的重叠（第 6 节）。
+各行数字来自不同的评测方法，不能跨行比较；“重叠”指模型公开的训练数据和本项目 2026-11-05 时 13 个数据集的重叠（第 6 节；三个对话数据集没有针对这些候选模型核查）。
 
-| 模型 | 机构、发布 | 大小 | 许可 | 权重 / API | 公开的 SER 结果 | 和我们 13 个数据集的重叠 | 结论 |
+| 模型 | 机构、发布 | 大小 | 许可 | 权重 / API | 公开的 SER 结果 | 和我们 13 个数据集的重叠（2026-11-05） | 结论 |
 |---|---|---|---|---|---|---|---|
 | Qwen3-Omni-30B-A3B-Instruct | 阿里 Qwen，2025-09 | 共 35.26B；Thinker 31.72B（MoE，每个 token 约激活 3B） | Apache-2.0 | 开源（[HF](https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct)）；API `qwen3-omni-flash` 是闭源 Flash 版本 | [技术报告](https://arxiv.org/abs/2509.17765)里没有；第三方 MELD 56.8（MiniCPM-o 4.5 卡片，见 [models_survey.md](models_survey.md)） | 训练数据未公开 | **最先加**（开源里最强的 Qwen） |
 | Qwen3.5-Omni Plus / Flash | 阿里 Qwen，2026-03-30 | 未公开（报告只说 “hundreds of billions”，即数百 B 参数，MoE；[报告](https://arxiv.org/abs/2604.15804)） | 闭源 | 只有 API | 报告里没有 | 未公开 | **走 API 加** |
@@ -54,11 +56,8 @@
 | `qwen3.8-omni-flash` | 国际 | 0.15（所有输入同价） | 0.15 | 0.47 | 7 | 同上；[OpenRouter](https://openrouter.ai/qwen/qwen3.8-omni-flash) 上 `qwen/qwen3.8-omni-flash` 同价 |
 | `qwen3.8-omni-flash` | 中国内地、香港、东京、法兰克福、美国（弗吉尼亚） | 0.113 | 0.113 | 0.382 | 7 | 同上 |
 | `step-audio-2`（阶跃星辰，实时 API） | 国际平台 | 1.43（输入，未命中缓存） | 1.43 | 10.00（输出） | 未公开 | [阶跃星辰价格](https://platform.stepfun.ai/docs/en/guides/pricing/details) |
-| `gpt-realtime`（参考） | — | 32 | 4 | 16 | 10（每 100 ms 1 个 token） | [OpenAI 价格](https://developers.openai.com/api/docs/pricing)；[Realtime 计费](https://developers.openai.com/api/docs/guides/realtime-costs) |
-| `gpt-realtime-mini`（参考） | — | 10 | 0.6 | 2.4 | 10 | 同上 |
-| `gemini-2.5-flash`（参考；`config/models.yaml` 里的占位） | — | 1.00 | 0.30 | 2.50 | 32 | [Gemini 价格](https://aistudio.google.com/docs/pricing)；[音频文档](https://aistudio.google.com/docs/audio) |
-| `gemini-3-flash-preview`（参考） | — | 1.00 | 0.50 | 3.00 | 32 | 同上 |
-| `gemini-3.5-flash`（参考） | — | 0.75 | 0.75 | 3.75 | 32 | 同上（价格有效到 2026-12-31） |
+
+GPT Realtime 和 Gemini 的参考行已于 2026-11-13 删去：两个模型都已评测。
 
 说明：
 - **Qwen 的 token 规则**（百炼“Billing and rate limits”）：Qwen3.8-Omni-Flash 和 Qwen3.5-Omni 系列的输入音频按时长（秒）× 7 计；Qwen3-Omni-Flash 按时长（秒）× 12.5 计；不到 1 秒按 1 秒算（方案 B 有 2,508 条不到 1 秒：MCAE-SPPS 1,797 条、THAI-SER 468 条、MELD 225 条、其他数据集 18 条；下面的费用已算进去）。更长的片段按实际时长计，不是每开始一秒就算一整秒。这和编码器一致：Qwen3-Omni 的 AuT 是 12.5 Hz（[论文](https://arxiv.org/abs/2509.17765)），Qwen3.5-Omni 的编码器是 6.25 Hz（[论文](https://arxiv.org/abs/2604.15804)）。
@@ -69,7 +68,6 @@
 - **限流**：北京的 `qwen3-omni-flash` 是每分钟 60 次请求、10 万 token（[模型页](https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen3-omni-flash)）；按每分钟 60 次，方案 B 的 56,264 条至少要 15.6 小时（每条约 220 个 token，碰不到 token 限额）。国际版的限额未核实。
 - **qwen3-omni-flash 不是开源模型**：Qwen3-Omni-Flash-2025-12-01 是“在 Qwen3-Omni 基础上全面升级的版本”（[阿里云博客](https://www.alibabacloud.com/blog/602735)）。API 的结果不能代表开源权重，API 版本还可能不打招呼就更新；能复现的是开源权重。
 - **OpenRouter**（2026-11-05 读的模型列表）：有 `qwen/qwen3.8-omni-flash`，没有 Qwen3-Omni 和 Qwen3.5-Omni。
-- **Gemini 的思考 token** 按输出计费：思考预算要设到最低，否则输出费用会远超下面假设的 5 个 token。
 
 ## 3. 音频总量和 API 费用
 
@@ -96,6 +94,8 @@
 
 THAI-SER 和 MEAD 占全部音频的 51%。每个数据集 200 条的试跑（`sample(ds, 200)`，共 2,600 条）是 2.20 小时。
 
+后来加入的三个对话数据集不在这张表里：EmotionTalk 官方 test（1,929 条）、DailyTalk validation（1,197 条）和 MultiDialog `gold_both`（7,672 条，13.10 小时）。加上它们，基准共 67,062 条；EmotionTalk 和 DailyTalk 这两个划分的时长没有为本调研实测。
+
 ### 3b 费用公式
 
 对一个模型、一组片段：
@@ -121,28 +121,23 @@ THAI-SER 和 MEAD 占全部音频的 51%。每个数据集 200 条的试跑（`s
 | qwen3.5-omni-flash，内地 | $6.88 | 同上 |
 | qwen3.8-omni-flash，国际 | $1.84 | 1.32M / 11.45M |
 | qwen3.8-omni-flash，内地及其他地域 | $1.40 | 同上 |
-| gpt-realtime（参考） | $106.15 | 1.88M / 12.01M |
-| gpt-realtime-mini（参考） | $25.90 | 同上 |
-| gemini-2.5-flash（参考，关思考） | $9.87 | 6.02M / 16.15M |
-| gemini-3-flash-preview（参考，关思考） | $12.02 | 同上 |
-| gemini-3.5-flash（参考，关思考） | $13.21 | 同上 |
 
 token 数不含 2% 的重问。都是估算；实际账单还取决于提示词缓存（Qwen3.8 自动缓存，重复的文本输入按 $0.016/M 而不是 $0.15/M 计）和多少回答需要追问。每个 Qwen 模型的文本提示词都占输入 token 的 80–90%，占费用从 30%（qwen3-omni-flash）到 82%（qwen3.8-omni-flash），Qwen3.5-Omni 约 45%。
-每个数据集 200 条的试跑（2,600 条，2.20 小时）：Qwen3.5-Omni Plus $1.38、Flash $0.38、qwen3-omni-flash $0.63、qwen3.8-omni-flash $0.08、GPT Realtime $4.65（国际价）。
-运行时间：GPT Realtime 一次一个请求，实测每条 5.5 秒，所以方案 B 全部片段约 86 小时（3.6 天）。Qwen API 没有实测；按北京每分钟 60 次的限流，一个模型至少 15.6 小时；如果一次一个请求、速度和 GPT Realtime 一样，也要约 86 小时，所以加载器应该同时发几个请求。
+每个数据集 200 条的试跑（2,600 条，2.20 小时）：Qwen3.5-Omni Plus $1.38、Flash $0.38、qwen3-omni-flash $0.63、qwen3.8-omni-flash $0.08（国际价）。
+运行时间：Qwen API 没有实测；按北京每分钟 60 次的限流，一个模型跑方案 B 至少 15.6 小时。一次一个请求要慢得多（GPT Realtime 每条约 5.5 秒），所以加载器应该同时发几个请求。
 Step-Audio 2 没有算：阶跃星辰没有公开音频 token 换算；如果和 Qwen 差不多（每秒 7–12.5 个 token），方案 B 是 1,150–1,250 万输入 token × $1.43 加 28 万输出 token × $10，约 $20（估算）。
 
 ## 4. 自己部署：硬件和接入
 
-### 4a 硬件表（开源模型，含正在接入的 3 个）
+### 4a 硬件表（开源模型，含基准里已有的 3 个本地音频大模型）
 
 bf16 显存 = 参数量 × 2 字节（只算权重）；短片段（1–5 秒，加提示词不到 300 个 token）另需约 1–3 GB 激活，KV cache 几乎可以忽略。“放得下”指权重加这点余量；“秒/条”是每次一条、用 transformers、输出 ≤ 5 个 token 时的数量级：全是**估算，没有实测**。
 
 | 模型 | 加载的参数 | bf16 显存 | L4 24 GB | L40 48 GB | H100 80 GB | Mac M4 Max 48 GB | 秒/条（估算） | 接入方式 |
 |---|---|---|---|---|---|---|---|---|
-| Qwen2-Audio-7B-Instruct（正在接入） | 8.40B | 16.8 GB | 能（偏紧） | 能 | 能 | 能（MPS） | L40 0.2–0.5；H100 0.1–0.3；Mac 1–3 | transformers 原生（`qwen2_audio` 加载器） |
-| Qwen2.5-Omni-7B（正在接入） | Thinker 约 8.9B（仓库含 talker 共 10.73B） | 约 17.9 GB | 能（偏紧） | 能 | 能 | 能（MPS） | 同上 | transformers 原生（`qwen2_5_omni` 加载器，不加载 talker） |
-| Gemma 4 E4B-it（正在接入） | 含嵌入 8.00B（有效 4.5B） | 16.0 GB | 能 | 能 | 能 | 能（MPS） | 比 7B 模型稍快 | transformers ≥ 5.5 原生（`gemma4_audio` 加载器） |
+| Qwen2-Audio-7B-Instruct（已在基准中） | 8.40B | 16.8 GB | 能（偏紧） | 能 | 能 | 能（MPS） | L40 0.2–0.5；H100 0.1–0.3；Mac 1–3 | transformers 原生（`qwen2_audio` 加载器） |
+| Qwen2.5-Omni-7B（已在基准中） | Thinker 约 8.9B（仓库含 talker 共 10.73B） | 约 17.9 GB | 能（偏紧） | 能 | 能 | 能（MPS） | 同上 | transformers 原生（`qwen2_5_omni` 加载器，不加载 talker） |
+| Gemma 4 E4B-it（已在基准中） | 含嵌入 8.00B（有效 4.5B） | 16.0 GB | 能 | 能 | 能 | 能（MPS） | 比 7B 模型稍快 | transformers ≥ 5.5 原生（`gemma4_audio` 加载器） |
 | Qwen3-Omni-30B-A3B-Instruct | Thinker 31.72B（talker 和 code2wav 共 3.54B 不加载） | 63.4 GB | 不能（4-bit 版本也许能，未核实） | **只能 FP8 或 4-bit**（社区版本，见 4b） | **能，1 张卡**（约剩 15 GB） | bf16 不能 | transformers：H100 0.5–2（MoE 开销）；vLLM 批处理：吞吐约 0.02–0.1 秒/条 | transformers 原生（`Qwen3OmniMoeForConditionalGeneration`，5.18.0 里有）或 vLLM（Thinker）；和 `qwen2_5_omni` 加载器很像 |
 | Kimi-Audio-7B-Instruct | 9.77B（主 safetensors）+ Whisper-large-v3 文件夹（3.1 GB）；文本输出用不到 19.0 GB 的 detokenizer 和 1.0 GB 的声码器（`load_detokenizer=False`） | 约 20–24 GB（估算） | 临界，未核实 | 能 | 能 | 不能（只支持 CUDA） | L40 0.3–0.8；H100 0.2–0.5 | 它自己的仓库（`KimiAudio` 类）：torch 2.6.0、flash_attn 2.7.4.post1、deepspeed；单独环境或 Docker |
 | Step-Audio 2 mini | 8.32B（+ token2wav 1.2 GB，用不到） | 16.6 GB | 能（偏紧） | 能 | 能 | 不改 `.cuda()` 就不能 | L40 0.2–0.5 | 它自己的仓库（`examples.py` 里的 `StepAudio2`）：transformers==4.49.0，写死 `.cuda()`；单独环境；有 vLLM 的 Docker 镜像 |
@@ -151,7 +146,7 @@ bf16 显存 = 参数量 × 2 字节（只算权重）；短片段（1–5 秒，
 | MiDashengLM-7B | 8.28B | 16.6 GB | 能 | 能 | 能 | 未核实 | 同上 | transformers `trust_remote_code`；官方有 FP8 和 GPTQ 版本 |
 | Voxtral Mini 3B / Small 24B | 4.68B / 24.26B | 9.4 / 48.5 GB | Mini 能 / Small 不能 | Mini 能 / Small 不能（刚超过 48 GB） | 都能 | Mini 能 / Small 不能 | Mini 0.1–0.3 | transformers 原生 |
 
-整个基准要多久：按每条 0.3 秒，一个 7–9B 模型在 L40 上跑方案 B 的 56,264 条约 4.7 小时；在 Mac 上按每条 1–3 秒约 16–47 小时（估算）。任何单个模型都用不着 4×H100；它们只在想同时跑 4 个模型（或 4 份 Qwen3-Omni）时有用。
+方案 B 的 13 个数据集要多久：按每条 0.3 秒，一个 7–9B 模型在 L40 上跑这 56,264 条约 4.7 小时；在 Mac 上按每条 1–3 秒约 16–47 小时（估算）。任何单个模型都用不着 4×H100；它们只在想同时跑 4 个模型（或 4 份 Qwen3-Omni）时有用。
 
 ### 4b Qwen3-Omni 细节
 
@@ -185,15 +180,15 @@ bf16 显存 = 参数量 × 2 字节（只算权重）；短片段（1–5 秒，
 | Kimi-Audio | **RAVDESS**（3 小时，比 1.5 小时的语音片段多：多半还包括歌唱片段或重复）、**MELD**（9 小时）、**SAVEE**（0.1 小时）、ESD（本项目已排除）、IEMOCAP | 论文 SFT 数据表 |
 | Qwen2-Audio、Qwen2.5-Omni、Qwen3-Omni、Qwen3.5-Omni | 未公开；它们报 MELD 结果，所以多半用了 MELD 的训练集（未核实） | 论文 |
 | Step-Audio 2、Gemma 4、MiDashengLM、Voxtral | 未公开 | — |
-| 参考：基准里已有的模型 | emotion2vec：预训练（无标签）里有 **MEAD** 和 **MELD**；MERaLiON-SER：**CREMA-D**、**MELD**；Melati：**Emozionalmente**、**JL-Corpus** | [models_survey.md](models_survey.md)、[datasets_survey.md](datasets_survey.md) |
+| 参考：基准里已有的模型 | 这里不再重复：本项目的核查把直接和上游使用都计入（例如 emotion2vec+ large 和 MERaLiON-SER-v1 各标了我们的 9 个语料，Melati 3 个）；GPT Realtime、Gemini 3.8 Flash、Gemma 4 和两个 Qwen 模型都没有对应语料的证据 | [training_provenance.md](training_provenance.md)、[reports/summary.md](../reports/summary.md) 的 Training data 一节 |
 
-所以报告里要把 AF3 在 JL-Corpus、TESS 上的结果标“见过”，MELD 标“可能见过”；Kimi-Audio 的 RAVDESS、MELD 和 SAVEE 结果标“见过”。对 AF3 来说，CREMA-D、RAVDESS、MCAE-SPPS、MESS、THAI-SER、nEMO、MEAD、EMOVO、Emozionalmente、SAVEE 仍然没见过。
+所以报告里要把 AF3 在 JL-Corpus、TESS 上的结果标“见过”，MELD 标“可能见过”；Kimi-Audio 的 RAVDESS、MELD 和 SAVEE 结果标“见过”。对 AF3 来说，CREMA-D、RAVDESS、MCAE-SPPS、MESS、THAI-SER、nEMO、MEAD、EMOVO、Emozionalmente、SAVEE 没有公开的重叠（同本项目的核查规则，这不等于确认没见过）。
 
 ## 7. 建议
 
 1. **下一个加 Qwen3-Omni-30B-A3B-Instruct 开源权重。** 开源里最强的 Qwen，是 Qwen2.5-Omni 之后顺理成章的下一步；Apache-2.0；已固定的 transformers（5.18.0）就能加载，加载器和 `qwen2_5_omni.py` 很像（关 talker，只用 Thinker）。
    硬件：有 H100 就用 1×H100 80 GB 跑 bf16（2×H100 更宽裕更快）。否则用 L40 加社区 FP8 版本（或 AWQ-4bit），并注明是量化版。Mac 和 L4 都跑不了 bf16。
-2. **Qwen3.5-Omni Plus 和 Flash 走 API，跑方案 B 的全部片段**（56,264 条，52.2 小时）：$31.25 + $8.69 = 约 $40（国际）；Plus 的 100 万 token 免费额度能抵约 $2.7。它们是最新的 Qwen omni 模型，只有 API，这是唯一的加法。要为百炼的 OpenAI 兼容 API 写一个新的流式加载器（`stream=True`），并申请国际（新加坡）的 key。同一个加载器顺便加 `qwen3.8-omni-flash` 只多 $1.84。正式跑之前先试跑 2,600 条（Plus $1.38，在免费额度内；Flash $0.38）检查加载器。时间：按每分钟 60 次，每个模型至少 15.6 小时；要同时发几个请求（像 GPT Realtime 那样一次一个、每条 5.5 秒，要约 86 小时）。`qwen3-omni-flash`（$14.35）可选：它是闭源变体，第 1 步的开源权重更适合作参考。
+2. **Qwen3.5-Omni Plus 和 Flash 走 API，跑方案 B 的全部片段**（56,264 条，52.2 小时）：$31.25 + $8.69 = 约 $40（国际）；Plus 的 100 万 token 免费额度能抵约 $2.7。它们是最新的 Qwen omni 模型，只有 API，这是唯一的加法。要为百炼的 OpenAI 兼容 API 写一个新的流式加载器（`stream=True`），并申请国际（新加坡）的 key。同一个加载器顺便加 `qwen3.8-omni-flash` 只多 $1.84。正式跑之前先试跑 2,600 条（Plus $1.38，在免费额度内；Flash $0.38）检查加载器。时间：按每分钟 60 次，每个模型至少 15.6 小时；要同时发几个请求。`qwen3-omni-flash`（$14.35）可选：它是闭源变体，第 1 步的开源权重更适合作参考。
 3. **Audio Flamingo 3**：工作量最小（transformers 原生，L40 能跑，Mac 多半也行），非商用许可这里可以接受。JL-Corpus 和 TESS 标“见过”，MELD 标“可能见过”，或者不计入它的平均值。
 4. **Step-Audio 2 mini，用 L40**：单独环境（transformers 4.49.0），还要改掉 `.cuda()`；带来一个非 Qwen、非 NVIDIA、副语言能力宣传很强的模型。
 5. **Kimi-Audio，用 L40**：接入工作量最大（单独的 CUDA 环境，flash-attn、torch 2.6）；RAVDESS、MELD 和 SAVEE 标“见过”。
@@ -206,7 +201,7 @@ bf16 显存 = 参数量 × 2 字节（只算权重）；短片段（1–5 秒，
 - Qwen3-Omni：https://arxiv.org/abs/2509.17765 , https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct , https://github.com/QwenLM/Qwen3-Omni ；vLLM：https://docs.vllm.ai/en/stable/api/vllm/model_executor/models/qwen3_omni_moe_thinker/ , https://docs.vllm.ai/projects/vllm-omni/en/stable/models/supported_models/
 - Qwen3.5-Omni：https://arxiv.org/abs/2604.15804
 - OpenRouter 模型列表：https://openrouter.ai/api/v1/models
-- OpenAI：https://developers.openai.com/api/docs/pricing , https://developers.openai.com/api/docs/guides/realtime-costs ；Gemini：https://aistudio.google.com/docs/pricing , https://aistudio.google.com/docs/audio ；阶跃星辰：https://platform.stepfun.ai/docs/en/guides/pricing/details
+- 阶跃星辰：https://platform.stepfun.ai/docs/en/guides/pricing/details
 - Kimi-Audio：https://arxiv.org/abs/2504.18425 , https://github.com/MoonshotAI/Kimi-Audio , https://huggingface.co/moonshotai/Kimi-Audio-7B-Instruct
 - Step-Audio 2：https://arxiv.org/abs/2507.16632 , https://github.com/stepfun-ai/Step-Audio2 , https://huggingface.co/stepfun-ai/Step-Audio-2-mini
 - Audio Flamingo 3 和 Next：https://arxiv.org/abs/2507.08128 , https://huggingface.co/nvidia/audio-flamingo-3-hf , https://arxiv.org/abs/2604.10905 , https://huggingface.co/nvidia/audio-flamingo-next-hf

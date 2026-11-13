@@ -26,3 +26,9 @@
 
 - **THAI-SER**：只用一致率 `agreement` ≥ 0.71 的片段（数据集作者推荐的高一致子集），4 类共 11,848 条（全部 22,584 条）。标签映射不变；注意一致率是评分者之间的一致，不是与指定情绪的一致：其中 2,698 条的多数票仍不同于 `assigned_emo`（多为 frustrated 或 neutral）。
 - **MEAD**：8,000 条分层子集（全部 27,514 条）：按演员、情绪、强度、句子编号排序后等间隔取，每个演员/情绪/强度格子按比例保留。标签映射不变。
+
+新增对话数据集的说明（2026-11-10 采用，未列入上表；THAI-SER 和 nEMO 的映射见项目 README 第 6 节）：
+
+- **EmotionTalk**：标签取音频 JSON 中的 `emotion_result`，七类名称与项目类别相同；保留发布的 gold，不用五位标注者的多数票替换。默认评估官方 test，1,929 条。
+- **DailyTalk**：标签取公开的 ECSS 类别：none / no emotion → neutral，anger → angry，disgust → disgusted，fear → fearful，happiness → happy，sadness → sad，surprise → surprised。默认评估 ECSS validation，1,197 条（没有官方 test）。
+- **MultiDialog**：标签是每句台词指定表演的情绪：Curious to dive deeper → neutral（同数据集论文的评估做法），Fear / Fearful → fearful，Disgusting / Disgusted → disgusted，Surprising / Surprised → surprised，其余同名。默认评估 `gold_both` 队列，7,672 条。

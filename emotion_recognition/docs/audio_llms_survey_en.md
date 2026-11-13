@@ -4,6 +4,8 @@ English version of [audio_llms_survey.md](audio_llms_survey.md) (Chinese); the t
 
 **Updated 2026-11-06 for plan B**: 13 datasets (SAVEE added; ESD out of scope), with THAI-SER limited to the clips with agreement ≥ 0.71 and MEAD to a stratified 8,000 clips, for every model; API models now run every clip of every dataset (no 200-clip sample). The audio volume, costs and run times below are for this plan-B set: 56,264 clips, 52.2 h, all measured.
 
+**Update 2026-11-13**: the benchmark now has 16 datasets. The three dialogue datasets EmotionTalk (official test, 1,929 clips), DailyTalk (validation, 1,197) and MultiDialog (`gold_both`, 7,672) bring it to 67,062 clips. GPT Realtime (`gpt-realtime`), Gemini 3.8 Flash (`gemini-3.8-flash`) and Qwen2.5-Omni 7B have results on all 16; Qwen2-Audio 7B Instruct is running and Gemma 4 E4B will be run again (status and numbers: [reports/summary.md](../reports/summary.md)). The price rows and cost estimates for GPT Realtime and Gemini were removed, since those runs are finished. The volumes and costs below still cover the 13 plan-B datasets; running a candidate model on the 10,798 dialogue clips adds cost by audio duration, not clip count: MultiDialog alone is about 13.1 h (plan B is 52.2 h), so the increase is larger than the 19% clip share; it has not been re-estimated.
+
 Survey date: 2026-11-05. Goal: decide which audio LLMs to add to this project's benchmark after the five SER models, GPT Realtime, Gemini and the three local audio LLMs being added now (Qwen2.5-Omni-7B, Qwen2-Audio-7B-Instruct, Gemma 4 E4B-it): what each costs through an API, what hardware it needs to run here, and how hard it is to integrate.
 Setting: academic research only, so non-commercial licences are acceptable (they are flagged, not excluded). Hardware: a Mac M4 Max with 48 GB; an NVIDIA L40 (48 GB) for certain; an NVIDIA L4 (24 GB) and 4×H100 80 GB possibly.
 
@@ -13,9 +15,9 @@ Units: M = million, B = billion parameters; sizes in decimal GB; prices in USD p
 ## 0. In short
 
 - **Audio volume (plan B)**: 13 datasets, THAI-SER only agreement ≥ 0.71 (11,848 clips), MEAD a stratified 8,000 clips: **56,264 clips, 52.2 h**, all measured from the file headers. API models run every one of these clips; ESD is never sent.
-- **API cost is small** (section 3). The whole plan-B set costs **$31.25** with Qwen3.5-Omni Plus, **$8.69** with Qwen3.5-Omni Flash, **$14.35** with qwen3-omni-flash and $1.84 with the new qwen3.8-omni-flash, against **$106.15** with GPT Realtime and $9.87 with Gemini 2.5 Flash (international prices; mainland China is 20–40% cheaper). A 200-clip-per-dataset pilot (2,600 clips) would cost $0.08–1.38 with the Qwen models.
+- **API cost is small** (section 3). The whole plan-B set costs **$31.25** with Qwen3.5-Omni Plus, **$8.69** with Qwen3.5-Omni Flash, **$14.35** with qwen3-omni-flash and $1.84 with the new qwen3.8-omni-flash (international prices; mainland China is 20–40% cheaper). A 200-clip-per-dataset pilot (2,600 clips) would cost $0.08–1.38 with the Qwen models.
   The fixed text prompt (about 175 tokens) is 80–90% of the input tokens of every Qwen model (a 2.5 s clip is only 18–31 audio tokens) and 30–82% of the cost: shortening it is the main way to save.
-- **Run time**: GPT Realtime, one request at a time, measured 5.5 s per clip: the plan-B set takes about **86 h** (3.6 days) per API model run this way; requests in parallel shorten it, within each API's rate limit.
+- **Run time**: one request at a time is slow (GPT Realtime took about 5.5 s per clip), so a new API loader should send a few requests in parallel, within each API's rate limit.
 - **Qwen3-Omni-30B-A3B-Instruct** (open, Apache-2.0): the API model `qwen3-omni-flash` is a closed, further-trained Flash version, not the open weights. Self-hosted, the Thinker alone (talker off) is **31.72B parameters = 63.4 GB in bf16**: it fits **1×H100 80 GB** (tight) or 2×H100 (comfortable); on the **L40 only with a community FP8 or 4-bit checkpoint** (no official quantised one). transformers 5.18.0 (pinned here) loads it natively; vLLM supports the Thinker.
 - **Qwen3.5-Omni** (2026-03-30, arXiv 2604.15804): **API only**, `qwen3.5-omni-plus` and `qwen3.5-omni-flash`; no Qwen3.5-Omni repository exists on Hugging Face (checked 2026-11-05; the "open Light version" claimed by some blogs was not found). Audio is billed at 7 tokens per second. Its technical report has no emotion recognition results.
 - **Kimi-Audio-7B-Instruct** (MIT, 9.77B): fits L40 and H100, not the Mac (CUDA, flash-attn, torch 2.6). Its own MELD 59.13 is the best published MELD figure among these candidates, but **its SFT data includes RAVDESS, MELD and SAVEE**, three of our datasets.
@@ -25,9 +27,9 @@ Units: M = million, B = billion parameters; sizes in decimal GB; prices in USD p
 
 ## 1. Candidates at a glance
 
-The figures come from different protocols and cannot be compared across rows; "overlap" is the overlap of the model's published training data with this project's 13 datasets (section 6).
+The figures come from different protocols and cannot be compared across rows; "overlap" is the overlap of the model's published training data with this project's 13 datasets of 2026-11-05 (section 6; the three dialogue datasets were not checked for these candidates).
 
-| Model | Organisation, release | Size | Licence | Weights / API | Published SER result | Overlap with our 13 datasets | Verdict |
+| Model | Organisation, release | Size | Licence | Weights / API | Published SER result | Overlap with our 13 datasets (2026-11-05) | Verdict |
 |---|---|---|---|---|---|---|---|
 | Qwen3-Omni-30B-A3B-Instruct | Alibaba Qwen, 2025-09 | 35.26B in all; Thinker 31.72B (MoE, about 3B active per token) | Apache-2.0 | open ([HF](https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct)); API `qwen3-omni-flash` is a closed Flash version | none in its [technical report](https://arxiv.org/abs/2509.17765); third-party MELD 56.8 (MiniCPM-o 4.5 card, see [models_survey_en.md](models_survey_en.md)) | training data not published | **add first** (open, strongest open Qwen) |
 | Qwen3.5-Omni Plus / Flash | Alibaba Qwen, 2026-03-30 | not disclosed ("hundreds of billions", MoE; [report](https://arxiv.org/abs/2604.15804)) | proprietary | API only | none in the report | not published | **add via API** |
@@ -54,11 +56,8 @@ Prices in $/M for audio input to text output (no audio output). "Text out" is th
 | `qwen3.8-omni-flash` | International | 0.15 (one price for all inputs) | 0.15 | 0.47 | 7 | as above; also [OpenRouter](https://openrouter.ai/qwen/qwen3.8-omni-flash) `qwen/qwen3.8-omni-flash` at the same price |
 | `qwen3.8-omni-flash` | Chinese mainland, Hong Kong, Tokyo, Frankfurt, US (Virginia) | 0.113 | 0.113 | 0.382 | 7 | as above |
 | `step-audio-2` (StepFun, realtime API) | international platform | 1.43 (input, cache miss) | 1.43 | 10.00 (output) | not published | [StepFun pricing](https://platform.stepfun.ai/docs/en/guides/pricing/details) |
-| `gpt-realtime` (reference) | — | 32 | 4 | 16 | 10 (1 token per 100 ms) | [OpenAI pricing](https://developers.openai.com/api/docs/pricing); [Realtime costs](https://developers.openai.com/api/docs/guides/realtime-costs) |
-| `gpt-realtime-mini` (reference) | — | 10 | 0.6 | 2.4 | 10 | as above |
-| `gemini-2.5-flash` (reference; the placeholder in `config/models.yaml`) | — | 1.00 | 0.30 | 2.50 | 32 | [Gemini pricing](https://aistudio.google.com/docs/pricing); [audio docs](https://aistudio.google.com/docs/audio) |
-| `gemini-3-flash-preview` (reference) | — | 1.00 | 0.50 | 3.00 | 32 | as above |
-| `gemini-3.5-flash` (reference) | — | 0.75 | 0.75 | 3.75 | 32 | as above (price valid until 2026-12-31) |
+
+The GPT Realtime and Gemini reference rows were removed on 2026-11-13: both models are already evaluated.
 
 Notes:
 - **Qwen token rules** (Model Studio, "Billing and rate limits"): Qwen3.8-Omni-Flash and the Qwen3.5-Omni series count input audio as duration (s) × 7; Qwen3-Omni-Flash as duration (s) × 12.5; audio shorter than 1 s counts as 1 s (2,508 plan-B clips are under 1 s: 1,797 in MCAE-SPPS, 468 in THAI-SER, 225 in MELD, 18 in other datasets; the costs below include this). Longer clips are billed by their exact duration, not per started second. These match the encoders: Qwen3-Omni's AuT runs at 12.5 Hz ([paper](https://arxiv.org/abs/2509.17765)), Qwen3.5-Omni's encoder at 6.25 Hz ([paper](https://arxiv.org/abs/2604.15804)).
@@ -69,7 +68,6 @@ Notes:
 - **Rate limit**: `qwen3-omni-flash` in Beijing: 60 requests per minute, 100,000 tokens per minute ([model page](https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen3-omni-flash)); at 60 per minute the 56,264 plan-B clips take at least 15.6 h (about 220 tokens per clip, so the token limit is not reached). International limits unverified.
 - **qwen3-omni-flash is not the open model**: Qwen3-Omni-Flash-2025-12-01 is "a comprehensively upgraded iteration built upon Qwen3-Omni" ([Alibaba Cloud blog](https://www.alibabacloud.com/blog/602735)). Results through the API do not stand for the open weights, and the API version may change without notice; the open weights are the reproducible choice.
 - **OpenRouter** (model list read 2026-11-05): has `qwen/qwen3.8-omni-flash` but neither Qwen3-Omni nor Qwen3.5-Omni.
-- **Gemini thinking tokens** are billed as output: keep the thinking budget at its minimum, or the output cost grows far above the 5 tokens assumed below.
 
 ## 3. Audio volume and API cost
 
@@ -96,6 +94,8 @@ Measured from the file headers (`soundfile.info`) of the clips the loaders retur
 
 THAI-SER and MEAD are 51% of the audio. A 200-clip-per-dataset pilot (`sample(ds, 200)`, 2,600 clips) would be 2.20 h.
 
+The three dialogue datasets added later are not in this table: EmotionTalk official test (1,929 clips), DailyTalk validation (1,197) and MultiDialog `gold_both` (7,672 clips, 13.10 h). With them the benchmark has 67,062 clips; the hours of the EmotionTalk and DailyTalk splits were not measured for this survey.
+
 ### 3b Cost formula
 
 For one model and one set of clips:
@@ -121,28 +121,23 @@ Worked example, Qwen3.5-Omni Plus (international), plan B: audio 52.36 h (with t
 | qwen3.5-omni-flash, mainland | $6.88 | as above |
 | qwen3.8-omni-flash, international | $1.84 | 1.32M / 11.45M |
 | qwen3.8-omni-flash, mainland and other regions | $1.40 | as above |
-| gpt-realtime (reference) | $106.15 | 1.88M / 12.01M |
-| gpt-realtime-mini (reference) | $25.90 | as above |
-| gemini-2.5-flash (reference, thinking off) | $9.87 | 6.02M / 16.15M |
-| gemini-3-flash-preview (reference, thinking off) | $12.02 | as above |
-| gemini-3.5-flash (reference, thinking off) | $13.21 | as above |
 
 Token counts are before the 2% of retries. All estimates; the real bill also depends on prompt caching (Qwen3.8 caches automatically; repeated text input then costs $0.016/M instead of $0.15/M) and on how many answers need a follow-up. For every Qwen model the text prompt is 80–90% of the input tokens and 30% (qwen3-omni-flash) to 82% (qwen3.8-omni-flash) of the cost; about 45% for Qwen3.5-Omni.
-A 200-clip-per-dataset pilot (2,600 clips, 2.20 h) would cost $1.38 with Qwen3.5-Omni Plus, $0.38 with Flash, $0.63 with qwen3-omni-flash, $0.08 with qwen3.8-omni-flash and $4.65 with GPT Realtime (international prices).
-Run time: GPT Realtime, one request at a time, measured 5.5 s per clip, so the plan-B set takes about 86 h (3.6 days). The Qwen API is not measured; at the Beijing limit of 60 requests per minute a model needs at least 15.6 h, and one request at a time at GPT Realtime's speed would also take about 86 h, so the loader should send a few requests in parallel.
+A 200-clip-per-dataset pilot (2,600 clips, 2.20 h) would cost $1.38 with Qwen3.5-Omni Plus, $0.38 with Flash, $0.63 with qwen3-omni-flash, $0.08 with qwen3.8-omni-flash (international prices).
+Run time: the Qwen API is not measured; at the Beijing limit of 60 requests per minute a model needs at least 15.6 h for the plan-B set. One request at a time is much slower (GPT Realtime took about 5.5 s per clip), so the loader should send a few requests in parallel.
 Step-Audio 2 is not costed: StepFun does not publish its audio token rate; if its audio rate is like Qwen's (7–12.5 tokens per second), a plan-B run is 11.5–12.5M input tokens × $1.43 plus 0.28M output tokens × $10, about $20 (estimate).
 
 ## 4. Self-hosting: hardware and integration
 
-### 4a Hardware table (open models, including the three being added)
+### 4a Hardware table (open models, including the three local audio LLMs already in the benchmark)
 
 bf16 memory = parameters × 2 bytes (weights only); short clips (1–5 s, under 300 tokens with the prompt) add about 1–3 GB of activations and almost no KV cache. "Fits" means weights plus that margin; "s/clip" is the order of magnitude for one clip at a time with transformers, ≤ 5 output tokens: all **estimates, not measured**.
 
 | Model | Parameters loaded | bf16 memory | L4 24 GB | L40 48 GB | H100 80 GB | Mac M4 Max 48 GB | s/clip (estimate) | Integration |
 |---|---|---|---|---|---|---|---|---|
-| Qwen2-Audio-7B-Instruct (being added) | 8.40B | 16.8 GB | yes (tight) | yes | yes | yes (MPS) | L40 0.2–0.5; H100 0.1–0.3; Mac 1–3 | transformers native (`qwen2_audio` loader) |
-| Qwen2.5-Omni-7B (being added) | Thinker about 8.9B (repo 10.73B with talker) | about 17.9 GB | yes (tight) | yes | yes | yes (MPS) | as above | transformers native (`qwen2_5_omni` loader, talker not loaded) |
-| Gemma 4 E4B-it (being added) | 8.00B with embeddings (4.5B effective) | 16.0 GB | yes | yes | yes | yes (MPS) | slightly faster than the 7B models | transformers ≥ 5.5 native (`gemma4_audio` loader) |
+| Qwen2-Audio-7B-Instruct (in the benchmark) | 8.40B | 16.8 GB | yes (tight) | yes | yes | yes (MPS) | L40 0.2–0.5; H100 0.1–0.3; Mac 1–3 | transformers native (`qwen2_audio` loader) |
+| Qwen2.5-Omni-7B (in the benchmark) | Thinker about 8.9B (repo 10.73B with talker) | about 17.9 GB | yes (tight) | yes | yes | yes (MPS) | as above | transformers native (`qwen2_5_omni` loader, talker not loaded) |
+| Gemma 4 E4B-it (in the benchmark) | 8.00B with embeddings (4.5B effective) | 16.0 GB | yes | yes | yes | yes (MPS) | slightly faster than the 7B models | transformers ≥ 5.5 native (`gemma4_audio` loader) |
 | Qwen3-Omni-30B-A3B-Instruct | Thinker 31.72B (talker and code2wav, 3.54B, not loaded) | 63.4 GB | no (a 4-bit checkpoint might, unverified) | **FP8 or 4-bit only** (community checkpoints, see 4b) | **yes, 1 card** (about 15 GB left) | no in bf16 | transformers: H100 0.5–2 (MoE overhead); vLLM batched: about 0.02–0.1 per clip throughput | transformers native (`Qwen3OmniMoeForConditionalGeneration`, in 5.18.0) or vLLM (Thinker); close to the `qwen2_5_omni` loader |
 | Kimi-Audio-7B-Instruct | 9.77B (main safetensors) + Whisper-large-v3 folder (3.1 GB); detokenizer 19.0 GB and vocoder 1.0 GB not needed for text output (`load_detokenizer=False`) | about 20–24 GB (estimate) | borderline, unverified | yes | yes | no (CUDA only) | L40 0.3–0.8; H100 0.2–0.5 | its own repo (`KimiAudio` class): torch 2.6.0, flash_attn 2.7.4.post1, deepspeed; separate environment or Docker |
 | Step-Audio 2 mini | 8.32B (+ token2wav 1.2 GB, not needed) | 16.6 GB | yes (tight) | yes | yes | no without patching `.cuda()` | L40 0.2–0.5 | its own repo (`StepAudio2` in `examples.py`): transformers==4.49.0, `.cuda()` hard-coded; separate environment; a vLLM Docker image exists |
@@ -151,7 +146,7 @@ bf16 memory = parameters × 2 bytes (weights only); short clips (1–5 s, under 
 | MiDashengLM-7B | 8.28B | 16.6 GB | yes | yes | yes | unverified | as above | transformers `trust_remote_code`; official FP8 and GPTQ versions exist |
 | Voxtral Mini 3B / Small 24B | 4.68B / 24.26B | 9.4 / 48.5 GB | Mini yes / Small no | Mini yes / Small no (just over 48 GB) | both | Mini yes / Small no | Mini 0.1–0.3 | transformers native |
 
-Time for the whole benchmark: at 0.3 s per clip, the 56,264 plan-B clips take about 4.7 h per 7–9B model on the L40, and about 16–47 h on the Mac at 1–3 s per clip (estimates). The 4×H100 are not needed for any single model; they help only to run four models (or four Qwen3-Omni copies) in parallel.
+Time for the 13 plan-B datasets: at 0.3 s per clip, the 56,264 clips take about 4.7 h per 7–9B model on the L40, and about 16–47 h on the Mac at 1–3 s per clip (estimates). The 4×H100 are not needed for any single model; they help only to run four models (or four Qwen3-Omni copies) in parallel.
 
 ### 4b Qwen3-Omni in detail
 
@@ -185,15 +180,15 @@ A model that saw a dataset in training is not tested zero-shot on it. The table 
 | Kimi-Audio | **RAVDESS** (3 h, more than the 1.5 h of speech clips: probably the song clips too, or repeats), **MELD** (9 h), **SAVEE** (0.1 h), ESD (excluded here), IEMOCAP | paper, SFT data table |
 | Qwen2-Audio, Qwen2.5-Omni, Qwen3-Omni, Qwen3.5-Omni | not published; they report MELD results, so MELD's training split was probably used (unverified) | papers |
 | Step-Audio 2, Gemma 4, MiDashengLM, Voxtral | not published | — |
-| For reference, models already in the benchmark | emotion2vec: **MEAD** and **MELD** in its (unlabelled) pre-training; MERaLiON-SER: **CREMA-D**, **MELD**; Melati: **Emozionalmente**, **JL-Corpus** | [models_survey_en.md](models_survey_en.md), [datasets_survey_en.md](datasets_survey_en.md) |
+| For reference, models already in the benchmark | not repeated here: the project's audit counts direct and upstream use alike (for example, emotion2vec+ large and MERaLiON-SER-v1 each have nine of our corpora marked, Melati three); GPT Realtime, Gemini 3.8 Flash, Gemma 4 and the two Qwen models have no corpus-specific evidence | [training_provenance.md](training_provenance.md) (Chinese), Training data section of [reports/summary.md](../reports/summary.md) |
 
-So the reports should mark AF3's JL-Corpus and TESS results "seen" and its MELD results "possibly seen", and Kimi-Audio's RAVDESS, MELD and SAVEE results "seen". CREMA-D, RAVDESS (for AF3), MCAE-SPPS, MESS, THAI-SER, nEMO, MEAD, EMOVO, Emozionalmente and SAVEE remain unseen for AF3.
+So the reports should mark AF3's JL-Corpus and TESS results "seen" and its MELD results "possibly seen", and Kimi-Audio's RAVDESS, MELD and SAVEE results "seen". CREMA-D, RAVDESS (for AF3), MCAE-SPPS, MESS, THAI-SER, nEMO, MEAD, EMOVO, Emozionalmente and SAVEE have no published overlap for AF3 (which, as in the project audit, does not prove they are unseen).
 
 ## 7. Recommendation
 
 1. **Qwen3-Omni-30B-A3B-Instruct, open weights, next.** The strongest open Qwen and the natural step after Qwen2.5-Omni; Apache-2.0; loads with the transformers already pinned (5.18.0), so the loader is close to `qwen2_5_omni.py` (talker off, Thinker only).
    Hardware: 1×H100 80 GB in bf16 if available (2×H100 for comfort and speed). Otherwise the L40 with the community FP8 checkpoint (or AWQ-4bit), reported as quantised. Not on the Mac or the L4 in bf16.
-2. **Qwen3.5-Omni Plus and Flash through the API, on every plan-B clip** (56,264 clips, 52.2 h): $31.25 + $8.69 = about $40 (international); the 1M-token free quota of Plus covers about $2.7 of it. They are the newest Qwen omni models and are API only, so this is the only way to include them. Needs a new streaming loader for Model Studio's OpenAI-compatible API (`stream=True`) and an international (Singapore) key. Adding `qwen3.8-omni-flash` in the same loader costs $1.84 more. A 2,600-clip pilot first (Plus $1.38, within the free quota; Flash $0.38) checks the loader before the full run. Time: at 60 requests per minute, at least 15.6 h per model; send a few requests in parallel (one at a time at GPT Realtime's 5.5 s per clip would be about 86 h). `qwen3-omni-flash` ($14.35) is optional: it is a closed variant, and the open weights of step 1 are the better reference.
+2. **Qwen3.5-Omni Plus and Flash through the API, on every plan-B clip** (56,264 clips, 52.2 h): $31.25 + $8.69 = about $40 (international); the 1M-token free quota of Plus covers about $2.7 of it. They are the newest Qwen omni models and are API only, so this is the only way to include them. Needs a new streaming loader for Model Studio's OpenAI-compatible API (`stream=True`) and an international (Singapore) key. Adding `qwen3.8-omni-flash` in the same loader costs $1.84 more. A 2,600-clip pilot first (Plus $1.38, within the free quota; Flash $0.38) checks the loader before the full run. Time: at 60 requests per minute, at least 15.6 h per model; send a few requests in parallel. `qwen3-omni-flash` ($14.35) is optional: it is a closed variant, and the open weights of step 1 are the better reference.
 3. **Audio Flamingo 3**: the least work (transformers native, runs on the L40 and probably the Mac), non-commercial licence acceptable here. Report JL-Corpus and TESS as "seen" and MELD as "possibly seen", or leave them out of its averages.
 4. **Step-Audio 2 mini on the L40**: a separate environment (transformers 4.49.0) and patches for `.cuda()`; brings a non-Qwen, non-NVIDIA model with strong paralinguistic claims.
 5. **Kimi-Audio on the L40**: the most integration work (separate CUDA environment with flash-attn and torch 2.6); mark RAVDESS, MELD and SAVEE as "seen".
@@ -206,7 +201,7 @@ So the reports should mark AF3's JL-Corpus and TESS results "seen" and its MELD 
 - Qwen3-Omni: https://arxiv.org/abs/2509.17765 , https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct , https://github.com/QwenLM/Qwen3-Omni ; vLLM: https://docs.vllm.ai/en/stable/api/vllm/model_executor/models/qwen3_omni_moe_thinker/ , https://docs.vllm.ai/projects/vllm-omni/en/stable/models/supported_models/
 - Qwen3.5-Omni: https://arxiv.org/abs/2604.15804
 - OpenRouter model list: https://openrouter.ai/api/v1/models
-- OpenAI: https://developers.openai.com/api/docs/pricing , https://developers.openai.com/api/docs/guides/realtime-costs ; Gemini: https://aistudio.google.com/docs/pricing , https://aistudio.google.com/docs/audio ; StepFun: https://platform.stepfun.ai/docs/en/guides/pricing/details
+- StepFun: https://platform.stepfun.ai/docs/en/guides/pricing/details
 - Kimi-Audio: https://arxiv.org/abs/2504.18425 , https://github.com/MoonshotAI/Kimi-Audio , https://huggingface.co/moonshotai/Kimi-Audio-7B-Instruct
 - Step-Audio 2: https://arxiv.org/abs/2507.16632 , https://github.com/stepfun-ai/Step-Audio2 , https://huggingface.co/stepfun-ai/Step-Audio-2-mini
 - Audio Flamingo 3 and Next: https://arxiv.org/abs/2507.08128 , https://huggingface.co/nvidia/audio-flamingo-3-hf , https://arxiv.org/abs/2604.10905 , https://huggingface.co/nvidia/audio-flamingo-next-hf

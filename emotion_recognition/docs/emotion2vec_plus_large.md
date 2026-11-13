@@ -15,7 +15,7 @@
 - **model.pt 为什么有 1.95 GB**：除了 0.65 GB 权重，还有 1.30 GB 的 Adam 优化器状态和 fairseq 训练配置；没有 EMA teacher，也没有 decoder。推理只用权重。
 - **训练**：emotion2vec 先在 262 h 无标注情感语音上做自监督预训练（data2vec 2.0 风格）。emotion2vec+ 再用标签训练三代：seed（EmoBox 学术数据，201 h）→ base（伪标签，4,788 h）→ large（伪标签，42,526 h，从约 16 万小时中筛出约 4 万小时）。伪标签数据的来源、筛选规则和训练算力都没有公开。
   `model.pt` 里的配置显示，large 的最后一个阶段用 8 块 GPU（型号未记录）在名为 `emo_box_fix` 的数据上训练了 13,669 步。
-- **本项目的实测**：在 EmoBox 包含的数据集上准确率 85.5–92.5%，在 EmoBox 以外的数据集上只有 40.8–61.3%。MPS 处理不了长于 20.48 s 的片段（脚本会改用 CPU）；内存大约随片段长度的平方增长。
+- **本项目的实测**：已在全部 16 个数据集上评测（[汇总报告](../reports/emotion2vec_plus_large/summary.md)）：在 EmoBox 收录的表演语料上准确率高，在 EmoBox 以外的语料和对话语音上低得多。MPS 处理不了长于 20.48 s 的片段（脚本会改用 CPU）；内存大约随片段长度的平方增长。
 - **许可**：Hugging Face 模型卡指向 FunASR 模型许可（可以使用、修改、分发，包括微调后的模型，但要注明出处并保留模型名）；ModelScope 模型卡写 Apache-2.0。两处不一致。
 
 ## 1. 它做什么
@@ -150,7 +150,7 @@ FunASR 的 `inference()`（`model.py`）对每个文件做这几步：
 
 ## 5. 本项目的实用信息
 
-**准确率**（[汇总报告](../reports/emotion2vec_plus_large/summary.md)，2026-10-27，按表演情绪计分）：
+**准确率**：全部 16 个数据集的当前结果见[汇总报告](../reports/emotion2vec_plus_large/summary.md)，与其他模型的对比见 [reports/summary.md](../reports/summary.md)。下表是早期对前 6 个数据集的检查（2026-10-27，按表演情绪计分）；最后一列用的是旧规则（在 4 种共有情绪的概率里重新取最大），所以和当前报告不同：
 
 | 数据集 | 语言 | 在 EmoBox 中 | 准确率 | 只算 4 种共有情绪 |
 |---|---|---|---|---|

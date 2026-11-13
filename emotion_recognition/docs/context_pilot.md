@@ -2,6 +2,8 @@
 
 2026-11-10。**当前只准备了代码和输入，没有加载 Omni、没有运行预测。** 本机有 Docker 等进程，按用户要求暂缓推理；没有后台任务会自动开始。
 
+2026-11-13 更新：pilot 仍未运行，准备目录里没有 `runs/`，因此还没有任何 H0–H3 结果。
+
 ## 这次具体比较什么
 
 我们固定同一批目标音频，只改变它前面的输入：
@@ -28,7 +30,7 @@ H2 只给转写，去掉 `[]`、`【】` 中的人工行为/声学标记，例�
 - 固定随机种子 `20261110`，七类近似均衡，合计 240 个目标。
 - 每段对话最多三个目标；目标至少 0.4 秒，需有非空历史转写。
 - 选择不依赖模型答对/答错；gold 仅用于目标分层抽样和之后计分。
-- 这是为了观察不同类别的**探索样本**，并非原始类别分布上的正式测试成绩。不能直接与整个 MELD/test 的总分比较。
+- 这是为了观察不同类别的**探索样本**，并非原始类别分布上的正式测试成绩。不能直接与 EmotionTalk 官方 test 等正式测试集的总分比较。
 
 准备命令会导出实际类别数量、对话数、目标/历史/H3路径与时长，以及全部 960 份请求。运行前可以直接检查这些小文件。
 
@@ -84,14 +86,16 @@ H1 对 H0 是音频历史的总作用；H2 对 H0 是文字历史的作用；H1/
 
 EmotionTalk 是演员主题即兴对话，发布音频 gold 的标注者可以回听历史。四个条件仍用同一个发布 gold 计分，**不能用它代替无历史/有历史两套独立人类判断**。
 
-## 其他新数据集也能跑普通基线
+## 三个对话数据集的普通基线
 
-原 13 个 loader 已有；新增 EmotionTalk、DailyTalk、MultiDialog 均接入统一 `LOADERS`，普通 `evaluate.py` 会自动使用同一模型推理接口。默认范围为 EmotionTalk 官方 test、DailyTalk ECSS validation、MultiDialog 双演员 gold 名单＋整对话 QC 的两套 test 子集。DailyTalk 不伪造一个不存在的官方 test；MultiDialog 的 gold 是演员筛选队列，不是每句的听众多数票。
+原有 13 个 loader；新增 EmotionTalk、DailyTalk、MultiDialog 也接入统一 `LOADERS`，普通 `evaluate.py` 使用同一模型推理接口。默认范围：EmotionTalk 官方 test（1,929 条）、DailyTalk ECSS validation（1,197 条）、MultiDialog 双演员 gold 名单＋整对话 QC 的 `gold_both`（7,672 条）。DailyTalk 不伪造一个不存在的官方 test；MultiDialog 的 gold 是演员筛选队列，不是每句的听众多数票。
 
-另备 [evaluation_dialogue_baselines.yaml](../config/evaluation_dialogue_baselines.yaml)，不会替换原来的 MELD 配置。等算力可用后才执行：
+截至 2026-11-13，这三个数据集的普通单句基线已有五个 SER 模型、GPT Realtime、Gemini 3.8 Flash 和 Qwen2.5-Omni 7B 的结果；Qwen2-Audio 和 Gemma 4 尚未完成。结果见 [reports/summary.md](../reports/summary.md)。
+
+另备 [evaluation_dialogue_baselines.yaml](../config/evaluation_dialogue_baselines.yaml)，只选三个对话数据集和三个开源音频 LLM，API 关闭，不替换主配置：
 
 ```bash
 python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml
 ```
 
-它计划三个开源音频 LLM 的普通单句基线，API关闭；这与本页 Omni 的 240 条 H0–H3 pilot 是两项独立实验，缓存与输出也分开。
+已完成且协议一致的结果会被复用。普通基线与本页 Omni 的 240 条 H0–H3 pilot 是两项独立实验，缓存与输出也分开。
