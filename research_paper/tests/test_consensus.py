@@ -119,7 +119,17 @@ class ConsensusTests(unittest.TestCase):
             self.assertIsNone(ser["common_samples"])
             self.assertEqual(ser["status"], "pending")
             self.assertEqual({p.relative_to(paper).as_posix() for p in paper.rglob('*') if p.is_file()},
-                             {"analysis_report/consensus_zh.md", "analysis_report/consensus_en.md", "output/consensus.csv"})
+                             {"analysis_report/consensus_zh.md", "analysis_report/consensus_en.md", "output/consensus.csv",
+                              "output/consensus_thresholds.csv", "output/consensus_by_class.csv",
+                              "output/consensus_baselines.csv", "output/consensus_manifest.json"})
+            with (paper / "output/consensus_thresholds.csv").open() as stream:
+                thresholds = list(csv.DictReader(stream))
+            self.assertEqual(len(thresholds), 1)
+            self.assertEqual((thresholds[0]["min_votes"], thresholds[0]["accepted_errors"]), ("2", "0"))
+            manifest = json.loads((paper / "output/consensus_manifest.json").read_text())
+            self.assertEqual(manifest["selected_run_count"], 2)
+            self.assertEqual(len(manifest["sources"]), 4)
+            self.assertFalse(any(c["eligible"] for c in manifest["cohorts"] if c["group"] in consensus.EXTRA_GROUPS))
             for p, content in before.items():
                 self.assertEqual(p.read_bytes(), content)
             report = (paper / "analysis_report/consensus_zh.md").read_text()
@@ -159,6 +169,25 @@ class ConsensusTests(unittest.TestCase):
         en = consensus.progress_sentence(selected, "en")
         self.assertIn("Gemini 3.8 Flash 0/16（另有 1 个数据集仅有部分样本）", zh)
         self.assertIn("Gemini 3.8 Flash 0/16 (plus 1 dataset with partial samples)", en)
+
+    def test_no_comparable_models_exports_pending_reports_and_empty_supplements(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "emotion_recognition"
+            paper = Path(directory) / "research_paper"
+            self.artifact(root, "gemini-3.8-flash")
+            (root / "config").mkdir()
+            registry = {m: {} for spec in consensus.GROUPS.values() for m in spec["models"]}
+            (root / "config/models.yaml").write_text(yaml.safe_dump(registry))
+            rows = consensus.run(root, paper)
+            self.assertTrue(all(row["status"] == "pending" for row in rows))
+            for name in ("thresholds", "by_class", "baselines"):
+                with (paper / "output" / f"consensus_{name}.csv").open() as stream:
+                    reader = csv.DictReader(stream)
+                    self.assertTrue(reader.fieldnames)
+                    self.assertEqual(list(reader), [])
+            manifest = json.loads((paper / "output/consensus_manifest.json").read_text())
+            self.assertEqual(manifest["selected_run_count"], 1)
+            self.assertTrue(all(c["cohort_sha256"] is None for c in manifest["cohorts"]))
 
     def test_path_aliases_are_rejected(self):
         for path in ("../a.wav", "/a.wav", "data/../a.wav", "data//a.wav", "C:/a.wav", "data\\a.wav"):

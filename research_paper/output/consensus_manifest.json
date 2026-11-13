@@ -1,0 +1,4571 @@
+{
+  "analysis": "model_consensus_v2",
+  "generated_at_utc": "2026-11-13T08:31:44+00:00",
+  "generated_at_singapore": "2026-11-13 16:31 SGT",
+  "python": "3.11.17",
+  "pyyaml": "6.0.3",
+  "selected_run_count": 136,
+  "datasets": [
+    "crema_d",
+    "mcae_spps",
+    "thai_ser",
+    "nemo",
+    "mess",
+    "ravdess",
+    "tess",
+    "jl_corpus",
+    "mead",
+    "meld",
+    "emovo",
+    "emozionalmente",
+    "savee",
+    "emotiontalk",
+    "dailytalk",
+    "multidialog"
+  ],
+  "groups": {
+    "SER5": {
+      "models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm"
+      ],
+      "require_all": true
+    },
+    "AudioLLM5": {
+      "models": [
+        "gpt_realtime",
+        "gemini-3.8-flash",
+        "qwen2_5_omni_7b",
+        "qwen2_audio_7b",
+        "gemma4_e4b"
+      ],
+      "require_all": false
+    },
+    "Selected3": {
+      "models": [
+        "emotion2vec_plus_large",
+        "gemini-3.8-flash",
+        "qwen2_5_omni_7b"
+      ],
+      "require_all": false
+    },
+    "SER_API7": {
+      "models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash"
+      ],
+      "require_all": true
+    },
+    "All10": {
+      "models": [
+        "emotion2vec_plus_large",
+        "meralion_ser_v1",
+        "melati_emotion",
+        "vox_profile_whisper",
+        "vox_profile_wavlm",
+        "gpt_realtime",
+        "gemini-3.8-flash",
+        "qwen2_5_omni_7b",
+        "qwen2_audio_7b",
+        "gemma4_e4b"
+      ],
+      "require_all": true
+    }
+  },
+  "rules": {
+    "unanimous": {
+      "unanimous": true
+    },
+    "majority": {
+      "fraction": [
+        1,
+        2
+      ],
+      "strict": true
+    }
+  },
+  "threshold_sweep": "Every integer k from floor(m/2)+1 through m; invalids retain m",
+  "coverage_denominator": "within-group common audio-path intersection",
+  "uncertainty": "Point estimates only; no confidence intervals or accuracy guarantees",
+  "code_configuration_sha256": {
+    "consensus.py": "1770419924f6dc2187fd198e65a697bfdb03f1d9bec8099e3d8fbe00013031b6",
+    "consensus_details.py": "5962328615687ee91fbcceb57334c30dd30899356decc742d295bfcfa080fe04",
+    "consensus_plot.py": "c1c3d5d03543a65289e1b5759b748d26e55d7898263d57cfdd8e7d114797d896",
+    "prompts.py": "cd5d9ef4ee23ad4b44948ae223af0a70cd89175755233cf2bbafc1073ed21e7f",
+    "config/models.yaml": "c6477fe4a8b114fff31b7e7f98b08d1cc6c72be820fef66b16c60622e120fa01",
+    "config/llm.yaml": "80a43260ad9e0f98e0a868006800767870581b431a4f3b7b57f759a2a789760c",
+    "config/evaluation.yaml": "ebe48c986b0482f8332a284f15173bca99322334e3989cbfe9e5f2226b465a7d",
+    "scripts/llm_eval/prompts.yaml": "bee7b98dc114634113ab1c23b96beb88554edfaf65899c554a7f6c094a09275d"
+  },
+  "selection": [
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "crema_d",
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "dailytalk",
+      "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "emotiontalk",
+      "path": "outputs/emotion2vec_plus_large/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "emovo",
+      "path": "outputs/emotion2vec_plus_large/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "emozionalmente",
+      "path": "outputs/emotion2vec_plus_large/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "jl_corpus",
+      "path": "outputs/emotion2vec_plus_large/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "mcae_spps",
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "mead",
+      "path": "outputs/emotion2vec_plus_large/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "meld",
+      "path": "outputs/emotion2vec_plus_large/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "mess",
+      "path": "outputs/emotion2vec_plus_large/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "multidialog",
+      "path": "outputs/emotion2vec_plus_large/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "nemo",
+      "path": "outputs/emotion2vec_plus_large/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "ravdess",
+      "path": "outputs/emotion2vec_plus_large/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "savee",
+      "path": "outputs/emotion2vec_plus_large/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "tess",
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "thai_ser",
+      "path": "outputs/emotion2vec_plus_large/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "crema_d",
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "dailytalk",
+      "path": "outputs/gemini-3.8-flash/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "emotiontalk",
+      "path": "outputs/gemini-3.8-flash/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "emovo",
+      "path": "outputs/gemini-3.8-flash/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "emozionalmente",
+      "path": "outputs/gemini-3.8-flash/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "jl_corpus",
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "mcae_spps",
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "mead",
+      "path": "outputs/gemini-3.8-flash/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "meld",
+      "path": "outputs/gemini-3.8-flash/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "mess",
+      "path": "outputs/gemini-3.8-flash/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "multidialog",
+      "path": "outputs/gemini-3.8-flash/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "nemo",
+      "path": "outputs/gemini-3.8-flash/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "ravdess",
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "savee",
+      "path": "outputs/gemini-3.8-flash/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "tess",
+      "path": "outputs/gemini-3.8-flash/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "thai_ser",
+      "path": "outputs/gemini-3.8-flash/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "gemma4_e4b",
+      "dataset": "meld",
+      "path": "outputs/gemma4_e4b/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "crema_d",
+      "path": "outputs/gpt_realtime/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "dailytalk",
+      "path": "outputs/gpt_realtime/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "emotiontalk",
+      "path": "outputs/gpt_realtime/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "emovo",
+      "path": "outputs/gpt_realtime/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "emozionalmente",
+      "path": "outputs/gpt_realtime/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "jl_corpus",
+      "path": "outputs/gpt_realtime/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "mcae_spps",
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "mead",
+      "path": "outputs/gpt_realtime/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "meld",
+      "path": "outputs/gpt_realtime/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "mess",
+      "path": "outputs/gpt_realtime/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "multidialog",
+      "path": "outputs/gpt_realtime/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "nemo",
+      "path": "outputs/gpt_realtime/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "ravdess",
+      "path": "outputs/gpt_realtime/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "savee",
+      "path": "outputs/gpt_realtime/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "tess",
+      "path": "outputs/gpt_realtime/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "thai_ser",
+      "path": "outputs/gpt_realtime/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "crema_d",
+      "path": "outputs/melati_emotion/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "dailytalk",
+      "path": "outputs/melati_emotion/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "emotiontalk",
+      "path": "outputs/melati_emotion/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "emovo",
+      "path": "outputs/melati_emotion/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "emozionalmente",
+      "path": "outputs/melati_emotion/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "jl_corpus",
+      "path": "outputs/melati_emotion/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "mcae_spps",
+      "path": "outputs/melati_emotion/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "mead",
+      "path": "outputs/melati_emotion/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "meld",
+      "path": "outputs/melati_emotion/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "mess",
+      "path": "outputs/melati_emotion/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "multidialog",
+      "path": "outputs/melati_emotion/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "nemo",
+      "path": "outputs/melati_emotion/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "ravdess",
+      "path": "outputs/melati_emotion/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "savee",
+      "path": "outputs/melati_emotion/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "tess",
+      "path": "outputs/melati_emotion/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "thai_ser",
+      "path": "outputs/melati_emotion/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "crema_d",
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "dailytalk",
+      "path": "outputs/meralion_ser_v1/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "emotiontalk",
+      "path": "outputs/meralion_ser_v1/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "emovo",
+      "path": "outputs/meralion_ser_v1/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "emozionalmente",
+      "path": "outputs/meralion_ser_v1/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "jl_corpus",
+      "path": "outputs/meralion_ser_v1/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "mcae_spps",
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "mead",
+      "path": "outputs/meralion_ser_v1/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "meld",
+      "path": "outputs/meralion_ser_v1/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "mess",
+      "path": "outputs/meralion_ser_v1/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "multidialog",
+      "path": "outputs/meralion_ser_v1/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "nemo",
+      "path": "outputs/meralion_ser_v1/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "ravdess",
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "savee",
+      "path": "outputs/meralion_ser_v1/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "tess",
+      "path": "outputs/meralion_ser_v1/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "thai_ser",
+      "path": "outputs/meralion_ser_v1/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "crema_d",
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "dailytalk",
+      "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "emotiontalk",
+      "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "emovo",
+      "path": "outputs/qwen2_5_omni_7b/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "emozionalmente",
+      "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "jl_corpus",
+      "path": "outputs/qwen2_5_omni_7b/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "mcae_spps",
+      "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "mead",
+      "path": "outputs/qwen2_5_omni_7b/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "meld",
+      "path": "outputs/qwen2_5_omni_7b/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "mess",
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "multidialog",
+      "path": "outputs/qwen2_5_omni_7b/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "nemo",
+      "path": "outputs/qwen2_5_omni_7b/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "ravdess",
+      "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "savee",
+      "path": "outputs/qwen2_5_omni_7b/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "tess",
+      "path": "outputs/qwen2_5_omni_7b/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "thai_ser",
+      "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "crema_d",
+      "path": "outputs/qwen2_audio_7b/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "mcae_spps",
+      "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "meld",
+      "path": "outputs/qwen2_audio_7b/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "mess",
+      "path": "outputs/qwen2_audio_7b/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "nemo",
+      "path": "outputs/qwen2_audio_7b/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "ravdess",
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "thai_ser",
+      "path": "outputs/qwen2_audio_7b/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "crema_d",
+      "path": "outputs/vox_profile_wavlm/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "dailytalk",
+      "path": "outputs/vox_profile_wavlm/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "emotiontalk",
+      "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "emovo",
+      "path": "outputs/vox_profile_wavlm/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "emozionalmente",
+      "path": "outputs/vox_profile_wavlm/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "jl_corpus",
+      "path": "outputs/vox_profile_wavlm/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "mcae_spps",
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "mead",
+      "path": "outputs/vox_profile_wavlm/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "meld",
+      "path": "outputs/vox_profile_wavlm/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "mess",
+      "path": "outputs/vox_profile_wavlm/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "multidialog",
+      "path": "outputs/vox_profile_wavlm/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "nemo",
+      "path": "outputs/vox_profile_wavlm/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "ravdess",
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "savee",
+      "path": "outputs/vox_profile_wavlm/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "tess",
+      "path": "outputs/vox_profile_wavlm/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "thai_ser",
+      "path": "outputs/vox_profile_wavlm/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "crema_d",
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "dailytalk",
+      "path": "outputs/vox_profile_whisper/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "emotiontalk",
+      "path": "outputs/vox_profile_whisper/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "emovo",
+      "path": "outputs/vox_profile_whisper/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "emozionalmente",
+      "path": "outputs/vox_profile_whisper/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "jl_corpus",
+      "path": "outputs/vox_profile_whisper/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "mcae_spps",
+      "path": "outputs/vox_profile_whisper/mcae_spps_predictions.json",
+      "status": "selected",
+      "clips": 6675
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "mead",
+      "path": "outputs/vox_profile_whisper/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "meld",
+      "path": "outputs/vox_profile_whisper/meld_predictions.json",
+      "status": "selected",
+      "clips": 2608
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "mess",
+      "path": "outputs/vox_profile_whisper/mess_predictions.json",
+      "status": "selected",
+      "clips": 1800
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "multidialog",
+      "path": "outputs/vox_profile_whisper/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "nemo",
+      "path": "outputs/vox_profile_whisper/nemo_predictions.json",
+      "status": "selected",
+      "clips": 4481
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "ravdess",
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "savee",
+      "path": "outputs/vox_profile_whisper/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "tess",
+      "path": "outputs/vox_profile_whisper/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "thai_ser",
+      "path": "outputs/vox_profile_whisper/thai_ser_predictions.json",
+      "status": "selected",
+      "clips": 11848
+    }
+  ],
+  "sources": [
+    {
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.csv",
+      "sha256": "f7f3dbfbabc9707d18f86cec7bceb51ba5dfcb9ac540112f6bce63391b135fb3",
+      "bytes": 1083737
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.json",
+      "sha256": "4bb54d0437d2a1feb8da6f8f54514ef0379b85e424cce15e0814103f716fd162",
+      "bytes": 2731
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.csv",
+      "sha256": "b7b5679365b5ad07f97d1f5db4aafd47c6d52fa9852c5d0574c7ba91c2dd98f7",
+      "bytes": 155156
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/dailytalk_predictions.json",
+      "sha256": "e6583e3f09d8736b2b0270f0ae7a332f2ca392c5eabf11fb84b56922e1a0db1e",
+      "bytes": 2615
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emotiontalk_predictions.csv",
+      "sha256": "828b4ca4ac06f974b3188018762ea7a9ec9620418b506f277b4e8781ec7af5e3",
+      "bytes": 326029
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emotiontalk_predictions.json",
+      "sha256": "fab3b921dd1ca4ae02d8239f297ee42de0fb5dd10fb4f83a64cb658300f9a44f",
+      "bytes": 2558
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emovo_predictions.csv",
+      "sha256": "42d1518a856f4dd99c510929c007fbe0d25991f25d986c0e1398d76536dc2fc4",
+      "bytes": 73953
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emovo_predictions.json",
+      "sha256": "679d9a61171cdeaa0b3448755c328d3f543801fbe5490ffcb0a320fc90d24192",
+      "bytes": 2828
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emozionalmente_predictions.csv",
+      "sha256": "f659e6e567db200b2ff8d53ed656af102977ec6b52e3eaf26c26eb814ba0c454",
+      "bytes": 1174158
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/emozionalmente_predictions.json",
+      "sha256": "5ee9e244934aa0f2193eb40e17427e9badac6b3808cec49444822625dc499bc5",
+      "bytes": 3282
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/jl_corpus_predictions.csv",
+      "sha256": "31e4c0859009fcda86f49f351cf24fbc5992668de6f656b225df34a90b2408a1",
+      "bytes": 222734
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/jl_corpus_predictions.json",
+      "sha256": "1a1164f128f4e2f4b597bab3e0da00742db58b6c57fda827b5c315b17dd70707",
+      "bytes": 2600
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.csv",
+      "sha256": "871f1582330cfbe5eb978dc5f58dabc843940dc07302300b1c6242f8ddd4e2dc",
+      "bytes": 940639
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.json",
+      "sha256": "88a168ef0ca115cc92fca7b32088a9cae18ae47f436f833da2e5577149fbdb57",
+      "bytes": 2475
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mead_predictions.csv",
+      "sha256": "2de93f9bf52c148260add99cb2edd559d0c308c70ec9446a37caabd62afe76cd",
+      "bytes": 1080232
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mead_predictions.json",
+      "sha256": "ff21d6fe9b4daf1a6a8ccaa02e9933e901d44b4c111e4d661c2d429a81592174",
+      "bytes": 2860
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/meld_predictions.csv",
+      "sha256": "1c748f3e8cef598d0f02c795f2e5e1068c2c43440f33fbd0248df84b3772f56b",
+      "bytes": 321489
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/meld_predictions.json",
+      "sha256": "78104cd590438eb72839995a8e84d4950017b6588ad386ae675df421cbd2cf25",
+      "bytes": 2862
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mess_predictions.csv",
+      "sha256": "3db43959e3fa763420607e0b63823fba0e8aa3e3b449298507314c7d9bcd37a2",
+      "bytes": 219286
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mess_predictions.json",
+      "sha256": "627f5940fc32611f4e307213caaa4c6c224580dde83f6fc867f23ed834c84433",
+      "bytes": 2225
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/multidialog_predictions.csv",
+      "sha256": "1cfaee42db4a45ff3c6c5b6bae7b729db623eba126da52ae74951ddff3259663",
+      "bytes": 1609912
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/multidialog_predictions.json",
+      "sha256": "e16fd34b75ed1cb8e30cf4701bc3cd4a8185f070ed6d55eface5a2e7dccbb0ba",
+      "bytes": 2588
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/nemo_predictions.csv",
+      "sha256": "7efc958275e1f71e7b7ba4727e9d7ab771a7238f26899ae9ccc8cb929433979f",
+      "bytes": 557554
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/nemo_predictions.json",
+      "sha256": "86142bf180e6c706debe91830aee1565d4d51e9cfef80c405c87c8c507902f37",
+      "bytes": 1949
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/ravdess_predictions.csv",
+      "sha256": "6f3ea3f0683f8dd9d5e6af49dcab22da46936ad10ad4b1734d6ee97520aeb8e9",
+      "bytes": 208160
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/ravdess_predictions.json",
+      "sha256": "977ddef8e181a8949e81861fb99a5e034f6adca8c27bb0d9db8ce872473f23e9",
+      "bytes": 2402
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/savee_predictions.csv",
+      "sha256": "fd310148c96e3efa0f66e3aa12509e38ea879e910d9826c3f12082cc38d1be93",
+      "bytes": 59676
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/savee_predictions.json",
+      "sha256": "932ef97502fe45e4ce16e73e5fdcf9f9c15b590b6c0a46e66671f09aa22b38fa",
+      "bytes": 2851
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.csv",
+      "sha256": "9baa65ab7d70be9fa0ab225906d180b2c8c66f98279d813192c2fdd259b9b671",
+      "bytes": 334062
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.json",
+      "sha256": "eecdc2e527bc2945aa89e11d00d881177fb307e0c9021807a2d680a04232e0ab",
+      "bytes": 2388
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/thai_ser_predictions.csv",
+      "sha256": "81b2d2b97f26d02798ae7fa1334f8277722f56b3900ae3d32318d7578fec9ffe",
+      "bytes": 1836728
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/thai_ser_predictions.json",
+      "sha256": "5569b494997f13ac0bf151afe75e667c8668abb64dc2167c420c28857afd637f",
+      "bytes": 2711
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.csv",
+      "sha256": "7876beea268cb541aa6f1b32a59722bfdce4114648080bb44b490aa7d03926d6",
+      "bytes": 1036341
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.json",
+      "sha256": "5d054851c9e6d87c3f08eab0c8a4d8d020dffe1a8e095115894692f083953671",
+      "bytes": 3364
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/dailytalk_predictions.csv",
+      "sha256": "eab90a5798058920d2dda15971a07209afcf2c9263e3cb959c6fb62a34de0b72",
+      "bytes": 146549
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/dailytalk_predictions.json",
+      "sha256": "9620d1f1fa801c8e3272a7f2ac34c74365a96723408d0d590e5e67b2c49eac3b",
+      "bytes": 3174
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emotiontalk_predictions.csv",
+      "sha256": "aab36f2f9152804c8fdbc1336f0e285f58a5b2f1de1c1125d54c7ec11d3ee87a",
+      "bytes": 311746
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emotiontalk_predictions.json",
+      "sha256": "8ea0443b6c8e45ac28ec3377761f02113fd84d6cf4d47da7187324542e3de622",
+      "bytes": 3116
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emovo_predictions.csv",
+      "sha256": "a31b4b90df28e30603be66804a1f44d939007363c62c8e877b99cab7ff18e8dc",
+      "bytes": 69593
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emovo_predictions.json",
+      "sha256": "190efbf8a55a1dde799326bf982d929287bf853c18568abdbc342da146492c91",
+      "bytes": 3145
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emozionalmente_predictions.csv",
+      "sha256": "95cfdb0733b83a7c907292e0abd41fddd13fa6a2f4906ac2f15ff09e39307cb6",
+      "bytes": 1117235
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/emozionalmente_predictions.json",
+      "sha256": "6d6db483c7b0df51c47ac7af485d9b2b6ac836021f756d80e532f0a4a5ab0a02",
+      "bytes": 3596
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.csv",
+      "sha256": "d005ca1d22af01de7757864b32bda10832548397f8dbf946df7b6b76076ed45b",
+      "bytes": 216938
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.json",
+      "sha256": "e439a5b93614cd7067e71f9941d27c5512bf0a562d27b1a9eb0c75531059e965",
+      "bytes": 3060
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.csv",
+      "sha256": "0c4259a52336449fd53720db0b89334e9a6842aa25d808e42bf9815f08e06e6f",
+      "bytes": 902062
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.json",
+      "sha256": "3833017667569df50b842a94600717138bb043c862629d08989a19217fce3e41",
+      "bytes": 3395
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mead_predictions.csv",
+      "sha256": "327d1a0d08e64b8c3460b78d1e6ed52a7b4e9c9b44e5777db431b5f350ae0e10",
+      "bytes": 1028030
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mead_predictions.json",
+      "sha256": "33ece5c7d724c8d7ef56d08a6bd4f84767b7ef2f6081f9a5aff6cb10e8d2fc0d",
+      "bytes": 3231
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/meld_predictions.csv",
+      "sha256": "777dccf4a67f4736c1d6b342f7c42c22fce700b7a4cf660c124e01b86204d4e7",
+      "bytes": 301482
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/meld_predictions.json",
+      "sha256": "0545c845047841f89495f6e273cfa4f68dd9e1932acd1e4bc3964b090c53a339",
+      "bytes": 3176
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mess_predictions.csv",
+      "sha256": "1b305a0194b27b82ee1047e0fad3f0600b8c5bd4585ad4731ba6d3f2d97b8da3",
+      "bytes": 206094
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mess_predictions.json",
+      "sha256": "9599b667e3277dc017ca5314264935a287d73e6a2992df27ae203ad817286e90",
+      "bytes": 2887
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/multidialog_predictions.csv",
+      "sha256": "bb7b6aedda6496231391a784eb485d6424efc016501732c9fcba9252799c213a",
+      "bytes": 1565328
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/multidialog_predictions.json",
+      "sha256": "ef00358e3df80cf6874e1ee17d55160735d3701a3c2a7be30f591b7393a5fe32",
+      "bytes": 3201
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/nemo_predictions.csv",
+      "sha256": "1e3b167d14f47f92e80815e36d14ed73319110f54d66df1cf28a51426c5e32f7",
+      "bytes": 532741
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/nemo_predictions.json",
+      "sha256": "d0b40601dced2cc248128db94fc9142ef6cda589f21c4a93a58f3125aad53c13",
+      "bytes": 3024
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.csv",
+      "sha256": "771315a1c1c70a06b6f0be3a43b80365c0544e3c568fc3c2c8955ddec7804b33",
+      "bytes": 197712
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.json",
+      "sha256": "f2f583cf67e9faed35c2cdf3eba67cb6f3f92027464bc76ae1514992aba5a8d2",
+      "bytes": 3163
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/savee_predictions.csv",
+      "sha256": "25eb9f88e48bd4dd283789771177b4e9e11e7364c7602b461d91f7cf61177ad9",
+      "bytes": 56537
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/savee_predictions.json",
+      "sha256": "d3bcd4063e1da6552d6306d9f85d8f82869cbc88460c9c4cf2851af44e6cab1a",
+      "bytes": 3166
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/tess_predictions.csv",
+      "sha256": "05e42a3b85c01e684e3d88befd98e06669918ecef25de87ee8d7256e87aba066",
+      "bytes": 311986
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/tess_predictions.json",
+      "sha256": "f70686e859886a86aaeaff843b39d0ce61dda96653cf90e1e460006f1ddca525",
+      "bytes": 3153
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/thai_ser_predictions.csv",
+      "sha256": "4868770f4773556f5747e5ea6a1aec85b0751b02a00ff4a4c6dbb4ac42fb1c89",
+      "bytes": 1748773
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/thai_ser_predictions.json",
+      "sha256": "0540d4c988c42e139425ec765dd261b3f6a14f0ab29426e7e806673165613c15",
+      "bytes": 3382
+    },
+    {
+      "path": "outputs/gemma4_e4b/meld_predictions.csv",
+      "sha256": "d14695e0250fa2544534e2af90eee8dbf58d069f18a36b12e4dab2e95f167a5e",
+      "bytes": 491434
+    },
+    {
+      "path": "outputs/gemma4_e4b/meld_predictions.json",
+      "sha256": "67f164b466cee23a13761122649b427e7b261b4a8e383044214290a2a5814d72",
+      "bytes": 3937
+    },
+    {
+      "path": "outputs/gpt_realtime/crema_d_predictions.csv",
+      "sha256": "e4ce68b8f41d5c59d356b6f510aedec701eabcbc16074629a6b6d34ed8b5c4bc",
+      "bytes": 1054556
+    },
+    {
+      "path": "outputs/gpt_realtime/crema_d_predictions.json",
+      "sha256": "58308a83ea2a49afb43ee1480ea50ffbdacaddb3d32b3b9898a7024fb942edd4",
+      "bytes": 3288
+    },
+    {
+      "path": "outputs/gpt_realtime/dailytalk_predictions.csv",
+      "sha256": "720a6fdca1e8785f8fa46819b50a6b6638afd571fe2556719afb4c8562835b09",
+      "bytes": 147393
+    },
+    {
+      "path": "outputs/gpt_realtime/dailytalk_predictions.json",
+      "sha256": "2510e01b1532c4eb7004c79a6529ee61b753d5cfa603044a70fdb60ddc4e2d58",
+      "bytes": 2995
+    },
+    {
+      "path": "outputs/gpt_realtime/emotiontalk_predictions.csv",
+      "sha256": "08e96150eb83dfdf191fca40c7e23b92dac42187ce685d0b9b3f61c1fb859c26",
+      "bytes": 312514
+    },
+    {
+      "path": "outputs/gpt_realtime/emotiontalk_predictions.json",
+      "sha256": "67ed6c9cbf2679b2436c9a103f4f720fb5b4e448e89156a0563b684b3f5643ae",
+      "bytes": 2937
+    },
+    {
+      "path": "outputs/gpt_realtime/emovo_predictions.csv",
+      "sha256": "f64084bf6445f37750d0e931b944c65ff7b53ff53c775bd4dda9de9e0d48fbd8",
+      "bytes": 70634
+    },
+    {
+      "path": "outputs/gpt_realtime/emovo_predictions.json",
+      "sha256": "45a20840634f99d9ec97c822eb17dc3f31f1f317ce5c1bab7582626c81496b7e",
+      "bytes": 2923
+    },
+    {
+      "path": "outputs/gpt_realtime/emozionalmente_predictions.csv",
+      "sha256": "3ebd09175e8a864ea68cbdeb9842509a3cd50dd91374d96a356b7d4c84e920b3",
+      "bytes": 1134787
+    },
+    {
+      "path": "outputs/gpt_realtime/emozionalmente_predictions.json",
+      "sha256": "67dbfea2831e64679ce7c8e1e7020189ba8db289b8e30cd460593071f28fb773",
+      "bytes": 3322
+    },
+    {
+      "path": "outputs/gpt_realtime/jl_corpus_predictions.csv",
+      "sha256": "a2a55805afd6ad23be7b0498cf6af3345386b8b14b2b7b51d21c707c3bd136c4",
+      "bytes": 218395
+    },
+    {
+      "path": "outputs/gpt_realtime/jl_corpus_predictions.json",
+      "sha256": "3852bb18b820eae26068351d6459f271c29de413a9a094d884c0b66a4b7cf09f",
+      "bytes": 2785
+    },
+    {
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.csv",
+      "sha256": "e6c0f361bb0d07adae76e7529fa66d55f4bb0327e78e2d68d3f76e9cf4e4b3aa",
+      "bytes": 915388
+    },
+    {
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.json",
+      "sha256": "26c7bbe14466027c1d26e7a1f74d5a8081a405d4f053733fd1e6eb98cdb14317",
+      "bytes": 3320
+    },
+    {
+      "path": "outputs/gpt_realtime/mead_predictions.csv",
+      "sha256": "02befd2230fd2c223439d334de71842b56ce76f65335f72b884f69b0da786119",
+      "bytes": 1032592
+    },
+    {
+      "path": "outputs/gpt_realtime/mead_predictions.json",
+      "sha256": "194d24b0884ea17d97d69bcb40b6d7ca4068a6efd8fc0f9e377af487803678ab",
+      "bytes": 2956
+    },
+    {
+      "path": "outputs/gpt_realtime/meld_predictions.csv",
+      "sha256": "e610efed5c8c44160eb661a8f28441af1fc17f923208ce5e1a336675a8e8abed",
+      "bytes": 302703
+    },
+    {
+      "path": "outputs/gpt_realtime/meld_predictions.json",
+      "sha256": "191f700a3fa214e3f55a16f30b8764e1842e288f4122a23fe81c159b6210d9ea",
+      "bytes": 2956
+    },
+    {
+      "path": "outputs/gpt_realtime/mess_predictions.csv",
+      "sha256": "b63cfd9e8c476b668ed0035a8124b755e36b1c9e3dc8b869501e615b1324c588",
+      "bytes": 208268
+    },
+    {
+      "path": "outputs/gpt_realtime/mess_predictions.json",
+      "sha256": "1a4973f024ecc88191efe2e8b96ddf7c142e05c894a0a4a8b0f55de9a41a5bb7",
+      "bytes": 2667
+    },
+    {
+      "path": "outputs/gpt_realtime/multidialog_predictions.csv",
+      "sha256": "cc80e9ca49e6e0fbcb6a6e169a052827e4ad9c2fd82039760aaff4b4aaa6220c",
+      "bytes": 1565653
+    },
+    {
+      "path": "outputs/gpt_realtime/multidialog_predictions.json",
+      "sha256": "0e1c5496e70ee7aff65255f668e9fa0973711aedf4b4d449fe13887b645a2600",
+      "bytes": 2962
+    },
+    {
+      "path": "outputs/gpt_realtime/nemo_predictions.csv",
+      "sha256": "88c3ccb8e90170ea8d743e2aa9e5958bbcef0602fbec4f237d74991fdd3d0655",
+      "bytes": 534959
+    },
+    {
+      "path": "outputs/gpt_realtime/nemo_predictions.json",
+      "sha256": "e375ba1c00b590f977199f935eb664d8eeab616d752be1ce3f6fb7c2e26bb5bf",
+      "bytes": 2692
+    },
+    {
+      "path": "outputs/gpt_realtime/ravdess_predictions.csv",
+      "sha256": "f76443a27122883777b8656925806c10517e3724ef6223dcf1d9d24acc1221f8",
+      "bytes": 200231
+    },
+    {
+      "path": "outputs/gpt_realtime/ravdess_predictions.json",
+      "sha256": "1bc36c34c718922aba5f4b37ae5ce49b9f4b7298f458dda932e24a833cba9eee",
+      "bytes": 2889
+    },
+    {
+      "path": "outputs/gpt_realtime/savee_predictions.csv",
+      "sha256": "0c0772c19ad7879aa3de2f6ea3a32d128459f80bc36afa104a6b34655a89d657",
+      "bytes": 56562
+    },
+    {
+      "path": "outputs/gpt_realtime/savee_predictions.json",
+      "sha256": "5a2bdd24be403ad75563b134344c499b4101333d32d908f738d749a601883dee",
+      "bytes": 2949
+    },
+    {
+      "path": "outputs/gpt_realtime/tess_predictions.csv",
+      "sha256": "4346b6fc67addabde32359fba62ad9b4b15e3c579fe4a4dbd3125ac51f92efbb",
+      "bytes": 322293
+    },
+    {
+      "path": "outputs/gpt_realtime/tess_predictions.json",
+      "sha256": "59ae3316e87d02a45933bd4949530c51eb5266926b4ba821a810b14b13677a3f",
+      "bytes": 2878
+    },
+    {
+      "path": "outputs/gpt_realtime/thai_ser_predictions.csv",
+      "sha256": "ceb97d2a92880b3597a0b29da5445e488eab016f5f47aec7bc4cd7dd63b563bd",
+      "bytes": 1765332
+    },
+    {
+      "path": "outputs/gpt_realtime/thai_ser_predictions.json",
+      "sha256": "7266e0a39448518e1cb386f8690a0b520813713e40553300a89793f48488afc7",
+      "bytes": 3107
+    },
+    {
+      "path": "outputs/melati_emotion/crema_d_predictions.csv",
+      "sha256": "8580f8d4d3f9ee59f427970b9c92666b31e5244c8db1e95bca80ad5aa87a5143",
+      "bytes": 985767
+    },
+    {
+      "path": "outputs/melati_emotion/crema_d_predictions.json",
+      "sha256": "41656adde3a0a670e13bb24bfce1fad1b93517c27cfd6de9109be17339ac13d1",
+      "bytes": 2588
+    },
+    {
+      "path": "outputs/melati_emotion/dailytalk_predictions.csv",
+      "sha256": "f2fa8774f122493789949e36bf7b0388351955f747184a9a8126e7075fd73b82",
+      "bytes": 138879
+    },
+    {
+      "path": "outputs/melati_emotion/dailytalk_predictions.json",
+      "sha256": "8fd1d095709fca94c97851550f8b7805d86771f879450fba8ba3ba26ad2f34a8",
+      "bytes": 2793
+    },
+    {
+      "path": "outputs/melati_emotion/emotiontalk_predictions.csv",
+      "sha256": "194313a7d9630a3697221c36230c80aa78687622925fc2a912590580cf4bf9bc",
+      "bytes": 298118
+    },
+    {
+      "path": "outputs/melati_emotion/emotiontalk_predictions.json",
+      "sha256": "25a8a346f68f772278def11fc047d683df772e41f5e4ca9d1884e7383afa8d37",
+      "bytes": 2734
+    },
+    {
+      "path": "outputs/melati_emotion/emovo_predictions.csv",
+      "sha256": "dd354d02869f7f904e9965b75ac589954ead421fde42770327e215b88d046e13",
+      "bytes": 65561
+    },
+    {
+      "path": "outputs/melati_emotion/emovo_predictions.json",
+      "sha256": "604fc929d15bec53d2f0e2af13ecf73af11c92c867d134a6a8a9ff3c713e57fb",
+      "bytes": 2766
+    },
+    {
+      "path": "outputs/melati_emotion/emozionalmente_predictions.csv",
+      "sha256": "8b235903075fad55cbda7d0087235925c0810e6f6dd54ed87414d06d043f7e21",
+      "bytes": 1076583
+    },
+    {
+      "path": "outputs/melati_emotion/emozionalmente_predictions.json",
+      "sha256": "feccea0749c07f0888e3d353b3e91611145a3eb31798b538a025ae584fa13d12",
+      "bytes": 3220
+    },
+    {
+      "path": "outputs/melati_emotion/jl_corpus_predictions.csv",
+      "sha256": "b163fd72b9cdbdaedbf65d4a6ef3b93a69017ab729791f5177d9d54e814ddceb",
+      "bytes": 205604
+    },
+    {
+      "path": "outputs/melati_emotion/jl_corpus_predictions.json",
+      "sha256": "ba103fc9fa91d8e70ecef55fc35f6b80e8148b9351ce6dd2e5d00678e7435b05",
+      "bytes": 2164
+    },
+    {
+      "path": "outputs/melati_emotion/mcae_spps_predictions.csv",
+      "sha256": "8d6dff666db8cc730ffdf25bf3fc5c595c850f2a766ba3e602dd53f00b164b07",
+      "bytes": 843201
+    },
+    {
+      "path": "outputs/melati_emotion/mcae_spps_predictions.json",
+      "sha256": "4bbeca55c6850c8b71cbd84fd53e5df22c2eb3b08459e80e0e2323c57e50ff7c",
+      "bytes": 2590
+    },
+    {
+      "path": "outputs/melati_emotion/mead_predictions.csv",
+      "sha256": "053d6baf763273acafe142dd4d0424b1af117b066806d427ad81ca9f2790264e",
+      "bytes": 965540
+    },
+    {
+      "path": "outputs/melati_emotion/mead_predictions.json",
+      "sha256": "7b1886bbf3fd49d1bf489d4b30734702dad6fe4638ae435e6034db4169937ad5",
+      "bytes": 2795
+    },
+    {
+      "path": "outputs/melati_emotion/meld_predictions.csv",
+      "sha256": "28235a6a890815080c430eeaab35c502a39318ed5fdd5592fab302dd0c4e810f",
+      "bytes": 281282
+    },
+    {
+      "path": "outputs/melati_emotion/meld_predictions.json",
+      "sha256": "a740041ad266de0a7d280a9f0ab8b5f5ba2f80ea0527add1be4792918969e17a",
+      "bytes": 2795
+    },
+    {
+      "path": "outputs/melati_emotion/mess_predictions.csv",
+      "sha256": "e1708841e0fecbfb2ebcf1e68ff83d2616a2f9d8c34384896f9cd055bcf5cb04",
+      "bytes": 191856
+    },
+    {
+      "path": "outputs/melati_emotion/mess_predictions.json",
+      "sha256": "0ba139d61f27426a64632f2035ab72018c7c3c8d1cc1221518044a849913fb50",
+      "bytes": 2025
+    },
+    {
+      "path": "outputs/melati_emotion/multidialog_predictions.csv",
+      "sha256": "ae7fd58b02f6001a436fbf4d5764926791d186af2dd7b2b0425b56012e17d467",
+      "bytes": 1508944
+    },
+    {
+      "path": "outputs/melati_emotion/multidialog_predictions.json",
+      "sha256": "573230bf595f4a4562401058745ba0dfd4551f32fa696853b499d39ba578d3bc",
+      "bytes": 2765
+    },
+    {
+      "path": "outputs/melati_emotion/nemo_predictions.csv",
+      "sha256": "4a1867ab24d1dc7403cca6699f7c5647930dfd5f7a6ce5279e76f0c24c55cfc4",
+      "bytes": 491204
+    },
+    {
+      "path": "outputs/melati_emotion/nemo_predictions.json",
+      "sha256": "61684241c03a86171213b7d4aefe0b827b337da62691358ec0226cf5dad67707",
+      "bytes": 2900
+    },
+    {
+      "path": "outputs/melati_emotion/ravdess_predictions.csv",
+      "sha256": "82a2b8d0736babf5f12bce3035c811a37d6795c8c59d0c5658b3791fbfaf8679",
+      "bytes": 184557
+    },
+    {
+      "path": "outputs/melati_emotion/ravdess_predictions.json",
+      "sha256": "1981cad44a8438da743b4e9658b849556c410b2029b2054829f84e496de82e81",
+      "bytes": 2216
+    },
+    {
+      "path": "outputs/melati_emotion/savee_predictions.csv",
+      "sha256": "016e6797829030b7d58fcdcad06f6b7d97ace6ce01273516256da9392265101a",
+      "bytes": 52160
+    },
+    {
+      "path": "outputs/melati_emotion/savee_predictions.json",
+      "sha256": "2d0afe3b61739da6c32c9b748492841d9a55c6ec77219921151b631115d3ace9",
+      "bytes": 2785
+    },
+    {
+      "path": "outputs/melati_emotion/tess_predictions.csv",
+      "sha256": "5d341b9223ecee1a513d79be6577fedd471177d38fd8c9bdd63497416e926fe9",
+      "bytes": 288281
+    },
+    {
+      "path": "outputs/melati_emotion/tess_predictions.json",
+      "sha256": "3faae61e479a08b520462e763d4b1d5b1655d7cd79f653fc0949f5b1a38eaa4f",
+      "bytes": 2206
+    },
+    {
+      "path": "outputs/melati_emotion/thai_ser_predictions.csv",
+      "sha256": "5b311206fee1b7d0c527c21a23dd03e4e4c1aec838c5472b82e69975ded209e2",
+      "bytes": 1665502
+    },
+    {
+      "path": "outputs/melati_emotion/thai_ser_predictions.json",
+      "sha256": "4a0eca9683042b639bf5ac95d9f10d3b659c00710286eba9d695c1249012b52c",
+      "bytes": 3031
+    },
+    {
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.csv",
+      "sha256": "384e24cf74d93423d88f91bf344e56d10d0b04d7fd948ea3f6c3dff4bbc6fa28",
+      "bytes": 984434
+    },
+    {
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.json",
+      "sha256": "42d192ccb5f43b98dcb8b664a118b3e08b0f8df8c49bdf78a8c104e777f9b25d",
+      "bytes": 2570
+    },
+    {
+      "path": "outputs/meralion_ser_v1/dailytalk_predictions.csv",
+      "sha256": "af8ae7261197b6a8658d9e5c2fdf74537f15fb4a87046933a11fb6eabf95e61d",
+      "bytes": 138943
+    },
+    {
+      "path": "outputs/meralion_ser_v1/dailytalk_predictions.json",
+      "sha256": "c8a764d597623786527ae95bd3a7703219e2b806a7ce269c6e4dc2ec20d06902",
+      "bytes": 2533
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emotiontalk_predictions.csv",
+      "sha256": "a96faa5f75ed606cc5038b33d577846d56de16ccf50557a3ffa3d88ad9179e64",
+      "bytes": 298631
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emotiontalk_predictions.json",
+      "sha256": "9d946815d4923351e84bc33deea3cfb5fe7024d8b2da7a4896957d048935b3bc",
+      "bytes": 2471
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emovo_predictions.csv",
+      "sha256": "d8c71e5096e66ebafc983df49d1f48f80826813bff4ce1223b2e6c6e47f1a4f2",
+      "bytes": 64795
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emovo_predictions.json",
+      "sha256": "9b0c59856ec27e10d3080381a3b575b8009497a5dd18defc20b0871353d82480",
+      "bytes": 2726
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emozionalmente_predictions.csv",
+      "sha256": "86689ffa65e51977ece19ce7a028126d09fbfce36a88df06888bbb79d914a38b",
+      "bytes": 1059789
+    },
+    {
+      "path": "outputs/meralion_ser_v1/emozionalmente_predictions.json",
+      "sha256": "c0adfb56de564c42708132ea4a6d6aa5092c33474c98b9c9162291e055a58bf2",
+      "bytes": 3177
+    },
+    {
+      "path": "outputs/meralion_ser_v1/jl_corpus_predictions.csv",
+      "sha256": "affb26bf0e9aecb51b787d82b34e8c5350bdfaeebeff60418e32b9e9403eed51",
+      "bytes": 205719
+    },
+    {
+      "path": "outputs/meralion_ser_v1/jl_corpus_predictions.json",
+      "sha256": "f002d2be2b11242a5e1a7797ea3f79ff1d0da002aff76d018155ce6bc209f15a",
+      "bytes": 2366
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.csv",
+      "sha256": "ed98f6d4648c6d9de744e3ebb88769aaeb9ad6a41e58959890c6ac2ebda3fb8e",
+      "bytes": 848581
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.json",
+      "sha256": "cfc31ccfdda6ea43c2701d0903561f663624e2dbb0652b628f127ea96f26b225",
+      "bytes": 2572
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mead_predictions.csv",
+      "sha256": "f6a531579794911bc34d98073a070fed818f6d596d7ce0fffaee19f15295fc6c",
+      "bytes": 963181
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mead_predictions.json",
+      "sha256": "81cb423e196bcd11b8f7cb8cc980f8d7033e8d9b91c530f91c52d1a5c2a86b22",
+      "bytes": 2753
+    },
+    {
+      "path": "outputs/meralion_ser_v1/meld_predictions.csv",
+      "sha256": "16b408c4f91a2d074857aa73f8d3e3281819b250b18e606093662817be47ae9b",
+      "bytes": 285224
+    },
+    {
+      "path": "outputs/meralion_ser_v1/meld_predictions.json",
+      "sha256": "4c7fd6cd1b4438de9e51787d2f2b455890a6baee3a45dfbdf7ae4f06387b3670",
+      "bytes": 2537
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mess_predictions.csv",
+      "sha256": "7e4b05d3e5bfe4740c04b94ea07a674b0bc665f927ae316601fe76ca6a8180b8",
+      "bytes": 186945
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mess_predictions.json",
+      "sha256": "23303c844cf4922b76646c4ab453b4c8419d3daa819abb98f79562bea31c30df",
+      "bytes": 1994
+    },
+    {
+      "path": "outputs/meralion_ser_v1/multidialog_predictions.csv",
+      "sha256": "71550caa9a490e08f35edc8a07370af395aef9ceb34f386f0acd9dfb2879af10",
+      "bytes": 1510005
+    },
+    {
+      "path": "outputs/meralion_ser_v1/multidialog_predictions.json",
+      "sha256": "ded86e760e5c0cc73aba7777ab47dedb75ea1afe11f7f06ca682c8059a9d2bcc",
+      "bytes": 2505
+    },
+    {
+      "path": "outputs/meralion_ser_v1/nemo_predictions.csv",
+      "sha256": "273bc42ec108c6f60998e081787419714871b9ef447c5f85d632fa7e607e192d",
+      "bytes": 490289
+    },
+    {
+      "path": "outputs/meralion_ser_v1/nemo_predictions.json",
+      "sha256": "434d776043450cf6113264058a99d51902df58fa4f25872e32ed69763acd1fc2",
+      "bytes": 2357
+    },
+    {
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.csv",
+      "sha256": "f7940e006f29e64db79cdfc39d804513a75b215cc70ca32cd5b79f62b46a556b",
+      "bytes": 185592
+    },
+    {
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.json",
+      "sha256": "5520446d884ff25f8600109cdafcf0b817758dad4d1159b10124c9a5402c0bf3",
+      "bytes": 2413
+    },
+    {
+      "path": "outputs/meralion_ser_v1/savee_predictions.csv",
+      "sha256": "e1fde60a3cc5bdb97f01f40e7c6461cfa700abed11dacf7924be9c9e8e4da5c7",
+      "bytes": 52325
+    },
+    {
+      "path": "outputs/meralion_ser_v1/savee_predictions.json",
+      "sha256": "c29513a124cfb1a279af9bfded3c71744bf1e9da23611c948d01db1d22680649",
+      "bytes": 2749
+    },
+    {
+      "path": "outputs/meralion_ser_v1/tess_predictions.csv",
+      "sha256": "e2ebd396015fa30a0405c80c89685f8f2f09ce2bd2c415d184861ac2d22c2ce9",
+      "bytes": 290418
+    },
+    {
+      "path": "outputs/meralion_ser_v1/tess_predictions.json",
+      "sha256": "7338f9b4240003ffc65c418376a823eb143a1b57e763fc0ea167c2689a5ee5cb",
+      "bytes": 2397
+    },
+    {
+      "path": "outputs/meralion_ser_v1/thai_ser_predictions.csv",
+      "sha256": "072709e0393701c081211e0e886707514b01bfec462f3cd31b41222c56458ec9",
+      "bytes": 1660259
+    },
+    {
+      "path": "outputs/meralion_ser_v1/thai_ser_predictions.json",
+      "sha256": "6377cb51988ed23ac6e317ed28e18af444a52c2a7a5d8428765cccf2e099dda6",
+      "bytes": 2771
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.csv",
+      "sha256": "9b885b7fe52d61bd7240c42921dc82b8e05e3aa3be85e0cabbc34bf874e6292c",
+      "bytes": 1520433
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.json",
+      "sha256": "3fed5e7dde48b562601dbb0093c1b2e051dddb20e15f25190ea7e53f2647ed58",
+      "bytes": 4287
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.csv",
+      "sha256": "e7b423213359d839dc28c386326a9f9a6b6e581e88617758b7b9da0ff697e1e3",
+      "bytes": 233739
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.json",
+      "sha256": "2e3b6d26b3a9c48fb1f410100217658ad5033bcbae8d4fe6ec8de0cf086377bb",
+      "bytes": 4020
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.csv",
+      "sha256": "82ddb5ec234259ef56257d010c8fc67d340b6d25d6385016ed8e1951a11e9ac6",
+      "bytes": 451583
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.json",
+      "sha256": "169c24eaa96a62cb582ff1d88fdaf2378b0cba882f38839a8629df0e84f1e476",
+      "bytes": 3964
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emovo_predictions.csv",
+      "sha256": "f46848ed5fe2d3e8228ba34670c4e313a2894485c72830e0808f433ce6a7314e",
+      "bytes": 113056
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emovo_predictions.json",
+      "sha256": "3a8c8ef8ad794574b86f795558f3e17c17e4b417c8e51a1a100489149aeaea98",
+      "bytes": 3936
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.csv",
+      "sha256": "41cd9a7c9456d84d11fb26651fbc0b875e5556c29aa7b805448c48ac5335090b",
+      "bytes": 1629650
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.json",
+      "sha256": "982363de32cb296895983195667d197ad4f79c44ce5612d55e346180be5615ad",
+      "bytes": 4388
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/jl_corpus_predictions.csv",
+      "sha256": "2040bf56e43304c6a70ad32c9237a16e254c35ec1353e884f2441eb4999fe769",
+      "bytes": 282846
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/jl_corpus_predictions.json",
+      "sha256": "26fe015d4ae926f108c1f4b701d983ecf9a4854289511fc76589fd22752c4f29",
+      "bytes": 3830
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.csv",
+      "sha256": "8be45bf6ad0b17068c0e686157c9e482c1ea5c9da4a6386ff99b4ab24098cecc",
+      "bytes": 1388131
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.json",
+      "sha256": "cc11e5b6250e2cf142acd9a153c4d50abcb0889057181b6a344063a742a4b80f",
+      "bytes": 4332
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mead_predictions.csv",
+      "sha256": "d02dadf45ba7bc391e99d3d756d70c061276a46d0449d78f3778790600cabaa0",
+      "bytes": 1610252
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mead_predictions.json",
+      "sha256": "4aa9948aad15ed283e8c281a98db798232369dca90b39e2de0fed888ad474ed5",
+      "bytes": 3959
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/meld_predictions.csv",
+      "sha256": "c1c9a9b73370402dfe441e041821ef40f346cd50137a5f82f20bc2d311f87f02",
+      "bytes": 491998
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/meld_predictions.json",
+      "sha256": "2e3dba49a4183bf28d6ef57c42d10871e6f25d399780f63b22c4cfcb218d5ae8",
+      "bytes": 4023
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.csv",
+      "sha256": "76355fd2a34c81bf7290d0b7321794b740048fb7e6d8cbcc47ba70b417359cba",
+      "bytes": 289451
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.json",
+      "sha256": "bb1705fe8416555d8cfb9df7c7639b7f14d05a28deda499f9e768849883c8b41",
+      "bytes": 3647
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/multidialog_predictions.csv",
+      "sha256": "902fd703731cf4c566cb911ca7c58111080b54bba58f2ededdce51a5158b174a",
+      "bytes": 2119092
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/multidialog_predictions.json",
+      "sha256": "ba8e513a26e2e6f83c61c0a14ba72ee9ac6e08f534951efe7be91851fcb5b842",
+      "bytes": 3990
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/nemo_predictions.csv",
+      "sha256": "e016a6b88ab7a9ab91eaa5802ff774e066cb722c3baf228bfd15201ef7d75ae0",
+      "bytes": 805839
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/nemo_predictions.json",
+      "sha256": "10589de46d170cf70e12d58dd461a51154fc1354d85d66a3df04c6a538a94360",
+      "bytes": 3804
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.csv",
+      "sha256": "64943a8d42991b655bab5fc26fc2dfeabcb42b193a45e88b36c6cf0c81d0ce3c",
+      "bytes": 303101
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.json",
+      "sha256": "609a69143365c82a860e9c3c8c2cc1c0e706985f9604eb1fa9836652e633b2a1",
+      "bytes": 3951
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/savee_predictions.csv",
+      "sha256": "4ff0055a8b5864f7c6d4681de9842ae52a03ac72d0c7715705b3c1af3b37d044",
+      "bytes": 91485
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/savee_predictions.json",
+      "sha256": "0ef0acabe859779337e24ff5bcab7e9a47a42ec2dfd2e3bbe4b94567c9ad872a",
+      "bytes": 3955
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/tess_predictions.csv",
+      "sha256": "a39bc8beb613090eb0e51d2d8d9092206b625eb020d60a06dc11477450ac3dd6",
+      "bytes": 521808
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/tess_predictions.json",
+      "sha256": "d0f4eba565fb4f3b8b33c3fa1140f3911d60758c6d6eda801cafe859bfc33d9b",
+      "bytes": 3944
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.csv",
+      "sha256": "65688bcf713d341b6843511f5eebfcea1a31561d38048b843311766c83ae4e42",
+      "bytes": 2291623
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.json",
+      "sha256": "ba6536b54f64d842f77c7cc24d9f02fb68d7c0f4010d4a547b02b68e47b70a94",
+      "bytes": 4087
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/crema_d_predictions.csv",
+      "sha256": "4a8b9eb4ff4157321b3da66c933ec23a88efbd1e8036713d04a3755769c61795",
+      "bytes": 1506581
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/crema_d_predictions.json",
+      "sha256": "0352f7d70484c35f60fb9d6567465101e4ef23902f880b0b31a0f7d1063a65dd",
+      "bytes": 4409
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.csv",
+      "sha256": "401779472ed88fb1df70764083cf7af1ac0824b63e00ca24aba96a964464645f",
+      "bytes": 1379067
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.json",
+      "sha256": "07d6ae2b07fe00c6c6f7b1eb6cfec49fe973fe35a40e1d36f21fc00c69e1dd48",
+      "bytes": 4454
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/meld_predictions.csv",
+      "sha256": "660a7ddccc0a8c145fdcb603d1d9030529008bd206a51119e630a9dc5accd77c",
+      "bytes": 491204
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/meld_predictions.json",
+      "sha256": "a6d324b8a5454fbbe96c80adedf7d1da47974f6cbb7969686945cd7f3120a97a",
+      "bytes": 4062
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mess_predictions.csv",
+      "sha256": "f580986439ea9bcf1efd295e50373be9f280145f6da6965036ae9feb265eb15d",
+      "bytes": 284828
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mess_predictions.json",
+      "sha256": "a408b05b1b4f5cb9e0a7ef32957d6579bdda45eaed7027f6d50f0f4f061d8cc6",
+      "bytes": 3761
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/nemo_predictions.csv",
+      "sha256": "518e66cd5f8da8fc25ff771b231398f4142655ccbc0b4e7c6bc2eb1d6cf1dca9",
+      "bytes": 810655
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/nemo_predictions.json",
+      "sha256": "07ff0f01d11a7be7a24f5c43702466dce8d770ee4937bc8d0dd1e988eea04171",
+      "bytes": 3870
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.csv",
+      "sha256": "416329492ffed5184edc3bb026f061232c131b16066cb1d9d45ddaeee87b706b",
+      "bytes": 302054
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
+      "sha256": "187d6019abcc96aa1fcd877919e26e21ee91eb7e93b3f6711831aa6fbac3173d",
+      "bytes": 4022
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/thai_ser_predictions.csv",
+      "sha256": "a7a31db749cab07220590c8d7ec316019fda28aef78dc1ae1a255b4f93dd8bae",
+      "bytes": 2322856
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/thai_ser_predictions.json",
+      "sha256": "8ebec4a1ae046c917f51381acd443bb780b89c0dc462afca6032f93329e1f162",
+      "bytes": 4206
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/crema_d_predictions.csv",
+      "sha256": "cb42026c0653127751c01512ad5426cdcb7a758849b2a98dd32544ad6aa27e98",
+      "bytes": 1094906
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/crema_d_predictions.json",
+      "sha256": "c446613681eac943a42086b859effb5cc08b55333cc4f12b7cd54bbcc8eefd38",
+      "bytes": 2555
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/dailytalk_predictions.csv",
+      "sha256": "7ed1cdc541f625defaa8ee1d07214ecee131e791a8be5dac9c00bd000d71e809",
+      "bytes": 156114
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/dailytalk_predictions.json",
+      "sha256": "c787efa8c76854699f3d3a90f7ceab2f32bdeea2cebd7cc7c750e3fd03210f72",
+      "bytes": 2681
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.csv",
+      "sha256": "2181ee71f21b1ed36cf0739bdbf2802e756a72c389582796777ddcf9002b100e",
+      "bytes": 326719
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emotiontalk_predictions.json",
+      "sha256": "ca34efcb7ea7a9a663c529fed75eaf4f1c9d97310f33072bd60f028e752c7cbe",
+      "bytes": 2624
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emovo_predictions.csv",
+      "sha256": "bce7135c691493b6c6398bb77116a4ddf194f441d1372c52a2253a9d9dc01a4c",
+      "bytes": 74466
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emovo_predictions.json",
+      "sha256": "84cd3fa0846f3bab79fa5fb40dd7295098e3108b8948d1707674564d29a836de",
+      "bytes": 2653
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emozionalmente_predictions.csv",
+      "sha256": "c2785bb288f40b6b2de2ee465d76b55709c9fe57d6f8e1f77b5ff0aaffb7a6cc",
+      "bytes": 1181689
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/emozionalmente_predictions.json",
+      "sha256": "4afdbfeb02039ef7ead5e8ab72dcf1879d89385a4e0b37940d23ffe76ffdc674",
+      "bytes": 3105
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/jl_corpus_predictions.csv",
+      "sha256": "a0df4d21104035b7c921c8a5aa152211b9494e3fd3ad9e94762a9af824a19f16",
+      "bytes": 225274
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/jl_corpus_predictions.json",
+      "sha256": "062a7caca7e03a0d109ea4fef160c9c3370c0fe577d9d59f7df25feaba84f681",
+      "bytes": 2130
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.csv",
+      "sha256": "ad14bef1e2056ccc3fe9c0593102fdb730310322a846e5b0ef3d638366ad89b9",
+      "bytes": 956065
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.json",
+      "sha256": "caf7e0e119ebf72ae366fe013fd8ee52b79ee20f360cb92ca65d44317889cf0d",
+      "bytes": 2561
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mead_predictions.csv",
+      "sha256": "a82225f17db4826f9995e3f99c974afd65439f9f1fbea8812008c4475ff47dd6",
+      "bytes": 1083716
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mead_predictions.json",
+      "sha256": "69843a099b7cfce68a0e394852e25b34278bf7a3d855d6e6be10363e726180c9",
+      "bytes": 2682
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/meld_predictions.csv",
+      "sha256": "2e505413f7f2cea238e8866cdca1c5a5d8ccda08920ca69c60d01de8da55c419",
+      "bytes": 321686
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/meld_predictions.json",
+      "sha256": "a77523c2cdedf67d6d09d1279bb797e030c626f88261e43f396cc5b6eb6ed93e",
+      "bytes": 2684
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mess_predictions.csv",
+      "sha256": "e55f60556d57a9171a74bce71c95552e6567ddd511eac768f1d600b1678833de",
+      "bytes": 220114
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mess_predictions.json",
+      "sha256": "77253e7a4ea3006d4f1b23c4f0dafa9682ecbed864f8a66f0a18de7a16941ed6",
+      "bytes": 1989
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/multidialog_predictions.csv",
+      "sha256": "10ae196aad65a3fbfbba9d487d2e11affab0a1b17058986b8b7af8c6ea38efac",
+      "bytes": 1621650
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/multidialog_predictions.json",
+      "sha256": "c63921c332a51ec81bf2537fe9936048bf155d0c3c09b02d90355ca94220e18e",
+      "bytes": 2652
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/nemo_predictions.csv",
+      "sha256": "82af64cfdd55d657a87e44bc8406b1852188466c8e406f8cc0c29d3d92af3677",
+      "bytes": 566651
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/nemo_predictions.json",
+      "sha256": "70313cb2a3603c12a186ad37c47e2b2febdc231e6a598b931f11f5bdee206824",
+      "bytes": 2504
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.csv",
+      "sha256": "ddf53c53a7e44e7e77e5cf7cc147fb3fb9afb68bc933756caea10db9fab78c90",
+      "bytes": 208694
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.json",
+      "sha256": "3a4e4f21ee8f3ac193056922166ca08154afa0cb8f5c57eb6846670d1db4a37e",
+      "bytes": 2182
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/savee_predictions.csv",
+      "sha256": "d5cde402e76dc558663bb91476a6eacaa0d0aeff126bd0112a67d3246ecc3341",
+      "bytes": 60104
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/savee_predictions.json",
+      "sha256": "6b1e52cb9586b22708bb1a9fcc34b413cfc77fe641555c4daffda10441017295",
+      "bytes": 2675
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/tess_predictions.csv",
+      "sha256": "c029f53179f70d333a2bb65a64affe592be9db269c7fbf9d657db35fb9fd206b",
+      "bytes": 337459
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/tess_predictions.json",
+      "sha256": "4f2b8b10f937f6651956b092808df8184771e6042855acb663f0d4949bf289d6",
+      "bytes": 2173
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/thai_ser_predictions.csv",
+      "sha256": "0610b61e8e5253d62a0ac4b619f5d9eec528daff24d962e9c96176d88b355297",
+      "bytes": 1850552
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/thai_ser_predictions.json",
+      "sha256": "2728fbd76c33d5bd7e7ef15e21ae8c602c0d5d75bf64d0951df40f86d58ac8df",
+      "bytes": 2920
+    },
+    {
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.csv",
+      "sha256": "939ee429750583f647a0e4e945097f7c1e2e17646345908f80a42c1b57167456",
+      "bytes": 1095221
+    },
+    {
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.json",
+      "sha256": "7a27e5e652786605b952134496f05768a2431acca117c7b8b67a0cfb85fc271e",
+      "bytes": 2496
+    },
+    {
+      "path": "outputs/vox_profile_whisper/dailytalk_predictions.csv",
+      "sha256": "11247bb6cc3694992d19c15424c9f990e9d4f05dec033a7dd916c4a25a37b333",
+      "bytes": 155646
+    },
+    {
+      "path": "outputs/vox_profile_whisper/dailytalk_predictions.json",
+      "sha256": "d28bb875fc5aca7c203b772914bdd0919d28746c1cdf72ea7306d4137c73ceb5",
+      "bytes": 2600
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emotiontalk_predictions.csv",
+      "sha256": "2aeeb2462bb22a697adcae310411af52a0c0f117883e39aef4434242b153a4c6",
+      "bytes": 326782
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emotiontalk_predictions.json",
+      "sha256": "e443af87ba9d526caacea26d0fcfff3fabc55e4994deaa4c5a537482e52d6023",
+      "bytes": 2542
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emovo_predictions.csv",
+      "sha256": "c41c9bfa502e4a06a03c3da3102c79305ac5fc1a129565c101692cfdb4bf2606",
+      "bytes": 74225
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emovo_predictions.json",
+      "sha256": "a2ade23102fdbfc6aba989a4231eabf3a702b03b74505d83b180e0508c2fc29b",
+      "bytes": 2573
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emozionalmente_predictions.csv",
+      "sha256": "a2d6e08822f1e7cb23aa7d09644baa4e4d1aea798937cee15e518a95f0368d1a",
+      "bytes": 1170069
+    },
+    {
+      "path": "outputs/vox_profile_whisper/emozionalmente_predictions.json",
+      "sha256": "3990ea31266312d1310af86744b20bf7591fc8da29f24acd3cab58aea39c87ac",
+      "bytes": 3025
+    },
+    {
+      "path": "outputs/vox_profile_whisper/jl_corpus_predictions.csv",
+      "sha256": "f9336a964fd10364dd1f839fbf57536f417ef88a770789a3d743f6463b5c6d64",
+      "bytes": 226650
+    },
+    {
+      "path": "outputs/vox_profile_whisper/jl_corpus_predictions.json",
+      "sha256": "55555e7ef1242e014baf028ec04299d2c18aad46ca20cd231dbd63508bed4ff8",
+      "bytes": 2075
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mcae_spps_predictions.csv",
+      "sha256": "4c46939faf9a688d87f2352fba8f6aeea3404f15a635f05282ab1b80354d9048",
+      "bytes": 953464
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mcae_spps_predictions.json",
+      "sha256": "1419ac48a43cb86c2d69ed5386f4f9cbfbded0f1bf317551dd6c2be395977972",
+      "bytes": 2501
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mead_predictions.csv",
+      "sha256": "acc73c3a0bd2dc0f2cb8537be83b5357e18cbe9d194ab2527bd5cf2a54788b04",
+      "bytes": 1080960
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mead_predictions.json",
+      "sha256": "f323b993949f854f9945e8b00d5fa7cfbd36d6922b14a80314fe8f9b639de685",
+      "bytes": 2601
+    },
+    {
+      "path": "outputs/vox_profile_whisper/meld_predictions.csv",
+      "sha256": "08f54c5f0d24363ba13daab3b052d487a7ff25c42df255b6f3de175023ab7457",
+      "bytes": 321962
+    },
+    {
+      "path": "outputs/vox_profile_whisper/meld_predictions.json",
+      "sha256": "fe4c917935a8f481f3002cdc99294b9fb1b3da81822899889a96b5bbb5410570",
+      "bytes": 2602
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mess_predictions.csv",
+      "sha256": "b94c0bac52daef5113ff0aaeb890613bcf5e1c93d57c0e0a06d3a52620a8d91d",
+      "bytes": 219515
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mess_predictions.json",
+      "sha256": "7b7ddb2388676c7c14bd3bceb37e2db78b48df2cce1e836f52d231cbcefe4936",
+      "bytes": 1932
+    },
+    {
+      "path": "outputs/vox_profile_whisper/multidialog_predictions.csv",
+      "sha256": "1f580b18bdf756c9a1a617ed6f10da06b144166a88a761f2d481e6a9b8f54b5b",
+      "bytes": 1620118
+    },
+    {
+      "path": "outputs/vox_profile_whisper/multidialog_predictions.json",
+      "sha256": "d8bfdd753970a16a563d4dbde09f31f81b8978510e668b9cc716668116c4f359",
+      "bytes": 2572
+    },
+    {
+      "path": "outputs/vox_profile_whisper/nemo_predictions.csv",
+      "sha256": "3649a8bffe37ea1c753b559b56189a485fb0152b8b8fc5832699ff32276e533a",
+      "bytes": 562771
+    },
+    {
+      "path": "outputs/vox_profile_whisper/nemo_predictions.json",
+      "sha256": "7423b56d7476446c9731f88cc434513303428f60c120b1acf1130ecc6ec3f2d3",
+      "bytes": 2425
+    },
+    {
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.csv",
+      "sha256": "b3042a1b66a913dbad1785d68f00f622ffdac96214d12ccd5f72656dbd637cfb",
+      "bytes": 208645
+    },
+    {
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.json",
+      "sha256": "63697d4ab3d748546abc10bbb0415a6bcd87de02fe553cccef8b43c1e1219aa3",
+      "bytes": 2122
+    },
+    {
+      "path": "outputs/vox_profile_whisper/savee_predictions.csv",
+      "sha256": "1ee80338bc7289e0746f2f10791c2d8f7b4632ad0275e050e1d06f358c6eb66d",
+      "bytes": 59811
+    },
+    {
+      "path": "outputs/vox_profile_whisper/savee_predictions.json",
+      "sha256": "c98d9b8223d2d8875f7f5e3223d4e5680111c1d1938549dc6a5c54012d7f6634",
+      "bytes": 2594
+    },
+    {
+      "path": "outputs/vox_profile_whisper/tess_predictions.csv",
+      "sha256": "b8cb143f48b16916289239299c65e0b5f0ab7db168c482f55d036bbe7795df1f",
+      "bytes": 334962
+    },
+    {
+      "path": "outputs/vox_profile_whisper/tess_predictions.json",
+      "sha256": "a7afa5cd34e00c349d1dd14bbfd665a5f926a7db00882679fad9bfd3573102b4",
+      "bytes": 2112
+    },
+    {
+      "path": "outputs/vox_profile_whisper/thai_ser_predictions.csv",
+      "sha256": "fa6a4b5168ab4c97ff940a5e35fa8ae33ea6e45f870704c267191c2697207509",
+      "bytes": 1838865
+    },
+    {
+      "path": "outputs/vox_profile_whisper/thai_ser_predictions.json",
+      "sha256": "437ee3f2199adb682982a23bcc5e7a0eeaab7bc6816a107f7d875874c9ee4494",
+      "bytes": 2838
+    }
+  ],
+  "cohorts": [
+    {
+      "dataset": "crema_d",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7442,
+      "union_samples": 7442,
+      "cohort_sha256": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+    },
+    {
+      "dataset": "mcae_spps",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6675,
+      "union_samples": 6675,
+      "cohort_sha256": "13e204753128687c791d4a4c0230d82e78de02e22e306fd1887ca2bb17ac3e1a"
+    },
+    {
+      "dataset": "thai_ser",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 11848,
+      "union_samples": 11848,
+      "cohort_sha256": "f8648b6352ba791573ae730c8a61eb2e26ae6238c4012fec74d2bbf3fad924ef"
+    },
+    {
+      "dataset": "nemo",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 4481,
+      "union_samples": 4481,
+      "cohort_sha256": "a6202f7f43a88c85741e865566346838acdb1006142fb05445c47bd718348857"
+    },
+    {
+      "dataset": "mess",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1800,
+      "union_samples": 1800,
+      "cohort_sha256": "9e1a1e7b2fdee25bd9078c076a09c6c0256e95788b1c9cf701fba7c8c6fe0eed"
+    },
+    {
+      "dataset": "ravdess",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1440,
+      "union_samples": 1440,
+      "cohort_sha256": "eb08dc4c6e5534792fa3ca863c8ffb7b32cb8f76e960ff13a68b85624e25265b"
+    },
+    {
+      "dataset": "tess",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2800,
+      "union_samples": 2800,
+      "cohort_sha256": "2f1ab1fc7d90f2e7c2d7a94c6ecc60e3fbe531ebd6ff330007bdf3079ac566bf"
+    },
+    {
+      "dataset": "jl_corpus",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1200,
+      "union_samples": 1200,
+      "cohort_sha256": "4112a7583a388fbd4cd99bd9facb9a208328dca9c4a21bb3097c07291f65f791"
+    },
+    {
+      "dataset": "mead",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 8000,
+      "union_samples": 8000,
+      "cohort_sha256": "a627bb183b2c294b56470956c077137d3b4e2423cffd5788c035b22351b4d27d"
+    },
+    {
+      "dataset": "meld",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2608,
+      "union_samples": 2608,
+      "cohort_sha256": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d"
+    },
+    {
+      "dataset": "emovo",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 588,
+      "union_samples": 588,
+      "cohort_sha256": "975fc83b4c54e1029106882e321bc8a908c1e9b90f53151056a082807c03a1dc"
+    },
+    {
+      "dataset": "emozionalmente",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6902,
+      "union_samples": 6902,
+      "cohort_sha256": "db44214c5589319e4f242a21f9202b78ba85e0ae49c5e295159be77f29bd4665"
+    },
+    {
+      "dataset": "savee",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 480,
+      "union_samples": 480,
+      "cohort_sha256": "bd7a5dfa208c8b6fa89dea03cfae21afe980f17c23a0b6600a6a31dbba8e8645"
+    },
+    {
+      "dataset": "emotiontalk",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1929,
+      "union_samples": 1929,
+      "cohort_sha256": "b65c5a601c0d0d3f83e3569b83447ab79d87f785cc30972fd3b6211d48c5b30f"
+    },
+    {
+      "dataset": "dailytalk",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1197,
+      "union_samples": 1197,
+      "cohort_sha256": "47ac8cd17ee62a0733722df8f56110df76a9a30330d88c9b39b966241d49059b"
+    },
+    {
+      "dataset": "multidialog",
+      "group": "SER5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7672,
+      "union_samples": 7672,
+      "cohort_sha256": "d5c15fc2967b301024c4f77452d5c8f3ea92b8a8e300fe8ec53f4fc75cd58fd2"
+    },
+    {
+      "dataset": "crema_d",
+      "group": "AudioLLM5",
+      "model_count": 4,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 7442,
+      "union_samples": 7442,
+      "cohort_sha256": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+    },
+    {
+      "dataset": "mcae_spps",
+      "group": "AudioLLM5",
+      "model_count": 4,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 6675,
+      "union_samples": 6675,
+      "cohort_sha256": "13e204753128687c791d4a4c0230d82e78de02e22e306fd1887ca2bb17ac3e1a"
+    },
+    {
+      "dataset": "thai_ser",
+      "group": "AudioLLM5",
+      "model_count": 4,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 11848,
+      "union_samples": 11848,
+      "cohort_sha256": "f8648b6352ba791573ae730c8a61eb2e26ae6238c4012fec74d2bbf3fad924ef"
+    },
+    {
+      "dataset": "nemo",
+      "group": "AudioLLM5",
+      "model_count": 4,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 4481,
+      "union_samples": 4481,
+      "cohort_sha256": "a6202f7f43a88c85741e865566346838acdb1006142fb05445c47bd718348857"
+    },
+    {
+      "dataset": "mess",
+      "group": "AudioLLM5",
+      "model_count": 4,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 1800,
+      "union_samples": 1800,
+      "cohort_sha256": "9e1a1e7b2fdee25bd9078c076a09c6c0256e95788b1c9cf701fba7c8c6fe0eed"
+    },
+    {
+      "dataset": "ravdess",
+      "group": "AudioLLM5",
+      "model_count": 4,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 1440,
+      "union_samples": 1440,
+      "cohort_sha256": "eb08dc4c6e5534792fa3ca863c8ffb7b32cb8f76e960ff13a68b85624e25265b"
+    },
+    {
+      "dataset": "tess",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 2800,
+      "union_samples": 2800,
+      "cohort_sha256": "2f1ab1fc7d90f2e7c2d7a94c6ecc60e3fbe531ebd6ff330007bdf3079ac566bf"
+    },
+    {
+      "dataset": "jl_corpus",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 1200,
+      "union_samples": 1200,
+      "cohort_sha256": "4112a7583a388fbd4cd99bd9facb9a208328dca9c4a21bb3097c07291f65f791"
+    },
+    {
+      "dataset": "mead",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 8000,
+      "union_samples": 8000,
+      "cohort_sha256": "a627bb183b2c294b56470956c077137d3b4e2423cffd5788c035b22351b4d27d"
+    },
+    {
+      "dataset": "meld",
+      "group": "AudioLLM5",
+      "model_count": 5,
+      "target_count": 5,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2608,
+      "union_samples": 2608,
+      "cohort_sha256": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d"
+    },
+    {
+      "dataset": "emovo",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 588,
+      "union_samples": 588,
+      "cohort_sha256": "975fc83b4c54e1029106882e321bc8a908c1e9b90f53151056a082807c03a1dc"
+    },
+    {
+      "dataset": "emozionalmente",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 6902,
+      "union_samples": 6902,
+      "cohort_sha256": "db44214c5589319e4f242a21f9202b78ba85e0ae49c5e295159be77f29bd4665"
+    },
+    {
+      "dataset": "savee",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 480,
+      "union_samples": 480,
+      "cohort_sha256": "bd7a5dfa208c8b6fa89dea03cfae21afe980f17c23a0b6600a6a31dbba8e8645"
+    },
+    {
+      "dataset": "emotiontalk",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 1929,
+      "union_samples": 1929,
+      "cohort_sha256": "b65c5a601c0d0d3f83e3569b83447ab79d87f785cc30972fd3b6211d48c5b30f"
+    },
+    {
+      "dataset": "dailytalk",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 1197,
+      "union_samples": 1197,
+      "cohort_sha256": "47ac8cd17ee62a0733722df8f56110df76a9a30330d88c9b39b966241d49059b"
+    },
+    {
+      "dataset": "multidialog",
+      "group": "AudioLLM5",
+      "model_count": 3,
+      "target_count": 5,
+      "complete": false,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": true,
+      "common_samples": 7672,
+      "union_samples": 7672,
+      "cohort_sha256": "d5c15fc2967b301024c4f77452d5c8f3ea92b8a8e300fe8ec53f4fc75cd58fd2"
+    },
+    {
+      "dataset": "crema_d",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7442,
+      "union_samples": 7442,
+      "cohort_sha256": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+    },
+    {
+      "dataset": "mcae_spps",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6675,
+      "union_samples": 6675,
+      "cohort_sha256": "13e204753128687c791d4a4c0230d82e78de02e22e306fd1887ca2bb17ac3e1a"
+    },
+    {
+      "dataset": "thai_ser",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 11848,
+      "union_samples": 11848,
+      "cohort_sha256": "f8648b6352ba791573ae730c8a61eb2e26ae6238c4012fec74d2bbf3fad924ef"
+    },
+    {
+      "dataset": "nemo",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 4481,
+      "union_samples": 4481,
+      "cohort_sha256": "a6202f7f43a88c85741e865566346838acdb1006142fb05445c47bd718348857"
+    },
+    {
+      "dataset": "mess",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1800,
+      "union_samples": 1800,
+      "cohort_sha256": "9e1a1e7b2fdee25bd9078c076a09c6c0256e95788b1c9cf701fba7c8c6fe0eed"
+    },
+    {
+      "dataset": "ravdess",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1440,
+      "union_samples": 1440,
+      "cohort_sha256": "eb08dc4c6e5534792fa3ca863c8ffb7b32cb8f76e960ff13a68b85624e25265b"
+    },
+    {
+      "dataset": "tess",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2800,
+      "union_samples": 2800,
+      "cohort_sha256": "2f1ab1fc7d90f2e7c2d7a94c6ecc60e3fbe531ebd6ff330007bdf3079ac566bf"
+    },
+    {
+      "dataset": "jl_corpus",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1200,
+      "union_samples": 1200,
+      "cohort_sha256": "4112a7583a388fbd4cd99bd9facb9a208328dca9c4a21bb3097c07291f65f791"
+    },
+    {
+      "dataset": "mead",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 8000,
+      "union_samples": 8000,
+      "cohort_sha256": "a627bb183b2c294b56470956c077137d3b4e2423cffd5788c035b22351b4d27d"
+    },
+    {
+      "dataset": "meld",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2608,
+      "union_samples": 2608,
+      "cohort_sha256": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d"
+    },
+    {
+      "dataset": "emovo",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 588,
+      "union_samples": 588,
+      "cohort_sha256": "975fc83b4c54e1029106882e321bc8a908c1e9b90f53151056a082807c03a1dc"
+    },
+    {
+      "dataset": "emozionalmente",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6902,
+      "union_samples": 6902,
+      "cohort_sha256": "db44214c5589319e4f242a21f9202b78ba85e0ae49c5e295159be77f29bd4665"
+    },
+    {
+      "dataset": "savee",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 480,
+      "union_samples": 480,
+      "cohort_sha256": "bd7a5dfa208c8b6fa89dea03cfae21afe980f17c23a0b6600a6a31dbba8e8645"
+    },
+    {
+      "dataset": "emotiontalk",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1929,
+      "union_samples": 1929,
+      "cohort_sha256": "b65c5a601c0d0d3f83e3569b83447ab79d87f785cc30972fd3b6211d48c5b30f"
+    },
+    {
+      "dataset": "dailytalk",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1197,
+      "union_samples": 1197,
+      "cohort_sha256": "47ac8cd17ee62a0733722df8f56110df76a9a30330d88c9b39b966241d49059b"
+    },
+    {
+      "dataset": "multidialog",
+      "group": "Selected3",
+      "model_count": 3,
+      "target_count": 3,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7672,
+      "union_samples": 7672,
+      "cohort_sha256": "d5c15fc2967b301024c4f77452d5c8f3ea92b8a8e300fe8ec53f4fc75cd58fd2"
+    },
+    {
+      "dataset": "crema_d",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7442,
+      "union_samples": 7442,
+      "cohort_sha256": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+    },
+    {
+      "dataset": "mcae_spps",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6675,
+      "union_samples": 6675,
+      "cohort_sha256": "13e204753128687c791d4a4c0230d82e78de02e22e306fd1887ca2bb17ac3e1a"
+    },
+    {
+      "dataset": "thai_ser",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 11848,
+      "union_samples": 11848,
+      "cohort_sha256": "f8648b6352ba791573ae730c8a61eb2e26ae6238c4012fec74d2bbf3fad924ef"
+    },
+    {
+      "dataset": "nemo",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 4481,
+      "union_samples": 4481,
+      "cohort_sha256": "a6202f7f43a88c85741e865566346838acdb1006142fb05445c47bd718348857"
+    },
+    {
+      "dataset": "mess",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1800,
+      "union_samples": 1800,
+      "cohort_sha256": "9e1a1e7b2fdee25bd9078c076a09c6c0256e95788b1c9cf701fba7c8c6fe0eed"
+    },
+    {
+      "dataset": "ravdess",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1440,
+      "union_samples": 1440,
+      "cohort_sha256": "eb08dc4c6e5534792fa3ca863c8ffb7b32cb8f76e960ff13a68b85624e25265b"
+    },
+    {
+      "dataset": "tess",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2800,
+      "union_samples": 2800,
+      "cohort_sha256": "2f1ab1fc7d90f2e7c2d7a94c6ecc60e3fbe531ebd6ff330007bdf3079ac566bf"
+    },
+    {
+      "dataset": "jl_corpus",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1200,
+      "union_samples": 1200,
+      "cohort_sha256": "4112a7583a388fbd4cd99bd9facb9a208328dca9c4a21bb3097c07291f65f791"
+    },
+    {
+      "dataset": "mead",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 8000,
+      "union_samples": 8000,
+      "cohort_sha256": "a627bb183b2c294b56470956c077137d3b4e2423cffd5788c035b22351b4d27d"
+    },
+    {
+      "dataset": "meld",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2608,
+      "union_samples": 2608,
+      "cohort_sha256": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d"
+    },
+    {
+      "dataset": "emovo",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 588,
+      "union_samples": 588,
+      "cohort_sha256": "975fc83b4c54e1029106882e321bc8a908c1e9b90f53151056a082807c03a1dc"
+    },
+    {
+      "dataset": "emozionalmente",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6902,
+      "union_samples": 6902,
+      "cohort_sha256": "db44214c5589319e4f242a21f9202b78ba85e0ae49c5e295159be77f29bd4665"
+    },
+    {
+      "dataset": "savee",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 480,
+      "union_samples": 480,
+      "cohort_sha256": "bd7a5dfa208c8b6fa89dea03cfae21afe980f17c23a0b6600a6a31dbba8e8645"
+    },
+    {
+      "dataset": "emotiontalk",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1929,
+      "union_samples": 1929,
+      "cohort_sha256": "b65c5a601c0d0d3f83e3569b83447ab79d87f785cc30972fd3b6211d48c5b30f"
+    },
+    {
+      "dataset": "dailytalk",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1197,
+      "union_samples": 1197,
+      "cohort_sha256": "47ac8cd17ee62a0733722df8f56110df76a9a30330d88c9b39b966241d49059b"
+    },
+    {
+      "dataset": "multidialog",
+      "group": "SER_API7",
+      "model_count": 7,
+      "target_count": 7,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7672,
+      "union_samples": 7672,
+      "cohort_sha256": "d5c15fc2967b301024c4f77452d5c8f3ea92b8a8e300fe8ec53f4fc75cd58fd2"
+    },
+    {
+      "dataset": "crema_d",
+      "group": "All10",
+      "model_count": 9,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "mcae_spps",
+      "group": "All10",
+      "model_count": 9,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "thai_ser",
+      "group": "All10",
+      "model_count": 9,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "nemo",
+      "group": "All10",
+      "model_count": 9,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "mess",
+      "group": "All10",
+      "model_count": 9,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "ravdess",
+      "group": "All10",
+      "model_count": 9,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "tess",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "jl_corpus",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "mead",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "meld",
+      "group": "All10",
+      "model_count": 10,
+      "target_count": 10,
+      "complete": true,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2608,
+      "union_samples": 2608,
+      "cohort_sha256": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d"
+    },
+    {
+      "dataset": "emovo",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "emozionalmente",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "savee",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "emotiontalk",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "dailytalk",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    },
+    {
+      "dataset": "multidialog",
+      "group": "All10",
+      "model_count": 8,
+      "target_count": 10,
+      "complete": false,
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
+      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "eligible": false,
+      "common_samples": null,
+      "union_samples": null,
+      "cohort_sha256": null
+    }
+  ],
+  "run_scopes": [
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": null,
+      "subset": null,
+      "date": "2026-10-23"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-10-28"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": null,
+      "subset": null,
+      "date": "2026-10-23"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-10-28"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": null,
+      "subset": null,
+      "date": "2026-10-23"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-10-27"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-10-27"
+    },
+    {
+      "model": "emotion2vec_plus_large",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gemma4_e4b",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-10"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "gpt_realtime",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-09"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "melati_emotion",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-10-28"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-10-28"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-10-28"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-10"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "meralion_ser_v1",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-11-11"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-11-12"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-11-11"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-11-11"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-11"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-11-12"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-11-12"
+    },
+    {
+      "model": "qwen2_5_omni_7b",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-11-12"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-11-12"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-09"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-13"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_wavlm",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-07"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "crema_d",
+      "clips": 7442,
+      "total_clips": 7442,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "mcae_spps",
+      "clips": 6675,
+      "total_clips": 6675,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-06"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "meld",
+      "clips": 2608,
+      "total_clips": 2608,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "mess",
+      "clips": 1800,
+      "total_clips": 1800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-11"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "nemo",
+      "clips": 4481,
+      "total_clips": 4481,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "ravdess",
+      "clips": 1440,
+      "total_clips": 1440,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-06"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
+      "subset": null,
+      "date": "2026-10-29"
+    },
+    {
+      "model": "vox_profile_whisper",
+      "dataset": "thai_ser",
+      "clips": 11848,
+      "total_clips": 11848,
+      "subset": "high_agreement",
+      "date": "2026-11-06"
+    }
+  ],
+  "figures": [
+    "analysis_report/figures/consensus_accuracy_coverage.png",
+    "analysis_report/figures/consensus_accuracy_coverage.svg",
+    "analysis_report/figures/consensus_meld_accuracy_coverage.png",
+    "analysis_report/figures/consensus_meld_accuracy_coverage.svg",
+    "analysis_report/figures/consensus_unanimous_accuracy_by_dataset.png",
+    "analysis_report/figures/consensus_unanimous_accuracy_by_dataset.svg",
+    "analysis_report/figures/consensus_ser5_accuracy_by_votes.png",
+    "analysis_report/figures/consensus_ser5_accuracy_by_votes.svg",
+    "analysis_report/figures/consensus_unanimous_coverage_by_dataset.png",
+    "analysis_report/figures/consensus_unanimous_coverage_by_dataset.svg",
+    "analysis_report/figures/consensus_ser5_coverage_by_votes.png",
+    "analysis_report/figures/consensus_ser5_coverage_by_votes.svg"
+  ],
+  "matplotlib": "3.11.2"
+}
