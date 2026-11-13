@@ -1,0 +1,51 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:07.878232+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "mess",
+  "clips": 1800,
+  "unique_audio_paths": 1800,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.csv",
+      "sha256": "76355fd2a34c81bf7290d0b7321794b740048fb7e6d8cbcc47ba70b417359cba",
+      "bytes": 289451
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.json",
+      "sha256": "bb1705fe8416555d8cfb9df7c7639b7f14d05a28deda499f9e768849883c8b41",
+      "bytes": 3647
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.251111,
+    "unweighted_accuracy": 0.251111,
+    "macro_f1": 0.104636,
+    "accuracy_all_classes": 0.251111
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2511111111111111,
+    "unweighted_accuracy": 0.2511111111111111,
+    "macro_f1": 0.10463557613908046,
+    "weighted_f1": 0.10463557613908044,
+    "accuracy_all_classes": 0.2511111111111111
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "e683d765d4ac",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

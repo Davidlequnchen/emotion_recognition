@@ -1,0 +1,54 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:07.481622+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.csv",
+      "sha256": "e7b423213359d839dc28c386326a9f9a6b6e581e88617758b7b9da0ff697e1e3",
+      "bytes": 233739
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.json",
+      "sha256": "2e3b6d26b3a9c48fb1f410100217658ad5033bcbae8d4fe6ec8de0cf086377bb",
+      "bytes": 4020
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.687552,
+    "unweighted_accuracy": 0.583317,
+    "macro_f1": 0.31262,
+    "accuracy_all_classes": 0.687552
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.6875522138680034,
+    "unweighted_accuracy": 0.5833166463948488,
+    "macro_f1": 0.31262017101940626,
+    "weighted_f1": 0.7319350847259628,
+    "accuracy_all_classes": 0.6875522138680034
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

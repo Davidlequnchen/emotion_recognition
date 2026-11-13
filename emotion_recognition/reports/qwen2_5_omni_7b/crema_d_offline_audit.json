@@ -1,0 +1,61 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:07.458474+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.csv",
+      "sha256": "9b885b7fe52d61bd7240c42921dc82b8e05e3aa3be85e0cabbc34bf874e6292c",
+      "bytes": 1520433
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.json",
+      "sha256": "3fed5e7dde48b562601dbb0093c1b2e051dddb20e15f25190ea7e53f2647ed58",
+      "bytes": 4287
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.222521,
+    "unweighted_accuracy": 0.241147,
+    "macro_f1": 0.172386,
+    "accuracy_all_classes": 0.222521,
+    "accuracy_acted_or_listener": 0.639076,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.600765
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.22252082773447998,
+    "unweighted_accuracy": 0.2411466510130573,
+    "macro_f1": 0.17238586686091237,
+    "weighted_f1": 0.169649539976814,
+    "accuracy_all_classes": 0.22252082773447998,
+    "accuracy_acted_or_listener": 0.63907551733405,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.6007649308620182
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "8bf25e176a1f",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

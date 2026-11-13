@@ -1,0 +1,57 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:08.221605+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.csv",
+      "sha256": "65688bcf713d341b6843511f5eebfcea1a31561d38048b843311766c83ae4e42",
+      "bytes": 2291623
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.json",
+      "sha256": "ba6536b54f64d842f77c7cc24d9f02fb68d7c0f4010d4a547b02b68e47b70a94",
+      "bytes": 4087
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.564568,
+    "unweighted_accuracy": 0.560586,
+    "macro_f1": 0.561091,
+    "accuracy_all_classes": 0.564568,
+    "accuracy_acted_or_listener": 0.624578,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.554271
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5645678595543552,
+    "unweighted_accuracy": 0.5605856394697024,
+    "macro_f1": 0.5610910045284482,
+    "weighted_f1": 0.5618973709811792,
+    "accuracy_all_classes": 0.5645678595543552,
+    "accuracy_acted_or_listener": 0.62457798784605,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.5542707629979743
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "e683d765d4ac",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

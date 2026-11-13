@@ -1,0 +1,54 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:07.514856+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/emovo_predictions.csv",
+      "sha256": "f46848ed5fe2d3e8228ba34670c4e313a2894485c72830e0808f433ce6a7314e",
+      "bytes": 113056
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emovo_predictions.json",
+      "sha256": "3a8c8ef8ad794574b86f795558f3e17c17e4b417c8e51a1a100489149aeaea98",
+      "bytes": 3936
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.202381,
+    "unweighted_accuracy": 0.202381,
+    "macro_f1": 0.138167,
+    "accuracy_all_classes": 0.202381
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.20238095238095238,
+    "unweighted_accuracy": 0.20238095238095236,
+    "macro_f1": 0.13816728216269097,
+    "weighted_f1": 0.13816728216269097,
+    "accuracy_all_classes": 0.20238095238095238
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,0 +1,60 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:07.626612+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.csv",
+      "sha256": "41cd9a7c9456d84d11fb26651fbc0b875e5556c29aa7b805448c48ac5335090b",
+      "bytes": 1629650
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.json",
+      "sha256": "982363de32cb296895983195667d197ad4f79c44ce5612d55e346180be5615ad",
+      "bytes": 4388
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.189076,
+    "unweighted_accuracy": 0.189076,
+    "macro_f1": 0.129746,
+    "accuracy_all_classes": 0.189076,
+    "accuracy_acted_or_listener": 0.282382,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.244868
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.18907563025210083,
+    "unweighted_accuracy": 0.18907563025210086,
+    "macro_f1": 0.12974597127829202,
+    "weighted_f1": 0.12974597127829202,
+    "accuracy_all_classes": 0.18907563025210083,
+    "accuracy_acted_or_listener": 0.2823819182845552,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.2448682721836108
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

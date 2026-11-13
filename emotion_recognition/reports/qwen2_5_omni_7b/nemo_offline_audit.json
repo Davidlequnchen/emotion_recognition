@@ -1,0 +1,53 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:08.021736+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/nemo_predictions.csv",
+      "sha256": "e016a6b88ab7a9ab91eaa5802ff774e066cb722c3baf228bfd15201ef7d75ae0",
+      "bytes": 805839
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/nemo_predictions.json",
+      "sha256": "10589de46d170cf70e12d58dd461a51154fc1354d85d66a3df04c6a538a94360",
+      "bytes": 3804
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.217139,
+    "unweighted_accuracy": 0.209496,
+    "macro_f1": 0.161178,
+    "accuracy_all_classes": 0.217139
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2171390314661906,
+    "unweighted_accuracy": 0.20949601746182234,
+    "macro_f1": 0.16117800066084798,
+    "weighted_f1": 0.16628310710542046,
+    "accuracy_all_classes": 0.2171390314661906
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "6c3ec6823d3d",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

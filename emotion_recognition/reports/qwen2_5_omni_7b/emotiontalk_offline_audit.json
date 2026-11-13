@@ -1,0 +1,54 @@
+{
+  "validated_at_utc": "2026-11-13T03:20:07.505981+00:00",
+  "model": "qwen2_5_omni_7b",
+  "key": "emotiontalk",
+  "clips": 1929,
+  "unique_audio_paths": 1929,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.csv",
+      "sha256": "82ddb5ec234259ef56257d010c8fc67d340b6d25d6385016ed8e1951a11e9ac6",
+      "bytes": 451583
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.json",
+      "sha256": "169c24eaa96a62cb582ff1d88fdaf2378b0cba882f38839a8629df0e84f1e476",
+      "bytes": 3964
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.547434,
+    "unweighted_accuracy": 0.543675,
+    "macro_f1": 0.481571,
+    "accuracy_all_classes": 0.547434
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5474339035769828,
+    "unweighted_accuracy": 0.543674922574181,
+    "macro_f1": 0.4815711790577501,
+    "weighted_f1": 0.5587095540829625,
+    "accuracy_all_classes": 0.5474339035769828
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2.5-Omni-7B"
+  },
+  "protocol_matches_configuration": true,
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

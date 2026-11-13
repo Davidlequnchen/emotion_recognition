@@ -1458,6 +1458,150 @@
         }
       ]
     },
+    "outputs/qwen2_5_omni_7b/crema_d_predictions.json": {
+      "clips": 7442,
+      "key": "crema_d",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.169649539976814
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.csv",
+          "sha256": "9b885b7fe52d61bd7240c42921dc82b8e05e3aa3be85e0cabbc34bf874e6292c"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.json",
+          "sha256": "3fed5e7dde48b562601dbb0093c1b2e051dddb20e15f25190ea7e53f2647ed58"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/dailytalk_predictions.json": {
+      "clips": 1197,
+      "key": "dailytalk",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.7319350847259628
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.csv",
+          "sha256": "e7b423213359d839dc28c386326a9f9a6b6e581e88617758b7b9da0ff697e1e3"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/dailytalk_predictions.json",
+          "sha256": "2e3b6d26b3a9c48fb1f410100217658ad5033bcbae8d4fe6ec8de0cf086377bb"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/emotiontalk_predictions.json": {
+      "clips": 1929,
+      "key": "emotiontalk",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.5587095540829625
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.csv",
+          "sha256": "82ddb5ec234259ef56257d010c8fc67d340b6d25d6385016ed8e1951a11e9ac6"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/emotiontalk_predictions.json",
+          "sha256": "169c24eaa96a62cb582ff1d88fdaf2378b0cba882f38839a8629df0e84f1e476"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/emovo_predictions.json": {
+      "clips": 588,
+      "key": "emovo",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.13816728216269097
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/emovo_predictions.csv",
+          "sha256": "f46848ed5fe2d3e8228ba34670c4e313a2894485c72830e0808f433ce6a7314e"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/emovo_predictions.json",
+          "sha256": "3a8c8ef8ad794574b86f795558f3e17c17e4b417c8e51a1a100489149aeaea98"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/emozionalmente_predictions.json": {
+      "clips": 6902,
+      "key": "emozionalmente",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.12974597127829202
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.csv",
+          "sha256": "41cd9a7c9456d84d11fb26651fbc0b875e5556c29aa7b805448c48ac5335090b"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/emozionalmente_predictions.json",
+          "sha256": "982363de32cb296895983195667d197ad4f79c44ce5612d55e346180be5615ad"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/jl_corpus_predictions.json": {
+      "clips": 1200,
+      "key": "jl_corpus",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.27606937301306106
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/jl_corpus_predictions.csv",
+          "sha256": "2040bf56e43304c6a70ad32c9237a16e254c35ec1353e884f2441eb4999fe769"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/jl_corpus_predictions.json",
+          "sha256": "26fe015d4ae926f108c1f4b701d983ecf9a4854289511fc76589fd22752c4f29"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/mcae_spps_predictions.json": {
+      "clips": 6675,
+      "key": "mcae_spps",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.34251274717205377
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.csv",
+          "sha256": "8be45bf6ad0b17068c0e686157c9e482c1ea5c9da4a6386ff99b4ab24098cecc"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.json",
+          "sha256": "cc11e5b6250e2cf142acd9a153c4d50abcb0889057181b6a344063a742a4b80f"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/mead_predictions.json": {
+      "clips": 8000,
+      "key": "mead",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.1630891983176646
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/mead_predictions.csv",
+          "sha256": "d02dadf45ba7bc391e99d3d756d70c061276a46d0449d78f3778790600cabaa0"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/mead_predictions.json",
+          "sha256": "4aa9948aad15ed283e8c281a98db798232369dca90b39e2de0fed888ad474ed5"
+        }
+      ]
+    },
     "outputs/qwen2_5_omni_7b/meld_predictions.json": {
       "clips": 2608,
       "key": "meld",
@@ -1473,6 +1617,132 @@
         {
           "path": "outputs/qwen2_5_omni_7b/meld_predictions.json",
           "sha256": "2e3dba49a4183bf28d6ef57c42d10871e6f25d399780f63b22c4cfcb218d5ae8"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/mess_predictions.json": {
+      "clips": 1800,
+      "key": "mess",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.10463557613908044
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/mess_predictions.csv",
+          "sha256": "76355fd2a34c81bf7290d0b7321794b740048fb7e6d8cbcc47ba70b417359cba"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/mess_predictions.json",
+          "sha256": "bb1705fe8416555d8cfb9df7c7639b7f14d05a28deda499f9e768849883c8b41"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/multidialog_predictions.json": {
+      "clips": 7672,
+      "key": "multidialog",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.5665751724697984
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/multidialog_predictions.csv",
+          "sha256": "902fd703731cf4c566cb911ca7c58111080b54bba58f2ededdce51a5158b174a"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/multidialog_predictions.json",
+          "sha256": "ba8e513a26e2e6f83c61c0a14ba72ee9ac6e08f534951efe7be91851fcb5b842"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/nemo_predictions.json": {
+      "clips": 4481,
+      "key": "nemo",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.16628310710542046
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/nemo_predictions.csv",
+          "sha256": "e016a6b88ab7a9ab91eaa5802ff774e066cb722c3baf228bfd15201ef7d75ae0"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/nemo_predictions.json",
+          "sha256": "10589de46d170cf70e12d58dd461a51154fc1354d85d66a3df04c6a538a94360"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/ravdess_predictions.json": {
+      "clips": 1440,
+      "key": "ravdess",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.4593676056237287
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.csv",
+          "sha256": "64943a8d42991b655bab5fc26fc2dfeabcb42b193a45e88b36c6cf0c81d0ce3c"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.json",
+          "sha256": "609a69143365c82a860e9c3c8c2cc1c0e706985f9604eb1fa9836652e633b2a1"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/savee_predictions.json": {
+      "clips": 480,
+      "key": "savee",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.25739697589339067
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/savee_predictions.csv",
+          "sha256": "4ff0055a8b5864f7c6d4681de9842ae52a03ac72d0c7715705b3c1af3b37d044"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/savee_predictions.json",
+          "sha256": "0ef0acabe859779337e24ff5bcab7e9a47a42ec2dfd2e3bbe4b94567c9ad872a"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/tess_predictions.json": {
+      "clips": 2800,
+      "key": "tess",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.33572479285136847
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/tess_predictions.csv",
+          "sha256": "a39bc8beb613090eb0e51d2d8d9092206b625eb020d60a06dc11477450ac3dd6"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/tess_predictions.json",
+          "sha256": "d0f4eba565fb4f3b8b33c3fa1140f3911d60758c6d6eda801cafe859bfc33d9b"
+        }
+      ]
+    },
+    "outputs/qwen2_5_omni_7b/thai_ser_predictions.json": {
+      "clips": 11848,
+      "key": "thai_ser",
+      "model": "qwen2_5_omni_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.5618973709811792
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.csv",
+          "sha256": "65688bcf713d341b6843511f5eebfcea1a31561d38048b843311766c83ae4e42"
+        },
+        {
+          "path": "outputs/qwen2_5_omni_7b/thai_ser_predictions.json",
+          "sha256": "ba6536b54f64d842f77c7cc24d9f02fb68d7c0f4010d4a547b02b68e47b70a94"
         }
       ]
     },

@@ -1,0 +1,611 @@
+{
+  "model": "qwen2_5_omni_7b",
+  "imported_at_utc": "2026-11-13T03:20:01.317393+00:00",
+  "source_folder": "outputs/qwen2_5_omni_7b_predictions",
+  "target_folder": "outputs/qwen2_5_omni_7b",
+  "source_sha256": {
+    "tess_predictions.json": "d0f4eba565fb4f3b8b33c3fa1140f3911d60758c6d6eda801cafe859bfc33d9b",
+    "crema_d_predictions.json": "3fed5e7dde48b562601dbb0093c1b2e051dddb20e15f25190ea7e53f2647ed58",
+    "savee_predictions.json": "0ef0acabe859779337e24ff5bcab7e9a47a42ec2dfd2e3bbe4b94567c9ad872a",
+    "ravdess_predictions.csv": "64943a8d42991b655bab5fc26fc2dfeabcb42b193a45e88b36c6cf0c81d0ce3c",
+    "mcae_spps_predictions.json": "cc11e5b6250e2cf142acd9a153c4d50abcb0889057181b6a344063a742a4b80f",
+    "thai_ser_predictions.json": "ba6536b54f64d842f77c7cc24d9f02fb68d7c0f4010d4a547b02b68e47b70a94",
+    "mess_predictions.json": "bb1705fe8416555d8cfb9df7c7639b7f14d05a28deda499f9e768849883c8b41",
+    "meld_predictions.csv": "aee9d3054a602315720f205e7871cf82f988e03c4550f75d02f582b5552a159c",
+    "ravdess_predictions.json": "609a69143365c82a860e9c3c8c2cc1c0e706985f9604eb1fa9836652e633b2a1",
+    "mead_predictions.json": "4aa9948aad15ed283e8c281a98db798232369dca90b39e2de0fed888ad474ed5",
+    "jl_corpus_predictions.csv": "2040bf56e43304c6a70ad32c9237a16e254c35ec1353e884f2441eb4999fe769",
+    "emovo_predictions.json": "3a8c8ef8ad794574b86f795558f3e17c17e4b417c8e51a1a100489149aeaea98",
+    "mcae_spps_predictions.csv": "8be45bf6ad0b17068c0e686157c9e482c1ea5c9da4a6386ff99b4ab24098cecc",
+    "savee_predictions.csv": "4ff0055a8b5864f7c6d4681de9842ae52a03ac72d0c7715705b3c1af3b37d044",
+    "responses.jsonl": "49350078146f02295876d1938f40ac54bb245c489b0a40a4ce08796b93bbeff7",
+    "nemo_predictions.json": "10589de46d170cf70e12d58dd461a51154fc1354d85d66a3df04c6a538a94360",
+    "mess_predictions.csv": "76355fd2a34c81bf7290d0b7321794b740048fb7e6d8cbcc47ba70b417359cba",
+    "thai_ser_predictions.csv": "65688bcf713d341b6843511f5eebfcea1a31561d38048b843311766c83ae4e42",
+    "dailytalk_predictions.csv": "e7b423213359d839dc28c386326a9f9a6b6e581e88617758b7b9da0ff697e1e3",
+    "nemo_predictions.csv": "e016a6b88ab7a9ab91eaa5802ff774e066cb722c3baf228bfd15201ef7d75ae0",
+    "dailytalk_predictions.json": "2e3b6d26b3a9c48fb1f410100217658ad5033bcbae8d4fe6ec8de0cf086377bb",
+    "tess_predictions.csv": "a39bc8beb613090eb0e51d2d8d9092206b625eb020d60a06dc11477450ac3dd6",
+    "emotiontalk_predictions.csv": "82ddb5ec234259ef56257d010c8fc67d340b6d25d6385016ed8e1951a11e9ac6",
+    "emozionalmente_predictions.json": "982363de32cb296895983195667d197ad4f79c44ce5612d55e346180be5615ad",
+    "emozionalmente_predictions.csv": "41cd9a7c9456d84d11fb26651fbc0b875e5556c29aa7b805448c48ac5335090b",
+    "crema_d_predictions.csv": "9b885b7fe52d61bd7240c42921dc82b8e05e3aa3be85e0cabbc34bf874e6292c",
+    "multidialog_predictions.json": "ba8e513a26e2e6f83c61c0a14ba72ee9ac6e08f534951efe7be91851fcb5b842",
+    "mead_predictions.csv": "d02dadf45ba7bc391e99d3d756d70c061276a46d0449d78f3778790600cabaa0",
+    "emotiontalk_predictions.json": "169c24eaa96a62cb582ff1d88fdaf2378b0cba882f38839a8629df0e84f1e476",
+    "jl_corpus_predictions.json": "26fe015d4ae926f108c1f4b701d983ecf9a4854289511fc76589fd22752c4f29",
+    "multidialog_predictions.csv": "902fd703731cf4c566cb911ca7c58111080b54bba58f2ededdce51a5158b174a",
+    "emovo_predictions.csv": "f46848ed5fe2d3e8228ba34670c4e313a2894485c72830e0808f433ce6a7314e"
+  },
+  "preserved_meld_sha256": {
+    "meld_predictions.csv": "c1c9a9b73370402dfe441e041821ef40f346cd50137a5f82f20bc2d311f87f02",
+    "meld_predictions.json": "2e3dba49a4183bf28d6ef57c42d10871e6f25d399780f63b22c4cfcb218d5ae8"
+  },
+  "dataset_count": 16,
+  "total_clips": 67062,
+  "response_count": 67062,
+  "removed_legacy_response_count": 4532,
+  "deduplicated_meld_response_count": 2608,
+  "normalized_absolute_response_paths": 64454,
+  "csv_json_moved_byte_for_byte": 30,
+  "source_prediction_values_modified": false,
+  "inference_performed": false,
+  "features": "Existing MELD features preserved; features from the remote run are pending upload.",
+  "validation": [
+    "All 16 CSV/JSON pairs passed refresh_reports.validate_pair against current prompts and model identity.",
+    "Clip paths, acted labels and listener votes match existing SER reference results.",
+    "THAI-SER, MEAD and dialogue split/cohort scopes match the current evaluation configuration.",
+    "Every prediction has one matching current-protocol response with matching answer and token scores.",
+    "Incoming duplicate MELD CSV has identical parsed rows; original MELD CSV/JSON and responses retained.",
+    "Only response audio_path fields were normalized; legacy responses excluded and duplicate MELD records collapsed."
+  ],
+  "datasets": {
+    "crema_d": {
+      "clips": 7442,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad"
+        ],
+        "prompt_hash": "8bf25e176a1f",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 5954.1,
+        "ms_per_clip": 800.1,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-11",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.22252082773447998,
+        "unweighted_accuracy": 0.2411466510130573,
+        "macro_f1": 0.17238586686091237,
+        "weighted_f1": 0.169649539976814,
+        "accuracy_all_classes": 0.22252082773447998,
+        "accuracy_acted_or_listener": 0.63907551733405,
+        "listeners_vs_acted": 0.4558693733451015,
+        "model_vs_listeners": 0.6007649308620182
+      }
+    },
+    "dailytalk": {
+      "clips": 1197,
+      "subset": "split:validation",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 1075.7,
+        "ms_per_clip": 898.7,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 4,
+      "recomputed_metrics": {
+        "accuracy": 0.6875522138680034,
+        "unweighted_accuracy": 0.5833166463948488,
+        "macro_f1": 0.31262017101940626,
+        "weighted_f1": 0.7319350847259628,
+        "accuracy_all_classes": 0.6875522138680034
+      }
+    },
+    "emotiontalk": {
+      "clips": 1929,
+      "subset": "split:test",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 2172.7,
+        "ms_per_clip": 1126.3,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 7,
+      "recomputed_metrics": {
+        "accuracy": 0.5474339035769828,
+        "unweighted_accuracy": 0.543674922574181,
+        "macro_f1": 0.4815711790577501,
+        "weighted_f1": 0.5587095540829625,
+        "accuracy_all_classes": 0.5474339035769828
+      }
+    },
+    "emovo": {
+      "clips": 588,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 516.9,
+        "ms_per_clip": 879.0,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.20238095238095238,
+        "unweighted_accuracy": 0.20238095238095236,
+        "macro_f1": 0.13816728216269097,
+        "weighted_f1": 0.13816728216269097,
+        "accuracy_all_classes": 0.20238095238095238
+      }
+    },
+    "emozionalmente": {
+      "clips": 6902,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 6082.1,
+        "ms_per_clip": 881.2,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.18907563025210083,
+        "unweighted_accuracy": 0.18907563025210086,
+        "macro_f1": 0.12974597127829202,
+        "weighted_f1": 0.12974597127829202,
+        "accuracy_all_classes": 0.18907563025210083,
+        "accuracy_acted_or_listener": 0.2823819182845552,
+        "listeners_vs_acted": 0.8121868433812833,
+        "model_vs_listeners": 0.2448682721836108
+      }
+    },
+    "jl_corpus": {
+      "clips": 1200,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "1add00540a85",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 882.3,
+        "ms_per_clip": 735.3,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-12",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.30916666666666665,
+        "unweighted_accuracy": 0.3091666666666667,
+        "macro_f1": 0.34636068797828906,
+        "weighted_f1": 0.27606937301306106,
+        "accuracy_all_classes": 0.30916666666666665
+      }
+    },
+    "mcae_spps": {
+      "clips": 6675,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 4433.0,
+        "ms_per_clip": 664.1,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-11",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.36704119850187267,
+        "unweighted_accuracy": 0.3225657165654528,
+        "macro_f1": 0.31146298743817136,
+        "weighted_f1": 0.34251274717205377,
+        "accuracy_all_classes": 0.36704119850187267,
+        "accuracy_acted_or_listener": 0.36704119850187267,
+        "listeners_vs_acted": 1.0,
+        "model_vs_listeners": 0.36704119850187267
+      }
+    },
+    "mead": {
+      "clips": 8000,
+      "subset": "stratified_8000",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 8034.7,
+        "ms_per_clip": 1004.3,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.167,
+        "unweighted_accuracy": 0.2037699445578829,
+        "macro_f1": 0.16170390754835032,
+        "weighted_f1": 0.1630891983176646,
+        "accuracy_all_classes": 0.167
+      }
+    },
+    "meld": {
+      "clips": 2608,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M4 Max",
+        "seconds": 1858.7,
+        "ms_per_clip": 712.7,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-09",
+      "invalid_answers": 6,
+      "recomputed_metrics": {
+        "accuracy": 0.5126533742331288,
+        "unweighted_accuracy": 0.4345257420887947,
+        "macro_f1": 0.4043400273600931,
+        "weighted_f1": 0.523871981449148,
+        "accuracy_all_classes": 0.5126533742331288
+      }
+    },
+    "mess": {
+      "clips": 1800,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "happy",
+          "neutral",
+          "sad"
+        ],
+        "prompt_hash": "e683d765d4ac",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 1443.6,
+        "ms_per_clip": 802.0,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-11",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.2511111111111111,
+        "unweighted_accuracy": 0.2511111111111111,
+        "macro_f1": 0.10463557613908046,
+        "weighted_f1": 0.10463557613908044,
+        "accuracy_all_classes": 0.2511111111111111
+      }
+    },
+    "multidialog": {
+      "clips": 7672,
+      "subset": "cohort:gold_both",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 9121.0,
+        "ms_per_clip": 1188.9,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 10,
+      "recomputed_metrics": {
+        "accuracy": 0.545490093847758,
+        "unweighted_accuracy": 0.36113328199490874,
+        "macro_f1": 0.26943968568558996,
+        "weighted_f1": 0.5665751724697984,
+        "accuracy_all_classes": 0.545490093847758
+      }
+    },
+    "nemo": {
+      "clips": 4481,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "6c3ec6823d3d",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 2964.5,
+        "ms_per_clip": 661.6,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-11",
+      "invalid_answers": 7,
+      "recomputed_metrics": {
+        "accuracy": 0.2171390314661906,
+        "unweighted_accuracy": 0.20949601746182234,
+        "macro_f1": 0.16117800066084798,
+        "weighted_f1": 0.16628310710542046,
+        "accuracy_all_classes": 0.2171390314661906
+      }
+    },
+    "ravdess": {
+      "clips": 1440,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 1077.0,
+        "ms_per_clip": 747.9,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-12",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.4625,
+        "unweighted_accuracy": 0.4243551587301587,
+        "macro_f1": 0.45895429382352493,
+        "weighted_f1": 0.4593676056237287,
+        "accuracy_all_classes": 0.4625
+      }
+    },
+    "savee": {
+      "clips": 480,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 458.5,
+        "ms_per_clip": 955.2,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-13",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.2875,
+        "unweighted_accuracy": 0.23928571428571427,
+        "macro_f1": 0.23480904882473771,
+        "weighted_f1": 0.25739697589339067,
+        "accuracy_all_classes": 0.2875
+      }
+    },
+    "tess": {
+      "clips": 2800,
+      "subset": null,
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 2360.4,
+        "ms_per_clip": 843.0,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-12",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.3364285714285714,
+        "unweighted_accuracy": 0.33642857142857135,
+        "macro_f1": 0.3357247928513685,
+        "weighted_f1": 0.33572479285136847,
+        "accuracy_all_classes": 0.3364285714285714
+      }
+    },
+    "thai_ser": {
+      "clips": 11848,
+      "subset": "high_agreement",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "happy",
+          "neutral",
+          "sad"
+        ],
+        "prompt_hash": "e683d765d4ac",
+        "model_id": "Qwen/Qwen2.5-Omni-7B"
+      },
+      "runtime": {
+        "device": "mps",
+        "hardware": "Apple M3 Pro",
+        "seconds": 15999.2,
+        "ms_per_clip": 1350.4,
+        "on_cpu": 0
+      },
+      "execution_date": "2026-11-11",
+      "invalid_answers": 0,
+      "recomputed_metrics": {
+        "accuracy": 0.5645678595543552,
+        "unweighted_accuracy": 0.5605856394697024,
+        "macro_f1": 0.5610910045284482,
+        "weighted_f1": 0.5618973709811792,
+        "accuracy_all_classes": 0.5645678595543552,
+        "accuracy_acted_or_listener": 0.62457798784605,
+        "listeners_vs_acted": 0.7722822417285617,
+        "model_vs_listeners": 0.5542707629979743
+      }
+    }
+  },
+  "merged_responses_sha256": "a3a971a845456f805f23b9544017d25423521bbb736dd9075fde81815f3a6344"
+}
