@@ -1,0 +1,95 @@
+{
+  "dataset": "nEMO",
+  "key": "nemo",
+  "language": "Polish",
+  "model": "qwen2_audio_7b",
+  "model_name": "Qwen2-Audio 7B Instruct",
+  "date": "2026-11-13",
+  "clips": 4481,
+  "total_clips": 4481,
+  "classes": [
+    "angry",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "labels": [
+    "angry",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised"
+  ],
+  "accept": {},
+  "chance": 0.166667,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+  "training_evidence": [
+    "https://arxiv.org/html/2407.10759v1#S3.SS1",
+    "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+  ],
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "invalid"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Qwen2-Audio-7B-Instruct gets one conversation per clip in its chat template: the system prompt, then one user turn with the audio first and the user prompt after it (as in the model card), with the system and user prompts of `scripts/llm_eval/prompts.yaml` (the same as for GPT Realtime); the clip as 16 kHz mono (at most its first 30 s)",
+    "Greedy decoding (do_sample=False, no repetition penalty), at most 24 new tokens, bfloat16 on `mps`, sdpa attention; so the answers are the same from run to run (up to rounding differences between devices)",
+    "The answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the 7 configured emotions plus `invalid`. Allowed answers for this run: angry, fearful, happy, neutral, sad, surprised. An answer that is not exactly one allowed label gets a follow-up in the same conversation (\"Answer with exactly one word from this list, in lowercase, and nothing else: angry, fearful, happy, neutral, sad, surprised.\"), up to 1 time(s); then `invalid`",
+    "An answer that is not one of the dataset's emotions counts as wrong (column *other answer* of the confusion matrices); the raw answers are in `outputs/qwen2_audio_7b/responses.jsonl`"
+  ],
+  "metrics": {
+    "accuracy": 0.262665,
+    "unweighted_accuracy": 0.26211,
+    "macro_f1": 0.188792,
+    "weighted_f1": 0.190609,
+    "accuracy_all_classes": 0.262665
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each speaker was asked to portray (`emotion`)",
+    "prediction": "model prediction: the most probable of the 6 emotions evaluated (angry, fearful, happy, neutral, sad, surprised); 'other answer' when the model's answer is none of them",
+    "prediction_all_classes": "model prediction: the most probable of all 8 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "p_*": "model probability of each of its 8 classes (they add up to 1)",
+    "token_p_*": "audio LLMs: the model's probability of each label at the first generated position (first-token probabilities, renormalised over the labels; they add up to 1); the prediction is still the parsed answer",
+    "token_mass": "audio LLMs: the share of the whole vocabulary that the labels' first tokens get at that position"
+  },
+  "runtime": {
+    "device": "mps",
+    "hardware": "Apple M4 Max",
+    "seconds": 6053.2,
+    "ms_per_clip": 1350.9,
+    "on_cpu": 0
+  },
+  "inference_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "6c3ec6823d3d",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  }
+}
