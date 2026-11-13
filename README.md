@@ -3,6 +3,8 @@
 Two independent speech projects, each in its own folder with its own README, configuration, requirements and scripts.
 Run each project's commands from its own folder.
 
+Label Studio guides: [中文操作手册](label_studio/README.md) · [English guide](label_studio/README_en.md).
+
 For the emotion recognition models, clone the metadata submodule and run its Release setup once:
 
 ```bash

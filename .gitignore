@@ -67,6 +67,9 @@ emotion_recognition/outputs/**/esd_*
 # labeling_tool: labels written by the tool (company data folders live outside this repository)
 labeling_tool/**/annotations/*
 !labeling_tool/**/annotations/.gitkeep
+# Local Label Studio demo runtime; reusable guidance lives in /label_studio/
+labeling_tool/label_studio/
+label_studio/.local/
 # Presentation deck: the Node packages and rendered previews are rebuilt locally
 emotion_recognition/presentation/node_modules/
 emotion_recognition/presentation/render/
