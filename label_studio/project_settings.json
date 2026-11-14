@@ -1,0 +1,6 @@
+{
+  "maximum_annotations": 5,
+  "overlap_cohort_percentage": 100,
+  "show_overlap_first": true,
+  "enable_empty_annotation": false
+}

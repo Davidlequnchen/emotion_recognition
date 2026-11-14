@@ -2,7 +2,7 @@
 
 中文 | [English](README_en.md)
 
-本子项目使用 Label Studio，对**已完成切分的客户音频 clip**做情绪分类：每个 clip 标一次，
+本子项目使用 Label Studio，对**已完成切分的客户音频 clip**做情绪分类：每个 clip 由 **5 个不同账号各标一次**，
 不需要重新转写，也不需要画说话人或事件时间区间。
 
 操作导航：
@@ -10,6 +10,7 @@
 - **项目负责人**：[1. 建立项目](#1-建立项目) → [2. 配置模板](#2-配置模板) → [3. 导入任务](#3-导入任务)
 - **标注员日常操作**：[4. 日常标注](#4-日常标注)
 - **项目负责人收集结果**：[5. 导出结果](#5-导出结果)
+- **五人标注与自动补齐**：[6. 设置每段五位听众](#6-设置每段五位听众)
 - 详细配置：[完整可复制 XML 与字段解释](template_configuration.md) · [数据准备与导入接口](data_import.md)
 
 本机演示项目为 [SER Emotion Labeler](http://localhost:8082/projects/3/data)，首页为 <http://localhost:8082>。
@@ -75,7 +76,7 @@
 
 ## 4. 日常标注
 
-**由标注员完成。** 打开负责人指定的项目和任务，按以下顺序操作：
+**由标注员完成。** 用自己的账号登录负责人指定的项目，点击 **Label All Tasks** 进入标注队列，按以下顺序操作：
 
 1. 听完整段音频，必要时重播。
 2. 音频可用时，在上方 **Emotion** 区选择一个情绪；情绪不确定或不属于既定类别时选 **Unknown / Other**。
@@ -138,6 +139,65 @@
 `was_cancelled`。同一 clip 的多人标注先分别保存，分析一致性和分歧后再决定训练标签，不要直接覆盖为一个标签。
 取消的标注单独处理；Community UI 导出不受当前 tab filter 限制，不能认为导出只包含当前筛选页面。
 
+## 6. 设置每段五位听众
+
+**由项目负责人完成，每个新项目都要设置。** 五人要求是项目设置，不在音频界面 XML 中。
+本机固定版本 **Community 1.23.2** 的后端支持以下配置，已有任务也会更新；两份 XML 均可原样使用。
+配置文件为 [project_settings.json](project_settings.json)：
+
+```json
+{
+  "maximum_annotations": 5,
+  "overlap_cohort_percentage": 100,
+  "show_overlap_first": true,
+  "enable_empty_annotation": false
+}
+```
+
+`5` 表示每段需要五位不同标注员；`100` 表示全部任务都遵循这一要求；另两项启用重叠任务优先并关闭界面空提交。
+Community 的设置页面可能没有相应控件，可用项目负责人账号的 API 凭据通过
+[Update project API](https://api.labelstud.io/api-reference/api-reference/projects/update) 设置。
+先按[官方令牌说明](https://labelstud.io/guide/access_tokens)将 Personal Access Token 换取短期 access token；
+本机未开启 Legacy token 认证，直接使用旧 token 会返回 401。在仓库根目录运行：
+
+```bash
+# 填写目标服务、项目 ID，以及刚换取的短期 access token。
+export LABEL_STUDIO_URL="http://localhost:8082"
+export LABEL_STUDIO_PROJECT_ID="3"
+export LABEL_STUDIO_AUTH_HEADER="Bearer <your-access-token>"
+curl --fail-with-body --request PATCH \
+  "$LABEL_STUDIO_URL/api/projects/$LABEL_STUDIO_PROJECT_ID/" \
+  --header "Authorization: $LABEL_STUDIO_AUTH_HEADER" \
+  --header "Content-Type: application/json" \
+  --data-binary @label_studio/project_settings.json
+```
+
+负责人在 **Organization → Add Members** 获取注册链接，让至少五位实际听众各建一个账号，不共用账号。
+使用 **Label All Tasks** 的正常队列时：
+
+- 某段已有 A、B、C 三位听众提交，仍未完成；没有标过它的 D、E 可以继续领取。
+- 已提交过该段的账号不会在正常队列中再次领取它；五位不同账号提交后，该段退出待标队列。
+- 默认跳过策略下，草稿、原生 Skip / 取消标注不计为完成；提交的 Unknown 或 Bad clip 都是一位听众的有效决策。
+- 每人每段只提交一份。不要在 Quick View 中点 `+` 重复新增；修改答案时编辑自己的原 annotation，不修改别人的结果。
+
+这是正常队列的完成门槛，**不是限制所有 API / Quick View 操作的硬上限**。手工新增的重复 annotation
+不会增加不同听众数，还可能占用队列容量；负责人应检查并清理误增项，再继续补齐。
+导出验收时，按 clip 对未取消的有效决策统计 **不同 `completed_by` 的数量**，不能只数 annotation 行数。
+公开演示提交不作为正式听众的标签；正式数据应使用干净项目。
+
+### 是否让听众看到彼此的结果
+
+保留当前默认行为：正常 **Label All Tasks** 队列在领取任务时不加载其他人的答案，方便先独立判断；
+通过任务详情 / Quick View 仍可查看彼此结果，不额外增加隔离机制。建议先听音并提交，再查看和讨论其他结果。
+Community 不能强制这一约定，也不能防止修改他人结果；`show_annotation_history` 不能作为盲标权限开关。
+若后续需要严格盲标，再采用具有相应权限控制的版本或隔离部署。
+
+官方[功能对比](https://labelstud.io/guide/enterprise_features)仍将 overlap 设置列为 Enterprise 功能。
+上述 Community 行为已按本机 **1.23.2** 的代码和隔离数据库流程验证，依据包括
+[不同标注员计数](https://github.com/HumanSignal/label-studio/blob/1.23.2/label_studio/tasks/mixins.py)
+及[任务领取逻辑](https://github.com/HumanSignal/label-studio/blob/1.23.2/label_studio/projects/functions/next_task.py)。
+升级或更换部署版本后，先验证三人未完成、第五人完成、同一账号不重复领取，再开始正式批次。
+
 ## 多人使用前先确认部署方式
 
 本机演示与公司多人部署是两件事。`localhost` 指当前电脑，不能把这个地址发给远程标注员使用；
@@ -145,7 +205,8 @@
 
 Community Edition 允许多人建账号，但所有用户可见所有项目、功能权限相同；不能真正分配特定任务，
 也不能阻止用户修改别人的 annotation。按 tab/filter 分工只是操作约定，不能作为盲标或权限隔离。
-严格的角色、任务分配、review 和独立标注流程需要另行选择版本或隔离部署，不能直接照搬 Enterprise 教程。
+五人补齐使用上节已验证的正常队列。严格的角色、人工任务分配、review 和强制盲标仍需要另行选择版本或隔离部署，
+不能直接照搬 Enterprise 教程。
 
 ## 官方参考
 

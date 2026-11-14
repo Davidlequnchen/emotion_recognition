@@ -3,13 +3,14 @@
 [中文](README.md) | English
 
 This subproject uses Label Studio to classify the emotion in **customer audio clips that have already been segmented**.
-Each clip is one labeling task; there is no need to transcribe it again or draw speaker or event boundaries.
+Each clip is one labeling task, with **one submission from each of five different accounts**; there is no need to transcribe it again or draw speaker or event boundaries.
 
 Navigation:
 
 - **Project lead**: [1. Create a project](#1-create-a-project) → [2. Configure the template](#2-configure-the-template) → [3. Import tasks](#3-import-tasks)
 - **Annotators' daily workflow**: [4. Label clips](#4-label-clips)
 - **Project lead collecting results**: [5. Export results](#5-export-results)
+- **Five listeners and automatic gap filling**: [6. Require five listeners per clip](#6-require-five-listeners-per-clip)
 - Configuration details: [Complete XML and field explanations](template_configuration_en.md) · [Data preparation and import](data_import_en.md)
 
 The local demo project is [SER Emotion Labeler](http://localhost:8082/projects/3/data); the home page is <http://localhost:8082>.
@@ -78,7 +79,7 @@ Do not put a bare local filesystem path or `file://` URL in the audio field.
 
 ## 4. Label clips
 
-**Completed by annotators.** Open the project and tasks specified by the project lead, then:
+**Completed by annotators.** Log in with your own account, open the project specified by the project lead, and click **Label All Tasks** to enter the labeling queue, then:
 
 1. Listen to the entire clip. Replay it if needed.
 2. If the audio is usable, choose one option in the upper **Emotion** section. Choose **Unknown / Other** if the emotion is uncertain or outside the defined categories.
@@ -146,6 +147,67 @@ Keep different annotators' votes for the same clip separately. Examine agreement
 do not overwrite them with a single label immediately. Handle cancelled annotations separately.
 Community Edition's UI export does not respect the current tab filters, so do not assume that it exports only the currently filtered view.
 
+## 6. Require five listeners per clip
+
+**Completed by the project lead for every new project.** The five-listener requirement is a project setting, separate from the audio interface XML.
+The backend in the pinned local **Community 1.23.2** version supports the following settings, including updates to existing tasks.
+Both XML interfaces can be used as they are. The configuration is in [project_settings.json](project_settings.json):
+
+```json
+{
+  "maximum_annotations": 5,
+  "overlap_cohort_percentage": 100,
+  "show_overlap_first": true,
+  "enable_empty_annotation": false
+}
+```
+
+`5` requires five distinct annotators per clip; `100` applies this requirement to all tasks; the other settings prioritize overlap tasks and disable empty UI submissions.
+Community may not expose these controls in its settings UI. Use the project lead's API credentials with the
+[Update project API](https://api.labelstud.io/api-reference/api-reference/projects/update).
+First exchange a Personal Access Token for a short-lived access token following the [official token instructions](https://labelstud.io/guide/access_tokens).
+Legacy token authentication is disabled in this local instance, so using an old token directly returns 401. Run from the repository root:
+
+```bash
+# Set the target server, project ID, and the short-lived access token just obtained.
+export LABEL_STUDIO_URL="http://localhost:8082"
+export LABEL_STUDIO_PROJECT_ID="3"
+export LABEL_STUDIO_AUTH_HEADER="Bearer <your-access-token>"
+curl --fail-with-body --request PATCH \
+  "$LABEL_STUDIO_URL/api/projects/$LABEL_STUDIO_PROJECT_ID/" \
+  --header "Authorization: $LABEL_STUDIO_AUTH_HEADER" \
+  --header "Content-Type: application/json" \
+  --data-binary @label_studio/project_settings.json
+```
+
+Under **Organization → Add Members**, obtain the registration link and have at least five real listeners create separate accounts.
+Do not share accounts. In the normal **Label All Tasks** queue:
+
+- A clip submitted by listeners A, B, and C remains incomplete; D and E can receive it if they have not labeled it.
+- An account that has submitted a clip will not receive it again in the normal queue. After five distinct accounts submit, the clip leaves the pending queue.
+- With the default skip policy, drafts and native Skip / cancelled annotations do not count as completed decisions. A submitted Unknown or Bad clip counts as one listener's decision.
+- Submit only one annotation per person per clip. Do not use Quick View's `+` to add duplicates. Correct your answer by editing your own original annotation, without changing another person's results.
+
+This is a completion threshold for the normal queue, **not a hard cap on every API or Quick View operation**.
+Manually added duplicate annotations do not increase the distinct-listener count and can consume queue capacity.
+The lead should check for and remove accidental duplicates before continuing.
+For export acceptance, count **distinct `completed_by` values** among valid, non-cancelled decisions for each clip, rather than counting annotation rows.
+Public demonstration submissions are not production listener labels; use a clean project for production data.
+
+### Can listeners see each other's results?
+
+Keep the current defaults: the normal **Label All Tasks** queue does not load other people's answers when delivering a task,
+which helps listeners judge independently. Task details / Quick View still allow access to each other's results, without adding isolation mechanisms.
+Listeners should first listen and submit their own decision, then view or discuss other results.
+Community cannot enforce this convention or prevent changes to another person's results; `show_annotation_history` is not a blind-labeling permission switch.
+If strict blind labeling becomes necessary, use an edition with the relevant permissions or isolated deployments.
+
+The official [feature comparison](https://labelstud.io/guide/enterprise_features) still lists overlap settings as an Enterprise feature.
+The Community behavior above was verified against the local **1.23.2** code and an isolated database workflow, including
+[distinct annotator counting](https://github.com/HumanSignal/label-studio/blob/1.23.2/label_studio/tasks/mixins.py)
+and [task selection](https://github.com/HumanSignal/label-studio/blob/1.23.2/label_studio/projects/functions/next_task.py).
+After an upgrade or deployment change, verify that three listeners leave a clip incomplete, the fifth completes it, and an account does not receive its own submitted clip again before starting production work.
+
 ## Confirm the deployment before adding a team
 
 A local demo and a company deployment for multiple annotators serve different purposes.
@@ -155,7 +217,7 @@ A company team needs an accessible company server and persistent storage.
 Community Edition supports multiple user accounts, but all users can see all projects and have the same functionality.
 It does not provide actual task assignment or prevent users from changing another person's annotations.
 Dividing work through tabs and filters is a working convention, not permission isolation or a way to enforce blind annotation.
-Strict roles, task assignment, review, and independent annotation workflows require an appropriate edition or an isolated deployment;
+Five-listener gap filling uses the verified normal queue described above. Strict roles, manual task assignment, review, and enforced blind labeling still require an appropriate edition or an isolated deployment;
 do not assume Enterprise instructions apply to Community Edition.
 
 ## Official references
