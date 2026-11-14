@@ -22,6 +22,8 @@ have current-protocol results on all 16 datasets (nine of ten models; 67,062 cli
 | [analysis_report/figures/consensus_ser5_accuracy_by_votes.svg](analysis_report/figures/consensus_ser5_accuracy_by_votes.svg) · [coverage](analysis_report/figures/consensus_ser5_coverage_by_votes.svg) | five-SER bar comparisons of the three minimum vote rules |
 | [analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg](analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg) · [coverage](analysis_report/figures/consensus_audiollm4_coverage_by_votes.svg) | fixed four-audio-LLM bar comparisons of the 3/4 and 4/4 vote rules |
 | [analysis_report/bootstrap_zh.md](analysis_report/bootstrap_zh.md) · [analysis_report/bootstrap_en.md](analysis_report/bootstrap_en.md) | cluster-bootstrap score intervals and paired model differences; Chinese and English |
+| [analysis_report/cross_dataset_zh.md](analysis_report/cross_dataset_zh.md) · [analysis_report/cross_dataset_en.md](analysis_report/cross_dataset_en.md) | language, conversational source, neutral baselines, actual clip-duration distributions and adjusted duration associations; training-exposure hypotheses and limits |
+| [analysis_report/intensity_zh.md](analysis_report/intensity_zh.md) · [analysis_report/intensity_en.md](analysis_report/intensity_en.md) | emotion-classification accuracy by native strength, class/duration adjustment and matched recordings; MERaLiON VAD output audit |
 
 Refresh both analyses from saved predictions, from this folder in the `emotion_recognition_llm` environment:
 
@@ -77,5 +79,37 @@ MELD analysis and other datasets are not implemented. These CIs describe fixed-p
 they do not include API rerun/training variability and are not multiplicity-adjusted significance tests.
 
 Offline checks: `python -m unittest discover -s tests -p 'test_*.py' -v`.
+
+Additional offline diagnostics, from this folder:
+
+```bash
+python scripts/cross_dataset_analysis.py
+python scripts/intensity_analysis.py
+```
+
+Use the same `emotion_recognition_llm` environment as above. These commands reuse current-protocol predictions
+and never run models or APIs. The first builds a cached
+`output/audio_inventory.csv` from all 67,062 audio headers, with source grouping IDs, and writes `cross_dataset_*.csv`,
+the complete `cross_dataset_analysis.json` snapshot and its manifest. The second joins explicitly documented native
+strength fields into `output/intensity_inventory.csv`, then writes `intensity_*.csv`, including level/class counts
+and common wrong predictions, plus `intensity_analysis.json` and its
+manifest. Metadata, code and prediction hashes are recorded; cached inventories reject changed inputs. Use
+`--refresh-inventory` or `--refresh-intensity` respectively after a relevant source change. `--no-plots` refreshes
+tables/reports only; `--data-only` refreshes statistics only.
+
+The reports include eight new PNG/SVG figure pairs: duration distributions, language/conversation bars, adjusted
+duration effects, dataset-specific duration slopes, accuracy by duration, native-strength accuracy, strength
+associations and matched higher-versus-lower strength recordings. Text is black and enlarged, with explicit axes,
+units, sample scopes and missing-data rules. Gemma remains MELD-only and is excluded from cross-dataset means.
+
+Duration associations use original file duration including silence, not voiced time or a uniform model input window.
+The primary fit balances datasets and original gold classes, controls dataset-by-gold intercepts and reports
+dataset-cluster intervals. Native strength is available in six corpora (19,131 known, non-neutral clips); scales
+are kept separate, unspecified/neutral samples are excluded, and a duration covariate is added in a sensitivity fit.
+MCAE listener ratings remain continuous. Fewer than 20 source clusters receive no strength CI; DailyTalk's sparse
+high-strength samples and MEAD's three complete take keys cannot support general conclusions. MERaLiON's native
+VAD dimensions were discarded by the existing adapter, so these outputs test classification sensitivity to strength,
+not intensity-prediction accuracy. Observed associations and high benchmark scores do not establish causality or
+training leakage; neither report certifies unseen test data or internal pseudo-label reliability.
 
 The experiments themselves reuse `emotion_recognition/` (models, data loaders, evaluation scripts, outputs).

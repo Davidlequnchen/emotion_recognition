@@ -1,0 +1,37 @@
+dataset,model,n_pairs,difference_pp,nclusters,ci_lower_pp,ci_upper_pp,low_level,high_level,pair_rule
+crema_d,emotion2vec_plus_large,455,3.5164835164835173,91,-1.3565217555523978,8.389488788519433,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,gemini-3.8-flash,455,29.010989010989015,91,23.843462345702786,34.17851567627524,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,gpt_realtime,455,9.010989010989013,91,6.585159943716581,11.436818078261442,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,melati_emotion,455,16.923076923076927,91,11.997753604930983,21.84840024122287,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,meralion_ser_v1,455,5.2747252747252755,91,0.6768271375668066,9.872623411883744,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,qwen2_5_omni_7b,455,21.318681318681325,91,16.981081726942477,25.656280910420172,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,qwen2_audio_7b,455,15.384615384615389,91,10.861031604845058,19.908199164385717,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,vox_profile_wavlm,455,23.296703296703303,91,19.406022684095557,27.18738390931105,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+crema_d,vox_profile_whisper,455,29.230769230769237,91,25.337911404441787,33.12362705709669,1.0,3.0,Actor + published IEO sentence ID + emotion; identical sentence across acted levels.
+ravdess,emotion2vec_plus_large,576,4.6875,24,-0.6368033810875605,10.011803381087562,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,gemini-3.8-flash,576,24.826388888888882,24,18.87728841273939,30.77548936503837,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,gpt_realtime,576,15.624999999999996,24,9.658485878154877,21.59151412184512,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,melati_emotion,576,-6.076388888888888,24,-13.788947869522246,1.636170091744471,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,meralion_ser_v1,576,3.124999999999999,24,-3.7433409513223097,9.993340951322308,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,qwen2_5_omni_7b,576,32.11805555555555,24,26.470716952300133,37.76539415881096,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,qwen2_audio_7b,576,3.124999999999999,24,-0.7314612659650555,6.981461265965054,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,vox_profile_wavlm,576,12.152777777777775,24,7.783627430321791,16.52192812523376,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+ravdess,vox_profile_whisper,576,15.798611111111107,24,8.480034281585722,23.117187940636494,1.0,2.0,Actor + native emotion + published statement ID + repetition; identical statement across levels.
+mead,emotion2vec_plus_large,3,33.33333333333333,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,gemini-3.8-flash,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,gpt_realtime,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,melati_emotion,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,meralion_ser_v1,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,qwen2_5_omni_7b,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,qwen2_audio_7b,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,vox_profile_wavlm,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+mead,vox_profile_whisper,3,0.0,2,,,1.0,3.0,"Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally."
+thai_ser,emotion2vec_plus_large,1005,-0.3808511603611825,195,-3.075258857865662,2.313556537143297,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,gemini-3.8-flash,1005,1.8153249036693728,195,-0.8153565189660088,4.4460063263047545,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,gpt_realtime,1005,0.45527840628063365,195,-1.8583129094992994,2.768869722060567,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,melati_emotion,1005,1.8813798323820594,195,-0.5533908839968331,4.316150548760953,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,meralion_ser_v1,1005,-0.13201141634697688,195,-0.7521661776822273,0.48814334498827355,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,qwen2_5_omni_7b,1005,-3.4898983674039354,195,-6.351182062928565,-0.6286146718793052,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,qwen2_audio_7b,1005,-3.5623876752310304,195,-6.525971856921046,-0.5988034935410145,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,vox_profile_wavlm,1005,1.3132136368958938,195,-1.4008498347346419,4.027277108526429,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.
+thai_ser,vox_profile_whisper,1005,0.2505894859272734,195,-2.52078653989193,3.021965511746477,1.0,2.0,Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.

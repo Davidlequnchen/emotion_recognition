@@ -1,0 +1,784 @@
+dataset,model,level_id,level_label,level,gold,n,correct,invalid,accuracy,most_common_error,most_common_error_count
+crema_d,emotion2vec_plus_large,0,low,1.0,angry,91,78,0,0.8571428571428571,happy,6
+crema_d,emotion2vec_plus_large,0,low,1.0,disgusted,91,76,0,0.8351648351648352,sad,11
+crema_d,emotion2vec_plus_large,0,low,1.0,fearful,91,57,0,0.6263736263736264,sad,23
+crema_d,emotion2vec_plus_large,0,low,1.0,happy,91,77,0,0.8461538461538461,neutral,6
+crema_d,emotion2vec_plus_large,0,low,1.0,sad,91,74,0,0.8131868131868132,fearful,9
+crema_d,emotion2vec_plus_large,1,medium,2.0,angry,91,81,0,0.8901098901098901,happy,6
+crema_d,emotion2vec_plus_large,1,medium,2.0,disgusted,91,76,0,0.8351648351648352,happy,6
+crema_d,emotion2vec_plus_large,1,medium,2.0,fearful,91,56,0,0.6153846153846154,sad,15
+crema_d,emotion2vec_plus_large,1,medium,2.0,happy,91,87,0,0.9560439560439561,disgusted,3
+crema_d,emotion2vec_plus_large,1,medium,2.0,sad,91,73,0,0.8021978021978022,fearful,11
+crema_d,emotion2vec_plus_large,2,high,3.0,angry,91,83,0,0.9120879120879121,happy,3
+crema_d,emotion2vec_plus_large,2,high,3.0,disgusted,91,80,0,0.8791208791208791,angry,3
+crema_d,emotion2vec_plus_large,2,high,3.0,fearful,91,73,0,0.8021978021978022,happy,9
+crema_d,emotion2vec_plus_large,2,high,3.0,happy,91,81,0,0.8901098901098901,angry,4
+crema_d,emotion2vec_plus_large,2,high,3.0,sad,91,61,0,0.6703296703296703,fearful,13
+crema_d,gemini-3.8-flash,0,low,1.0,angry,91,5,0,0.054945054945054944,neutral,64
+crema_d,gemini-3.8-flash,0,low,1.0,disgusted,91,0,0,0.0,neutral,41
+crema_d,gemini-3.8-flash,0,low,1.0,fearful,91,7,0,0.07692307692307693,neutral,53
+crema_d,gemini-3.8-flash,0,low,1.0,happy,91,6,0,0.06593406593406594,neutral,78
+crema_d,gemini-3.8-flash,0,low,1.0,sad,91,30,0,0.32967032967032966,neutral,55
+crema_d,gemini-3.8-flash,1,medium,2.0,angry,91,22,0,0.24175824175824176,neutral,41
+crema_d,gemini-3.8-flash,1,medium,2.0,disgusted,91,6,0,0.06593406593406594,neutral,35
+crema_d,gemini-3.8-flash,1,medium,2.0,fearful,91,12,0,0.13186813186813187,neutral,47
+crema_d,gemini-3.8-flash,1,medium,2.0,happy,91,13,0,0.14285714285714285,neutral,50
+crema_d,gemini-3.8-flash,1,medium,2.0,sad,91,35,0,0.38461538461538464,neutral,49
+crema_d,gemini-3.8-flash,2,high,3.0,angry,91,69,0,0.7582417582417582,happy,9
+crema_d,gemini-3.8-flash,2,high,3.0,disgusted,91,4,0,0.04395604395604396,neutral,32
+crema_d,gemini-3.8-flash,2,high,3.0,fearful,91,40,0,0.43956043956043955,angry,19
+crema_d,gemini-3.8-flash,2,high,3.0,happy,91,26,0,0.2857142857142857,neutral,27
+crema_d,gemini-3.8-flash,2,high,3.0,sad,91,41,0,0.45054945054945056,neutral,43
+crema_d,gpt_realtime,0,low,1.0,angry,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,0,low,1.0,disgusted,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,0,low,1.0,fearful,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,0,low,1.0,happy,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,0,low,1.0,sad,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,1,medium,2.0,angry,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,1,medium,2.0,disgusted,91,0,0,0.0,neutral,90
+crema_d,gpt_realtime,1,medium,2.0,fearful,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,1,medium,2.0,happy,91,1,0,0.01098901098901099,neutral,90
+crema_d,gpt_realtime,1,medium,2.0,sad,91,0,0,0.0,neutral,91
+crema_d,gpt_realtime,2,high,3.0,angry,91,36,0,0.3956043956043956,neutral,52
+crema_d,gpt_realtime,2,high,3.0,disgusted,91,0,0,0.0,neutral,90
+crema_d,gpt_realtime,2,high,3.0,fearful,91,1,0,0.01098901098901099,neutral,81
+crema_d,gpt_realtime,2,high,3.0,happy,91,4,0,0.04395604395604396,neutral,87
+crema_d,gpt_realtime,2,high,3.0,sad,91,0,0,0.0,neutral,91
+crema_d,melati_emotion,0,low,1.0,angry,91,51,0,0.5604395604395604,neutral,30
+crema_d,melati_emotion,0,low,1.0,disgusted,91,11,0,0.12087912087912088,neutral,44
+crema_d,melati_emotion,0,low,1.0,fearful,91,12,0,0.13186813186813187,neutral,66
+crema_d,melati_emotion,0,low,1.0,happy,91,27,0,0.2967032967032967,neutral,56
+crema_d,melati_emotion,0,low,1.0,sad,91,4,0,0.04395604395604396,neutral,85
+crema_d,melati_emotion,1,medium,2.0,angry,91,69,0,0.7582417582417582,happy,10
+crema_d,melati_emotion,1,medium,2.0,disgusted,91,19,0,0.2087912087912088,angry,32
+crema_d,melati_emotion,1,medium,2.0,fearful,91,19,0,0.2087912087912088,neutral,47
+crema_d,melati_emotion,1,medium,2.0,happy,91,51,0,0.5604395604395604,neutral,24
+crema_d,melati_emotion,1,medium,2.0,sad,91,8,0,0.08791208791208792,neutral,75
+crema_d,melati_emotion,2,high,3.0,angry,91,89,0,0.978021978021978,happy,1
+crema_d,melati_emotion,2,high,3.0,disgusted,91,18,0,0.1978021978021978,angry,36
+crema_d,melati_emotion,2,high,3.0,fearful,91,9,0,0.0989010989010989,angry,57
+crema_d,melati_emotion,2,high,3.0,happy,91,56,0,0.6153846153846154,angry,26
+crema_d,melati_emotion,2,high,3.0,sad,91,10,0,0.10989010989010989,neutral,64
+crema_d,meralion_ser_v1,0,low,1.0,angry,91,69,0,0.7582417582417582,disgusted,10
+crema_d,meralion_ser_v1,0,low,1.0,disgusted,91,81,0,0.8901098901098901,sad,7
+crema_d,meralion_ser_v1,0,low,1.0,fearful,91,56,0,0.6153846153846154,sad,26
+crema_d,meralion_ser_v1,0,low,1.0,happy,91,76,0,0.8351648351648352,fearful,10
+crema_d,meralion_ser_v1,0,low,1.0,sad,91,73,0,0.8021978021978022,fearful,10
+crema_d,meralion_ser_v1,1,medium,2.0,angry,91,84,0,0.9230769230769231,happy,3
+crema_d,meralion_ser_v1,1,medium,2.0,disgusted,91,80,0,0.8791208791208791,fearful,5
+crema_d,meralion_ser_v1,1,medium,2.0,fearful,91,67,0,0.7362637362637363,sad,11
+crema_d,meralion_ser_v1,1,medium,2.0,happy,91,77,0,0.8461538461538461,disgusted,5
+crema_d,meralion_ser_v1,1,medium,2.0,sad,91,67,0,0.7362637362637363,fearful,17
+crema_d,meralion_ser_v1,2,high,3.0,angry,91,90,0,0.989010989010989,disgusted,1
+crema_d,meralion_ser_v1,2,high,3.0,disgusted,91,86,0,0.945054945054945,angry,3
+crema_d,meralion_ser_v1,2,high,3.0,fearful,91,82,0,0.9010989010989011,angry,5
+crema_d,meralion_ser_v1,2,high,3.0,happy,91,72,0,0.7912087912087912,angry,9
+crema_d,meralion_ser_v1,2,high,3.0,sad,91,49,0,0.5384615384615384,fearful,21
+crema_d,qwen2_5_omni_7b,0,low,1.0,angry,91,2,0,0.02197802197802198,neutral,87
+crema_d,qwen2_5_omni_7b,0,low,1.0,disgusted,91,1,0,0.01098901098901099,neutral,83
+crema_d,qwen2_5_omni_7b,0,low,1.0,fearful,91,5,0,0.054945054945054944,neutral,78
+crema_d,qwen2_5_omni_7b,0,low,1.0,happy,91,9,0,0.0989010989010989,neutral,82
+crema_d,qwen2_5_omni_7b,0,low,1.0,sad,91,12,0,0.13186813186813187,neutral,79
+crema_d,qwen2_5_omni_7b,1,medium,2.0,angry,91,6,0,0.06593406593406594,neutral,84
+crema_d,qwen2_5_omni_7b,1,medium,2.0,disgusted,91,1,0,0.01098901098901099,neutral,80
+crema_d,qwen2_5_omni_7b,1,medium,2.0,fearful,91,7,0,0.07692307692307693,neutral,79
+crema_d,qwen2_5_omni_7b,1,medium,2.0,happy,91,11,0,0.12087912087912088,neutral,80
+crema_d,qwen2_5_omni_7b,1,medium,2.0,sad,91,4,0,0.04395604395604396,neutral,86
+crema_d,qwen2_5_omni_7b,2,high,3.0,angry,91,57,0,0.6263736263736264,neutral,33
+crema_d,qwen2_5_omni_7b,2,high,3.0,disgusted,91,2,0,0.02197802197802198,neutral,78
+crema_d,qwen2_5_omni_7b,2,high,3.0,fearful,91,25,0,0.27472527472527475,neutral,38
+crema_d,qwen2_5_omni_7b,2,high,3.0,happy,91,31,0,0.34065934065934067,neutral,53
+crema_d,qwen2_5_omni_7b,2,high,3.0,sad,91,11,0,0.12087912087912088,neutral,77
+crema_d,qwen2_audio_7b,0,low,1.0,angry,91,64,0,0.7032967032967034,disgusted,24
+crema_d,qwen2_audio_7b,0,low,1.0,disgusted,91,88,0,0.967032967032967,sad,2
+crema_d,qwen2_audio_7b,0,low,1.0,fearful,91,30,0,0.32967032967032966,disgusted,33
+crema_d,qwen2_audio_7b,0,low,1.0,happy,91,74,0,0.8131868131868132,disgusted,6
+crema_d,qwen2_audio_7b,0,low,1.0,sad,91,52,0,0.5714285714285714,disgusted,37
+crema_d,qwen2_audio_7b,1,medium,2.0,angry,91,80,0,0.8791208791208791,disgusted,8
+crema_d,qwen2_audio_7b,1,medium,2.0,disgusted,91,88,0,0.967032967032967,angry,2
+crema_d,qwen2_audio_7b,1,medium,2.0,fearful,91,47,0,0.5164835164835165,disgusted,26
+crema_d,qwen2_audio_7b,1,medium,2.0,happy,91,76,0,0.8351648351648352,disgusted,8
+crema_d,qwen2_audio_7b,1,medium,2.0,sad,91,57,0,0.6263736263736264,disgusted,33
+crema_d,qwen2_audio_7b,2,high,3.0,angry,91,88,0,0.967032967032967,disgusted,3
+crema_d,qwen2_audio_7b,2,high,3.0,disgusted,91,89,0,0.978021978021978,fearful,2
+crema_d,qwen2_audio_7b,2,high,3.0,fearful,91,82,0,0.9010989010989011,disgusted,5
+crema_d,qwen2_audio_7b,2,high,3.0,happy,91,78,0,0.8571428571428571,disgusted,5
+crema_d,qwen2_audio_7b,2,high,3.0,sad,91,41,0,0.45054945054945056,disgusted,41
+crema_d,vox_profile_wavlm,0,low,1.0,angry,91,3,0,0.03296703296703297,neutral,83
+crema_d,vox_profile_wavlm,0,low,1.0,disgusted,91,1,0,0.01098901098901099,neutral,80
+crema_d,vox_profile_wavlm,0,low,1.0,fearful,91,3,0,0.03296703296703297,neutral,71
+crema_d,vox_profile_wavlm,0,low,1.0,happy,91,5,0,0.054945054945054944,neutral,85
+crema_d,vox_profile_wavlm,0,low,1.0,sad,91,15,0,0.16483516483516483,neutral,75
+crema_d,vox_profile_wavlm,1,medium,2.0,angry,91,16,0,0.17582417582417584,neutral,56
+crema_d,vox_profile_wavlm,1,medium,2.0,disgusted,91,0,0,0.0,neutral,76
+crema_d,vox_profile_wavlm,1,medium,2.0,fearful,91,6,0,0.06593406593406594,neutral,76
+crema_d,vox_profile_wavlm,1,medium,2.0,happy,91,9,0,0.0989010989010989,neutral,80
+crema_d,vox_profile_wavlm,1,medium,2.0,sad,91,18,0,0.1978021978021978,neutral,73
+crema_d,vox_profile_wavlm,2,high,3.0,angry,91,69,0,0.7582417582417582,neutral,9
+crema_d,vox_profile_wavlm,2,high,3.0,disgusted,91,2,0,0.02197802197802198,neutral,74
+crema_d,vox_profile_wavlm,2,high,3.0,fearful,91,25,0,0.27472527472527475,neutral,38
+crema_d,vox_profile_wavlm,2,high,3.0,happy,91,17,0,0.18681318681318682,neutral,53
+crema_d,vox_profile_wavlm,2,high,3.0,sad,91,20,0,0.21978021978021978,neutral,69
+crema_d,vox_profile_whisper,0,low,1.0,angry,91,4,0,0.04395604395604396,neutral,75
+crema_d,vox_profile_whisper,0,low,1.0,disgusted,91,0,0,0.0,neutral,77
+crema_d,vox_profile_whisper,0,low,1.0,fearful,91,2,0,0.02197802197802198,neutral,60
+crema_d,vox_profile_whisper,0,low,1.0,happy,91,2,0,0.02197802197802198,neutral,88
+crema_d,vox_profile_whisper,0,low,1.0,sad,91,28,0,0.3076923076923077,neutral,63
+crema_d,vox_profile_whisper,1,medium,2.0,angry,91,40,0,0.43956043956043955,neutral,42
+crema_d,vox_profile_whisper,1,medium,2.0,disgusted,91,2,0,0.02197802197802198,neutral,68
+crema_d,vox_profile_whisper,1,medium,2.0,fearful,91,6,0,0.06593406593406594,neutral,56
+crema_d,vox_profile_whisper,1,medium,2.0,happy,91,15,0,0.16483516483516483,neutral,72
+crema_d,vox_profile_whisper,1,medium,2.0,sad,91,33,0,0.3626373626373626,neutral,58
+crema_d,vox_profile_whisper,2,high,3.0,angry,91,84,0,0.9230769230769231,neutral,5
+crema_d,vox_profile_whisper,2,high,3.0,disgusted,91,0,0,0.0,neutral,67
+crema_d,vox_profile_whisper,2,high,3.0,fearful,91,33,0,0.3626373626373626,angry,30
+crema_d,vox_profile_whisper,2,high,3.0,happy,91,24,0,0.26373626373626374,neutral,41
+crema_d,vox_profile_whisper,2,high,3.0,sad,91,28,0,0.3076923076923077,neutral,61
+ravdess,emotion2vec_plus_large,0,normal,1.0,angry,96,90,0,0.9375,surprised,4
+ravdess,emotion2vec_plus_large,0,normal,1.0,disgusted,96,92,0,0.9583333333333334,neutral,2
+ravdess,emotion2vec_plus_large,0,normal,1.0,fearful,96,82,0,0.8541666666666666,sad,9
+ravdess,emotion2vec_plus_large,0,normal,1.0,happy,96,89,0,0.9270833333333334,neutral,6
+ravdess,emotion2vec_plus_large,0,normal,1.0,sad,96,79,0,0.8229166666666666,neutral,12
+ravdess,emotion2vec_plus_large,0,normal,1.0,surprised,96,89,0,0.9270833333333334,disgusted,3
+ravdess,emotion2vec_plus_large,1,strong,2.0,angry,96,96,0,1.0,,0
+ravdess,emotion2vec_plus_large,1,strong,2.0,disgusted,96,95,0,0.9895833333333334,angry,1
+ravdess,emotion2vec_plus_large,1,strong,2.0,fearful,96,88,0,0.9166666666666666,happy,4
+ravdess,emotion2vec_plus_large,1,strong,2.0,happy,96,92,0,0.9583333333333334,surprised,3
+ravdess,emotion2vec_plus_large,1,strong,2.0,sad,96,87,0,0.90625,happy,4
+ravdess,emotion2vec_plus_large,1,strong,2.0,surprised,96,90,0,0.9375,happy,4
+ravdess,gemini-3.8-flash,0,normal,1.0,angry,96,15,0,0.15625,neutral,35
+ravdess,gemini-3.8-flash,0,normal,1.0,disgusted,96,11,0,0.11458333333333333,sad,34
+ravdess,gemini-3.8-flash,0,normal,1.0,fearful,96,41,0,0.4270833333333333,neutral,22
+ravdess,gemini-3.8-flash,0,normal,1.0,happy,96,34,0,0.3541666666666667,neutral,46
+ravdess,gemini-3.8-flash,0,normal,1.0,sad,96,31,0,0.3229166666666667,neutral,53
+ravdess,gemini-3.8-flash,0,normal,1.0,surprised,96,43,0,0.4479166666666667,happy,26
+ravdess,gemini-3.8-flash,1,strong,2.0,angry,96,69,0,0.71875,surprised,11
+ravdess,gemini-3.8-flash,1,strong,2.0,disgusted,96,22,0,0.22916666666666666,sad,25
+ravdess,gemini-3.8-flash,1,strong,2.0,fearful,96,74,0,0.7708333333333334,surprised,7
+ravdess,gemini-3.8-flash,1,strong,2.0,happy,96,59,0,0.6145833333333334,surprised,21
+ravdess,gemini-3.8-flash,1,strong,2.0,sad,96,41,0,0.4270833333333333,fearful,21
+ravdess,gemini-3.8-flash,1,strong,2.0,surprised,96,53,0,0.5520833333333334,happy,26
+ravdess,gpt_realtime,0,normal,1.0,angry,96,0,0,0.0,neutral,95
+ravdess,gpt_realtime,0,normal,1.0,disgusted,96,0,0,0.0,neutral,96
+ravdess,gpt_realtime,0,normal,1.0,fearful,96,1,0,0.010416666666666666,neutral,93
+ravdess,gpt_realtime,0,normal,1.0,happy,96,5,0,0.052083333333333336,neutral,91
+ravdess,gpt_realtime,0,normal,1.0,sad,96,0,0,0.0,neutral,95
+ravdess,gpt_realtime,0,normal,1.0,surprised,96,0,0,0.0,neutral,93
+ravdess,gpt_realtime,1,strong,2.0,angry,96,43,0,0.4479166666666667,neutral,50
+ravdess,gpt_realtime,1,strong,2.0,disgusted,96,1,0,0.010416666666666666,neutral,88
+ravdess,gpt_realtime,1,strong,2.0,fearful,96,17,0,0.17708333333333334,neutral,44
+ravdess,gpt_realtime,1,strong,2.0,happy,96,20,0,0.20833333333333334,neutral,67
+ravdess,gpt_realtime,1,strong,2.0,sad,96,7,0,0.07291666666666667,neutral,82
+ravdess,gpt_realtime,1,strong,2.0,surprised,96,8,0,0.08333333333333333,neutral,77
+ravdess,melati_emotion,0,normal,1.0,angry,96,92,0,0.9583333333333334,sad,3
+ravdess,melati_emotion,0,normal,1.0,disgusted,96,24,0,0.25,angry,49
+ravdess,melati_emotion,0,normal,1.0,fearful,96,38,0,0.3958333333333333,angry,30
+ravdess,melati_emotion,0,normal,1.0,happy,96,51,0,0.53125,sad,15
+ravdess,melati_emotion,0,normal,1.0,sad,96,80,0,0.8333333333333334,neutral,8
+ravdess,melati_emotion,0,normal,1.0,surprised,96,30,0,0.3125,angry,32
+ravdess,melati_emotion,1,strong,2.0,angry,96,96,0,1.0,,0
+ravdess,melati_emotion,1,strong,2.0,disgusted,96,17,0,0.17708333333333334,angry,68
+ravdess,melati_emotion,1,strong,2.0,fearful,96,29,0,0.3020833333333333,angry,54
+ravdess,melati_emotion,1,strong,2.0,happy,96,64,0,0.6666666666666666,angry,31
+ravdess,melati_emotion,1,strong,2.0,sad,96,63,0,0.65625,happy,14
+ravdess,melati_emotion,1,strong,2.0,surprised,96,11,0,0.11458333333333333,angry,65
+ravdess,meralion_ser_v1,0,normal,1.0,angry,96,85,0,0.8854166666666666,neutral,4
+ravdess,meralion_ser_v1,0,normal,1.0,disgusted,96,45,0,0.46875,angry,26
+ravdess,meralion_ser_v1,0,normal,1.0,fearful,96,55,0,0.5729166666666666,sad,29
+ravdess,meralion_ser_v1,0,normal,1.0,happy,96,54,0,0.5625,neutral,31
+ravdess,meralion_ser_v1,0,normal,1.0,sad,96,80,0,0.8333333333333334,neutral,9
+ravdess,meralion_ser_v1,0,normal,1.0,surprised,96,53,0,0.5520833333333334,happy,27
+ravdess,meralion_ser_v1,1,strong,2.0,angry,96,96,0,1.0,,0
+ravdess,meralion_ser_v1,1,strong,2.0,disgusted,96,23,0,0.23958333333333334,angry,57
+ravdess,meralion_ser_v1,1,strong,2.0,fearful,96,81,0,0.84375,angry,9
+ravdess,meralion_ser_v1,1,strong,2.0,happy,96,50,0,0.5208333333333334,angry,17
+ravdess,meralion_ser_v1,1,strong,2.0,sad,96,79,0,0.8229166666666666,fearful,9
+ravdess,meralion_ser_v1,1,strong,2.0,surprised,96,61,0,0.6354166666666666,happy,15
+ravdess,qwen2_5_omni_7b,0,normal,1.0,angry,96,12,0,0.125,neutral,82
+ravdess,qwen2_5_omni_7b,0,normal,1.0,disgusted,96,17,0,0.17708333333333334,neutral,72
+ravdess,qwen2_5_omni_7b,0,normal,1.0,fearful,96,23,0,0.23958333333333334,neutral,63
+ravdess,qwen2_5_omni_7b,0,normal,1.0,happy,96,17,0,0.17708333333333334,neutral,78
+ravdess,qwen2_5_omni_7b,0,normal,1.0,sad,96,13,0,0.13541666666666666,neutral,83
+ravdess,qwen2_5_omni_7b,0,normal,1.0,surprised,96,15,0,0.15625,neutral,69
+ravdess,qwen2_5_omni_7b,1,strong,2.0,angry,96,57,0,0.59375,neutral,39
+ravdess,qwen2_5_omni_7b,1,strong,2.0,disgusted,96,25,0,0.2604166666666667,neutral,64
+ravdess,qwen2_5_omni_7b,1,strong,2.0,fearful,96,48,0,0.5,neutral,26
+ravdess,qwen2_5_omni_7b,1,strong,2.0,happy,96,56,0,0.5833333333333334,neutral,26
+ravdess,qwen2_5_omni_7b,1,strong,2.0,sad,96,57,0,0.59375,neutral,24
+ravdess,qwen2_5_omni_7b,1,strong,2.0,surprised,96,39,0,0.40625,neutral,33
+ravdess,qwen2_audio_7b,0,normal,1.0,angry,96,69,0,0.71875,disgusted,25
+ravdess,qwen2_audio_7b,0,normal,1.0,disgusted,96,96,0,1.0,,0
+ravdess,qwen2_audio_7b,0,normal,1.0,fearful,96,92,0,0.9583333333333334,sad,2
+ravdess,qwen2_audio_7b,0,normal,1.0,happy,96,74,0,0.7708333333333334,surprised,12
+ravdess,qwen2_audio_7b,0,normal,1.0,sad,96,90,0,0.9375,disgusted,6
+ravdess,qwen2_audio_7b,0,normal,1.0,surprised,96,90,0,0.9375,fearful,3
+ravdess,qwen2_audio_7b,1,strong,2.0,angry,96,95,0,0.9895833333333334,disgusted,1
+ravdess,qwen2_audio_7b,1,strong,2.0,disgusted,96,96,0,1.0,,0
+ravdess,qwen2_audio_7b,1,strong,2.0,fearful,96,95,0,0.9895833333333334,sad,1
+ravdess,qwen2_audio_7b,1,strong,2.0,happy,96,85,0,0.8854166666666666,surprised,7
+ravdess,qwen2_audio_7b,1,strong,2.0,sad,96,66,0,0.6875,fearful,17
+ravdess,qwen2_audio_7b,1,strong,2.0,surprised,96,92,0,0.9583333333333334,fearful,3
+ravdess,vox_profile_wavlm,0,normal,1.0,angry,96,53,0,0.5520833333333334,neutral,24
+ravdess,vox_profile_wavlm,0,normal,1.0,disgusted,96,2,0,0.020833333333333332,neutral,39
+ravdess,vox_profile_wavlm,0,normal,1.0,fearful,96,55,0,0.5729166666666666,neutral,26
+ravdess,vox_profile_wavlm,0,normal,1.0,happy,96,2,0,0.020833333333333332,neutral,56
+ravdess,vox_profile_wavlm,0,normal,1.0,sad,96,32,0,0.3333333333333333,neutral,45
+ravdess,vox_profile_wavlm,0,normal,1.0,surprised,96,33,0,0.34375,fearful,33
+ravdess,vox_profile_wavlm,1,strong,2.0,angry,96,90,0,0.9375,fearful,5
+ravdess,vox_profile_wavlm,1,strong,2.0,disgusted,96,2,0,0.020833333333333332,angry,35
+ravdess,vox_profile_wavlm,1,strong,2.0,fearful,96,70,0,0.7291666666666666,angry,10
+ravdess,vox_profile_wavlm,1,strong,2.0,happy,96,17,0,0.17708333333333334,fearful,32
+ravdess,vox_profile_wavlm,1,strong,2.0,sad,96,27,0,0.28125,fearful,29
+ravdess,vox_profile_wavlm,1,strong,2.0,surprised,96,41,0,0.4270833333333333,fearful,35
+ravdess,vox_profile_whisper,0,normal,1.0,angry,96,53,0,0.5520833333333334,neutral,31
+ravdess,vox_profile_whisper,0,normal,1.0,disgusted,96,0,0,0.0,neutral,38
+ravdess,vox_profile_whisper,0,normal,1.0,fearful,96,38,0,0.3958333333333333,sad,26
+ravdess,vox_profile_whisper,0,normal,1.0,happy,96,7,0,0.07291666666666667,neutral,58
+ravdess,vox_profile_whisper,0,normal,1.0,sad,96,43,0,0.4479166666666667,neutral,52
+ravdess,vox_profile_whisper,0,normal,1.0,surprised,96,77,0,0.8020833333333334,neutral,14
+ravdess,vox_profile_whisper,1,strong,2.0,angry,96,95,0,0.9895833333333334,neutral,1
+ravdess,vox_profile_whisper,1,strong,2.0,disgusted,96,3,0,0.03125,surprised,29
+ravdess,vox_profile_whisper,1,strong,2.0,fearful,96,72,0,0.75,angry,12
+ravdess,vox_profile_whisper,1,strong,2.0,happy,96,16,0,0.16666666666666666,surprised,43
+ravdess,vox_profile_whisper,1,strong,2.0,sad,96,40,0,0.4166666666666667,fearful,25
+ravdess,vox_profile_whisper,1,strong,2.0,surprised,96,83,0,0.8645833333333334,angry,8
+mead,emotion2vec_plus_large,0,weak,1.0,angry,413,361,0,0.87409200968523,disgusted,20
+mead,emotion2vec_plus_large,0,weak,1.0,disgusted,417,351,0,0.841726618705036,neutral,42
+mead,emotion2vec_plus_large,0,weak,1.0,fearful,413,335,0,0.8111380145278451,neutral,24
+mead,emotion2vec_plus_large,0,weak,1.0,happy,416,398,0,0.9567307692307693,neutral,14
+mead,emotion2vec_plus_large,0,weak,1.0,sad,418,393,0,0.9401913875598086,neutral,12
+mead,emotion2vec_plus_large,0,weak,1.0,surprised,415,352,0,0.8481927710843373,fearful,20
+mead,emotion2vec_plus_large,1,medium,2.0,angry,405,365,0,0.9012345679012346,disgusted,12
+mead,emotion2vec_plus_large,1,medium,2.0,disgusted,412,343,0,0.8325242718446602,neutral,41
+mead,emotion2vec_plus_large,1,medium,2.0,fearful,411,359,0,0.8734793187347932,surprised,20
+mead,emotion2vec_plus_large,1,medium,2.0,happy,419,409,0,0.9761336515513126,neutral,3
+mead,emotion2vec_plus_large,1,medium,2.0,sad,414,395,0,0.9541062801932367,neutral,7
+mead,emotion2vec_plus_large,1,medium,2.0,surprised,414,373,0,0.9009661835748792,fearful,15
+mead,emotion2vec_plus_large,2,strong,3.0,angry,405,370,0,0.9135802469135802,disgusted,13
+mead,emotion2vec_plus_large,2,strong,3.0,disgusted,419,375,0,0.8949880668257757,angry,14
+mead,emotion2vec_plus_large,2,strong,3.0,fearful,409,372,0,0.9095354523227384,surprised,13
+mead,emotion2vec_plus_large,2,strong,3.0,happy,412,402,0,0.9757281553398058,fearful,4
+mead,emotion2vec_plus_large,2,strong,3.0,sad,417,400,0,0.9592326139088729,happy,5
+mead,emotion2vec_plus_large,2,strong,3.0,surprised,410,377,0,0.9195121951219513,fearful,22
+mead,gemini-3.8-flash,0,weak,1.0,angry,413,54,0,0.13075060532687652,neutral,246
+mead,gemini-3.8-flash,0,weak,1.0,disgusted,417,34,0,0.0815347721822542,neutral,297
+mead,gemini-3.8-flash,0,weak,1.0,fearful,413,16,0,0.0387409200968523,neutral,246
+mead,gemini-3.8-flash,0,weak,1.0,happy,416,46,0,0.11057692307692307,neutral,282
+mead,gemini-3.8-flash,0,weak,1.0,sad,418,109,0,0.2607655502392344,neutral,248
+mead,gemini-3.8-flash,0,weak,1.0,surprised,415,18,1,0.043373493975903614,neutral,243
+mead,gemini-3.8-flash,1,medium,2.0,angry,405,63,1,0.15555555555555556,neutral,226
+mead,gemini-3.8-flash,1,medium,2.0,disgusted,412,36,1,0.08737864077669903,neutral,277
+mead,gemini-3.8-flash,1,medium,2.0,fearful,411,30,1,0.072992700729927,neutral,221
+mead,gemini-3.8-flash,1,medium,2.0,happy,419,74,2,0.1766109785202864,neutral,255
+mead,gemini-3.8-flash,1,medium,2.0,sad,414,125,0,0.30193236714975846,neutral,208
+mead,gemini-3.8-flash,1,medium,2.0,surprised,414,26,0,0.06280193236714976,neutral,239
+mead,gemini-3.8-flash,2,strong,3.0,angry,405,85,0,0.20987654320987653,neutral,168
+mead,gemini-3.8-flash,2,strong,3.0,disgusted,419,42,1,0.10023866348448687,neutral,245
+mead,gemini-3.8-flash,2,strong,3.0,fearful,409,35,1,0.08557457212713937,neutral,166
+mead,gemini-3.8-flash,2,strong,3.0,happy,412,89,1,0.21601941747572814,neutral,231
+mead,gemini-3.8-flash,2,strong,3.0,sad,417,121,0,0.290167865707434,neutral,174
+mead,gemini-3.8-flash,2,strong,3.0,surprised,410,33,1,0.08048780487804878,neutral,190
+mead,gpt_realtime,0,weak,1.0,angry,413,25,3,0.06053268765133172,neutral,305
+mead,gpt_realtime,0,weak,1.0,disgusted,417,5,0,0.011990407673860911,neutral,347
+mead,gpt_realtime,0,weak,1.0,fearful,413,1,0,0.002421307506053269,neutral,328
+mead,gpt_realtime,0,weak,1.0,happy,416,82,2,0.1971153846153846,neutral,302
+mead,gpt_realtime,0,weak,1.0,sad,418,51,0,0.12200956937799043,neutral,299
+mead,gpt_realtime,0,weak,1.0,surprised,415,0,0,0.0,neutral,330
+mead,gpt_realtime,1,medium,2.0,angry,405,38,6,0.09382716049382717,neutral,263
+mead,gpt_realtime,1,medium,2.0,disgusted,412,8,2,0.019417475728155338,neutral,323
+mead,gpt_realtime,1,medium,2.0,fearful,411,2,0,0.004866180048661801,neutral,321
+mead,gpt_realtime,1,medium,2.0,happy,419,80,2,0.1909307875894988,neutral,298
+mead,gpt_realtime,1,medium,2.0,sad,414,68,1,0.1642512077294686,neutral,273
+mead,gpt_realtime,1,medium,2.0,surprised,414,1,0,0.0024154589371980675,neutral,327
+mead,gpt_realtime,2,strong,3.0,angry,405,64,2,0.1580246913580247,neutral,244
+mead,gpt_realtime,2,strong,3.0,disgusted,419,4,0,0.00954653937947494,neutral,336
+mead,gpt_realtime,2,strong,3.0,fearful,409,8,1,0.019559902200488997,neutral,289
+mead,gpt_realtime,2,strong,3.0,happy,412,92,2,0.22330097087378642,neutral,282
+mead,gpt_realtime,2,strong,3.0,sad,417,65,0,0.15587529976019185,neutral,264
+mead,gpt_realtime,2,strong,3.0,surprised,410,2,1,0.004878048780487805,neutral,311
+mead,melati_emotion,0,weak,1.0,angry,413,96,0,0.2324455205811138,neutral,243
+mead,melati_emotion,0,weak,1.0,disgusted,417,15,0,0.03597122302158273,neutral,236
+mead,melati_emotion,0,weak,1.0,fearful,413,80,0,0.1937046004842615,neutral,172
+mead,melati_emotion,0,weak,1.0,happy,416,137,0,0.3293269230769231,neutral,235
+mead,melati_emotion,0,weak,1.0,sad,418,124,0,0.2966507177033493,neutral,212
+mead,melati_emotion,0,weak,1.0,surprised,415,4,0,0.00963855421686747,neutral,201
+mead,melati_emotion,1,medium,2.0,angry,405,182,0,0.44938271604938274,neutral,140
+mead,melati_emotion,1,medium,2.0,disgusted,412,15,0,0.03640776699029126,neutral,188
+mead,melati_emotion,1,medium,2.0,fearful,411,93,0,0.22627737226277372,neutral,117
+mead,melati_emotion,1,medium,2.0,happy,419,228,0,0.5441527446300716,neutral,132
+mead,melati_emotion,1,medium,2.0,sad,414,131,0,0.3164251207729469,neutral,140
+mead,melati_emotion,1,medium,2.0,surprised,414,10,0,0.024154589371980676,neutral,141
+mead,melati_emotion,2,strong,3.0,angry,405,256,0,0.6320987654320988,neutral,61
+mead,melati_emotion,2,strong,3.0,disgusted,419,30,0,0.07159904534606205,angry,131
+mead,melati_emotion,2,strong,3.0,fearful,409,117,0,0.2860635696821516,angry,120
+mead,melati_emotion,2,strong,3.0,happy,412,297,0,0.720873786407767,neutral,59
+mead,melati_emotion,2,strong,3.0,sad,417,154,0,0.36930455635491605,happy,75
+mead,melati_emotion,2,strong,3.0,surprised,410,10,0,0.024390243902439025,angry,149
+mead,meralion_ser_v1,0,weak,1.0,angry,413,96,0,0.2324455205811138,neutral,268
+mead,meralion_ser_v1,0,weak,1.0,disgusted,417,23,0,0.05515587529976019,neutral,229
+mead,meralion_ser_v1,0,weak,1.0,fearful,413,12,0,0.029055690072639227,neutral,187
+mead,meralion_ser_v1,0,weak,1.0,happy,416,83,0,0.19951923076923078,neutral,274
+mead,meralion_ser_v1,0,weak,1.0,sad,418,189,0,0.45215311004784686,neutral,162
+mead,meralion_ser_v1,0,weak,1.0,surprised,415,12,0,0.02891566265060241,neutral,238
+mead,meralion_ser_v1,1,medium,2.0,angry,405,181,0,0.4469135802469136,neutral,170
+mead,meralion_ser_v1,1,medium,2.0,disgusted,412,15,0,0.03640776699029126,neutral,198
+mead,meralion_ser_v1,1,medium,2.0,fearful,411,26,0,0.06326034063260341,neutral,146
+mead,meralion_ser_v1,1,medium,2.0,happy,419,179,0,0.42720763723150357,neutral,192
+mead,meralion_ser_v1,1,medium,2.0,sad,414,198,0,0.4782608695652174,neutral,122
+mead,meralion_ser_v1,1,medium,2.0,surprised,414,24,0,0.057971014492753624,neutral,189
+mead,meralion_ser_v1,2,strong,3.0,angry,405,268,0,0.6617283950617284,neutral,84
+mead,meralion_ser_v1,2,strong,3.0,disgusted,419,28,0,0.06682577565632458,neutral,142
+mead,meralion_ser_v1,2,strong,3.0,fearful,409,29,0,0.07090464547677261,angry,138
+mead,meralion_ser_v1,2,strong,3.0,happy,412,231,0,0.5606796116504854,neutral,114
+mead,meralion_ser_v1,2,strong,3.0,sad,417,199,0,0.47721822541966424,neutral,78
+mead,meralion_ser_v1,2,strong,3.0,surprised,410,31,0,0.07560975609756097,angry,151
+mead,qwen2_5_omni_7b,0,weak,1.0,angry,413,61,0,0.14769975786924938,neutral,218
+mead,qwen2_5_omni_7b,0,weak,1.0,disgusted,417,54,0,0.12949640287769784,neutral,263
+mead,qwen2_5_omni_7b,0,weak,1.0,fearful,413,12,0,0.029055690072639227,neutral,242
+mead,qwen2_5_omni_7b,0,weak,1.0,happy,416,107,0,0.25721153846153844,neutral,206
+mead,qwen2_5_omni_7b,0,weak,1.0,sad,418,45,0,0.1076555023923445,neutral,241
+mead,qwen2_5_omni_7b,0,weak,1.0,surprised,415,7,0,0.016867469879518072,neutral,240
+mead,qwen2_5_omni_7b,1,medium,2.0,angry,405,74,0,0.18271604938271604,neutral,190
+mead,qwen2_5_omni_7b,1,medium,2.0,disgusted,412,62,0,0.15048543689320387,neutral,240
+mead,qwen2_5_omni_7b,1,medium,2.0,fearful,411,17,0,0.0413625304136253,neutral,242
+mead,qwen2_5_omni_7b,1,medium,2.0,happy,419,94,0,0.2243436754176611,neutral,217
+mead,qwen2_5_omni_7b,1,medium,2.0,sad,414,63,0,0.15217391304347827,neutral,213
+mead,qwen2_5_omni_7b,1,medium,2.0,surprised,414,14,0,0.033816425120772944,neutral,242
+mead,qwen2_5_omni_7b,2,strong,3.0,angry,405,95,0,0.2345679012345679,neutral,177
+mead,qwen2_5_omni_7b,2,strong,3.0,disgusted,419,56,0,0.13365155131264916,neutral,254
+mead,qwen2_5_omni_7b,2,strong,3.0,fearful,409,26,0,0.06356968215158924,neutral,202
+mead,qwen2_5_omni_7b,2,strong,3.0,happy,412,101,0,0.24514563106796117,neutral,201
+mead,qwen2_5_omni_7b,2,strong,3.0,sad,417,75,0,0.17985611510791366,neutral,178
+mead,qwen2_5_omni_7b,2,strong,3.0,surprised,410,15,0,0.036585365853658534,neutral,217
+mead,qwen2_audio_7b,0,weak,1.0,angry,413,194,10,0.46973365617433416,disgusted,103
+mead,qwen2_audio_7b,0,weak,1.0,disgusted,417,124,9,0.2973621103117506,angry,149
+mead,qwen2_audio_7b,0,weak,1.0,fearful,413,19,12,0.04600484261501211,angry,186
+mead,qwen2_audio_7b,0,weak,1.0,happy,416,53,16,0.12740384615384615,angry,144
+mead,qwen2_audio_7b,0,weak,1.0,sad,418,59,21,0.14114832535885166,disgusted,151
+mead,qwen2_audio_7b,0,weak,1.0,surprised,415,5,14,0.012048192771084338,angry,127
+mead,qwen2_audio_7b,1,medium,2.0,angry,405,225,4,0.5555555555555556,disgusted,88
+mead,qwen2_audio_7b,1,medium,2.0,disgusted,412,99,7,0.24029126213592233,angry,175
+mead,qwen2_audio_7b,1,medium,2.0,fearful,411,25,11,0.06082725060827251,angry,212
+mead,qwen2_audio_7b,1,medium,2.0,happy,419,54,14,0.1288782816229117,angry,167
+mead,qwen2_audio_7b,1,medium,2.0,sad,414,63,15,0.15217391304347827,disgusted,138
+mead,qwen2_audio_7b,1,medium,2.0,surprised,414,12,5,0.028985507246376812,angry,154
+mead,qwen2_audio_7b,2,strong,3.0,angry,405,286,1,0.7061728395061728,disgusted,72
+mead,qwen2_audio_7b,2,strong,3.0,disgusted,419,94,8,0.2243436754176611,angry,207
+mead,qwen2_audio_7b,2,strong,3.0,fearful,409,27,9,0.06601466992665037,angry,231
+mead,qwen2_audio_7b,2,strong,3.0,happy,412,56,9,0.13592233009708737,angry,202
+mead,qwen2_audio_7b,2,strong,3.0,sad,417,53,16,0.12709832134292565,angry,152
+mead,qwen2_audio_7b,2,strong,3.0,surprised,410,9,9,0.02195121951219512,angry,206
+mead,vox_profile_wavlm,0,weak,1.0,angry,413,66,0,0.15980629539951574,neutral,213
+mead,vox_profile_wavlm,0,weak,1.0,disgusted,417,46,0,0.11031175059952038,neutral,234
+mead,vox_profile_wavlm,0,weak,1.0,fearful,413,23,0,0.05569007263922518,neutral,195
+mead,vox_profile_wavlm,0,weak,1.0,happy,416,23,0,0.055288461538461536,neutral,294
+mead,vox_profile_wavlm,0,weak,1.0,sad,418,135,0,0.3229665071770335,neutral,182
+mead,vox_profile_wavlm,0,weak,1.0,surprised,415,18,0,0.043373493975903614,neutral,243
+mead,vox_profile_wavlm,1,medium,2.0,angry,405,109,0,0.2691358024691358,neutral,172
+mead,vox_profile_wavlm,1,medium,2.0,disgusted,412,53,0,0.12864077669902912,neutral,208
+mead,vox_profile_wavlm,1,medium,2.0,fearful,411,34,0,0.0827250608272506,neutral,176
+mead,vox_profile_wavlm,1,medium,2.0,happy,419,35,0,0.08353221957040573,neutral,257
+mead,vox_profile_wavlm,1,medium,2.0,sad,414,128,0,0.30917874396135264,neutral,152
+mead,vox_profile_wavlm,1,medium,2.0,surprised,414,18,0,0.043478260869565216,neutral,204
+mead,vox_profile_wavlm,2,strong,3.0,angry,405,184,0,0.454320987654321,neutral,100
+mead,vox_profile_wavlm,2,strong,3.0,disgusted,419,63,0,0.15035799522673032,neutral,176
+mead,vox_profile_wavlm,2,strong,3.0,fearful,409,33,0,0.08068459657701711,neutral,124
+mead,vox_profile_wavlm,2,strong,3.0,happy,412,61,0,0.14805825242718446,neutral,212
+mead,vox_profile_wavlm,2,strong,3.0,sad,417,129,0,0.30935251798561153,neutral,112
+mead,vox_profile_wavlm,2,strong,3.0,surprised,410,22,0,0.05365853658536585,neutral,159
+mead,vox_profile_whisper,0,weak,1.0,angry,413,77,0,0.1864406779661017,neutral,220
+mead,vox_profile_whisper,0,weak,1.0,disgusted,417,15,0,0.03597122302158273,neutral,246
+mead,vox_profile_whisper,0,weak,1.0,fearful,413,7,0,0.01694915254237288,neutral,213
+mead,vox_profile_whisper,0,weak,1.0,happy,416,63,0,0.15144230769230768,neutral,271
+mead,vox_profile_whisper,0,weak,1.0,sad,418,133,0,0.3181818181818182,neutral,207
+mead,vox_profile_whisper,0,weak,1.0,surprised,415,13,0,0.03132530120481928,neutral,262
+mead,vox_profile_whisper,1,medium,2.0,angry,405,138,0,0.34074074074074073,neutral,162
+mead,vox_profile_whisper,1,medium,2.0,disgusted,412,17,0,0.0412621359223301,neutral,228
+mead,vox_profile_whisper,1,medium,2.0,fearful,411,14,0,0.0340632603406326,neutral,203
+mead,vox_profile_whisper,1,medium,2.0,happy,419,63,0,0.15035799522673032,neutral,263
+mead,vox_profile_whisper,1,medium,2.0,sad,414,129,0,0.3115942028985507,neutral,182
+mead,vox_profile_whisper,1,medium,2.0,surprised,414,25,0,0.06038647342995169,neutral,243
+mead,vox_profile_whisper,2,strong,3.0,angry,405,198,0,0.4888888888888889,neutral,101
+mead,vox_profile_whisper,2,strong,3.0,disgusted,419,17,0,0.0405727923627685,neutral,188
+mead,vox_profile_whisper,2,strong,3.0,fearful,409,14,0,0.034229828850855744,neutral,143
+mead,vox_profile_whisper,2,strong,3.0,happy,412,87,0,0.2111650485436893,neutral,198
+mead,vox_profile_whisper,2,strong,3.0,sad,417,125,0,0.2997601918465228,neutral,141
+mead,vox_profile_whisper,2,strong,3.0,surprised,410,28,0,0.06829268292682927,neutral,193
+thai_ser,emotion2vec_plus_large,0,low,1.0,angry,523,343,0,0.655831739961759,neutral,98
+thai_ser,emotion2vec_plus_large,0,low,1.0,happy,658,560,0,0.851063829787234,neutral,47
+thai_ser,emotion2vec_plus_large,0,low,1.0,sad,520,236,0,0.45384615384615384,neutral,145
+thai_ser,emotion2vec_plus_large,1,high,2.0,angry,486,344,0,0.7078189300411523,neutral,75
+thai_ser,emotion2vec_plus_large,1,high,2.0,happy,691,582,0,0.8422575976845152,angry,61
+thai_ser,emotion2vec_plus_large,1,high,2.0,sad,552,271,0,0.49094202898550726,happy,139
+thai_ser,gemini-3.8-flash,0,low,1.0,angry,523,157,0,0.30019120458891013,happy,215
+thai_ser,gemini-3.8-flash,0,low,1.0,happy,658,462,0,0.7021276595744681,neutral,103
+thai_ser,gemini-3.8-flash,0,low,1.0,sad,520,221,0,0.425,neutral,198
+thai_ser,gemini-3.8-flash,1,high,2.0,angry,486,164,0,0.3374485596707819,happy,185
+thai_ser,gemini-3.8-flash,1,high,2.0,happy,691,497,0,0.7192474674384949,neutral,92
+thai_ser,gemini-3.8-flash,1,high,2.0,sad,552,256,0,0.463768115942029,neutral,200
+thai_ser,gpt_realtime,0,low,1.0,angry,523,67,0,0.12810707456978968,neutral,273
+thai_ser,gpt_realtime,0,low,1.0,happy,658,397,0,0.6033434650455927,neutral,246
+thai_ser,gpt_realtime,0,low,1.0,sad,520,51,0,0.09807692307692308,neutral,322
+thai_ser,gpt_realtime,1,high,2.0,angry,486,73,0,0.15020576131687244,neutral,244
+thai_ser,gpt_realtime,1,high,2.0,happy,691,421,0,0.6092619392185239,neutral,261
+thai_ser,gpt_realtime,1,high,2.0,sad,552,52,0,0.09420289855072464,neutral,354
+thai_ser,melati_emotion,0,low,1.0,angry,523,473,0,0.904397705544933,neutral,37
+thai_ser,melati_emotion,0,low,1.0,happy,658,517,0,0.7857142857142857,angry,125
+thai_ser,melati_emotion,0,low,1.0,sad,520,254,0,0.48846153846153845,neutral,124
+thai_ser,melati_emotion,1,high,2.0,angry,486,446,0,0.9176954732510288,neutral,26
+thai_ser,melati_emotion,1,high,2.0,happy,691,549,0,0.7945007235890015,angry,124
+thai_ser,melati_emotion,1,high,2.0,sad,552,276,0,0.5,neutral,120
+thai_ser,meralion_ser_v1,0,low,1.0,angry,523,503,0,0.9617590822179732,neutral,9
+thai_ser,meralion_ser_v1,0,low,1.0,happy,658,7,0,0.010638297872340425,sad,644
+thai_ser,meralion_ser_v1,0,low,1.0,sad,520,5,0,0.009615384615384616,happy,499
+thai_ser,meralion_ser_v1,1,high,2.0,angry,486,473,0,0.9732510288065843,sad,10
+thai_ser,meralion_ser_v1,1,high,2.0,happy,691,1,0,0.001447178002894356,sad,679
+thai_ser,meralion_ser_v1,1,high,2.0,sad,552,9,0,0.016304347826086956,happy,533
+thai_ser,qwen2_5_omni_7b,0,low,1.0,angry,523,254,0,0.48565965583174,neutral,145
+thai_ser,qwen2_5_omni_7b,0,low,1.0,happy,658,273,0,0.4148936170212766,angry,209
+thai_ser,qwen2_5_omni_7b,0,low,1.0,sad,520,78,0,0.15,neutral,268
+thai_ser,qwen2_5_omni_7b,1,high,2.0,angry,486,237,0,0.4876543209876543,neutral,133
+thai_ser,qwen2_5_omni_7b,1,high,2.0,happy,691,274,0,0.39652677279305354,angry,223
+thai_ser,qwen2_5_omni_7b,1,high,2.0,sad,552,70,0,0.12681159420289856,neutral,307
+thai_ser,qwen2_audio_7b,0,low,1.0,angry,523,361,154,0.6902485659655831,<invalid>,154
+thai_ser,qwen2_audio_7b,0,low,1.0,happy,658,40,187,0.060790273556231005,angry,421
+thai_ser,qwen2_audio_7b,0,low,1.0,sad,520,111,337,0.21346153846153845,<invalid>,337
+thai_ser,qwen2_audio_7b,1,high,2.0,angry,486,307,165,0.6316872427983539,<invalid>,165
+thai_ser,qwen2_audio_7b,1,high,2.0,happy,691,37,225,0.053545586107091175,angry,421
+thai_ser,qwen2_audio_7b,1,high,2.0,sad,552,114,363,0.20652173913043478,<invalid>,363
+thai_ser,vox_profile_wavlm,0,low,1.0,angry,523,289,0,0.5525812619502868,neutral,134
+thai_ser,vox_profile_wavlm,0,low,1.0,happy,658,400,0,0.60790273556231,neutral,137
+thai_ser,vox_profile_wavlm,0,low,1.0,sad,520,64,0,0.12307692307692308,neutral,304
+thai_ser,vox_profile_wavlm,1,high,2.0,angry,486,291,0,0.5987654320987654,neutral,105
+thai_ser,vox_profile_wavlm,1,high,2.0,happy,691,432,0,0.6251808972503617,neutral,142
+thai_ser,vox_profile_wavlm,1,high,2.0,sad,552,61,0,0.1105072463768116,neutral,316
+thai_ser,vox_profile_whisper,0,low,1.0,angry,523,384,0,0.734225621414914,neutral,131
+thai_ser,vox_profile_whisper,0,low,1.0,happy,658,159,0,0.24164133738601823,angry,308
+thai_ser,vox_profile_whisper,0,low,1.0,sad,520,311,0,0.5980769230769231,neutral,159
+thai_ser,vox_profile_whisper,1,high,2.0,angry,486,377,0,0.7757201646090535,neutral,104
+thai_ser,vox_profile_whisper,1,high,2.0,happy,691,169,0,0.24457308248914617,angry,322
+thai_ser,vox_profile_whisper,1,high,2.0,sad,552,339,0,0.6141304347826086,neutral,147
+mcae_spps,emotion2vec_plus_large,0,Q1,4.85,angry,63,63,0,1.0,,0
+mcae_spps,emotion2vec_plus_large,0,Q1,4.85,disgusted,595,52,0,0.08739495798319327,neutral,412
+mcae_spps,emotion2vec_plus_large,0,Q1,4.85,fearful,153,8,0,0.05228758169934641,sad,70
+mcae_spps,emotion2vec_plus_large,0,Q1,4.85,happy,285,148,0,0.519298245614035,neutral,58
+mcae_spps,emotion2vec_plus_large,0,Q1,4.85,sad,11,6,0,0.5454545454545454,neutral,3
+mcae_spps,emotion2vec_plus_large,0,Q1,4.85,surprised,247,62,0,0.25101214574898784,angry,125
+mcae_spps,emotion2vec_plus_large,1,Q2,5.425,angry,150,146,0,0.9733333333333334,happy,4
+mcae_spps,emotion2vec_plus_large,1,Q2,5.425,disgusted,135,9,0,0.06666666666666667,neutral,81
+mcae_spps,emotion2vec_plus_large,1,Q2,5.425,fearful,241,17,0,0.07053941908713693,sad,139
+mcae_spps,emotion2vec_plus_large,1,Q2,5.425,happy,305,169,0,0.5540983606557377,angry,64
+mcae_spps,emotion2vec_plus_large,1,Q2,5.425,sad,88,66,0,0.75,neutral,11
+mcae_spps,emotion2vec_plus_large,1,Q2,5.425,surprised,442,133,0,0.3009049773755656,angry,223
+mcae_spps,emotion2vec_plus_large,2,Q3,6.0,angry,353,350,0,0.9915014164305949,happy,2
+mcae_spps,emotion2vec_plus_large,2,Q3,6.0,disgusted,6,2,0,0.3333333333333333,neutral,3
+mcae_spps,emotion2vec_plus_large,2,Q3,6.0,fearful,224,29,0,0.12946428571428573,sad,153
+mcae_spps,emotion2vec_plus_large,2,Q3,6.0,happy,166,91,0,0.5481927710843374,angry,36
+mcae_spps,emotion2vec_plus_large,2,Q3,6.0,sad,394,330,0,0.8375634517766497,happy,21
+mcae_spps,emotion2vec_plus_large,2,Q3,6.0,surprised,242,68,0,0.2809917355371901,angry,152
+mcae_spps,emotion2vec_plus_large,3,Q4,6.65,angry,563,557,0,0.9893428063943162,happy,5
+mcae_spps,emotion2vec_plus_large,3,Q4,6.65,disgusted,2,0,0,0.0,surprised,1
+mcae_spps,emotion2vec_plus_large,3,Q4,6.65,fearful,53,3,0,0.05660377358490566,sad,39
+mcae_spps,emotion2vec_plus_large,3,Q4,6.65,happy,29,12,0,0.41379310344827586,angry,6
+mcae_spps,emotion2vec_plus_large,3,Q4,6.65,sad,694,634,0,0.9135446685878963,happy,34
+mcae_spps,emotion2vec_plus_large,3,Q4,6.65,surprised,38,14,0,0.3684210526315789,angry,23
+mcae_spps,gemini-3.8-flash,0,Q1,4.85,angry,63,8,0,0.12698412698412698,neutral,27
+mcae_spps,gemini-3.8-flash,0,Q1,4.85,disgusted,595,2,0,0.0033613445378151263,neutral,294
+mcae_spps,gemini-3.8-flash,0,Q1,4.85,fearful,153,19,0,0.12418300653594772,neutral,58
+mcae_spps,gemini-3.8-flash,0,Q1,4.85,happy,285,53,0,0.18596491228070175,neutral,146
+mcae_spps,gemini-3.8-flash,0,Q1,4.85,sad,11,3,0,0.2727272727272727,neutral,5
+mcae_spps,gemini-3.8-flash,0,Q1,4.85,surprised,247,33,0,0.13360323886639677,neutral,90
+mcae_spps,gemini-3.8-flash,1,Q2,5.425,angry,150,37,0,0.24666666666666667,neutral,48
+mcae_spps,gemini-3.8-flash,1,Q2,5.425,disgusted,135,1,0,0.007407407407407408,neutral,56
+mcae_spps,gemini-3.8-flash,1,Q2,5.425,fearful,241,30,0,0.12448132780082988,neutral,81
+mcae_spps,gemini-3.8-flash,1,Q2,5.425,happy,305,101,0,0.33114754098360655,neutral,123
+mcae_spps,gemini-3.8-flash,1,Q2,5.425,sad,88,22,0,0.25,neutral,39
+mcae_spps,gemini-3.8-flash,1,Q2,5.425,surprised,442,110,0,0.248868778280543,neutral,131
+mcae_spps,gemini-3.8-flash,2,Q3,6.0,angry,353,94,0,0.26628895184135976,neutral,97
+mcae_spps,gemini-3.8-flash,2,Q3,6.0,disgusted,6,0,0,0.0,neutral,3
+mcae_spps,gemini-3.8-flash,2,Q3,6.0,fearful,224,38,0,0.16964285714285715,sad,91
+mcae_spps,gemini-3.8-flash,2,Q3,6.0,happy,166,58,0,0.3493975903614458,neutral,55
+mcae_spps,gemini-3.8-flash,2,Q3,6.0,sad,394,141,0,0.35786802030456855,neutral,85
+mcae_spps,gemini-3.8-flash,2,Q3,6.0,surprised,242,88,0,0.36363636363636365,happy,48
+mcae_spps,gemini-3.8-flash,3,Q4,6.65,angry,563,197,0,0.34991119005328597,neutral,159
+mcae_spps,gemini-3.8-flash,3,Q4,6.65,disgusted,2,0,0,0.0,happy,1
+mcae_spps,gemini-3.8-flash,3,Q4,6.65,fearful,53,14,0,0.2641509433962264,sad,24
+mcae_spps,gemini-3.8-flash,3,Q4,6.65,happy,29,16,0,0.5517241379310345,sad,5
+mcae_spps,gemini-3.8-flash,3,Q4,6.65,sad,694,386,0,0.5561959654178674,neutral,97
+mcae_spps,gemini-3.8-flash,3,Q4,6.65,surprised,38,18,0,0.47368421052631576,happy,8
+mcae_spps,gpt_realtime,0,Q1,4.85,angry,63,0,0,0.0,neutral,52
+mcae_spps,gpt_realtime,0,Q1,4.85,disgusted,595,0,0,0.0,neutral,546
+mcae_spps,gpt_realtime,0,Q1,4.85,fearful,153,0,0,0.0,neutral,136
+mcae_spps,gpt_realtime,0,Q1,4.85,happy,285,40,0,0.14035087719298245,neutral,244
+mcae_spps,gpt_realtime,0,Q1,4.85,sad,11,1,0,0.09090909090909091,neutral,9
+mcae_spps,gpt_realtime,0,Q1,4.85,surprised,247,0,0,0.0,neutral,213
+mcae_spps,gpt_realtime,1,Q2,5.425,angry,150,1,0,0.006666666666666667,neutral,121
+mcae_spps,gpt_realtime,1,Q2,5.425,disgusted,135,0,0,0.0,neutral,121
+mcae_spps,gpt_realtime,1,Q2,5.425,fearful,241,0,0,0.0,neutral,210
+mcae_spps,gpt_realtime,1,Q2,5.425,happy,305,48,0,0.15737704918032788,neutral,254
+mcae_spps,gpt_realtime,1,Q2,5.425,sad,88,3,0,0.03409090909090909,neutral,77
+mcae_spps,gpt_realtime,1,Q2,5.425,surprised,442,1,0,0.0022624434389140274,neutral,375
+mcae_spps,gpt_realtime,2,Q3,6.0,angry,353,9,0,0.025495750708215296,neutral,275
+mcae_spps,gpt_realtime,2,Q3,6.0,disgusted,6,0,0,0.0,neutral,6
+mcae_spps,gpt_realtime,2,Q3,6.0,fearful,224,0,0,0.0,neutral,199
+mcae_spps,gpt_realtime,2,Q3,6.0,happy,166,37,0,0.22289156626506024,neutral,127
+mcae_spps,gpt_realtime,2,Q3,6.0,sad,394,14,0,0.03553299492385787,neutral,325
+mcae_spps,gpt_realtime,2,Q3,6.0,surprised,242,0,0,0.0,neutral,203
+mcae_spps,gpt_realtime,3,Q4,6.65,angry,563,33,0,0.0586145648312611,neutral,410
+mcae_spps,gpt_realtime,3,Q4,6.65,disgusted,2,0,0,0.0,neutral,2
+mcae_spps,gpt_realtime,3,Q4,6.65,fearful,53,0,0,0.0,neutral,45
+mcae_spps,gpt_realtime,3,Q4,6.65,happy,29,9,0,0.3103448275862069,neutral,20
+mcae_spps,gpt_realtime,3,Q4,6.65,sad,694,30,1,0.043227665706051875,neutral,506
+mcae_spps,gpt_realtime,3,Q4,6.65,surprised,38,0,0,0.0,neutral,32
+mcae_spps,melati_emotion,0,Q1,4.85,angry,63,58,0,0.9206349206349206,happy,5
+mcae_spps,melati_emotion,0,Q1,4.85,disgusted,595,67,0,0.11260504201680673,angry,452
+mcae_spps,melati_emotion,0,Q1,4.85,fearful,153,40,0,0.26143790849673204,happy,102
+mcae_spps,melati_emotion,0,Q1,4.85,happy,285,264,0,0.9263157894736842,angry,21
+mcae_spps,melati_emotion,0,Q1,4.85,sad,11,0,0,0.0,happy,7
+mcae_spps,melati_emotion,0,Q1,4.85,surprised,247,0,0,0.0,happy,159
+mcae_spps,melati_emotion,1,Q2,5.425,angry,150,137,0,0.9133333333333333,happy,13
+mcae_spps,melati_emotion,1,Q2,5.425,disgusted,135,26,0,0.1925925925925926,angry,94
+mcae_spps,melati_emotion,1,Q2,5.425,fearful,241,104,0,0.4315352697095436,happy,112
+mcae_spps,melati_emotion,1,Q2,5.425,happy,305,269,0,0.8819672131147541,angry,36
+mcae_spps,melati_emotion,1,Q2,5.425,sad,88,36,0,0.4090909090909091,happy,41
+mcae_spps,melati_emotion,1,Q2,5.425,surprised,442,2,0,0.004524886877828055,happy,274
+mcae_spps,melati_emotion,2,Q3,6.0,angry,353,339,0,0.9603399433427762,happy,14
+mcae_spps,melati_emotion,2,Q3,6.0,disgusted,6,0,0,0.0,angry,6
+mcae_spps,melati_emotion,2,Q3,6.0,fearful,224,150,0,0.6696428571428571,happy,66
+mcae_spps,melati_emotion,2,Q3,6.0,happy,166,152,0,0.9156626506024096,angry,14
+mcae_spps,melati_emotion,2,Q3,6.0,sad,394,215,0,0.5456852791878173,happy,139
+mcae_spps,melati_emotion,2,Q3,6.0,surprised,242,0,0,0.0,happy,160
+mcae_spps,melati_emotion,3,Q4,6.65,angry,563,535,0,0.9502664298401421,happy,28
+mcae_spps,melati_emotion,3,Q4,6.65,disgusted,2,0,0,0.0,angry,2
+mcae_spps,melati_emotion,3,Q4,6.65,fearful,53,44,0,0.8301886792452831,happy,9
+mcae_spps,melati_emotion,3,Q4,6.65,happy,29,24,0,0.8275862068965517,angry,5
+mcae_spps,melati_emotion,3,Q4,6.65,sad,694,520,0,0.7492795389048992,happy,153
+mcae_spps,melati_emotion,3,Q4,6.65,surprised,38,0,0,0.0,happy,26
+mcae_spps,meralion_ser_v1,0,Q1,4.85,angry,63,63,0,1.0,,0
+mcae_spps,meralion_ser_v1,0,Q1,4.85,disgusted,595,103,0,0.173109243697479,neutral,391
+mcae_spps,meralion_ser_v1,0,Q1,4.85,fearful,153,2,0,0.013071895424836602,sad,63
+mcae_spps,meralion_ser_v1,0,Q1,4.85,happy,285,146,0,0.512280701754386,angry,56
+mcae_spps,meralion_ser_v1,0,Q1,4.85,sad,11,4,0,0.36363636363636365,angry,4
+mcae_spps,meralion_ser_v1,0,Q1,4.85,surprised,247,112,0,0.4534412955465587,angry,113
+mcae_spps,meralion_ser_v1,1,Q2,5.425,angry,150,148,0,0.9866666666666667,happy,2
+mcae_spps,meralion_ser_v1,1,Q2,5.425,disgusted,135,12,0,0.08888888888888889,neutral,106
+mcae_spps,meralion_ser_v1,1,Q2,5.425,fearful,241,7,0,0.029045643153526972,sad,138
+mcae_spps,meralion_ser_v1,1,Q2,5.425,happy,305,182,0,0.5967213114754099,angry,74
+mcae_spps,meralion_ser_v1,1,Q2,5.425,sad,88,61,0,0.6931818181818182,angry,19
+mcae_spps,meralion_ser_v1,1,Q2,5.425,surprised,442,232,0,0.5248868778280543,angry,189
+mcae_spps,meralion_ser_v1,2,Q3,6.0,angry,353,352,0,0.9971671388101983,surprised,1
+mcae_spps,meralion_ser_v1,2,Q3,6.0,disgusted,6,1,0,0.16666666666666666,neutral,3
+mcae_spps,meralion_ser_v1,2,Q3,6.0,fearful,224,6,0,0.026785714285714284,sad,169
+mcae_spps,meralion_ser_v1,2,Q3,6.0,happy,166,103,0,0.6204819277108434,angry,45
+mcae_spps,meralion_ser_v1,2,Q3,6.0,sad,394,327,0,0.8299492385786802,angry,33
+mcae_spps,meralion_ser_v1,2,Q3,6.0,surprised,242,109,0,0.45041322314049587,angry,124
+mcae_spps,meralion_ser_v1,3,Q4,6.65,angry,563,561,0,0.9964476021314387,happy,2
+mcae_spps,meralion_ser_v1,3,Q4,6.65,disgusted,2,0,0,0.0,neutral,2
+mcae_spps,meralion_ser_v1,3,Q4,6.65,fearful,53,2,0,0.03773584905660377,sad,44
+mcae_spps,meralion_ser_v1,3,Q4,6.65,happy,29,19,0,0.6551724137931034,surprised,5
+mcae_spps,meralion_ser_v1,3,Q4,6.65,sad,694,647,0,0.9322766570605188,happy,26
+mcae_spps,meralion_ser_v1,3,Q4,6.65,surprised,38,18,0,0.47368421052631576,angry,18
+mcae_spps,qwen2_5_omni_7b,0,Q1,4.85,angry,63,8,0,0.12698412698412698,neutral,43
+mcae_spps,qwen2_5_omni_7b,0,Q1,4.85,disgusted,595,0,0,0.0,neutral,512
+mcae_spps,qwen2_5_omni_7b,0,Q1,4.85,fearful,153,13,0,0.08496732026143791,neutral,114
+mcae_spps,qwen2_5_omni_7b,0,Q1,4.85,happy,285,50,0,0.17543859649122806,neutral,226
+mcae_spps,qwen2_5_omni_7b,0,Q1,4.85,sad,11,1,0,0.09090909090909091,neutral,10
+mcae_spps,qwen2_5_omni_7b,0,Q1,4.85,surprised,247,28,0,0.11336032388663968,neutral,165
+mcae_spps,qwen2_5_omni_7b,1,Q2,5.425,angry,150,37,0,0.24666666666666667,neutral,78
+mcae_spps,qwen2_5_omni_7b,1,Q2,5.425,disgusted,135,0,0,0.0,neutral,114
+mcae_spps,qwen2_5_omni_7b,1,Q2,5.425,fearful,241,20,0,0.08298755186721991,neutral,174
+mcae_spps,qwen2_5_omni_7b,1,Q2,5.425,happy,305,91,0,0.2983606557377049,neutral,202
+mcae_spps,qwen2_5_omni_7b,1,Q2,5.425,sad,88,17,0,0.19318181818181818,neutral,64
+mcae_spps,qwen2_5_omni_7b,1,Q2,5.425,surprised,442,78,0,0.17647058823529413,neutral,258
+mcae_spps,qwen2_5_omni_7b,2,Q3,6.0,angry,353,119,0,0.3371104815864023,neutral,161
+mcae_spps,qwen2_5_omni_7b,2,Q3,6.0,disgusted,6,0,0,0.0,neutral,6
+mcae_spps,qwen2_5_omni_7b,2,Q3,6.0,fearful,224,33,0,0.14732142857142858,neutral,101
+mcae_spps,qwen2_5_omni_7b,2,Q3,6.0,happy,166,63,0,0.3795180722891566,neutral,98
+mcae_spps,qwen2_5_omni_7b,2,Q3,6.0,sad,394,132,0,0.3350253807106599,neutral,202
+mcae_spps,qwen2_5_omni_7b,2,Q3,6.0,surprised,242,68,0,0.2809917355371901,neutral,99
+mcae_spps,qwen2_5_omni_7b,3,Q4,6.65,angry,563,249,0,0.4422735346358792,neutral,215
+mcae_spps,qwen2_5_omni_7b,3,Q4,6.65,disgusted,2,0,0,0.0,neutral,2
+mcae_spps,qwen2_5_omni_7b,3,Q4,6.65,fearful,53,11,0,0.20754716981132076,neutral,20
+mcae_spps,qwen2_5_omni_7b,3,Q4,6.65,happy,29,22,0,0.7586206896551724,neutral,5
+mcae_spps,qwen2_5_omni_7b,3,Q4,6.65,sad,694,329,0,0.47406340057636887,neutral,242
+mcae_spps,qwen2_5_omni_7b,3,Q4,6.65,surprised,38,13,0,0.34210526315789475,neutral,13
+mcae_spps,qwen2_audio_7b,0,Q1,4.85,angry,63,61,0,0.9682539682539683,fearful,2
+mcae_spps,qwen2_audio_7b,0,Q1,4.85,disgusted,595,0,12,0.0,angry,457
+mcae_spps,qwen2_audio_7b,0,Q1,4.85,fearful,153,81,3,0.5294117647058824,angry,54
+mcae_spps,qwen2_audio_7b,0,Q1,4.85,happy,285,35,6,0.12280701754385964,angry,217
+mcae_spps,qwen2_audio_7b,0,Q1,4.85,sad,11,2,1,0.18181818181818182,angry,5
+mcae_spps,qwen2_audio_7b,0,Q1,4.85,surprised,247,2,4,0.008097165991902834,angry,211
+mcae_spps,qwen2_audio_7b,1,Q2,5.425,angry,150,142,0,0.9466666666666667,happy,4
+mcae_spps,qwen2_audio_7b,1,Q2,5.425,disgusted,135,0,3,0.0,angry,106
+mcae_spps,qwen2_audio_7b,1,Q2,5.425,fearful,241,146,3,0.6058091286307054,angry,75
+mcae_spps,qwen2_audio_7b,1,Q2,5.425,happy,305,81,7,0.26557377049180325,angry,203
+mcae_spps,qwen2_audio_7b,1,Q2,5.425,sad,88,6,1,0.06818181818181818,angry,44
+mcae_spps,qwen2_audio_7b,1,Q2,5.425,surprised,442,4,5,0.00904977375565611,angry,386
+mcae_spps,qwen2_audio_7b,2,Q3,6.0,angry,353,347,0,0.9830028328611898,happy,4
+mcae_spps,qwen2_audio_7b,2,Q3,6.0,disgusted,6,0,0,0.0,angry,4
+mcae_spps,qwen2_audio_7b,2,Q3,6.0,fearful,224,180,2,0.8035714285714286,angry,37
+mcae_spps,qwen2_audio_7b,2,Q3,6.0,happy,166,34,2,0.20481927710843373,angry,123
+mcae_spps,qwen2_audio_7b,2,Q3,6.0,sad,394,63,12,0.1598984771573604,angry,155
+mcae_spps,qwen2_audio_7b,2,Q3,6.0,surprised,242,0,4,0.0,angry,229
+mcae_spps,qwen2_audio_7b,3,Q4,6.65,angry,563,555,1,0.9857904085257548,fearful,7
+mcae_spps,qwen2_audio_7b,3,Q4,6.65,disgusted,2,0,0,0.0,angry,2
+mcae_spps,qwen2_audio_7b,3,Q4,6.65,fearful,53,45,1,0.8490566037735849,angry,6
+mcae_spps,qwen2_audio_7b,3,Q4,6.65,happy,29,13,0,0.4482758620689655,angry,16
+mcae_spps,qwen2_audio_7b,3,Q4,6.65,sad,694,102,14,0.14697406340057637,fearful,334
+mcae_spps,qwen2_audio_7b,3,Q4,6.65,surprised,38,0,1,0.0,angry,35
+mcae_spps,vox_profile_wavlm,0,Q1,4.85,angry,63,32,0,0.5079365079365079,fearful,19
+mcae_spps,vox_profile_wavlm,0,Q1,4.85,disgusted,595,2,0,0.0033613445378151263,neutral,495
+mcae_spps,vox_profile_wavlm,0,Q1,4.85,fearful,153,60,0,0.39215686274509803,neutral,57
+mcae_spps,vox_profile_wavlm,0,Q1,4.85,happy,285,33,0,0.11578947368421053,neutral,79
+mcae_spps,vox_profile_wavlm,0,Q1,4.85,sad,11,0,0,0.0,neutral,9
+mcae_spps,vox_profile_wavlm,0,Q1,4.85,surprised,247,61,0,0.24696356275303644,neutral,84
+mcae_spps,vox_profile_wavlm,1,Q2,5.425,angry,150,64,0,0.4266666666666667,fearful,46
+mcae_spps,vox_profile_wavlm,1,Q2,5.425,disgusted,135,0,0,0.0,neutral,111
+mcae_spps,vox_profile_wavlm,1,Q2,5.425,fearful,241,107,0,0.44398340248962653,neutral,66
+mcae_spps,vox_profile_wavlm,1,Q2,5.425,happy,305,48,0,0.15737704918032788,neutral,96
+mcae_spps,vox_profile_wavlm,1,Q2,5.425,sad,88,6,0,0.06818181818181818,neutral,33
+mcae_spps,vox_profile_wavlm,1,Q2,5.425,surprised,442,120,0,0.27149321266968324,neutral,122
+mcae_spps,vox_profile_wavlm,2,Q3,6.0,angry,353,185,0,0.5240793201133145,fearful,89
+mcae_spps,vox_profile_wavlm,2,Q3,6.0,disgusted,6,0,0,0.0,neutral,6
+mcae_spps,vox_profile_wavlm,2,Q3,6.0,fearful,224,116,0,0.5178571428571429,sad,68
+mcae_spps,vox_profile_wavlm,2,Q3,6.0,happy,166,52,0,0.3132530120481928,surprised,39
+mcae_spps,vox_profile_wavlm,2,Q3,6.0,sad,394,83,0,0.21065989847715735,neutral,120
+mcae_spps,vox_profile_wavlm,2,Q3,6.0,surprised,242,105,0,0.43388429752066116,fearful,56
+mcae_spps,vox_profile_wavlm,3,Q4,6.65,angry,563,280,0,0.49733570159857904,fearful,170
+mcae_spps,vox_profile_wavlm,3,Q4,6.65,disgusted,2,0,0,0.0,neutral,2
+mcae_spps,vox_profile_wavlm,3,Q4,6.65,fearful,53,27,0,0.5094339622641509,sad,17
+mcae_spps,vox_profile_wavlm,3,Q4,6.65,happy,29,14,0,0.4827586206896552,neutral,6
+mcae_spps,vox_profile_wavlm,3,Q4,6.65,sad,694,248,0,0.3573487031700288,happy,210
+mcae_spps,vox_profile_wavlm,3,Q4,6.65,surprised,38,22,0,0.5789473684210527,neutral,6
+mcae_spps,vox_profile_whisper,0,Q1,4.85,angry,63,48,0,0.7619047619047619,neutral,14
+mcae_spps,vox_profile_whisper,0,Q1,4.85,disgusted,595,1,0,0.0016806722689075631,neutral,515
+mcae_spps,vox_profile_whisper,0,Q1,4.85,fearful,153,42,0,0.27450980392156865,neutral,74
+mcae_spps,vox_profile_whisper,0,Q1,4.85,happy,285,1,0,0.0035087719298245615,neutral,168
+mcae_spps,vox_profile_whisper,0,Q1,4.85,sad,11,0,0,0.0,neutral,6
+mcae_spps,vox_profile_whisper,0,Q1,4.85,surprised,247,60,0,0.242914979757085,angry,129
+mcae_spps,vox_profile_whisper,1,Q2,5.425,angry,150,129,0,0.86,neutral,11
+mcae_spps,vox_profile_whisper,1,Q2,5.425,disgusted,135,0,0,0.0,neutral,119
+mcae_spps,vox_profile_whisper,1,Q2,5.425,fearful,241,84,0,0.34854771784232363,neutral,79
+mcae_spps,vox_profile_whisper,1,Q2,5.425,happy,305,2,0,0.006557377049180328,neutral,146
+mcae_spps,vox_profile_whisper,1,Q2,5.425,sad,88,4,0,0.045454545454545456,neutral,54
+mcae_spps,vox_profile_whisper,1,Q2,5.425,surprised,442,179,0,0.40497737556561086,angry,209
+mcae_spps,vox_profile_whisper,2,Q3,6.0,angry,353,330,0,0.9348441926345609,fearful,11
+mcae_spps,vox_profile_whisper,2,Q3,6.0,disgusted,6,0,0,0.0,neutral,4
+mcae_spps,vox_profile_whisper,2,Q3,6.0,fearful,224,96,0,0.42857142857142855,neutral,52
+mcae_spps,vox_profile_whisper,2,Q3,6.0,happy,166,7,0,0.04216867469879518,neutral,63
+mcae_spps,vox_profile_whisper,2,Q3,6.0,sad,394,58,0,0.14720812182741116,neutral,135
+mcae_spps,vox_profile_whisper,2,Q3,6.0,surprised,242,128,0,0.5289256198347108,angry,95
+mcae_spps,vox_profile_whisper,3,Q4,6.65,angry,563,543,0,0.9644760213143873,fearful,9
+mcae_spps,vox_profile_whisper,3,Q4,6.65,disgusted,2,0,0,0.0,neutral,1
+mcae_spps,vox_profile_whisper,3,Q4,6.65,fearful,53,27,0,0.5094339622641509,sad,15
+mcae_spps,vox_profile_whisper,3,Q4,6.65,happy,29,3,0,0.10344827586206896,angry,11
+mcae_spps,vox_profile_whisper,3,Q4,6.65,sad,694,195,0,0.28097982708933716,neutral,169
+mcae_spps,vox_profile_whisper,3,Q4,6.65,surprised,38,26,0,0.6842105263157895,angry,10
+dailytalk,emotion2vec_plus_large,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,emotion2vec_plus_large,0,ECSS level 1,1.0,happy,41,17,0,0.4146341463414634,neutral,21
+dailytalk,emotion2vec_plus_large,0,ECSS level 1,1.0,sad,12,5,0,0.4166666666666667,neutral,4
+dailytalk,emotion2vec_plus_large,0,ECSS level 1,1.0,surprised,3,0,0,0.0,happy,2
+dailytalk,emotion2vec_plus_large,1,ECSS level 2,2.0,angry,4,0,0,0.0,surprised,4
+dailytalk,emotion2vec_plus_large,1,ECSS level 2,2.0,disgusted,2,0,0,0.0,happy,1
+dailytalk,emotion2vec_plus_large,1,ECSS level 2,2.0,happy,166,112,0,0.6746987951807228,neutral,38
+dailytalk,emotion2vec_plus_large,1,ECSS level 2,2.0,sad,9,8,0,0.8888888888888888,neutral,1
+dailytalk,emotion2vec_plus_large,1,ECSS level 2,2.0,surprised,16,9,0,0.5625,happy,3
+dailytalk,emotion2vec_plus_large,2,ECSS level 3,3.0,fearful,1,0,0,0.0,sad,1
+dailytalk,emotion2vec_plus_large,2,ECSS level 3,3.0,happy,10,9,0,0.9,surprised,1
+dailytalk,emotion2vec_plus_large,2,ECSS level 3,3.0,sad,1,0,0,0.0,disgusted,1
+dailytalk,gemini-3.8-flash,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,gemini-3.8-flash,0,ECSS level 1,1.0,happy,41,23,0,0.5609756097560976,neutral,15
+dailytalk,gemini-3.8-flash,0,ECSS level 1,1.0,sad,12,4,0,0.3333333333333333,neutral,4
+dailytalk,gemini-3.8-flash,0,ECSS level 1,1.0,surprised,3,2,0,0.6666666666666666,happy,1
+dailytalk,gemini-3.8-flash,1,ECSS level 2,2.0,angry,4,0,0,0.0,surprised,2
+dailytalk,gemini-3.8-flash,1,ECSS level 2,2.0,disgusted,2,0,0,0.0,sad,1
+dailytalk,gemini-3.8-flash,1,ECSS level 2,2.0,happy,166,137,0,0.8253012048192772,neutral,20
+dailytalk,gemini-3.8-flash,1,ECSS level 2,2.0,sad,9,5,0,0.5555555555555556,neutral,3
+dailytalk,gemini-3.8-flash,1,ECSS level 2,2.0,surprised,16,10,0,0.625,happy,3
+dailytalk,gemini-3.8-flash,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,gemini-3.8-flash,2,ECSS level 3,3.0,happy,10,9,0,0.9,angry,1
+dailytalk,gemini-3.8-flash,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,gpt_realtime,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,gpt_realtime,0,ECSS level 1,1.0,happy,41,17,0,0.4146341463414634,neutral,22
+dailytalk,gpt_realtime,0,ECSS level 1,1.0,sad,12,2,0,0.16666666666666666,neutral,8
+dailytalk,gpt_realtime,0,ECSS level 1,1.0,surprised,3,1,0,0.3333333333333333,happy,2
+dailytalk,gpt_realtime,1,ECSS level 2,2.0,angry,4,0,0,0.0,surprised,3
+dailytalk,gpt_realtime,1,ECSS level 2,2.0,disgusted,2,1,0,0.5,neutral,1
+dailytalk,gpt_realtime,1,ECSS level 2,2.0,happy,166,103,0,0.6204819277108434,neutral,61
+dailytalk,gpt_realtime,1,ECSS level 2,2.0,sad,9,1,0,0.1111111111111111,neutral,6
+dailytalk,gpt_realtime,1,ECSS level 2,2.0,surprised,16,8,1,0.5,happy,4
+dailytalk,gpt_realtime,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,gpt_realtime,2,ECSS level 3,3.0,happy,10,10,0,1.0,,0
+dailytalk,gpt_realtime,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,melati_emotion,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,happy,1
+dailytalk,melati_emotion,0,ECSS level 1,1.0,happy,41,10,0,0.24390243902439024,neutral,29
+dailytalk,melati_emotion,0,ECSS level 1,1.0,sad,12,0,0,0.0,neutral,6
+dailytalk,melati_emotion,0,ECSS level 1,1.0,surprised,3,0,0,0.0,neutral,2
+dailytalk,melati_emotion,1,ECSS level 2,2.0,angry,4,2,0,0.5,happy,2
+dailytalk,melati_emotion,1,ECSS level 2,2.0,disgusted,2,0,0,0.0,happy,2
+dailytalk,melati_emotion,1,ECSS level 2,2.0,happy,166,67,0,0.4036144578313253,neutral,86
+dailytalk,melati_emotion,1,ECSS level 2,2.0,sad,9,4,0,0.4444444444444444,happy,4
+dailytalk,melati_emotion,1,ECSS level 2,2.0,surprised,16,3,0,0.1875,neutral,5
+dailytalk,melati_emotion,2,ECSS level 3,3.0,fearful,1,0,0,0.0,sad,1
+dailytalk,melati_emotion,2,ECSS level 3,3.0,happy,10,10,0,1.0,,0
+dailytalk,melati_emotion,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,meralion_ser_v1,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,meralion_ser_v1,0,ECSS level 1,1.0,happy,41,15,0,0.36585365853658536,neutral,21
+dailytalk,meralion_ser_v1,0,ECSS level 1,1.0,sad,12,2,0,0.16666666666666666,neutral,7
+dailytalk,meralion_ser_v1,0,ECSS level 1,1.0,surprised,3,1,0,0.3333333333333333,sad,1
+dailytalk,meralion_ser_v1,1,ECSS level 2,2.0,angry,4,1,0,0.25,neutral,1
+dailytalk,meralion_ser_v1,1,ECSS level 2,2.0,disgusted,2,2,0,1.0,,0
+dailytalk,meralion_ser_v1,1,ECSS level 2,2.0,happy,166,93,0,0.5602409638554217,neutral,52
+dailytalk,meralion_ser_v1,1,ECSS level 2,2.0,sad,9,9,0,1.0,,0
+dailytalk,meralion_ser_v1,1,ECSS level 2,2.0,surprised,16,14,0,0.875,happy,1
+dailytalk,meralion_ser_v1,2,ECSS level 3,3.0,fearful,1,0,0,0.0,sad,1
+dailytalk,meralion_ser_v1,2,ECSS level 3,3.0,happy,10,9,0,0.9,surprised,1
+dailytalk,meralion_ser_v1,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,qwen2_5_omni_7b,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,qwen2_5_omni_7b,0,ECSS level 1,1.0,happy,41,22,0,0.5365853658536586,neutral,16
+dailytalk,qwen2_5_omni_7b,0,ECSS level 1,1.0,sad,12,3,0,0.25,neutral,6
+dailytalk,qwen2_5_omni_7b,0,ECSS level 1,1.0,surprised,3,1,0,0.3333333333333333,happy,2
+dailytalk,qwen2_5_omni_7b,1,ECSS level 2,2.0,angry,4,0,0,0.0,disgusted,2
+dailytalk,qwen2_5_omni_7b,1,ECSS level 2,2.0,disgusted,2,2,0,1.0,,0
+dailytalk,qwen2_5_omni_7b,1,ECSS level 2,2.0,happy,166,127,0,0.7650602409638554,neutral,35
+dailytalk,qwen2_5_omni_7b,1,ECSS level 2,2.0,sad,9,4,1,0.4444444444444444,fearful,2
+dailytalk,qwen2_5_omni_7b,1,ECSS level 2,2.0,surprised,16,12,1,0.75,happy,2
+dailytalk,qwen2_5_omni_7b,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,qwen2_5_omni_7b,2,ECSS level 3,3.0,happy,10,8,0,0.8,surprised,1
+dailytalk,qwen2_5_omni_7b,2,ECSS level 3,3.0,sad,1,0,0,0.0,disgusted,1
+dailytalk,qwen2_audio_7b,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,qwen2_audio_7b,0,ECSS level 1,1.0,happy,41,13,0,0.3170731707317073,neutral,13
+dailytalk,qwen2_audio_7b,0,ECSS level 1,1.0,sad,12,6,0,0.5,disgusted,2
+dailytalk,qwen2_audio_7b,0,ECSS level 1,1.0,surprised,3,2,0,0.6666666666666666,happy,1
+dailytalk,qwen2_audio_7b,1,ECSS level 2,2.0,angry,4,3,0,0.75,disgusted,1
+dailytalk,qwen2_audio_7b,1,ECSS level 2,2.0,disgusted,2,2,0,1.0,,0
+dailytalk,qwen2_audio_7b,1,ECSS level 2,2.0,happy,166,88,9,0.5301204819277109,angry,29
+dailytalk,qwen2_audio_7b,1,ECSS level 2,2.0,sad,9,5,0,0.5555555555555556,fearful,2
+dailytalk,qwen2_audio_7b,1,ECSS level 2,2.0,surprised,16,6,0,0.375,angry,7
+dailytalk,qwen2_audio_7b,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,qwen2_audio_7b,2,ECSS level 3,3.0,happy,10,8,0,0.8,surprised,1
+dailytalk,qwen2_audio_7b,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,vox_profile_wavlm,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,vox_profile_wavlm,0,ECSS level 1,1.0,happy,41,17,0,0.4146341463414634,neutral,14
+dailytalk,vox_profile_wavlm,0,ECSS level 1,1.0,sad,12,5,0,0.4166666666666667,neutral,3
+dailytalk,vox_profile_wavlm,0,ECSS level 1,1.0,surprised,3,2,0,0.6666666666666666,happy,1
+dailytalk,vox_profile_wavlm,1,ECSS level 2,2.0,angry,4,3,0,0.75,disgusted,1
+dailytalk,vox_profile_wavlm,1,ECSS level 2,2.0,disgusted,2,1,0,0.5,sad,1
+dailytalk,vox_profile_wavlm,1,ECSS level 2,2.0,happy,166,102,0,0.6144578313253012,neutral,30
+dailytalk,vox_profile_wavlm,1,ECSS level 2,2.0,sad,9,5,0,0.5555555555555556,fearful,2
+dailytalk,vox_profile_wavlm,1,ECSS level 2,2.0,surprised,16,10,0,0.625,angry,4
+dailytalk,vox_profile_wavlm,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,vox_profile_wavlm,2,ECSS level 3,3.0,happy,10,7,0,0.7,surprised,2
+dailytalk,vox_profile_wavlm,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,vox_profile_whisper,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,vox_profile_whisper,0,ECSS level 1,1.0,happy,41,19,0,0.4634146341463415,neutral,17
+dailytalk,vox_profile_whisper,0,ECSS level 1,1.0,sad,12,1,0,0.08333333333333333,neutral,4
+dailytalk,vox_profile_whisper,0,ECSS level 1,1.0,surprised,3,2,0,0.6666666666666666,happy,1
+dailytalk,vox_profile_whisper,1,ECSS level 2,2.0,angry,4,3,0,0.75,surprised,1
+dailytalk,vox_profile_whisper,1,ECSS level 2,2.0,disgusted,2,0,0,0.0,angry,1
+dailytalk,vox_profile_whisper,1,ECSS level 2,2.0,happy,166,118,0,0.7108433734939759,neutral,22
+dailytalk,vox_profile_whisper,1,ECSS level 2,2.0,sad,9,3,0,0.3333333333333333,neutral,3
+dailytalk,vox_profile_whisper,1,ECSS level 2,2.0,surprised,16,15,0,0.9375,angry,1
+dailytalk,vox_profile_whisper,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,vox_profile_whisper,2,ECSS level 3,3.0,happy,10,8,0,0.8,surprised,2
+dailytalk,vox_profile_whisper,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0

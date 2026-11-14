@@ -1,0 +1,698 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-14T06:15:20+00:00",
+  "clips": 67062,
+  "cohort_sha256": "4d2dc2e32371198e610bb792e9560d7606fab1be5c858c37ddd9f23ea3e4ce1b",
+  "implementation_sha256": "d8072c3384b9aeedf92b7224fb9201f4b7c749887f4fb4acbb3413fcbc8476c7",
+  "scales": {
+    "crema_d": {
+      "scale": "crema_d_acted_LO_MD_HI",
+      "kind": "acted_ordinal",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "source": "filename fourth field LO/MD/HI; XX means unspecified",
+      "pair_rule": "Actor + published IEO sentence ID + emotion; identical sentence across acted levels.",
+      "url": "https://github.com/CheyneyComputerScience/CREMA-D",
+      "notes": "Only IEO has LO/MD/HI; all neutral and other sentence clips are XX. Native perceived VoiceLevel is a separate scale, not substituted."
+    },
+    "ravdess": {
+      "scale": "ravdess_acted_normal_strong",
+      "kind": "acted_ordinal",
+      "levels": [
+        1,
+        2
+      ],
+      "source": "filename fourth numeric field: 01 normal, 02 strong",
+      "pair_rule": "Actor + native emotion + published statement ID + repetition; identical statement across levels.",
+      "url": "https://zenodo.org/records/1188976",
+      "notes": "Native neutral has only normal intensity. Calm maps to benchmark neutral; both are excluded from primary non-neutral intensity comparisons."
+    },
+    "mead": {
+      "scale": "mead_acted_level_1_3",
+      "kind": "acted_ordinal",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "source": "audio/<actor>/<emotion>/level_<1|2|3>/<sentence>.wav",
+      "pair_rule": "Actor + emotion + file index only. The corpus describes shared sentences across levels, but index-to-transcript equivalence was not independently verified locally.",
+      "url": "https://github.com/uniBruce/Mead",
+      "notes": "Neutral is a single level_1 reference, not weak emotional acting; current 8,000-clip stratified scope is retained."
+    },
+    "thai_ser": {
+      "scale": "thai_ser_script_Low_High",
+      "kind": "acted_ordinal",
+      "levels": [
+        1,
+        2
+      ],
+      "source": "data/thai_ser/labels.csv: script_intensity",
+      "pair_rule": "Session + actor + exact published script_sent text + script_trial + assigned emotion; intensity excluded from key.",
+      "url": "https://huggingface.co/datasets/airesearch/thai-ser",
+      "notes": "Raw values are Low/High; the author README describes normal/strong. Improvised turns have no script intensity; agreement is not intensity."
+    },
+    "mcae_spps": {
+      "scale": "mcae_spps_listener_mean_1_9",
+      "kind": "perceived_continuous_mean",
+      "range": [
+        1,
+        9
+      ],
+      "source": "data/mcae_spps/Corpus information.xlsx: Intensity",
+      "url": "https://osf.io/9jyzc/",
+      "notes": "Mean of 40 listeners' 1-9 emotional-strength ratings. Intensity is not meanIntensity (the latter is acoustic dB). No low/high bins are invented."
+    },
+    "dailytalk": {
+      "scale": "dailytalk_ECSS_1_3",
+      "kind": "annotated_ordinal",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "source": "data/dailytalk/utterances.csv: ecss_intensity",
+      "url": "https://github.com/walker-hyf/ECSS",
+      "notes": "Additional public ECSS intensity annotation, not randomized acting strength. Published levels1-3 are retained verbatim; neutral is excluded from primary non-neutral comparisons."
+    }
+  },
+  "metadata_sources": [
+    {
+      "path": "data/thai_ser/labels.csv",
+      "sha256": "1228ce87dc466d32859a984bef4d8268f86ae9445ad64cd81e2c5fd949cddea0"
+    },
+    {
+      "path": "data/mcae_spps/Corpus information.xlsx",
+      "sha256": "55917ff429a074d987d369b326476509c6de1d672b36da4f18490310820204c4"
+    },
+    {
+      "path": "data/dailytalk/utterances.csv",
+      "sha256": "fad4e8ce33abe11f1d132f743e0b51173dda13ee11eaf78155d6a1ffdedd11aa"
+    }
+  ],
+  "datasets": {
+    "crema_d": {
+      "clips": 7442,
+      "available": 1365,
+      "non_neutral_applicable": 1365,
+      "native_level_counts": {
+        "1": 455,
+        "2": 455,
+        "3": 455
+      },
+      "missing_reasons": {
+        "unspecified_XX": 6077
+      }
+    },
+    "dailytalk": {
+      "clips": 1197,
+      "available": 1197,
+      "non_neutral_applicable": 266,
+      "native_level_counts": {
+        "1": 976,
+        "2": 209,
+        "3": 12
+      },
+      "missing_reasons": {}
+    },
+    "emotiontalk": {
+      "clips": 1929,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 1929
+      }
+    },
+    "emovo": {
+      "clips": 588,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 588
+      }
+    },
+    "emozionalmente": {
+      "clips": 6902,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 6902
+      }
+    },
+    "jl_corpus": {
+      "clips": 1200,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 1200
+      }
+    },
+    "mcae_spps": {
+      "clips": 6675,
+      "available": 6675,
+      "non_neutral_applicable": 5479,
+      "native_level_counts": {
+        "3.425": 1,
+        "3.475": 1,
+        "3.6": 2,
+        "3.7": 4,
+        "3.725": 2,
+        "3.75": 1,
+        "3.775": 3,
+        "3.8": 5,
+        "3.825": 3,
+        "3.85": 4,
+        "3.875": 3,
+        "3.9": 8,
+        "3.925": 9,
+        "3.95": 10,
+        "3.975": 13,
+        "4.0": 12,
+        "4.025": 7,
+        "4.05": 13,
+        "4.075": 13,
+        "4.1": 29,
+        "4.125": 22,
+        "4.15": 24,
+        "4.175": 23,
+        "4.2": 27,
+        "4.225": 36,
+        "4.25": 29,
+        "4.275": 43,
+        "4.3": 42,
+        "4.325": 42,
+        "4.35": 32,
+        "4.375": 48,
+        "4.4": 41,
+        "4.425": 60,
+        "4.45": 76,
+        "4.475": 49,
+        "4.5": 48,
+        "4.525": 62,
+        "4.55": 59,
+        "4.575": 60,
+        "4.6": 55,
+        "4.625": 52,
+        "4.65": 73,
+        "4.675": 74,
+        "4.7": 55,
+        "4.725": 73,
+        "4.75": 67,
+        "4.775": 64,
+        "4.8": 54,
+        "4.825": 71,
+        "4.85": 65,
+        "4.875": 72,
+        "4.9": 74,
+        "4.925": 71,
+        "4.95": 79,
+        "4.975": 74,
+        "5.0": 68,
+        "5.025": 63,
+        "5.05": 80,
+        "5.075": 81,
+        "5.1": 66,
+        "5.125": 66,
+        "5.15": 64,
+        "5.175": 69,
+        "5.2": 64,
+        "5.225": 65,
+        "5.25": 63,
+        "5.275": 61,
+        "5.3": 66,
+        "5.325": 61,
+        "5.35": 55,
+        "5.375": 85,
+        "5.4": 62,
+        "5.425": 77,
+        "5.45": 66,
+        "5.475": 50,
+        "5.5": 78,
+        "5.525": 55,
+        "5.55": 58,
+        "5.575": 52,
+        "5.6": 73,
+        "5.625": 51,
+        "5.65": 51,
+        "5.675": 62,
+        "5.7": 60,
+        "5.725": 61,
+        "5.75": 51,
+        "5.775": 55,
+        "5.8": 64,
+        "5.825": 66,
+        "5.85": 56,
+        "5.875": 55,
+        "5.9": 73,
+        "5.925": 62,
+        "5.95": 55,
+        "5.975": 49,
+        "6.0": 64,
+        "6.025": 67,
+        "6.05": 55,
+        "6.075": 56,
+        "6.1": 72,
+        "6.125": 44,
+        "6.15": 59,
+        "6.175": 51,
+        "6.2": 61,
+        "6.225": 57,
+        "6.25": 41,
+        "6.275": 60,
+        "6.3": 51,
+        "6.325": 46,
+        "6.35": 82,
+        "6.375": 62,
+        "6.4": 54,
+        "6.425": 43,
+        "6.45": 63,
+        "6.475": 44,
+        "6.5": 46,
+        "6.525": 41,
+        "6.55": 48,
+        "6.575": 43,
+        "6.6": 43,
+        "6.625": 43,
+        "6.65": 41,
+        "6.675": 38,
+        "6.7": 40,
+        "6.725": 42,
+        "6.75": 38,
+        "6.775": 32,
+        "6.8": 30,
+        "6.825": 30,
+        "6.85": 24,
+        "6.875": 26,
+        "6.9": 22,
+        "6.925": 26,
+        "6.95": 26,
+        "6.975": 26,
+        "7.0": 31,
+        "7.025": 14,
+        "7.05": 19,
+        "7.075": 14,
+        "7.1": 12,
+        "7.125": 14,
+        "7.15": 14,
+        "7.175": 16,
+        "7.2": 12,
+        "7.225": 11,
+        "7.25": 17,
+        "7.275": 13,
+        "7.3": 11,
+        "7.325": 10,
+        "7.35": 9,
+        "7.375": 4,
+        "7.4": 5,
+        "7.425": 3,
+        "7.45": 4,
+        "7.475": 2,
+        "7.5": 1,
+        "7.525": 5,
+        "7.55": 2,
+        "7.575": 3,
+        "7.6": 5,
+        "7.625": 6,
+        "7.65": 4,
+        "7.675": 2,
+        "7.7": 6,
+        "7.75": 2,
+        "7.825": 2,
+        "7.85": 2,
+        "8.05": 1,
+        "8.075": 1,
+        "8.125": 1,
+        "8.225": 1,
+        "8.5": 1
+      },
+      "missing_reasons": {}
+    },
+    "mead": {
+      "clips": 8000,
+      "available": 8000,
+      "non_neutral_applicable": 7439,
+      "native_level_counts": {
+        "1": 3053,
+        "2": 2475,
+        "3": 2472
+      },
+      "missing_reasons": {}
+    },
+    "meld": {
+      "clips": 2608,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 2608
+      }
+    },
+    "mess": {
+      "clips": 1800,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 1800
+      }
+    },
+    "multidialog": {
+      "clips": 7672,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 7672
+      }
+    },
+    "nemo": {
+      "clips": 4481,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 4481
+      }
+    },
+    "ravdess": {
+      "clips": 1440,
+      "available": 1440,
+      "non_neutral_applicable": 1152,
+      "native_level_counts": {
+        "1": 768,
+        "2": 672
+      },
+      "missing_reasons": {}
+    },
+    "savee": {
+      "clips": 480,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 480
+      }
+    },
+    "tess": {
+      "clips": 2800,
+      "available": 0,
+      "non_neutral_applicable": 0,
+      "native_level_counts": {},
+      "missing_reasons": {
+        "no_native_intensity_in_current_inventory": 2800
+      }
+    },
+    "thai_ser": {
+      "clips": 11848,
+      "available": 5012,
+      "non_neutral_applicable": 3430,
+      "native_level_counts": {
+        "1": 2502,
+        "2": 2510
+      },
+      "missing_reasons": {
+        "improvised_no_script_intensity": 6836
+      }
+    }
+  },
+  "meralion_capabilities": {
+    "available": true,
+    "native_output": {
+      "logits": "seven categorical emotion scores",
+      "dims": [
+        "valence",
+        "arousal",
+        "dominance"
+      ],
+      "dimensional_range": [
+        0,
+        1
+      ],
+      "generic_emotion_intensity_head": false
+    },
+    "code_returns_dims": true,
+    "adapter_selects_logits_only": true,
+    "saved_dimensional_columns": [],
+    "saved_csv_headers": {
+      "crema_d_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "listener_vote",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "correct_acted_or_listener",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "dailytalk_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "emotiontalk_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "emovo_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "emozionalmente_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "listener_vote",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "correct_acted_or_listener",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "jl_corpus_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "mcae_spps_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "listener_vote",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "correct_acted_or_listener",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "mead_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "meld_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "mess_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "multidialog_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "nemo_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "ravdess_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "savee_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "tess_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ],
+      "thai_ser_predictions.csv": [
+        "audio_path",
+        "acted_emotion",
+        "listener_vote",
+        "prediction",
+        "prediction_all_classes",
+        "correct",
+        "correct_acted_or_listener",
+        "p_neutral",
+        "p_happy",
+        "p_sad",
+        "p_angry",
+        "p_fearful",
+        "p_disgusted",
+        "p_surprised"
+      ]
+    },
+    "new_inference_required_to_recover_dims": true,
+    "sources": [
+      {
+        "path": "models/meralion_ser_v1/modeling_ser_whisper_ecapa.py",
+        "sha256": "b657e0005cccd6901d6e589b05fbc3e47abd64a746bed3bfbed36749ac35d363"
+      },
+      {
+        "path": "scripts/models/meralion_ser.py",
+        "sha256": "350314bd059c6fc95dd2471c2a309d8d8e199ceee6a3e53e071bc0041de0bc4d"
+      }
+    ],
+    "model_card": "https://huggingface.co/MERaLiON/MERaLiON-SER-v1",
+    "interpretation": "VAD is not an emotion-strength label. Arousal is calm-to-active; dominance weak-to-strong is control, not expressiveness. Neither class probability nor existing CSVs reconstruct native dims."
+  },
+  "notes": [
+    "Ordinal numbers are comparable only within their native dataset scale; no cross-dataset intensity regression is licensed by these labels.",
+    "Intensity availability preserves neutral annotations, but intensity_applicable excludes benchmark-neutral labels in the primary emotional-strength comparison.",
+    "Primary CREMA scale is acted LO/MD/HI, not perceived VoiceLevel. MCAE meanIntensity(dB), rater agreement and confidence weights are never substituted for emotion strength.",
+    "Pair keys are documented separately per dataset. CREMA/RAVDESS/THAI use published sentence/text IDs; MEAD uses file index with unverified local lexical equivalence. They are not independent samples or a guarantee all levels survive the configured cohort."
+  ],
+  "inventory_csv_sha256": "8fe422f0ee8c3be6e509ed2a0166870fb9a589ec2ced383ef96631fc20689d10"
+}
