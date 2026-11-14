@@ -6,6 +6,10 @@ open SER models vs audio LLMs on public, lexically neutral emotional speech.
 Constraints: public data only; no company data, systems or business details; no method that could be commercially
 valuable or patentable (the paper is an evaluation and analysis). Publication needs the company's approval.
 
+Benchmark status, 2026-11-14: the five SER models, Qwen2.5-Omni, Qwen2-Audio, GPT Realtime and Gemini 3.8 Flash
+have current-protocol results on all 16 datasets (nine of ten models; 67,062 clips each). Gemma 4 has MELD only
+(1/16), for 145 compatible model–dataset runs in total. See [the benchmark summary](../emotion_recognition/reports/summary.md).
+
 | File | Content |
 |---|---|
 | [docs/research_angles.md](docs/research_angles.md) | candidate research questions, novelty against the closest work, two possible papers, what must be added |
@@ -16,6 +20,7 @@ valuable or patentable (the paper is an evaluation and analysis). Publication ne
 | [analysis_report/figures/consensus_meld_accuracy_coverage.svg](analysis_report/figures/consensus_meld_accuracy_coverage.svg) | detailed MELD vote thresholds, one panel per model group |
 | [analysis_report/figures/consensus_unanimous_accuracy_by_dataset.svg](analysis_report/figures/consensus_unanimous_accuracy_by_dataset.svg) · [coverage](analysis_report/figures/consensus_unanimous_coverage_by_dataset.svg) | benchmark-style bars comparing complete fixed groups under unanimity |
 | [analysis_report/figures/consensus_ser5_accuracy_by_votes.svg](analysis_report/figures/consensus_ser5_accuracy_by_votes.svg) · [coverage](analysis_report/figures/consensus_ser5_coverage_by_votes.svg) | five-SER bar comparisons of the three minimum vote rules |
+| [analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg](analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg) · [coverage](analysis_report/figures/consensus_audiollm4_coverage_by_votes.svg) | fixed four-audio-LLM bar comparisons of the 3/4 and 4/4 vote rules |
 | [analysis_report/bootstrap_zh.md](analysis_report/bootstrap_zh.md) · [analysis_report/bootstrap_en.md](analysis_report/bootstrap_en.md) | cluster-bootstrap score intervals and paired model differences; Chinese and English |
 
 Refresh both analyses from saved predictions, from this folder in the `emotion_recognition_llm` environment:
@@ -44,8 +49,9 @@ saved run per model/dataset. Rerun after more model results arrive.
 
 Consensus keeps the original `SER5`, `AudioLLM5` and `Selected3` groups. The latter is the legacy group name, not an
 accuracy ranking; it contains emotion2vec+, Gemini and Qwen2.5-Omni. `AudioLLM5` can use available members and therefore
-has varying membership across datasets, always reported explicitly. Supplementary fixed groups `SER_API7` (five SER
-models + GPT + Gemini) and `All10` (all ten models) wait for every member. Groups are defined by the existing analysis
+has varying membership across datasets, always reported explicitly. Supplementary fixed groups `AudioLLM4` (GPT,
+Gemini, Qwen2.5-Omni and Qwen2-Audio), `SER_API7` (five SER models + GPT + Gemini) and `All10` (all ten models)
+wait for every member; `AudioLLM4` is complete on all 16 datasets. Groups are defined by the existing analysis
 or model families, without searching these evaluation scores for an optimal combination. Compare groups only on matching
 cohort hashes. `python scripts/consensus.py --no-plots` skips matplotlib exports while refreshing reports and CSVs.
 
@@ -59,7 +65,8 @@ the five-SER line contains three rules, not three repeated measurements. Tighter
 but accuracy is not guaranteed to rise. Adding members also does not guarantee higher accuracy: majority votes may change
 the answer, while unanimity adds a filter that can reject correct labels as well as wrong ones. The report includes an
 observed CREMA-D filtering example and a matched MELD endpoint table explaining this distinction. All chart text is black
-and enlarged; bars follow the benchmark's dataset order and whole-percentage value labels. SVGs and PNGs are exported.
+and enlarged; bars follow the benchmark's dataset order and whole-percentage value labels. Eight figure pairs are exported
+as SVG and PNG (16 files in total), including the fixed `AudioLLM4` 3/4 versus 4/4 comparisons.
 
 Bootstrap defaults: 10,000 resamples, seed `20261111`, 95% percentile intervals; speaker clusters for CREMA-D and
 RAVDESS, dialogue clusters for MELD. Model differences share the exact same cluster draws. Streams depend on the

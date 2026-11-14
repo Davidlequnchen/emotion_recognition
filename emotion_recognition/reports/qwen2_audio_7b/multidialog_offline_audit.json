@@ -1,0 +1,76 @@
+{
+  "validated_at_utc": "2026-11-14T05:25:38.600868+00:00",
+  "model": "qwen2_audio_7b",
+  "key": "multidialog",
+  "clips": 7672,
+  "unique_audio_paths": 7672,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_audio_7b/multidialog_predictions.csv",
+      "sha256": "50345db93f1b26812011e5c557254c875555685616e714ca1baa2cc1bedfa58d",
+      "bytes": 2114953
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/multidialog_predictions.json",
+      "sha256": "4463e38645c1f1bf75d3b2a85f9c99656bf7ac0b1074af2bc1ec16175d79c8dd",
+      "bytes": 4053
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.25769,
+    "unweighted_accuracy": 0.33625,
+    "macro_f1": 0.1506,
+    "weighted_f1": 0.3525,
+    "accuracy_all_classes": 0.25769
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.25769030239833157,
+    "unweighted_accuracy": 0.33624986433970233,
+    "macro_f1": 0.15060016977359153,
+    "weighted_f1": 0.3524996048981263,
+    "accuracy_all_classes": 0.25769030239833157
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 223,
+    "invalid_rate": 0.029066736183524504,
+    "prediction_counts": {
+      "angry": 1641,
+      "disgusted": 1279,
+      "fearful": 252,
+      "happy": 809,
+      "neutral": 1854,
+      "sad": 1278,
+      "surprised": 336,
+      "invalid": 223
+    },
+    "ground_truth_counts": {
+      "angry": 35,
+      "disgusted": 67,
+      "fearful": 26,
+      "happy": 1064,
+      "neutral": 5284,
+      "sad": 83,
+      "surprised": 1113
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

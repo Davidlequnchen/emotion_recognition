@@ -1,0 +1,73 @@
+{
+  "validated_at_utc": "2026-11-14T05:25:38.651913+00:00",
+  "model": "qwen2_audio_7b",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_audio_7b/nemo_predictions.csv",
+      "sha256": "518e66cd5f8da8fc25ff771b231398f4142655ccbc0b4e7c6bc2eb1d6cf1dca9",
+      "bytes": 810655
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/nemo_predictions.json",
+      "sha256": "07ff0f01d11a7be7a24f5c43702466dce8d770ee4937bc8d0dd1e988eea04171",
+      "bytes": 3870
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.262665,
+    "unweighted_accuracy": 0.26211,
+    "macro_f1": 0.188792,
+    "weighted_f1": 0.190609,
+    "accuracy_all_classes": 0.262665
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2626645837982593,
+    "unweighted_accuracy": 0.26211023844031905,
+    "macro_f1": 0.18879228473787668,
+    "weighted_f1": 0.19060884096416097,
+    "accuracy_all_classes": 0.2626645837982593
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "6c3ec6823d3d",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 35,
+    "invalid_rate": 0.007810756527560812,
+    "prediction_counts": {
+      "angry": 2198,
+      "fearful": 1802,
+      "happy": 44,
+      "neutral": 83,
+      "sad": 318,
+      "surprised": 1,
+      "invalid": 35
+    },
+    "ground_truth_counts": {
+      "angry": 749,
+      "fearful": 736,
+      "happy": 749,
+      "neutral": 809,
+      "sad": 769,
+      "surprised": 669
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -22,8 +22,11 @@ GROUPS = {
     "Selected3": (3, "Selected mixed models", "#D55E00"),
     "SER_API7": (7, "SER + APIs", "#009E73"),
     "All10": (10, "All ten models", "#CC79A7"),
+    "AudioLLM4": (4, "Four audio LLM/API models", "#332288"),
 }
+MELD_GROUPS = ("SER5", "Selected3", "SER_API7", "All10")
 RULE_COLOURS = {3: "#56B4E9", 4: "#0072B2", 5: "#332288"}
+AUDIO_RULE_COLOURS = {3: "#AA4499", 4: "#332288"}
 INK, GRID = "#000000", "#d9d9d9"
 
 
@@ -185,7 +188,8 @@ def _ser5_overview(plt, records, destination):
 def _meld_details(plt, records, destination):
     fig, axes = plt.subplots(2, 2, figsize=(16, 13.5), sharex=True, sharey=True)
     fig.subplots_adjust(left=.09, right=.98, top=.81, bottom=.22, wspace=.17, hspace=.25)
-    for i, (ax, (group, (m, name, color))) in enumerate(zip(axes.flat, GROUPS.items())):
+    for ax, group in zip(axes.flat, MELD_GROUPS):
+        m, name, color = GROUPS[group]
         rows = records.get(("meld", group), [])
         _axes(ax)
         ax.set_title(f"{name} ({m} models)", fontsize=20, fontweight="bold", pad=12, color=INK)
@@ -216,25 +220,29 @@ def _meld_details(plt, records, destination):
              "All10: SER+API7 + Qwen2.5-Omni + Qwen2-Audio + Gemma 4.\n"
              "A group that accepts fewer samples can still make a larger fraction of errors on those samples.",
              fontsize=15, color=INK, linespacing=1.4)
-    for ax, group in zip(axes.flat, GROUPS):
+    for ax, group in zip(axes.flat, MELD_GROUPS):
         usable = [r for r in records.get(("meld", group), []) if r["conditional_precision"] is not None]
         _annotate_votes(ax, usable, fontsize=16)
     return _save(fig, plt, destination, "consensus_meld_accuracy_coverage")
 
 
-def _bar_panels(plt, records, destination, *, metric, by_votes=False):
+def _bar_panels(plt, records, destination, *, metric, by_votes=False, vote_group="SER5"):
     from matplotlib.patches import Patch
 
     accuracy = metric == "conditional_precision"
     label = "Correct auto-labels (%)" if accuracy else "Samples auto-labelled (%)"
-    title = ("Five SER models: accuracy at each vote rule" if accuracy else "Five SER models: coverage at each vote rule") \
+    m, group_name, _ = GROUPS[vote_group]
+    title = (f"{group_name}: accuracy at each vote rule" if accuracy else f"{group_name}: coverage at each vote rule") \
         if by_votes else ("All models agree: accuracy of the auto-labels" if accuracy else "All models agree: share of samples auto-labelled")
-    fig, axes = plt.subplots(4, 4, figsize=(18.8, 13.5), squeeze=False)
-    fig.subplots_adjust(left=.065, right=.99, bottom=.19, top=.84, wspace=.15, hspace=.40)
+    fig, axes = plt.subplots(4, 4, figsize=(18.8, 13.5 if by_votes else 14.2), squeeze=False)
+    fig.subplots_adjust(left=.065, right=.99, bottom=.19 if by_votes else .235, top=.84, wspace=.15, hspace=.40)
     if by_votes:
-        entries = [(k, f"≥{k}/5 matching votes" if k < 5 else "5/5: all five agree", RULE_COLOURS[k]) for k in (3, 4, 5)]
+        colours = AUDIO_RULE_COLOURS if vote_group == "AudioLLM4" else RULE_COLOURS
+        entries = [(k, f"≥{k}/{m} matching votes" if k < m else f"{m}/{m}: all {m} agree", colours[k])
+                   for k in range(m // 2 + 1, m + 1)]
     else:
-        names = {"SER5": "SER5", "Selected3": "Mixed3", "SER_API7": "SER+API7", "All10": "All10"}
+        names = {"SER5": "SER5", "Selected3": "Mixed3", "SER_API7": "SER+API7", "All10": "All10",
+                 "AudioLLM4": "AudioLLM4"}
         entries = [(key, f"{names[key]}: all {spec[0]} agree", spec[2]) for key, spec in GROUPS.items()]
     positions = [i * .70 for i in range(len(entries))]
     for i, (dataset, name, language) in enumerate(DATASETS):
@@ -245,7 +253,7 @@ def _bar_panels(plt, records, destination, *, metric, by_votes=False):
         ax.set_xlim(-.48, positions[-1] + .48)
         for position, (entry, _name, color) in zip(positions, entries):
             if by_votes:
-                row = next((r for r in records.get((dataset, "SER5"), []) if r["min_votes"] == entry), None)
+                row = next((r for r in records.get((dataset, vote_group), []) if r["min_votes"] == entry), None)
             else:
                 m = GROUPS[entry][0]
                 row = next((r for r in records.get((dataset, entry), []) if r["min_votes"] == m), None)
@@ -260,35 +268,42 @@ def _bar_panels(plt, records, destination, *, metric, by_votes=False):
                     fontsize=15.5, color=INK)
     fig.suptitle(title, fontsize=24, fontweight="bold", y=.985)
     denominator = "Correct predictions / auto-labelled samples" if accuracy else "Auto-labelled samples / all common samples"
-    rule = "Each colour is a different vote rule on the same five models." if by_votes else "Each colour is a fixed model group; every model in that group must agree."
+    rule = f"Each colour is a different vote rule on the same {GROUPS[vote_group][0]} models." if by_votes else \
+           "Each colour is a fixed model group; every model in that group must agree."
     fig.text(.5, .93, denominator + "; values are percentages.", ha="center", fontsize=18, color=INK)
     fig.text(.5, .90, rule, ha="center", fontsize=17, color=INK)
     fig.supylabel(label, fontsize=20, x=.012)
     handles = [Patch(facecolor=color, edgecolor=INK, linewidth=1, label=name) for _, name, color in entries]
-    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.5, .105),
-               ncol=3 if by_votes else 2, frameon=False, fontsize=16, columnspacing=1.6,
+    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.5, .105 if by_votes else .14),
+               ncol=3, frameon=False, fontsize=16, columnspacing=1.6,
                handlelength=1.4, handletextpad=.45)
     note = "n/a = group incomplete.  — = no samples accepted, so accuracy is undefined.  Bar labels round to whole percentages."
-    fig.text(.065, .065, note, fontsize=15, color=INK)
+    fig.text(.065, .065 if by_votes else .10, note, fontsize=15, color=INK)
     if not by_votes:
         fig.text(.065, .025, "Mixed3 = emotion2vec+ + Gemini + Qwen2.5-Omni.  SER+API7 = five SER + GPT + Gemini.\n"
-                 "All10 adds Qwen2.5-Omni, Qwen2-Audio and Gemma 4 to SER+API7.", fontsize=15,
+                 "All10 adds Qwen2.5-Omni, Qwen2-Audio and Gemma 4 to SER+API7.\n"
+                 "AudioLLM4 = GPT + Gemini + Qwen2.5-Omni + Qwen2-Audio; Gemma 4 is excluded.", fontsize=15,
                  color=INK, linespacing=1.35)
+    elif vote_group == "AudioLLM4":
+        fig.text(.065, .025, "Members: GPT Realtime + Gemini + Qwen2.5-Omni + Qwen2-Audio. Gemma 4 is not included.\n"
+                 "A stricter rule reduces automatic acceptance; its observed accuracy need not increase on every dataset.",
+                 fontsize=15, color=INK, linespacing=1.35)
     else:
         fig.text(.065, .025, "A stricter rule reduces automatic acceptance; its observed accuracy need not increase on every dataset.",
                  fontsize=15, color=INK)
-    name = f"consensus_ser5_{'accuracy' if accuracy else 'coverage'}_by_votes" if by_votes else \
+    name = f"consensus_{vote_group.lower()}_{'accuracy' if accuracy else 'coverage'}_by_votes" if by_votes else \
            f"consensus_unanimous_{'accuracy' if accuracy else 'coverage'}_by_dataset"
     return _save(fig, plt, destination, name)
 
 
 def plot_thresholds(threshold_rows, output_dir):
-    """Export six PNG/SVG figure pairs using black, large text and explicit rules.
+    """Export eight PNG/SVG figure pairs using black, large text and explicit rules.
 
     Coverage is accepted/common samples; accuracy is correct/accepted labels.
     The overview isolates SER5 so all three thresholds can be labelled clearly.
     The MELD figure separates the four complete model groups into four panels.
-    Two unanimous bars compare fixed groups; two SER5 bars compare vote rules.
+    Two unanimous bars compare fixed groups; separate SER5 and AudioLLM4 bars
+    compare vote rules. AudioLLM4 excludes Gemma and always requires its four members.
     Incomplete fixed groups are shown as unavailable, never as zero accuracy.
     """
     import matplotlib
@@ -314,4 +329,5 @@ def plot_thresholds(threshold_rows, output_dir):
         for metric in ("conditional_precision", "coverage"):
             paths += _bar_panels(plt, records, destination, metric=metric)
             paths += _bar_panels(plt, records, destination, metric=metric, by_votes=True)
+            paths += _bar_panels(plt, records, destination, metric=metric, by_votes=True, vote_group="AudioLLM4")
     return paths

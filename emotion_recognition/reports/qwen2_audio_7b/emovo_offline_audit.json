@@ -1,0 +1,76 @@
+{
+  "validated_at_utc": "2026-11-14T05:25:38.143951+00:00",
+  "model": "qwen2_audio_7b",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_audio_7b/emovo_predictions.csv",
+      "sha256": "e6ac9553e2c232c6c68c3e4a8e644dc5b408e2ae9d51780c8e41e4c04f9595e9",
+      "bytes": 111357
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emovo_predictions.json",
+      "sha256": "4484c0d6132d5750ea3b43d364d4be1515294f9708f2f862fa087f553070f450",
+      "bytes": 4001
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.268707,
+    "unweighted_accuracy": 0.268707,
+    "macro_f1": 0.21778,
+    "weighted_f1": 0.21778,
+    "accuracy_all_classes": 0.268707
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2687074829931973,
+    "unweighted_accuracy": 0.2687074829931973,
+    "macro_f1": 0.21777966868577717,
+    "weighted_f1": 0.21777966868577722,
+    "accuracy_all_classes": 0.2687074829931973
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 425,
+      "disgusted": 26,
+      "fearful": 70,
+      "happy": 6,
+      "neutral": 22,
+      "sad": 36,
+      "surprised": 3,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 84,
+      "disgusted": 84,
+      "fearful": 84,
+      "happy": 84,
+      "neutral": 84,
+      "sad": 84,
+      "surprised": 84
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -8,6 +8,7 @@ Every selected CSV/JSON pair is validated before any report is written. --plots 
 optionally rebuild the existing comparison figures and HTML; they never call a model/API.
 """
 import argparse
+from collections import Counter
 from contextlib import contextmanager
 import csv
 import hashlib
@@ -255,12 +256,19 @@ def validate_pair(json_path, model, entry):
         compare_metric("chance", metadata["chance"], chance, json_path.name)
     artifacts = [{"path": str(path), "sha256": sha256(path), "bytes": path.stat().st_size}
                  for path in (csv_path, json_path)]
+    prediction_counts, truth_counts = Counter(prediction), Counter(truth)
+    invalid_count = sum(count for label, count in prediction_counts.items() if label not in classes)
     audit = {"validated_at_utc": datetime.now(timezone.utc).isoformat(), "model": model, "key": key,
              "clips": len(records), "unique_audio_paths": len(paths), "source_artifacts": artifacts,
              "source_metrics": claimed_metrics, "recomputed_metrics": metrics, "metric_tolerance": METRIC_TOLERANCE,
              "derived_metrics": sorted(set(metrics) - set(claimed_metrics)),
              "probability_columns": probability_kind, "candidate_protocol": metadata.get("inference_protocol"),
              "protocol_matches_configuration": expected_protocol is not None,
+             "prediction_diagnostics": {
+                 "invalid_count": invalid_count, "invalid_rate": invalid_count / len(records),
+                 "prediction_counts": {**{label: prediction_counts[label] for label in classes},
+                                       "invalid": invalid_count},
+                 "ground_truth_counts": {label: truth_counts[label] for label in row_labels}},
              "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. "
                                    "This does not independently authenticate the original remote requests."}
     audit["scope_notes"] = (["The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved "
@@ -304,6 +312,7 @@ def render_report(run, entry, root=ROOT):
     lenient_path = folder / "figures" / f"{run.stem}_confusion_acted_or_listener.png"
     name = run.metadata.get("model_name", entry["name"])
     pct = lambda value: f"{100 * value:.2f}%" if value is not None else "—"
+    diagnostics = run.audit["prediction_diagnostics"]
     reporting.plot_confusion(run.matrix, run.ds, run.rows, f"{name} on {run.ds.name}",
                             f"Saved predictions; accuracy {pct(run.metrics['accuracy'])}.",
                             "Ground-truth emotion (clips)", strict_path, run.other)
@@ -321,7 +330,9 @@ def render_report(run, entry, root=ROOT):
              f"| UAR: mean ground-truth-row recall | {pct(run.metrics['unweighted_accuracy'])} |",
              f"| Macro F1 | {pct(run.metrics['macro_f1'])} |",
              f"| Weighted F1: true-support weighted | {pct(run.metrics['weighted_f1'])} |",
-             f"| Accuracy: all model classes | {pct(run.metrics['accuracy_all_classes'])} |"]
+             f"| Accuracy: all model classes | {pct(run.metrics['accuracy_all_classes'])} |",
+             f"| Invalid / outside-candidate answers | {diagnostics['invalid_count']:,} "
+             f"({pct(diagnostics['invalid_rate'])}) |"]
     for metric, label in (("accuracy_acted_or_listener", "Accuracy: acted emotion or listener vote"),
                           ("listeners_vs_acted", "Single listener vote vs acted emotion"),
                           ("model_vs_listeners", "Model vs single listener vote")):
@@ -362,6 +373,21 @@ def render_report(run, entry, root=ROOT):
                      f"{label} accepts {' or '.join(accepted)}" for label, accepted in run.ds.accept.items()) + ". "
                      "F1 resolves a correct composite to the predicted class, otherwise to its first accepted class. "
                      "Weighted F1 uses the resulting resolved-truth support, which can depend on the predictions.")
+    small_classes = {label: count for label, count in diagnostics["ground_truth_counts"].items()
+                     if 0 < count <= 5}
+    if small_classes:
+        lines.append("- Small original ground-truth classes (at most 5 clips): " + ", ".join(
+                     f"{label} ({count:,} {'clip' if count == 1 else 'clips'})"
+                     for label, count in small_classes.items()) + ". "
+                     "UAR gives each original ground-truth row equal weight; recalls from these small supports "
+                     "should be interpreted with care.")
+    lines += ["", "## Prediction distribution", "",
+              "Counts and shares use all saved samples. The invalid bucket combines `invalid` and "
+              "`other answer`: answers outside the dataset's candidate classes remain errors.", "",
+              "| Predicted label | Clips | Share of all clips |", "|---|---:|---:|",
+              *[f"| {label if label != 'invalid' else 'invalid / outside candidates'} | {count:,} | "
+                f"{pct(count / len(run.records))} |"
+                for label, count in diagnostics["prediction_counts"].items()]]
     lines += ["", "## Results per emotion", "",
               "| Ground-truth emotion | Clips | Recall | Acted-or-listener recall |",
               "|---|---:|---:|---:|",

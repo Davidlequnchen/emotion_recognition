@@ -421,13 +421,21 @@ z
    <g id="text_24">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="520.319462" y="92.783848" transform="rotate(-0 520.319462 92.783848)">56</text>
    </g>
+   <g id="patch_24">
+    <path d="M 536.222704 156.733678 
+L 557.427027 156.733678 
+L 557.427027 132.286783 
+L 536.222704 132.286783 
+z
+" clip-path="url(#pfef3cf9c3c)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_25">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="546.824865" y="151.266711" transform="rotate(-0 546.824865 151.266711)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="546.824865" y="127.502723" transform="rotate(-0 546.824865 127.502723)">23</text>
    </g>
    <g id="text_26">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="573.330269" y="151.266711" transform="rotate(-0 573.330269 151.266711)">n/a</text>
    </g>
-   <g id="patch_24">
+   <g id="patch_25">
     <path d="M 589.233511 156.733678 
 L 610.437833 156.733678 
 L 610.437833 96.590292 
@@ -438,7 +446,7 @@ z
    <g id="text_27">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="599.835672" y="91.806232" transform="rotate(-0 599.835672 91.806232)">57</text>
    </g>
-   <g id="patch_25">
+   <g id="patch_26">
     <path d="M 615.738914 156.733678 
 L 636.943236 156.733678 
 L 636.943236 100.528783 
@@ -454,7 +462,7 @@ z
    </g>
   </g>
   <g id="axes_3">
-   <g id="patch_26">
+   <g id="patch_27">
     <path d="M 680.094033 156.733678 
 L 950.449146 156.733678 
 L 950.449146 31.775 
@@ -537,17 +545,17 @@ L 950.449146 50.836493
      </g>
     </g>
    </g>
-   <g id="patch_27">
+   <g id="patch_28">
     <path d="M 680.094033 156.733678 
 L 680.094033 31.775 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_28">
+   <g id="patch_29">
     <path d="M 680.094033 156.733678 
 L 950.449146 156.733678 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_29">
+   <g id="patch_30">
     <path d="M 685.395114 156.733678 
 L 706.599436 156.733678 
 L 706.599436 89.385634 
@@ -558,7 +566,7 @@ z
    <g id="text_30">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="695.997275" y="84.601574" transform="rotate(-0 695.997275 84.601574)">64</text>
    </g>
-   <g id="patch_30">
+   <g id="patch_31">
     <path d="M 711.900517 156.733678 
 L 733.104839 156.733678 
 L 733.104839 86.649781 
@@ -569,7 +577,7 @@ z
    <g id="text_31">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="722.502678" y="81.86572" transform="rotate(-0 722.502678 81.86572)">66</text>
    </g>
-   <g id="patch_31">
+   <g id="patch_32">
     <path d="M 738.40592 156.733678 
 L 759.610243 156.733678 
 L 759.610243 84.859202 
@@ -580,7 +588,7 @@ z
    <g id="text_32">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="749.008081" y="80.075142" transform="rotate(-0 749.008081 80.075142)">68</text>
    </g>
-   <g id="patch_32">
+   <g id="patch_33">
     <path d="M 764.911323 156.733678 
 L 786.115646 156.733678 
 L 786.115646 86.994556 
@@ -591,7 +599,7 @@ z
    <g id="text_33">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="775.513485" y="82.210496" transform="rotate(-0 775.513485 82.210496)">66</text>
    </g>
-   <g id="patch_33">
+   <g id="patch_34">
     <path d="M 791.416727 156.733678 
 L 812.621049 156.733678 
 L 812.621049 90.166566 
@@ -602,7 +610,7 @@ z
    <g id="text_34">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="802.018888" y="85.382505" transform="rotate(-0 802.018888 85.382505)">63</text>
    </g>
-   <g id="patch_34">
+   <g id="patch_35">
     <path d="M 817.92213 156.733678 
 L 839.126452 156.733678 
 L 839.126452 79.223813 
@@ -613,13 +621,21 @@ z
    <g id="text_35">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="828.524291" y="74.439752" transform="rotate(-0 828.524291 74.439752)">73</text>
    </g>
+   <g id="patch_36">
+    <path d="M 844.427533 156.733678 
+L 865.631856 156.733678 
+L 865.631856 101.513273 
+L 844.427533 101.513273 
+z
+" clip-path="url(#p467bb1f6db)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_36">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="855.029694" y="151.266711" transform="rotate(-0 855.029694 151.266711)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="855.029694" y="96.729213" transform="rotate(-0 855.029694 96.729213)">52</text>
    </g>
    <g id="text_37">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="881.535098" y="151.266711" transform="rotate(-0 881.535098 151.266711)">n/a</text>
    </g>
-   <g id="patch_35">
+   <g id="patch_37">
     <path d="M 897.43834 156.733678 
 L 918.642662 156.733678 
 L 918.642662 76.050302 
@@ -630,7 +646,7 @@ z
    <g id="text_38">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="908.040501" y="71.266242" transform="rotate(-0 908.040501 71.266242)">76</text>
    </g>
-   <g id="patch_36">
+   <g id="patch_38">
     <path d="M 923.943743 156.733678 
 L 945.148065 156.733678 
 L 945.148065 90.400749 
@@ -646,7 +662,7 @@ z
    </g>
   </g>
   <g id="axes_4">
-   <g id="patch_37">
+   <g id="patch_39">
     <path d="M 988.298862 156.733678 
 L 1258.653975 156.733678 
 L 1258.653975 31.775 
@@ -729,17 +745,17 @@ L 1258.653975 50.836493
      </g>
     </g>
    </g>
-   <g id="patch_38">
+   <g id="patch_40">
     <path d="M 988.298862 156.733678 
 L 988.298862 31.775 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_39">
+   <g id="patch_41">
     <path d="M 988.298862 156.733678 
 L 1258.653975 156.733678 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_40">
+   <g id="patch_42">
     <path d="M 993.599943 156.733678 
 L 1014.804265 156.733678 
 L 1014.804265 104.269403 
@@ -750,7 +766,7 @@ z
    <g id="text_41">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1004.202104" y="99.485342" transform="rotate(-0 1004.202104 99.485342)">50</text>
    </g>
-   <g id="patch_41">
+   <g id="patch_43">
     <path d="M 1020.105346 156.733678 
 L 1041.309668 156.733678 
 L 1041.309668 97.905464 
@@ -761,7 +777,7 @@ z
    <g id="text_42">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1030.707507" y="93.121403" transform="rotate(-0 1030.707507 93.121403)">56</text>
    </g>
-   <g id="patch_42">
+   <g id="patch_44">
     <path d="M 1046.610749 156.733678 
 L 1067.815072 156.733678 
 L 1067.815072 95.857551 
@@ -772,7 +788,7 @@ z
    <g id="text_43">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1057.21291" y="91.073491" transform="rotate(-0 1057.21291 91.073491)">57</text>
    </g>
-   <g id="patch_43">
+   <g id="patch_45">
     <path d="M 1073.116152 156.733678 
 L 1094.320475 156.733678 
 L 1094.320475 97.188684 
@@ -783,7 +799,7 @@ z
    <g id="text_44">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1083.718314" y="92.404624" transform="rotate(-0 1083.718314 92.404624)">56</text>
    </g>
-   <g id="patch_44">
+   <g id="patch_46">
     <path d="M 1099.621556 156.733678 
 L 1120.825878 156.733678 
 L 1120.825878 96.380987 
@@ -794,7 +810,7 @@ z
    <g id="text_45">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1110.223717" y="91.596926" transform="rotate(-0 1110.223717 91.596926)">57</text>
    </g>
-   <g id="patch_45">
+   <g id="patch_47">
     <path d="M 1126.126959 156.733678 
 L 1147.331281 156.733678 
 L 1147.331281 96.734962 
@@ -805,13 +821,21 @@ z
    <g id="text_46">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1136.72912" y="91.950902" transform="rotate(-0 1136.72912 91.950902)">57</text>
    </g>
+   <g id="patch_48">
+    <path d="M 1152.632362 156.733678 
+L 1173.836685 156.733678 
+L 1173.836685 119.40492 
+L 1152.632362 119.40492 
+z
+" clip-path="url(#p2e07332512)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_47">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1163.234523" y="151.266711" transform="rotate(-0 1163.234523 151.266711)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1163.234523" y="114.62086" transform="rotate(-0 1163.234523 114.62086)">35</text>
    </g>
    <g id="text_48">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1189.739927" y="151.266711" transform="rotate(-0 1189.739927 151.266711)">n/a</text>
    </g>
-   <g id="patch_46">
+   <g id="patch_49">
     <path d="M 1205.643169 156.733678 
 L 1226.847491 156.733678 
 L 1226.847491 93.804424 
@@ -822,7 +846,7 @@ z
    <g id="text_49">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1216.24533" y="89.020364" transform="rotate(-0 1216.24533 89.020364)">59</text>
    </g>
-   <g id="patch_47">
+   <g id="patch_50">
     <path d="M 1232.148572 156.733678 
 L 1253.352894 156.733678 
 L 1253.352894 95.84029 
@@ -838,7 +862,7 @@ z
    </g>
   </g>
   <g id="axes_5">
-   <g id="patch_48">
+   <g id="patch_51">
     <path d="M 63.684375 316.680785 
 L 334.039488 316.680785 
 L 334.039488 191.722107 
@@ -942,17 +966,17 @@ L 334.039488 210.783601
      <text style="font-size: 19px; font-family: 'Helvetica Neue'; text-anchor: middle" x="25.288" y="254.201446" transform="rotate(-90 25.288 254.201446)">Weighted F1 (%)</text>
     </g>
    </g>
-   <g id="patch_49">
+   <g id="patch_52">
     <path d="M 63.684375 316.680785 
 L 63.684375 191.722107 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_50">
+   <g id="patch_53">
     <path d="M 63.684375 316.680785 
 L 334.039488 316.680785 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_51">
+   <g id="patch_54">
     <path d="M 68.985456 316.680785 
 L 90.189778 316.680785 
 L 90.189778 225.105208 
@@ -963,7 +987,7 @@ z
    <g id="text_59">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="79.587617" y="220.321147" transform="rotate(-0 79.587617 220.321147)">86</text>
    </g>
-   <g id="patch_52">
+   <g id="patch_55">
     <path d="M 95.490859 316.680785 
 L 116.695181 316.680785 
 L 116.695181 227.113204 
@@ -974,7 +998,7 @@ z
    <g id="text_60">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="106.09302" y="222.329143" transform="rotate(-0 106.09302 222.329143)">85</text>
    </g>
-   <g id="patch_53">
+   <g id="patch_56">
     <path d="M 121.996262 316.680785 
 L 143.200585 316.680785 
 L 143.200585 267.318505 
@@ -985,7 +1009,7 @@ z
    <g id="text_61">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="132.598423" y="262.534444" transform="rotate(-0 132.598423 262.534444)">47</text>
    </g>
-   <g id="patch_54">
+   <g id="patch_57">
     <path d="M 148.501665 316.680785 
 L 169.705988 316.680785 
 L 169.705988 285.145942 
@@ -996,7 +1020,7 @@ z
    <g id="text_62">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="159.103827" y="280.361881" transform="rotate(-0 159.103827 280.361881)">30</text>
    </g>
-   <g id="patch_55">
+   <g id="patch_58">
     <path d="M 175.007069 316.680785 
 L 196.211391 316.680785 
 L 196.211391 287.774509 
@@ -1007,7 +1031,7 @@ z
    <g id="text_63">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="185.60923" y="282.990448" transform="rotate(-0 185.60923 282.990448)">27</text>
    </g>
-   <g id="patch_56">
+   <g id="patch_59">
     <path d="M 201.512472 316.680785 
 L 222.716794 316.680785 
 L 222.716794 298.715376 
@@ -1018,7 +1042,7 @@ z
    <g id="text_64">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="212.114633" y="293.931316" transform="rotate(-0 212.114633 293.931316)">17</text>
    </g>
-   <g id="patch_57">
+   <g id="patch_60">
     <path d="M 228.017875 316.680785 
 L 249.222198 316.680785 
 L 249.222198 228.308208 
@@ -1032,7 +1056,7 @@ z
    <g id="text_66">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="265.12544" y="311.213818" transform="rotate(-0 265.12544 311.213818)">n/a</text>
    </g>
-   <g id="patch_58">
+   <g id="patch_61">
     <path d="M 281.028682 316.680785 
 L 302.233004 316.680785 
 L 302.233004 309.761514 
@@ -1043,7 +1067,7 @@ z
    <g id="text_67">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="291.630843" y="304.977454" transform="rotate(-0 291.630843 304.977454)">7</text>
    </g>
-   <g id="patch_59">
+   <g id="patch_62">
     <path d="M 307.534085 316.680785 
 L 328.738407 316.680785 
 L 328.738407 284.853753 
@@ -1059,7 +1083,7 @@ z
    </g>
   </g>
   <g id="axes_6">
-   <g id="patch_60">
+   <g id="patch_63">
     <path d="M 371.889204 316.680785 
 L 642.244317 316.680785 
 L 642.244317 191.722107 
@@ -1142,17 +1166,17 @@ L 642.244317 210.783601
      </g>
     </g>
    </g>
-   <g id="patch_61">
+   <g id="patch_64">
     <path d="M 371.889204 316.680785 
 L 371.889204 191.722107 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_62">
+   <g id="patch_65">
     <path d="M 371.889204 316.680785 
 L 642.244317 316.680785 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_63">
+   <g id="patch_66">
     <path d="M 377.190285 316.680785 
 L 398.394607 316.680785 
 L 398.394607 219.148423 
@@ -1163,7 +1187,7 @@ z
    <g id="text_70">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="387.792446" y="214.364363" transform="rotate(-0 387.792446 214.364363)">92</text>
    </g>
-   <g id="patch_64">
+   <g id="patch_67">
     <path d="M 403.695688 316.680785 
 L 424.90001 316.680785 
 L 424.90001 254.758375 
@@ -1174,7 +1198,7 @@ z
    <g id="text_71">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="414.297849" y="249.974315" transform="rotate(-0 414.297849 249.974315)">58</text>
    </g>
-   <g id="patch_65">
+   <g id="patch_68">
     <path d="M 430.201091 316.680785 
 L 451.405414 316.680785 
 L 451.405414 267.281225 
@@ -1185,7 +1209,7 @@ z
    <g id="text_72">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="440.803252" y="262.497164" transform="rotate(-0 440.803252 262.497164)">47</text>
    </g>
-   <g id="patch_66">
+   <g id="patch_69">
     <path d="M 456.706494 316.680785 
 L 477.910817 316.680785 
 L 477.910817 268.870791 
@@ -1196,7 +1220,7 @@ z
    <g id="text_73">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="467.308656" y="264.086731" transform="rotate(-0 467.308656 264.086731)">45</text>
    </g>
-   <g id="patch_67">
+   <g id="patch_70">
     <path d="M 483.211898 316.680785 
 L 504.41622 316.680785 
 L 504.41622 274.695175 
@@ -1207,7 +1231,7 @@ z
    <g id="text_74">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="493.814059" y="269.911114" transform="rotate(-0 493.814059 269.911114)">40</text>
    </g>
-   <g id="patch_68">
+   <g id="patch_71">
     <path d="M 509.717301 316.680785 
 L 530.921623 316.680785 
 L 530.921623 268.035049 
@@ -1218,13 +1242,21 @@ z
    <g id="text_75">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="520.319462" y="263.250988" transform="rotate(-0 520.319462 263.250988)">46</text>
    </g>
+   <g id="patch_72">
+    <path d="M 536.222704 316.680785 
+L 557.427027 316.680785 
+L 557.427027 229.794899 
+L 536.222704 229.794899 
+z
+" clip-path="url(#pbe64fd98f4)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_76">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="546.824865" y="311.213818" transform="rotate(-0 546.824865 311.213818)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="546.824865" y="225.010838" transform="rotate(-0 546.824865 225.010838)">82</text>
    </g>
    <g id="text_77">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="573.330269" y="311.213818" transform="rotate(-0 573.330269 311.213818)">n/a</text>
    </g>
-   <g id="patch_69">
+   <g id="patch_73">
     <path d="M 589.233511 316.680785 
 L 610.437833 316.680785 
 L 610.437833 296.501489 
@@ -1235,7 +1267,7 @@ z
    <g id="text_78">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="599.835672" y="291.717429" transform="rotate(-0 599.835672 291.717429)">19</text>
    </g>
-   <g id="patch_70">
+   <g id="patch_74">
     <path d="M 615.738914 316.680785 
 L 636.943236 316.680785 
 L 636.943236 267.423993 
@@ -1251,7 +1283,7 @@ z
    </g>
   </g>
   <g id="axes_7">
-   <g id="patch_71">
+   <g id="patch_75">
     <path d="M 680.094033 316.680785 
 L 950.449146 316.680785 
 L 950.449146 191.722107 
@@ -1334,17 +1366,17 @@ L 950.449146 210.783601
      </g>
     </g>
    </g>
-   <g id="patch_72">
+   <g id="patch_76">
     <path d="M 680.094033 316.680785 
 L 680.094033 191.722107 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_73">
+   <g id="patch_77">
     <path d="M 680.094033 316.680785 
 L 950.449146 316.680785 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_74">
+   <g id="patch_78">
     <path d="M 685.395114 316.680785 
 L 706.599436 316.680785 
 L 706.599436 217.817436 
@@ -1355,7 +1387,7 @@ z
    <g id="text_81">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="695.997275" y="213.033376" transform="rotate(-0 695.997275 213.033376)">93</text>
    </g>
-   <g id="patch_75">
+   <g id="patch_79">
     <path d="M 711.900517 316.680785 
 L 733.104839 316.680785 
 L 733.104839 261.801051 
@@ -1366,7 +1398,7 @@ z
    <g id="text_82">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="722.502678" y="257.016991" transform="rotate(-0 722.502678 257.016991)">52</text>
    </g>
-   <g id="patch_76">
+   <g id="patch_80">
     <path d="M 738.40592 316.680785 
 L 759.610243 316.680785 
 L 759.610243 255.205586 
@@ -1377,7 +1409,7 @@ z
    <g id="text_83">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="749.008081" y="250.421526" transform="rotate(-0 749.008081 250.421526)">58</text>
    </g>
-   <g id="patch_77">
+   <g id="patch_81">
     <path d="M 764.911323 316.680785 
 L 786.115646 316.680785 
 L 786.115646 282.383002 
@@ -1388,7 +1420,7 @@ z
    <g id="text_84">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="775.513485" y="277.598941" transform="rotate(-0 775.513485 277.598941)">32</text>
    </g>
-   <g id="patch_78">
+   <g id="patch_82">
     <path d="M 791.416727 316.680785 
 L 812.621049 316.680785 
 L 812.621049 283.95921 
@@ -1399,7 +1431,7 @@ z
    <g id="text_85">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="802.018888" y="279.17515" transform="rotate(-0 802.018888 279.17515)">31</text>
    </g>
-   <g id="patch_79">
+   <g id="patch_83">
     <path d="M 817.92213 316.680785 
 L 839.126452 316.680785 
 L 839.126452 289.42317 
@@ -1410,13 +1442,21 @@ z
    <g id="text_86">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="828.524291" y="284.63911" transform="rotate(-0 828.524291 284.63911)">26</text>
    </g>
+   <g id="patch_84">
+    <path d="M 844.427533 316.680785 
+L 865.631856 316.680785 
+L 865.631856 241.036414 
+L 844.427533 241.036414 
+z
+" clip-path="url(#ped8221070c)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_87">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="855.029694" y="311.213818" transform="rotate(-0 855.029694 311.213818)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="855.029694" y="236.252354" transform="rotate(-0 855.029694 236.252354)">71</text>
    </g>
    <g id="text_88">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="881.535098" y="311.213818" transform="rotate(-0 881.535098 311.213818)">n/a</text>
    </g>
-   <g id="patch_80">
+   <g id="patch_85">
     <path d="M 897.43834 316.680785 
 L 918.642662 316.680785 
 L 918.642662 295.387584 
@@ -1427,7 +1467,7 @@ z
    <g id="text_89">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="908.040501" y="290.603523" transform="rotate(-0 908.040501 290.603523)">20</text>
    </g>
-   <g id="patch_81">
+   <g id="patch_86">
     <path d="M 923.943743 316.680785 
 L 945.148065 316.680785 
 L 945.148065 286.820114 
@@ -1443,7 +1483,7 @@ z
    </g>
   </g>
   <g id="axes_8">
-   <g id="patch_82">
+   <g id="patch_87">
     <path d="M 988.298862 316.680785 
 L 1258.653975 316.680785 
 L 1258.653975 191.722107 
@@ -1526,17 +1566,17 @@ L 1258.653975 210.783601
      </g>
     </g>
    </g>
-   <g id="patch_83">
+   <g id="patch_88">
     <path d="M 988.298862 316.680785 
 L 988.298862 191.722107 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_84">
+   <g id="patch_89">
     <path d="M 988.298862 316.680785 
 L 1258.653975 316.680785 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_85">
+   <g id="patch_90">
     <path d="M 993.599943 316.680785 
 L 1014.804265 316.680785 
 L 1014.804265 218.696902 
@@ -1547,7 +1587,7 @@ z
    <g id="text_92">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1004.202104" y="213.912841" transform="rotate(-0 1004.202104 213.912841)">93</text>
    </g>
-   <g id="patch_86">
+   <g id="patch_91">
     <path d="M 1020.105346 316.680785 
 L 1041.309668 316.680785 
 L 1041.309668 236.150702 
@@ -1558,7 +1598,7 @@ z
    <g id="text_93">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1030.707507" y="231.366642" transform="rotate(-0 1030.707507 231.366642)">76</text>
    </g>
-   <g id="patch_87">
+   <g id="patch_92">
     <path d="M 1046.610749 316.680785 
 L 1067.815072 316.680785 
 L 1067.815072 211.31255 
@@ -1569,7 +1609,7 @@ z
    <g id="text_94">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1057.21291" y="206.528489" transform="rotate(-0 1057.21291 206.528489)">100</text>
    </g>
-   <g id="patch_88">
+   <g id="patch_93">
     <path d="M 1073.116152 316.680785 
 L 1094.320475 316.680785 
 L 1094.320475 271.791959 
@@ -1580,7 +1620,7 @@ z
    <g id="text_95">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1083.718314" y="267.007899" transform="rotate(-0 1083.718314 267.007899)">42</text>
    </g>
-   <g id="patch_89">
+   <g id="patch_94">
     <path d="M 1099.621556 316.680785 
 L 1120.825878 316.680785 
 L 1120.825878 265.918494 
@@ -1591,7 +1631,7 @@ z
    <g id="text_96">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1110.223717" y="261.134434" transform="rotate(-0 1110.223717 261.134434)">48</text>
    </g>
-   <g id="patch_90">
+   <g id="patch_95">
     <path d="M 1126.126959 316.680785 
 L 1147.331281 316.680785 
 L 1147.331281 287.445816 
@@ -1602,13 +1642,21 @@ z
    <g id="text_97">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1136.72912" y="282.661755" transform="rotate(-0 1136.72912 282.661755)">28</text>
    </g>
+   <g id="patch_96">
+    <path d="M 1152.632362 316.680785 
+L 1173.836685 316.680785 
+L 1173.836685 265.956457 
+L 1152.632362 265.956457 
+z
+" clip-path="url(#p82a185526a)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_98">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1163.234523" y="311.213818" transform="rotate(-0 1163.234523 311.213818)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1163.234523" y="261.172397" transform="rotate(-0 1163.234523 261.172397)">48</text>
    </g>
    <g id="text_99">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1189.739927" y="311.213818" transform="rotate(-0 1189.739927 311.213818)">n/a</text>
    </g>
-   <g id="patch_91">
+   <g id="patch_97">
     <path d="M 1205.643169 316.680785 
 L 1226.847491 316.680785 
 L 1226.847491 290.900709 
@@ -1619,7 +1667,7 @@ z
    <g id="text_100">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1216.24533" y="286.116649" transform="rotate(-0 1216.24533 286.116649)">24</text>
    </g>
-   <g id="patch_92">
+   <g id="patch_98">
     <path d="M 1232.148572 316.680785 
 L 1253.352894 316.680785 
 L 1253.352894 277.691134 
@@ -1635,7 +1683,7 @@ z
    </g>
   </g>
   <g id="axes_9">
-   <g id="patch_93">
+   <g id="patch_99">
     <path d="M 63.684375 476.627893 
 L 334.039488 476.627893 
 L 334.039488 351.669215 
@@ -1739,17 +1787,17 @@ L 334.039488 370.730708
      <text style="font-size: 19px; font-family: 'Helvetica Neue'; text-anchor: middle" x="25.288" y="414.148554" transform="rotate(-90 25.288 414.148554)">Weighted F1 (%)</text>
     </g>
    </g>
-   <g id="patch_94">
+   <g id="patch_100">
     <path d="M 63.684375 476.627893 
 L 63.684375 351.669215 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_95">
+   <g id="patch_101">
     <path d="M 63.684375 476.627893 
 L 334.039488 476.627893 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_96">
+   <g id="patch_102">
     <path d="M 68.985456 476.627893 
 L 90.189778 476.627893 
 L 90.189778 392.089524 
@@ -1760,7 +1808,7 @@ z
    <g id="text_110">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="79.587617" y="387.305463" transform="rotate(-0 79.587617 387.305463)">80</text>
    </g>
-   <g id="patch_97">
+   <g id="patch_103">
     <path d="M 95.490859 476.627893 
 L 116.695181 476.627893 
 L 116.695181 436.530722 
@@ -1771,7 +1819,7 @@ z
    <g id="text_111">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="106.09302" y="431.746661" transform="rotate(-0 106.09302 431.746661)">38</text>
    </g>
-   <g id="patch_98">
+   <g id="patch_104">
     <path d="M 121.996262 476.627893 
 L 143.200585 476.627893 
 L 143.200585 430.626336 
@@ -1782,7 +1830,7 @@ z
    <g id="text_112">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="132.598423" y="425.842275" transform="rotate(-0 132.598423 425.842275)">43</text>
    </g>
-   <g id="patch_99">
+   <g id="patch_105">
     <path d="M 148.501665 476.627893 
 L 169.705988 476.627893 
 L 169.705988 458.194949 
@@ -1793,7 +1841,7 @@ z
    <g id="text_113">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="159.103827" y="453.410889" transform="rotate(-0 159.103827 453.410889)">17</text>
    </g>
-   <g id="patch_100">
+   <g id="patch_106">
     <path d="M 175.007069 476.627893 
 L 196.211391 476.627893 
 L 196.211391 443.213164 
@@ -1804,7 +1852,7 @@ z
    <g id="text_114">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="185.60923" y="438.429104" transform="rotate(-0 185.60923 438.429104)">32</text>
    </g>
-   <g id="patch_101">
+   <g id="patch_107">
     <path d="M 201.512472 476.627893 
 L 222.716794 476.627893 
 L 222.716794 441.075582 
@@ -1815,13 +1863,21 @@ z
    <g id="text_115">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="212.114633" y="436.291522" transform="rotate(-0 212.114633 436.291522)">34</text>
    </g>
+   <g id="patch_108">
+    <path d="M 228.017875 476.627893 
+L 249.222198 476.627893 
+L 249.222198 378.837349 
+L 228.017875 378.837349 
+z
+" clip-path="url(#p0c678da292)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_116">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="238.620036" y="471.160926" transform="rotate(-0 238.620036 471.160926)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="238.620036" y="374.053289" transform="rotate(-0 238.620036 374.053289)">92</text>
    </g>
    <g id="text_117">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="265.12544" y="471.160926" transform="rotate(-0 265.12544 471.160926)">n/a</text>
    </g>
-   <g id="patch_102">
+   <g id="patch_109">
     <path d="M 281.028682 476.627893 
 L 302.233004 476.627893 
 L 302.233004 472.545949 
@@ -1832,7 +1888,7 @@ z
    <g id="text_118">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="291.630843" y="467.761888" transform="rotate(-0 291.630843 467.761888)">4</text>
    </g>
-   <g id="patch_103">
+   <g id="patch_110">
     <path d="M 307.534085 476.627893 
 L 328.738407 476.627893 
 L 328.738407 451.076312 
@@ -1848,7 +1904,7 @@ z
    </g>
   </g>
   <g id="axes_10">
-   <g id="patch_104">
+   <g id="patch_111">
     <path d="M 371.889204 476.627893 
 L 642.244317 476.627893 
 L 642.244317 351.669215 
@@ -1931,17 +1987,17 @@ L 642.244317 370.730708
      </g>
     </g>
    </g>
-   <g id="patch_105">
+   <g id="patch_112">
     <path d="M 371.889204 476.627893 
 L 371.889204 351.669215 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_106">
+   <g id="patch_113">
     <path d="M 371.889204 476.627893 
 L 642.244317 476.627893 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_107">
+   <g id="patch_114">
     <path d="M 377.190285 476.627893 
 L 398.394607 476.627893 
 L 398.394607 381.114191 
@@ -1952,7 +2008,7 @@ z
    <g id="text_121">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="387.792446" y="376.33013" transform="rotate(-0 387.792446 376.33013)">90</text>
    </g>
-   <g id="patch_108">
+   <g id="patch_115">
     <path d="M 403.695688 476.627893 
 L 424.90001 476.627893 
 L 424.90001 449.850179 
@@ -1963,7 +2019,7 @@ z
    <g id="text_122">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="414.297849" y="445.066118" transform="rotate(-0 414.297849 445.066118)">25</text>
    </g>
-   <g id="patch_109">
+   <g id="patch_116">
     <path d="M 430.201091 476.627893 
 L 451.405414 476.627893 
 L 451.405414 447.289865 
@@ -1974,7 +2030,7 @@ z
    <g id="text_123">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="440.803252" y="442.505805" transform="rotate(-0 440.803252 442.505805)">28</text>
    </g>
-   <g id="patch_110">
+   <g id="patch_117">
     <path d="M 456.706494 476.627893 
 L 477.910817 476.627893 
 L 477.910817 458.218004 
@@ -1985,7 +2041,7 @@ z
    <g id="text_124">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="467.308656" y="453.433944" transform="rotate(-0 467.308656 453.433944)">17</text>
    </g>
-   <g id="patch_111">
+   <g id="patch_118">
     <path d="M 483.211898 476.627893 
 L 504.41622 476.627893 
 L 504.41622 457.215787 
@@ -1996,7 +2052,7 @@ z
    <g id="text_125">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="493.814059" y="452.431726" transform="rotate(-0 493.814059 452.431726)">18</text>
    </g>
-   <g id="patch_112">
+   <g id="patch_119">
     <path d="M 509.717301 476.627893 
 L 530.921623 476.627893 
 L 530.921623 459.357206 
@@ -2007,13 +2063,21 @@ z
    <g id="text_126">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="520.319462" y="454.573145" transform="rotate(-0 520.319462 454.573145)">16</text>
    </g>
+   <g id="patch_120">
+    <path d="M 536.222704 476.627893 
+L 557.427027 476.627893 
+L 557.427027 458.792159 
+L 536.222704 458.792159 
+z
+" clip-path="url(#p98c34da0bd)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_127">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="546.824865" y="471.160926" transform="rotate(-0 546.824865 471.160926)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="546.824865" y="454.008099" transform="rotate(-0 546.824865 454.008099)">17</text>
    </g>
    <g id="text_128">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="573.330269" y="471.160926" transform="rotate(-0 573.330269 471.160926)">n/a</text>
    </g>
-   <g id="patch_113">
+   <g id="patch_121">
     <path d="M 589.233511 476.627893 
 L 610.437833 476.627893 
 L 610.437833 465.08119 
@@ -2024,7 +2088,7 @@ z
    <g id="text_129">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="599.835672" y="460.297129" transform="rotate(-0 599.835672 460.297129)">11</text>
    </g>
-   <g id="patch_114">
+   <g id="patch_122">
     <path d="M 615.738914 476.627893 
 L 636.943236 476.627893 
 L 636.943236 457.911151 
@@ -2040,7 +2104,7 @@ z
    </g>
   </g>
   <g id="axes_11">
-   <g id="patch_115">
+   <g id="patch_123">
     <path d="M 680.094033 476.627893 
 L 950.449146 476.627893 
 L 950.449146 351.669215 
@@ -2123,17 +2187,17 @@ L 950.449146 370.730708
      </g>
     </g>
    </g>
-   <g id="patch_116">
+   <g id="patch_124">
     <path d="M 680.094033 476.627893 
 L 680.094033 351.669215 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_117">
+   <g id="patch_125">
     <path d="M 680.094033 476.627893 
 L 950.449146 476.627893 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_118">
+   <g id="patch_126">
     <path d="M 685.395114 476.627893 
 L 706.599436 476.627893 
 L 706.599436 439.32681 
@@ -2144,7 +2208,7 @@ z
    <g id="text_132">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="695.997275" y="434.542749" transform="rotate(-0 695.997275 434.542749)">35</text>
    </g>
-   <g id="patch_119">
+   <g id="patch_127">
     <path d="M 711.900517 476.627893 
 L 733.104839 476.627893 
 L 733.104839 397.553322 
@@ -2155,7 +2219,7 @@ z
    <g id="text_133">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="722.502678" y="392.769262" transform="rotate(-0 722.502678 392.769262)">75</text>
    </g>
-   <g id="patch_120">
+   <g id="patch_128">
     <path d="M 738.40592 476.627893 
 L 759.610243 476.627893 
 L 759.610243 436.868928 
@@ -2166,7 +2230,7 @@ z
    <g id="text_134">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="749.008081" y="432.084867" transform="rotate(-0 749.008081 432.084867)">38</text>
    </g>
-   <g id="patch_121">
+   <g id="patch_129">
     <path d="M 764.911323 476.627893 
 L 786.115646 476.627893 
 L 786.115646 448.282006 
@@ -2177,7 +2241,7 @@ z
    <g id="text_135">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="775.513485" y="443.497945" transform="rotate(-0 775.513485 443.497945)">27</text>
    </g>
-   <g id="patch_122">
+   <g id="patch_130">
     <path d="M 791.416727 476.627893 
 L 812.621049 476.627893 
 L 812.621049 446.211831 
@@ -2188,7 +2252,7 @@ z
    <g id="text_136">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="802.018888" y="441.42777" transform="rotate(-0 802.018888 441.42777)">29</text>
    </g>
-   <g id="patch_123">
+   <g id="patch_131">
     <path d="M 817.92213 476.627893 
 L 839.126452 476.627893 
 L 839.126452 465.54728 
@@ -2199,13 +2263,21 @@ z
    <g id="text_137">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="828.524291" y="460.763219" transform="rotate(-0 828.524291 460.763219)">10</text>
    </g>
+   <g id="patch_132">
+    <path d="M 844.427533 476.627893 
+L 865.631856 476.627893 
+L 865.631856 454.11574 
+L 844.427533 454.11574 
+z
+" clip-path="url(#pc34185143f)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_138">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="855.029694" y="471.160926" transform="rotate(-0 855.029694 471.160926)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="855.029694" y="449.331679" transform="rotate(-0 855.029694 449.331679)">21</text>
    </g>
    <g id="text_139">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="881.535098" y="471.160926" transform="rotate(-0 881.535098 471.160926)">n/a</text>
    </g>
-   <g id="patch_124">
+   <g id="patch_133">
     <path d="M 897.43834 476.627893 
 L 918.642662 476.627893 
 L 918.642662 463.935071 
@@ -2216,7 +2288,7 @@ z
    <g id="text_140">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="908.040501" y="459.151011" transform="rotate(-0 908.040501 459.151011)">12</text>
    </g>
-   <g id="patch_125">
+   <g id="patch_134">
     <path d="M 923.943743 476.627893 
 L 945.148065 476.627893 
 L 945.148065 453.452386 
@@ -2232,7 +2304,7 @@ z
    </g>
   </g>
   <g id="axes_12">
-   <g id="patch_126">
+   <g id="patch_135">
     <path d="M 988.298862 476.627893 
 L 1258.653975 476.627893 
 L 1258.653975 351.669215 
@@ -2315,17 +2387,17 @@ L 1258.653975 370.730708
      </g>
     </g>
    </g>
-   <g id="patch_127">
+   <g id="patch_136">
     <path d="M 988.298862 476.627893 
 L 988.298862 351.669215 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_128">
+   <g id="patch_137">
     <path d="M 988.298862 476.627893 
 L 1258.653975 476.627893 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_129">
+   <g id="patch_138">
     <path d="M 993.599943 476.627893 
 L 1014.804265 476.627893 
 L 1014.804265 418.787312 
@@ -2336,7 +2408,7 @@ z
    <g id="text_143">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1004.202104" y="414.003251" transform="rotate(-0 1004.202104 414.003251)">55</text>
    </g>
-   <g id="patch_130">
+   <g id="patch_139">
     <path d="M 1020.105346 476.627893 
 L 1041.309668 476.627893 
 L 1041.309668 414.042615 
@@ -2347,7 +2419,7 @@ z
    <g id="text_144">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1030.707507" y="409.258554" transform="rotate(-0 1030.707507 409.258554)">59</text>
    </g>
-   <g id="patch_131">
+   <g id="patch_140">
     <path d="M 1046.610749 476.627893 
 L 1067.815072 476.627893 
 L 1067.815072 429.630547 
@@ -2358,7 +2430,7 @@ z
    <g id="text_145">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1057.21291" y="424.846486" transform="rotate(-0 1057.21291 424.846486)">44</text>
    </g>
-   <g id="patch_132">
+   <g id="patch_141">
     <path d="M 1073.116152 476.627893 
 L 1094.320475 476.627893 
 L 1094.320475 436.086455 
@@ -2369,7 +2441,7 @@ z
    <g id="text_146">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1083.718314" y="431.302394" transform="rotate(-0 1083.718314 431.302394)">38</text>
    </g>
-   <g id="patch_133">
+   <g id="patch_142">
     <path d="M 1099.621556 476.627893 
 L 1120.825878 476.627893 
 L 1120.825878 437.986847 
@@ -2380,7 +2452,7 @@ z
    <g id="text_147">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1110.223717" y="433.202786" transform="rotate(-0 1110.223717 433.202786)">36</text>
    </g>
-   <g id="patch_134">
+   <g id="patch_143">
     <path d="M 1126.126959 476.627893 
 L 1147.331281 476.627893 
 L 1147.331281 440.356757 
@@ -2391,7 +2463,7 @@ z
    <g id="text_148">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1136.72912" y="435.572696" transform="rotate(-0 1136.72912 435.572696)">34</text>
    </g>
-   <g id="patch_135">
+   <g id="patch_144">
     <path d="M 1152.632362 476.627893 
 L 1173.836685 476.627893 
 L 1173.836685 449.55496 
@@ -2405,7 +2477,7 @@ z
    <g id="text_150">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1189.739927" y="471.160926" transform="rotate(-0 1189.739927 471.160926)">n/a</text>
    </g>
-   <g id="patch_136">
+   <g id="patch_145">
     <path d="M 1205.643169 476.627893 
 L 1226.847491 476.627893 
 L 1226.847491 465.780407 
@@ -2416,7 +2488,7 @@ z
    <g id="text_151">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1216.24533" y="460.996346" transform="rotate(-0 1216.24533 460.996346)">10</text>
    </g>
-   <g id="patch_137">
+   <g id="patch_146">
     <path d="M 1232.148572 476.627893 
 L 1253.352894 476.627893 
 L 1253.352894 444.129868 
@@ -2432,7 +2504,7 @@ z
    </g>
   </g>
   <g id="axes_13">
-   <g id="patch_138">
+   <g id="patch_147">
     <path d="M 63.684375 636.575 
 L 334.039488 636.575 
 L 334.039488 511.616322 
@@ -2536,17 +2608,17 @@ L 334.039488 530.677816
      <text style="font-size: 19px; font-family: 'Helvetica Neue'; text-anchor: middle" x="25.288" y="574.095661" transform="rotate(-90 25.288 574.095661)">Weighted F1 (%)</text>
     </g>
    </g>
-   <g id="patch_139">
+   <g id="patch_148">
     <path d="M 63.684375 636.575 
 L 63.684375 511.616322 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_140">
+   <g id="patch_149">
     <path d="M 63.684375 636.575 
 L 334.039488 636.575 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_141">
+   <g id="patch_150">
     <path d="M 68.985456 636.575 
 L 90.189778 636.575 
 L 90.189778 562.226625 
@@ -2557,7 +2629,7 @@ z
    <g id="text_161">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="79.587617" y="557.442565" transform="rotate(-0 79.587617 557.442565)">70</text>
    </g>
-   <g id="patch_142">
+   <g id="patch_151">
     <path d="M 95.490859 636.575 
 L 116.695181 636.575 
 L 116.695181 586.751881 
@@ -2568,7 +2640,7 @@ z
    <g id="text_162">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="106.09302" y="581.967821" transform="rotate(-0 106.09302 581.967821)">47</text>
    </g>
-   <g id="patch_143">
+   <g id="patch_152">
     <path d="M 121.996262 636.575 
 L 143.200585 636.575 
 L 143.200585 559.867973 
@@ -2579,7 +2651,7 @@ z
    <g id="text_163">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="132.598423" y="555.083912" transform="rotate(-0 132.598423 555.083912)">72</text>
    </g>
-   <g id="patch_144">
+   <g id="patch_153">
     <path d="M 148.501665 636.575 
 L 169.705988 636.575 
 L 169.705988 563.694136 
@@ -2590,7 +2662,7 @@ z
    <g id="text_164">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="159.103827" y="558.910075" transform="rotate(-0 159.103827 558.910075)">69</text>
    </g>
-   <g id="patch_145">
+   <g id="patch_154">
     <path d="M 175.007069 636.575 
 L 196.211391 636.575 
 L 196.211391 579.18824 
@@ -2601,7 +2673,7 @@ z
    <g id="text_165">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="185.60923" y="574.40418" transform="rotate(-0 185.60923 574.40418)">54</text>
    </g>
-   <g id="patch_146">
+   <g id="patch_155">
     <path d="M 201.512472 636.575 
 L 222.716794 636.575 
 L 222.716794 577.07165 
@@ -2612,13 +2684,21 @@ z
    <g id="text_166">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="212.114633" y="572.28759" transform="rotate(-0 212.114633 572.28759)">56</text>
    </g>
+   <g id="patch_156">
+    <path d="M 228.017875 636.575 
+L 249.222198 636.575 
+L 249.222198 610.313981 
+L 228.017875 610.313981 
+z
+" clip-path="url(#p136be5b1be)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_167">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="238.620036" y="631.108033" transform="rotate(-0 238.620036 631.108033)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="238.620036" y="605.52992" transform="rotate(-0 238.620036 605.52992)">25</text>
    </g>
    <g id="text_168">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="265.12544" y="631.108033" transform="rotate(-0 265.12544 631.108033)">n/a</text>
    </g>
-   <g id="patch_147">
+   <g id="patch_157">
     <path d="M 281.028682 636.575 
 L 302.233004 636.575 
 L 302.233004 578.58663 
@@ -2629,7 +2709,7 @@ z
    <g id="text_169">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="291.630843" y="573.80257" transform="rotate(-0 291.630843 573.80257)">55</text>
    </g>
-   <g id="patch_148">
+   <g id="patch_158">
     <path d="M 307.534085 636.575 
 L 328.738407 636.575 
 L 328.738407 563.887494 
@@ -2645,7 +2725,7 @@ z
    </g>
   </g>
   <g id="axes_14">
-   <g id="patch_149">
+   <g id="patch_159">
     <path d="M 371.889204 636.575 
 L 642.244317 636.575 
 L 642.244317 511.616322 
@@ -2728,17 +2808,17 @@ L 642.244317 530.677816
      </g>
     </g>
    </g>
-   <g id="patch_150">
+   <g id="patch_160">
     <path d="M 371.889204 636.575 
 L 371.889204 511.616322 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_151">
+   <g id="patch_161">
     <path d="M 371.889204 636.575 
 L 642.244317 636.575 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_152">
+   <g id="patch_162">
     <path d="M 377.190285 636.575 
 L 398.394607 636.575 
 L 398.394607 585.65447 
@@ -2749,7 +2829,7 @@ z
    <g id="text_172">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="387.792446" y="580.870409" transform="rotate(-0 387.792446 580.870409)">48</text>
    </g>
-   <g id="patch_153">
+   <g id="patch_163">
     <path d="M 403.695688 636.575 
 L 424.90001 636.575 
 L 424.90001 584.905366 
@@ -2760,7 +2840,7 @@ z
    <g id="text_173">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="414.297849" y="580.121305" transform="rotate(-0 414.297849 580.121305)">49</text>
    </g>
-   <g id="patch_154">
+   <g id="patch_164">
     <path d="M 430.201091 636.575 
 L 451.405414 636.575 
 L 451.405414 572.556504 
@@ -2771,7 +2851,7 @@ z
    <g id="text_174">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="440.803252" y="567.772443" transform="rotate(-0 440.803252 567.772443)">60</text>
    </g>
-   <g id="patch_155">
+   <g id="patch_165">
     <path d="M 456.706494 636.575 
 L 477.910817 636.575 
 L 477.910817 605.788004 
@@ -2782,7 +2862,7 @@ z
    <g id="text_175">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="467.308656" y="601.003944" transform="rotate(-0 467.308656 601.003944)">29</text>
    </g>
-   <g id="patch_156">
+   <g id="patch_166">
     <path d="M 483.211898 636.575 
 L 504.41622 636.575 
 L 504.41622 613.272638 
@@ -2793,7 +2873,7 @@ z
    <g id="text_176">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="493.814059" y="608.488577" transform="rotate(-0 493.814059 608.488577)">22</text>
    </g>
-   <g id="patch_157">
+   <g id="patch_167">
     <path d="M 509.717301 636.575 
 L 530.921623 636.575 
 L 530.921623 618.966087 
@@ -2804,13 +2884,21 @@ z
    <g id="text_177">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="520.319462" y="614.182027" transform="rotate(-0 520.319462 614.182027)">17</text>
    </g>
+   <g id="patch_168">
+    <path d="M 536.222704 636.575 
+L 557.427027 636.575 
+L 557.427027 616.390044 
+L 536.222704 616.390044 
+z
+" clip-path="url(#p4a532b3245)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_178">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="546.824865" y="631.108033" transform="rotate(-0 546.824865 631.108033)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="546.824865" y="611.605983" transform="rotate(-0 546.824865 611.605983)">19</text>
    </g>
    <g id="text_179">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="573.330269" y="631.108033" transform="rotate(-0 573.330269 631.108033)">n/a</text>
    </g>
-   <g id="patch_158">
+   <g id="patch_169">
     <path d="M 589.233511 636.575 
 L 610.437833 636.575 
 L 610.437833 625.391269 
@@ -2821,7 +2909,7 @@ z
    <g id="text_180">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="599.835672" y="620.607208" transform="rotate(-0 599.835672 620.607208)">11</text>
    </g>
-   <g id="patch_159">
+   <g id="patch_170">
     <path d="M 615.738914 636.575 
 L 636.943236 636.575 
 L 636.943236 620.837509 
@@ -2837,7 +2925,7 @@ z
    </g>
   </g>
   <g id="axes_15">
-   <g id="patch_160">
+   <g id="patch_171">
     <path d="M 680.094033 636.575 
 L 950.449146 636.575 
 L 950.449146 511.616322 
@@ -2920,17 +3008,17 @@ L 950.449146 530.677816
      </g>
     </g>
    </g>
-   <g id="patch_161">
+   <g id="patch_172">
     <path d="M 680.094033 636.575 
 L 680.094033 511.616322 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_162">
+   <g id="patch_173">
     <path d="M 680.094033 636.575 
 L 950.449146 636.575 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_163">
+   <g id="patch_174">
     <path d="M 685.395114 636.575 
 L 706.599436 636.575 
 L 706.599436 543.785837 
@@ -2941,7 +3029,7 @@ z
    <g id="text_183">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="695.997275" y="539.001776" transform="rotate(-0 695.997275 539.001776)">88</text>
    </g>
-   <g id="patch_164">
+   <g id="patch_175">
     <path d="M 711.900517 636.575 
 L 733.104839 636.575 
 L 733.104839 586.938949 
@@ -2952,7 +3040,7 @@ z
    <g id="text_184">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="722.502678" y="582.154889" transform="rotate(-0 722.502678 582.154889)">47</text>
    </g>
-   <g id="patch_165">
+   <g id="patch_176">
     <path d="M 738.40592 636.575 
 L 759.610243 636.575 
 L 759.610243 579.63987 
@@ -2963,7 +3051,7 @@ z
    <g id="text_185">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="749.008081" y="574.855809" transform="rotate(-0 749.008081 574.855809)">54</text>
    </g>
-   <g id="patch_166">
+   <g id="patch_177">
     <path d="M 764.911323 636.575 
 L 786.115646 636.575 
 L 786.115646 603.362765 
@@ -2974,7 +3062,7 @@ z
    <g id="text_186">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="775.513485" y="598.578705" transform="rotate(-0 775.513485 598.578705)">31</text>
    </g>
-   <g id="patch_167">
+   <g id="patch_178">
     <path d="M 791.416727 636.575 
 L 812.621049 636.575 
 L 812.621049 612.74503 
@@ -2985,7 +3073,7 @@ z
    <g id="text_187">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="802.018888" y="607.960969" transform="rotate(-0 802.018888 607.960969)">23</text>
    </g>
-   <g id="patch_168">
+   <g id="patch_179">
     <path d="M 817.92213 636.575 
 L 839.126452 636.575 
 L 839.126452 621.943474 
@@ -2996,13 +3084,21 @@ z
    <g id="text_188">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="828.524291" y="617.159413" transform="rotate(-0 828.524291 617.159413)">14</text>
    </g>
+   <g id="patch_180">
+    <path d="M 844.427533 636.575 
+L 865.631856 636.575 
+L 865.631856 613.512711 
+L 844.427533 613.512711 
+z
+" clip-path="url(#pac251ad87e)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_189">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="855.029694" y="631.108033" transform="rotate(-0 855.029694 631.108033)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="855.029694" y="608.728651" transform="rotate(-0 855.029694 608.728651)">22</text>
    </g>
    <g id="text_190">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="881.535098" y="631.108033" transform="rotate(-0 881.535098 631.108033)">n/a</text>
    </g>
-   <g id="patch_169">
+   <g id="patch_181">
     <path d="M 897.43834 636.575 
 L 918.642662 636.575 
 L 918.642662 626.275833 
@@ -3013,7 +3109,7 @@ z
    <g id="text_191">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="908.040501" y="621.491773" transform="rotate(-0 908.040501 621.491773)">10</text>
    </g>
-   <g id="patch_170">
+   <g id="patch_182">
     <path d="M 923.943743 636.575 
 L 945.148065 636.575 
 L 945.148065 607.19621 
@@ -3029,7 +3125,7 @@ z
    </g>
   </g>
   <g id="axes_16">
-   <g id="patch_171">
+   <g id="patch_183">
     <path d="M 988.298862 636.575 
 L 1258.653975 636.575 
 L 1258.653975 511.616322 
@@ -3112,17 +3208,17 @@ L 1258.653975 530.677816
      </g>
     </g>
    </g>
-   <g id="patch_172">
+   <g id="patch_184">
     <path d="M 988.298862 636.575 
 L 988.298862 511.616322 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_173">
+   <g id="patch_185">
     <path d="M 988.298862 636.575 
 L 1258.653975 636.575 
 " style="fill: none; stroke: #444444; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
-   <g id="patch_174">
+   <g id="patch_186">
     <path d="M 993.599943 636.575 
 L 1014.804265 636.575 
 L 1014.804265 544.523543 
@@ -3133,7 +3229,7 @@ z
    <g id="text_194">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1004.202104" y="539.739483" transform="rotate(-0 1004.202104 539.739483)">87</text>
    </g>
-   <g id="patch_175">
+   <g id="patch_187">
     <path d="M 1020.105346 636.575 
 L 1041.309668 636.575 
 L 1041.309668 592.36556 
@@ -3144,7 +3240,7 @@ z
    <g id="text_195">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1030.707507" y="587.5815" transform="rotate(-0 1030.707507 587.5815)">42</text>
    </g>
-   <g id="patch_176">
+   <g id="patch_188">
     <path d="M 1046.610749 636.575 
 L 1067.815072 636.575 
 L 1067.815072 546.538989 
@@ -3155,7 +3251,7 @@ z
    <g id="text_196">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1057.21291" y="541.754928" transform="rotate(-0 1057.21291 541.754928)">85</text>
    </g>
-   <g id="patch_177">
+   <g id="patch_189">
     <path d="M 1073.116152 636.575 
 L 1094.320475 636.575 
 L 1094.320475 602.730372 
@@ -3166,7 +3262,7 @@ z
    <g id="text_197">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1083.718314" y="597.946312" transform="rotate(-0 1083.718314 597.946312)">32</text>
    </g>
-   <g id="patch_178">
+   <g id="patch_190">
     <path d="M 1099.621556 636.575 
 L 1120.825878 636.575 
 L 1120.825878 611.45838 
@@ -3177,7 +3273,7 @@ z
    <g id="text_198">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1110.223717" y="606.67432" transform="rotate(-0 1110.223717 606.67432)">24</text>
    </g>
-   <g id="patch_179">
+   <g id="patch_191">
     <path d="M 1126.126959 636.575 
 L 1147.331281 636.575 
 L 1147.331281 622.835267 
@@ -3188,13 +3284,21 @@ z
    <g id="text_199">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1136.72912" y="618.051206" transform="rotate(-0 1136.72912 618.051206)">13</text>
    </g>
+   <g id="patch_192">
+    <path d="M 1152.632362 636.575 
+L 1173.836685 636.575 
+L 1173.836685 611.82704 
+L 1152.632362 611.82704 
+z
+" clip-path="url(#pd592d5921c)" style="fill: #f0e442; stroke: #111111; stroke-linejoin: miter"/>
+   </g>
    <g id="text_200">
-    <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1163.234523" y="631.108033" transform="rotate(-0 1163.234523 631.108033)">n/a</text>
+    <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1163.234523" y="607.042979" transform="rotate(-0 1163.234523 607.042979)">23</text>
    </g>
    <g id="text_201">
     <text style="font-size: 11px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #444444" x="1189.739927" y="631.108033" transform="rotate(-0 1189.739927 631.108033)">n/a</text>
    </g>
-   <g id="patch_180">
+   <g id="patch_193">
     <path d="M 1205.643169 636.575 
 L 1226.847491 636.575 
 L 1226.847491 625.207105 
@@ -3205,7 +3309,7 @@ z
    <g id="text_202">
     <text style="font-size: 15.5px; font-family: 'Helvetica Neue'; text-anchor: middle; fill: #111111" x="1216.24533" y="620.423045" transform="rotate(-0 1216.24533 620.423045)">11</text>
    </g>
-   <g id="patch_181">
+   <g id="patch_194">
     <path d="M 1232.148572 636.575 
 L 1253.352894 636.575 
 L 1253.352894 604.766639 
@@ -3221,7 +3325,7 @@ z
    </g>
   </g>
   <g id="legend_1">
-   <g id="patch_182">
+   <g id="patch_195">
     <path d="M 130.984038 670.463 
 L 150.584038 670.463 
 L 150.584038 660.663 
@@ -3232,7 +3336,7 @@ z
    <g id="text_205">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="155.484038" y="670.463" transform="rotate(-0 155.484038 670.463)">emotion2vec+ large</text>
    </g>
-   <g id="patch_183">
+   <g id="patch_196">
     <path d="M 130.984038 693.073 
 L 150.584038 693.073 
 L 150.584038 683.273 
@@ -3243,7 +3347,7 @@ z
    <g id="text_206">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="155.484038" y="693.073" transform="rotate(-0 155.484038 693.073)">MERaLiON-SER-v1</text>
    </g>
-   <g id="patch_184">
+   <g id="patch_197">
     <path d="M 290.0831 670.463 
 L 309.6831 670.463 
 L 309.6831 660.663 
@@ -3254,7 +3358,7 @@ z
    <g id="text_207">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="314.5831" y="670.463" transform="rotate(-0 314.5831 670.463)">Melati</text>
    </g>
-   <g id="patch_185">
+   <g id="patch_198">
     <path d="M 290.0831 693.073 
 L 309.6831 693.073 
 L 309.6831 683.273 
@@ -3265,7 +3369,7 @@ z
    <g id="text_208">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="314.5831" y="693.073" transform="rotate(-0 314.5831 693.073)">Vox-Profile Whisper</text>
    </g>
-   <g id="patch_186">
+   <g id="patch_199">
     <path d="M 448.926225 670.463 
 L 468.526225 670.463 
 L 468.526225 660.663 
@@ -3276,7 +3380,7 @@ z
    <g id="text_209">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="473.426225" y="670.463" transform="rotate(-0 473.426225 670.463)">Vox-Profile WavLM</text>
    </g>
-   <g id="patch_187">
+   <g id="patch_200">
     <path d="M 448.926225 693.073 
 L 468.526225 693.073 
 L 468.526225 683.273 
@@ -3287,7 +3391,7 @@ z
    <g id="text_210">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="473.426225" y="693.073" transform="rotate(-0 473.426225 693.073)">Qwen2.5-Omni 7B</text>
    </g>
-   <g id="patch_188">
+   <g id="patch_201">
     <path d="M 603.372475 670.463 
 L 622.972475 670.463 
 L 622.972475 660.663 
@@ -3298,7 +3402,7 @@ z
    <g id="text_211">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="627.872475" y="670.463" transform="rotate(-0 627.872475 670.463)">Qwen2-Audio 7B Instruct</text>
    </g>
-   <g id="patch_189">
+   <g id="patch_202">
     <path d="M 603.372475 693.073 
 L 622.972475 693.073 
 L 622.972475 683.273 
@@ -3309,7 +3413,7 @@ z
    <g id="text_212">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="627.872475" y="693.073" transform="rotate(-0 627.872475 693.073)">Gemma 4 E4B</text>
    </g>
-   <g id="patch_190">
+   <g id="patch_203">
     <path d="M 797.506538 670.463 
 L 817.106538 670.463 
 L 817.106538 660.663 
@@ -3320,7 +3424,7 @@ z
    <g id="text_213">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="822.006538" y="670.463" transform="rotate(-0 822.006538 670.463)">GPT Realtime</text>
    </g>
-   <g id="patch_191">
+   <g id="patch_204">
     <path d="M 797.506538 693.073 
 L 817.106538 693.073 
 L 817.106538 683.273 
@@ -3331,7 +3435,7 @@ z
    <g id="text_214">
     <text style="font-size: 14px; font-family: 'Helvetica Neue'; text-anchor: start" x="822.006538" y="693.073" transform="rotate(-0 822.006538 693.073)">Gemini 3.8 Flash</text>
    </g>
-   <g id="patch_192">
+   <g id="patch_205">
     <path d="M 937.981225 670.463 
 L 957.581225 670.463 
 L 957.581225 660.663 

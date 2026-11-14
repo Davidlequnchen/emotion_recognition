@@ -189,6 +189,26 @@ class ConsensusTests(unittest.TestCase):
             self.assertEqual(manifest["selected_run_count"], 1)
             self.assertTrue(all(c["cohort_sha256"] is None for c in manifest["cohorts"]))
 
+    def test_fixed_four_audio_group_is_complete_without_claiming_five_model_completion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "emotion_recognition"
+            paper = Path(directory) / "research_paper"
+            for model in consensus.EXTRA_GROUPS["AudioLLM4"]["models"]:
+                self.artifact(root, model)
+            (root / "config").mkdir()
+            registry = {m: {} for spec in consensus.GROUPS.values() for m in spec["models"]}
+            (root / "config/models.yaml").write_text(yaml.safe_dump(registry))
+            rows = consensus.run(root, paper)
+            partial = next(r for r in rows if r["dataset"] == "crema_d" and r["group"] == "AudioLLM5")
+            self.assertEqual(partial["model_count"], 4)
+            self.assertFalse(partial["complete"])
+            self.assertEqual(json.loads(partial["missing_members"]), ["gemma4_e4b"])
+            with (paper / "output/consensus_thresholds.csv").open() as stream:
+                fixed = [r for r in csv.DictReader(stream) if r["group"] == "AudioLLM4"]
+            self.assertEqual([r["min_votes"] for r in fixed], ["3", "4"])
+            self.assertTrue(all(r["complete"] == "True" and r["target_count"] == "4" for r in fixed))
+            self.assertTrue(all(r["accepted"] == "2" and r["accepted_correct"] == "2" for r in fixed))
+
     def test_path_aliases_are_rejected(self):
         for path in ("../a.wav", "/a.wav", "data/../a.wav", "data//a.wav", "C:/a.wav", "data\\a.wav"):
             with self.subTest(path=path), self.assertRaises(ValueError):

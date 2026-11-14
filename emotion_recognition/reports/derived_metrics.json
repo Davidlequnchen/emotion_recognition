@@ -1746,6 +1746,150 @@
         }
       ]
     },
+    "outputs/qwen2_audio_7b/crema_d_predictions.json": {
+      "clips": 7442,
+      "key": "crema_d",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.8345130425413949
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/crema_d_predictions.csv",
+          "sha256": "4a8b9eb4ff4157321b3da66c933ec23a88efbd1e8036713d04a3755769c61795"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/crema_d_predictions.json",
+          "sha256": "0352f7d70484c35f60fb9d6567465101e4ef23902f880b0b31a0f7d1063a65dd"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/dailytalk_predictions.json": {
+      "clips": 1197,
+      "key": "dailytalk",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.5214528334537643
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/dailytalk_predictions.csv",
+          "sha256": "cbf8691871f325963e202328f865b0799e5cb28d75ea84969bfdff5af9bb27d7"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/dailytalk_predictions.json",
+          "sha256": "0b26baadd17fa03b95982eee683908b7666e4ebf9a1839bff947afce0c97c049"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/emotiontalk_predictions.json": {
+      "clips": 1929,
+      "key": "emotiontalk",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.23085473935713233
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/emotiontalk_predictions.csv",
+          "sha256": "e6fd3d25ec71a219d4571d74c0eeeb5847e8dbb441f970ee8cdbc302ce5e17df"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/emotiontalk_predictions.json",
+          "sha256": "ecc6291bf8f9379e3de95200a68124b5ef3407f8cef980b8dfd71b35e615512c"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/emovo_predictions.json": {
+      "clips": 588,
+      "key": "emovo",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.21777966868577722
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/emovo_predictions.csv",
+          "sha256": "e6ac9553e2c232c6c68c3e4a8e644dc5b408e2ae9d51780c8e41e4c04f9595e9"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/emovo_predictions.json",
+          "sha256": "4484c0d6132d5750ea3b43d364d4be1515294f9708f2f862fa087f553070f450"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/emozionalmente_predictions.json": {
+      "clips": 6902,
+      "key": "emozionalmente",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.23369816604466528
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/emozionalmente_predictions.csv",
+          "sha256": "b456db653ff3d19966390d7517461e019ff1aa2504016922caf63e161cf3e392"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/emozionalmente_predictions.json",
+          "sha256": "09b3904b52614767815ce75d7eea444fbcc2b41fd97f7bb124ddf4398b4c04d7"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/jl_corpus_predictions.json": {
+      "clips": 1200,
+      "key": "jl_corpus",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.478995601860215
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/jl_corpus_predictions.csv",
+          "sha256": "7b0fe201fb5553f1b9bca98365208e59ba3f9a2f518dff766db8416c878409b0"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/jl_corpus_predictions.json",
+          "sha256": "c4dba60d48335547b524144507e3371e5bb445df23286a3fa12a66712c7b2c23"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/mcae_spps_predictions.json": {
+      "clips": 6675,
+      "key": "mcae_spps",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.2556526689481819
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.csv",
+          "sha256": "401779472ed88fb1df70764083cf7af1ac0824b63e00ca24aba96a964464645f"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.json",
+          "sha256": "07d6ae2b07fe00c6c6f7b1eb6cfec49fe973fe35a40e1d36f21fc00c69e1dd48"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/mead_predictions.json": {
+      "clips": 8000,
+      "key": "mead",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.1684251107772279
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/mead_predictions.csv",
+          "sha256": "4039e9ae9328fa410be9c556c15847309011f0b5155d430a74c49f5921b39471"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/mead_predictions.json",
+          "sha256": "b07d7b2dba46594a3561e1b9b863ebda590afc0bc1ccef4e24c5f8cdbf570cc9"
+        }
+      ]
+    },
     "outputs/qwen2_audio_7b/meld_predictions.json": {
       "clips": 2608,
       "key": "meld",
@@ -1761,6 +1905,132 @@
         {
           "path": "outputs/qwen2_audio_7b/meld_predictions.json",
           "sha256": "a6d324b8a5454fbbe96c80adedf7d1da47974f6cbb7969686945cd7f3120a97a"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/mess_predictions.json": {
+      "clips": 1800,
+      "key": "mess",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.21258530828404365
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/mess_predictions.csv",
+          "sha256": "f580986439ea9bcf1efd295e50373be9f280145f6da6965036ae9feb265eb15d"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/mess_predictions.json",
+          "sha256": "a408b05b1b4f5cb9e0a7ef32957d6579bdda45eaed7027f6d50f0f4f061d8cc6"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/multidialog_predictions.json": {
+      "clips": 7672,
+      "key": "multidialog",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.3524996048981263
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/multidialog_predictions.csv",
+          "sha256": "50345db93f1b26812011e5c557254c875555685616e714ca1baa2cc1bedfa58d"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/multidialog_predictions.json",
+          "sha256": "4463e38645c1f1bf75d3b2a85f9c99656bf7ac0b1074af2bc1ec16175d79c8dd"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/nemo_predictions.json": {
+      "clips": 4481,
+      "key": "nemo",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.19060884096416097
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/nemo_predictions.csv",
+          "sha256": "518e66cd5f8da8fc25ff771b231398f4142655ccbc0b4e7c6bc2eb1d6cf1dca9"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/nemo_predictions.json",
+          "sha256": "07ff0f01d11a7be7a24f5c43702466dce8d770ee4937bc8d0dd1e988eea04171"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/ravdess_predictions.json": {
+      "clips": 1440,
+      "key": "ravdess",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.8204743331922361
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/ravdess_predictions.csv",
+          "sha256": "416329492ffed5184edc3bb026f061232c131b16066cb1d9d45ddaeee87b706b"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
+          "sha256": "187d6019abcc96aa1fcd877919e26e21ee91eb7e93b3f6711831aa6fbac3173d"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/savee_predictions.json": {
+      "clips": 480,
+      "key": "savee",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.7143188110741127
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/savee_predictions.csv",
+          "sha256": "76d429d85c306608b119907041cefaa245792c1f644a9ed338829db54f84c2c0"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/savee_predictions.json",
+          "sha256": "b82b64d4df76988735d85e8a1565b42885c0cb89fe10974748ab3ab57d35a7d0"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/tess_predictions.json": {
+      "clips": 2800,
+      "key": "tess",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.9234484391996216
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/tess_predictions.csv",
+          "sha256": "11cef8f212d7e32df5b1e4cb6bcdcf018deafb3b499b4a86205897b0582c32d1"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/tess_predictions.json",
+          "sha256": "81fd1fd129165f0e562bd7aeb06fef95ee0638be92e5e1f36e4da3e18cf0d049"
+        }
+      ]
+    },
+    "outputs/qwen2_audio_7b/thai_ser_predictions.json": {
+      "clips": 11848,
+      "key": "thai_ser",
+      "model": "qwen2_audio_7b",
+      "recomputed_metrics": {
+        "weighted_f1": 0.24798581985574011
+      },
+      "source_artifacts": [
+        {
+          "path": "outputs/qwen2_audio_7b/thai_ser_predictions.csv",
+          "sha256": "a7a31db749cab07220590c8d7ec316019fda28aef78dc1ae1a255b4f93dd8bae"
+        },
+        {
+          "path": "outputs/qwen2_audio_7b/thai_ser_predictions.json",
+          "sha256": "8ebec4a1ae046c917f51381acd443bb780b89c0dc462afca6032f93329e1f162"
         }
       ]
     },

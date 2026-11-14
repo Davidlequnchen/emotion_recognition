@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-13",
+  "date": "2026-11-14",
   "models": [
     {
       "model": "emotion2vec_plus_large",
@@ -2143,6 +2143,139 @@
         "shared_accuracy": 0.396788,
         "shared_unweighted_accuracy": 0.388217
       },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.252701,
+        "unweighted_accuracy": 0.264034,
+        "macro_f1": 0.257533,
+        "weighted_f1": 0.247986,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.252701,
+        "shared_unweighted_accuracy": 0.264034
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.262665,
+        "unweighted_accuracy": 0.26211,
+        "macro_f1": 0.188792,
+        "weighted_f1": 0.190609,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.242198,
+        "shared_unweighted_accuracy": 0.246426
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.305,
+        "unweighted_accuracy": 0.305,
+        "macro_f1": 0.212585,
+        "weighted_f1": 0.212585,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.305,
+        "shared_unweighted_accuracy": 0.305
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.822917,
+        "unweighted_accuracy": 0.845734,
+        "macro_f1": 0.831241,
+        "weighted_f1": 0.820474,
+        "shared_clips": 864,
+        "shared_accuracy": 0.722222,
+        "shared_unweighted_accuracy": 0.749566
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.926429,
+        "unweighted_accuracy": 0.926429,
+        "macro_f1": 0.923448,
+        "weighted_f1": 0.923448,
+        "shared_clips": 1600,
+        "shared_accuracy": 0.88,
+        "shared_unweighted_accuracy": 0.88
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.485833,
+        "unweighted_accuracy": 0.485833,
+        "macro_f1": 0.395717,
+        "weighted_f1": 0.478996,
+        "shared_clips": 960,
+        "shared_accuracy": 0.532292,
+        "shared_unweighted_accuracy": 0.532292
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.198,
+        "unweighted_accuracy": 0.20089,
+        "macro_f1": 0.167813,
+        "weighted_f1": 0.168425,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.273364,
+        "shared_unweighted_accuracy": 0.268415
+      },
       "meld": {
         "clips": 2608,
         "total_clips": 2608,
@@ -2161,6 +2294,120 @@
         "shared_clips": 2210,
         "shared_accuracy": 0.288235,
         "shared_unweighted_accuracy": 0.374901
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.268707,
+        "unweighted_accuracy": 0.268707,
+        "macro_f1": 0.21778,
+        "weighted_f1": 0.21778,
+        "shared_clips": 336,
+        "shared_accuracy": 0.345238,
+        "shared_unweighted_accuracy": 0.345238
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.277311,
+        "unweighted_accuracy": 0.277311,
+        "macro_f1": 0.233698,
+        "weighted_f1": 0.233698,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.346602,
+        "shared_unweighted_accuracy": 0.346602
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.71875,
+        "unweighted_accuracy": 0.754762,
+        "macro_f1": 0.725455,
+        "weighted_f1": 0.714319,
+        "shared_clips": 300,
+        "shared_accuracy": 0.696667,
+        "shared_unweighted_accuracy": 0.754167
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.239502,
+        "unweighted_accuracy": 0.342404,
+        "macro_f1": 0.281711,
+        "weighted_f1": 0.230855,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.226923,
+        "shared_unweighted_accuracy": 0.355434
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.414369,
+        "unweighted_accuracy": 0.610462,
+        "macro_f1": 0.242733,
+        "weighted_f1": 0.521453,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.413118,
+        "shared_unweighted_accuracy": 0.546378
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Qwen-7B and Whisper-large-v3 initialization; report states evaluation-data exclusion, but full backbone and pre/post-training corpus provenance is unavailable",
+        "training_evidence": [
+          "https://arxiv.org/html/2407.10759v1#S3.SS1",
+          "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+        ],
+        "accuracy": 0.25769,
+        "unweighted_accuracy": 0.33625,
+        "macro_f1": 0.1506,
+        "weighted_f1": 0.3525,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.280235,
+        "shared_unweighted_accuracy": 0.332473
       }
     },
     "gemma4_e4b": {

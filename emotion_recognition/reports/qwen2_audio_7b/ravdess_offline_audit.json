@@ -1,0 +1,76 @@
+{
+  "validated_at_utc": "2026-11-14T05:25:38.670766+00:00",
+  "model": "qwen2_audio_7b",
+  "key": "ravdess",
+  "clips": 1440,
+  "unique_audio_paths": 1440,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.csv",
+      "sha256": "416329492ffed5184edc3bb026f061232c131b16066cb1d9d45ddaeee87b706b",
+      "bytes": 302054
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
+      "sha256": "187d6019abcc96aa1fcd877919e26e21ee91eb7e93b3f6711831aa6fbac3173d",
+      "bytes": 4022
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.822917,
+    "unweighted_accuracy": 0.845734,
+    "macro_f1": 0.831241,
+    "weighted_f1": 0.820474,
+    "accuracy_all_classes": 0.822917
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.8229166666666666,
+    "unweighted_accuracy": 0.8457341269841271,
+    "macro_f1": 0.8312406456752843,
+    "weighted_f1": 0.8204743331922361,
+    "accuracy_all_classes": 0.8229166666666666
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "neutral": 145,
+      "happy": 161,
+      "sad": 271,
+      "angry": 166,
+      "fearful": 212,
+      "disgusted": 283,
+      "surprised": 202,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "neutral": 288,
+      "happy": 192,
+      "sad": 192,
+      "angry": 192,
+      "fearful": 192,
+      "disgusted": 192,
+      "surprised": 192
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

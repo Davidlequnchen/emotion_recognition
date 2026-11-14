@@ -1,10 +1,10 @@
 {
   "analysis": "model_consensus_v2",
-  "generated_at_utc": "2026-11-13T08:31:44+00:00",
-  "generated_at_singapore": "2026-11-13 16:31 SGT",
+  "generated_at_utc": "2026-11-14T05:24:34+00:00",
+  "generated_at_singapore": "2026-11-14 13:24 SGT",
   "python": "3.11.17",
   "pyyaml": "6.0.3",
-  "selected_run_count": 136,
+  "selected_run_count": 145,
   "datasets": [
     "crema_d",
     "mcae_spps",
@@ -64,6 +64,15 @@
       ],
       "require_all": true
     },
+    "AudioLLM4": {
+      "models": [
+        "gpt_realtime",
+        "gemini-3.8-flash",
+        "qwen2_5_omni_7b",
+        "qwen2_audio_7b"
+      ],
+      "require_all": true
+    },
     "All10": {
       "models": [
         "emotion2vec_plus_large",
@@ -96,9 +105,9 @@
   "coverage_denominator": "within-group common audio-path intersection",
   "uncertainty": "Point estimates only; no confidence intervals or accuracy guarantees",
   "code_configuration_sha256": {
-    "consensus.py": "1770419924f6dc2187fd198e65a697bfdb03f1d9bec8099e3d8fbe00013031b6",
+    "consensus.py": "a58e44fcf950c5aec4706e22be5c08e0d3723bd97a5ff05cf7255c6896b208d0",
     "consensus_details.py": "5962328615687ee91fbcceb57334c30dd30899356decc742d295bfcfa080fe04",
-    "consensus_plot.py": "c1c3d5d03543a65289e1b5759b748d26e55d7898263d57cfdd8e7d114797d896",
+    "consensus_plot.py": "3e3e2dfba27dcf8a21d76ee12915a496e16ed4196fd69252fd3e70eb7f382f5d",
     "prompts.py": "cd5d9ef4ee23ad4b44948ae223af0a70cd89175755233cf2bbafc1073ed21e7f",
     "config/models.yaml": "c6477fe4a8b114fff31b7e7f98b08d1cc6c72be820fef66b16c60622e120fa01",
     "config/llm.yaml": "80a43260ad9e0f98e0a868006800767870581b431a4f3b7b57f759a2a789760c",
@@ -794,10 +803,52 @@
     },
     {
       "model": "qwen2_audio_7b",
+      "dataset": "dailytalk",
+      "path": "outputs/qwen2_audio_7b/dailytalk_predictions.json",
+      "status": "selected",
+      "clips": 1197
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "emotiontalk",
+      "path": "outputs/qwen2_audio_7b/emotiontalk_predictions.json",
+      "status": "selected",
+      "clips": 1929
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "emovo",
+      "path": "outputs/qwen2_audio_7b/emovo_predictions.json",
+      "status": "selected",
+      "clips": 588
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "emozionalmente",
+      "path": "outputs/qwen2_audio_7b/emozionalmente_predictions.json",
+      "status": "selected",
+      "clips": 6902
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "jl_corpus",
+      "path": "outputs/qwen2_audio_7b/jl_corpus_predictions.json",
+      "status": "selected",
+      "clips": 1200
+    },
+    {
+      "model": "qwen2_audio_7b",
       "dataset": "mcae_spps",
       "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.json",
       "status": "selected",
       "clips": 6675
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "mead",
+      "path": "outputs/qwen2_audio_7b/mead_predictions.json",
+      "status": "selected",
+      "clips": 8000
     },
     {
       "model": "qwen2_audio_7b",
@@ -815,6 +866,13 @@
     },
     {
       "model": "qwen2_audio_7b",
+      "dataset": "multidialog",
+      "path": "outputs/qwen2_audio_7b/multidialog_predictions.json",
+      "status": "selected",
+      "clips": 7672
+    },
+    {
+      "model": "qwen2_audio_7b",
       "dataset": "nemo",
       "path": "outputs/qwen2_audio_7b/nemo_predictions.json",
       "status": "selected",
@@ -826,6 +884,20 @@
       "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
       "status": "selected",
       "clips": 1440
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "savee",
+      "path": "outputs/qwen2_audio_7b/savee_predictions.json",
+      "status": "selected",
+      "clips": 480
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "tess",
+      "path": "outputs/qwen2_audio_7b/tess_predictions.json",
+      "status": "selected",
+      "clips": 2800
     },
     {
       "model": "qwen2_audio_7b",
@@ -2041,6 +2113,56 @@
       "bytes": 4409
     },
     {
+      "path": "outputs/qwen2_audio_7b/dailytalk_predictions.csv",
+      "sha256": "cbf8691871f325963e202328f865b0799e5cb28d75ea84969bfdff5af9bb27d7",
+      "bytes": 233276
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/dailytalk_predictions.json",
+      "sha256": "0b26baadd17fa03b95982eee683908b7666e4ebf9a1839bff947afce0c97c049",
+      "bytes": 4088
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emotiontalk_predictions.csv",
+      "sha256": "e6fd3d25ec71a219d4571d74c0eeeb5847e8dbb441f970ee8cdbc302ce5e17df",
+      "bytes": 454946
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emotiontalk_predictions.json",
+      "sha256": "ecc6291bf8f9379e3de95200a68124b5ef3407f8cef980b8dfd71b35e615512c",
+      "bytes": 4030
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emovo_predictions.csv",
+      "sha256": "e6ac9553e2c232c6c68c3e4a8e644dc5b408e2ae9d51780c8e41e4c04f9595e9",
+      "bytes": 111357
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emovo_predictions.json",
+      "sha256": "4484c0d6132d5750ea3b43d364d4be1515294f9708f2f862fa087f553070f450",
+      "bytes": 4001
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emozionalmente_predictions.csv",
+      "sha256": "b456db653ff3d19966390d7517461e019ff1aa2504016922caf63e161cf3e392",
+      "bytes": 1615902
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/emozionalmente_predictions.json",
+      "sha256": "09b3904b52614767815ce75d7eea444fbcc2b41fd97f7bb124ddf4398b4c04d7",
+      "bytes": 4512
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/jl_corpus_predictions.csv",
+      "sha256": "7b0fe201fb5553f1b9bca98365208e59ba3f9a2f518dff766db8416c878409b0",
+      "bytes": 280241
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/jl_corpus_predictions.json",
+      "sha256": "c4dba60d48335547b524144507e3371e5bb445df23286a3fa12a66712c7b2c23",
+      "bytes": 3954
+    },
+    {
       "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.csv",
       "sha256": "401779472ed88fb1df70764083cf7af1ac0824b63e00ca24aba96a964464645f",
       "bytes": 1379067
@@ -2049,6 +2171,16 @@
       "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.json",
       "sha256": "07d6ae2b07fe00c6c6f7b1eb6cfec49fe973fe35a40e1d36f21fc00c69e1dd48",
       "bytes": 4454
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mead_predictions.csv",
+      "sha256": "4039e9ae9328fa410be9c556c15847309011f0b5155d430a74c49f5921b39471",
+      "bytes": 1604952
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mead_predictions.json",
+      "sha256": "b07d7b2dba46594a3561e1b9b863ebda590afc0bc1ccef4e24c5f8cdbf570cc9",
+      "bytes": 4082
     },
     {
       "path": "outputs/qwen2_audio_7b/meld_predictions.csv",
@@ -2071,6 +2203,16 @@
       "bytes": 3761
     },
     {
+      "path": "outputs/qwen2_audio_7b/multidialog_predictions.csv",
+      "sha256": "50345db93f1b26812011e5c557254c875555685616e714ca1baa2cc1bedfa58d",
+      "bytes": 2114953
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/multidialog_predictions.json",
+      "sha256": "4463e38645c1f1bf75d3b2a85f9c99656bf7ac0b1074af2bc1ec16175d79c8dd",
+      "bytes": 4053
+    },
+    {
       "path": "outputs/qwen2_audio_7b/nemo_predictions.csv",
       "sha256": "518e66cd5f8da8fc25ff771b231398f4142655ccbc0b4e7c6bc2eb1d6cf1dca9",
       "bytes": 810655
@@ -2089,6 +2231,26 @@
       "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
       "sha256": "187d6019abcc96aa1fcd877919e26e21ee91eb7e93b3f6711831aa6fbac3173d",
       "bytes": 4022
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/savee_predictions.csv",
+      "sha256": "76d429d85c306608b119907041cefaa245792c1f644a9ed338829db54f84c2c0",
+      "bytes": 90870
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/savee_predictions.json",
+      "sha256": "b82b64d4df76988735d85e8a1565b42885c0cb89fe10974748ab3ab57d35a7d0",
+      "bytes": 4024
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/tess_predictions.csv",
+      "sha256": "11cef8f212d7e32df5b1e4cb6bcdcf018deafb3b499b4a86205897b0582c32d1",
+      "bytes": 517652
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/tess_predictions.json",
+      "sha256": "81fd1fd129165f0e562bd7aeb06fef95ee0638be92e5e1f36e4da3e18cf0d049",
+      "bytes": 4011
     },
     {
       "path": "outputs/qwen2_audio_7b/thai_ser_predictions.csv",
@@ -2711,11 +2873,11 @@
     {
       "dataset": "tess",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 2800,
       "union_samples": 2800,
@@ -2724,11 +2886,11 @@
     {
       "dataset": "jl_corpus",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 1200,
       "union_samples": 1200,
@@ -2737,11 +2899,11 @@
     {
       "dataset": "mead",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 8000,
       "union_samples": 8000,
@@ -2763,11 +2925,11 @@
     {
       "dataset": "emovo",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 588,
       "union_samples": 588,
@@ -2776,11 +2938,11 @@
     {
       "dataset": "emozionalmente",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 6902,
       "union_samples": 6902,
@@ -2789,11 +2951,11 @@
     {
       "dataset": "savee",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 480,
       "union_samples": 480,
@@ -2802,11 +2964,11 @@
     {
       "dataset": "emotiontalk",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 1929,
       "union_samples": 1929,
@@ -2815,11 +2977,11 @@
     {
       "dataset": "dailytalk",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 1197,
       "union_samples": 1197,
@@ -2828,11 +2990,11 @@
     {
       "dataset": "multidialog",
       "group": "AudioLLM5",
-      "model_count": 3,
+      "model_count": 4,
       "target_count": 5,
       "complete": false,
-      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": true,
       "common_samples": 7672,
       "union_samples": 7672,
@@ -3256,6 +3418,214 @@
     },
     {
       "dataset": "crema_d",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7442,
+      "union_samples": 7442,
+      "cohort_sha256": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+    },
+    {
+      "dataset": "mcae_spps",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6675,
+      "union_samples": 6675,
+      "cohort_sha256": "13e204753128687c791d4a4c0230d82e78de02e22e306fd1887ca2bb17ac3e1a"
+    },
+    {
+      "dataset": "thai_ser",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 11848,
+      "union_samples": 11848,
+      "cohort_sha256": "f8648b6352ba791573ae730c8a61eb2e26ae6238c4012fec74d2bbf3fad924ef"
+    },
+    {
+      "dataset": "nemo",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 4481,
+      "union_samples": 4481,
+      "cohort_sha256": "a6202f7f43a88c85741e865566346838acdb1006142fb05445c47bd718348857"
+    },
+    {
+      "dataset": "mess",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1800,
+      "union_samples": 1800,
+      "cohort_sha256": "9e1a1e7b2fdee25bd9078c076a09c6c0256e95788b1c9cf701fba7c8c6fe0eed"
+    },
+    {
+      "dataset": "ravdess",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1440,
+      "union_samples": 1440,
+      "cohort_sha256": "eb08dc4c6e5534792fa3ca863c8ffb7b32cb8f76e960ff13a68b85624e25265b"
+    },
+    {
+      "dataset": "tess",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2800,
+      "union_samples": 2800,
+      "cohort_sha256": "2f1ab1fc7d90f2e7c2d7a94c6ecc60e3fbe531ebd6ff330007bdf3079ac566bf"
+    },
+    {
+      "dataset": "jl_corpus",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1200,
+      "union_samples": 1200,
+      "cohort_sha256": "4112a7583a388fbd4cd99bd9facb9a208328dca9c4a21bb3097c07291f65f791"
+    },
+    {
+      "dataset": "mead",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 8000,
+      "union_samples": 8000,
+      "cohort_sha256": "a627bb183b2c294b56470956c077137d3b4e2423cffd5788c035b22351b4d27d"
+    },
+    {
+      "dataset": "meld",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 2608,
+      "union_samples": 2608,
+      "cohort_sha256": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d"
+    },
+    {
+      "dataset": "emovo",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 588,
+      "union_samples": 588,
+      "cohort_sha256": "975fc83b4c54e1029106882e321bc8a908c1e9b90f53151056a082807c03a1dc"
+    },
+    {
+      "dataset": "emozionalmente",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 6902,
+      "union_samples": 6902,
+      "cohort_sha256": "db44214c5589319e4f242a21f9202b78ba85e0ae49c5e295159be77f29bd4665"
+    },
+    {
+      "dataset": "savee",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 480,
+      "union_samples": 480,
+      "cohort_sha256": "bd7a5dfa208c8b6fa89dea03cfae21afe980f17c23a0b6600a6a31dbba8e8645"
+    },
+    {
+      "dataset": "emotiontalk",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1929,
+      "union_samples": 1929,
+      "cohort_sha256": "b65c5a601c0d0d3f83e3569b83447ab79d87f785cc30972fd3b6211d48c5b30f"
+    },
+    {
+      "dataset": "dailytalk",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 1197,
+      "union_samples": 1197,
+      "cohort_sha256": "47ac8cd17ee62a0733722df8f56110df76a9a30330d88c9b39b966241d49059b"
+    },
+    {
+      "dataset": "multidialog",
+      "group": "AudioLLM4",
+      "model_count": 4,
+      "target_count": 4,
+      "complete": true,
+      "members": "[\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[]",
+      "eligible": true,
+      "common_samples": 7672,
+      "union_samples": 7672,
+      "cohort_sha256": "d5c15fc2967b301024c4f77452d5c8f3ea92b8a8e300fe8ec53f4fc75cd58fd2"
+    },
+    {
+      "dataset": "crema_d",
       "group": "All10",
       "model_count": 9,
       "target_count": 10,
@@ -3335,11 +3705,11 @@
     {
       "dataset": "tess",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3348,11 +3718,11 @@
     {
       "dataset": "jl_corpus",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3361,11 +3731,11 @@
     {
       "dataset": "mead",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3387,11 +3757,11 @@
     {
       "dataset": "emovo",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3400,11 +3770,11 @@
     {
       "dataset": "emozionalmente",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3413,11 +3783,11 @@
     {
       "dataset": "savee",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3426,11 +3796,11 @@
     {
       "dataset": "emotiontalk",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3439,11 +3809,11 @@
     {
       "dataset": "dailytalk",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -3452,11 +3822,11 @@
     {
       "dataset": "multidialog",
       "group": "All10",
-      "model_count": 8,
+      "model_count": 9,
       "target_count": 10,
       "complete": false,
-      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\"]",
-      "missing_members": "[\"qwen2_audio_7b\",\"gemma4_e4b\"]",
+      "members": "[\"emotion2vec_plus_large\",\"meralion_ser_v1\",\"melati_emotion\",\"vox_profile_whisper\",\"vox_profile_wavlm\",\"gpt_realtime\",\"gemini-3.8-flash\",\"qwen2_5_omni_7b\",\"qwen2_audio_7b\"]",
+      "missing_members": "[\"gemma4_e4b\"]",
       "eligible": false,
       "common_samples": null,
       "union_samples": null,
@@ -4250,11 +4620,59 @@
     },
     {
       "model": "qwen2_audio_7b",
+      "dataset": "dailytalk",
+      "clips": 1197,
+      "total_clips": 1197,
+      "subset": "split:validation",
+      "date": "2026-11-14"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "emotiontalk",
+      "clips": 1929,
+      "total_clips": 1929,
+      "subset": "split:test",
+      "date": "2026-11-14"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "emovo",
+      "clips": 588,
+      "total_clips": 588,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "emozionalmente",
+      "clips": 6902,
+      "total_clips": 6902,
+      "subset": null,
+      "date": "2026-11-14"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "jl_corpus",
+      "clips": 1200,
+      "total_clips": 1200,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_audio_7b",
       "dataset": "mcae_spps",
       "clips": 6675,
       "total_clips": 6675,
       "subset": null,
       "date": "2026-11-12"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "mead",
+      "clips": 8000,
+      "total_clips": 8000,
+      "subset": "stratified_8000",
+      "date": "2026-11-13"
     },
     {
       "model": "qwen2_audio_7b",
@@ -4274,6 +4692,14 @@
     },
     {
       "model": "qwen2_audio_7b",
+      "dataset": "multidialog",
+      "clips": 7672,
+      "total_clips": 7672,
+      "subset": "cohort:gold_both",
+      "date": "2026-11-14"
+    },
+    {
+      "model": "qwen2_audio_7b",
       "dataset": "nemo",
       "clips": 4481,
       "total_clips": 4481,
@@ -4285,6 +4711,22 @@
       "dataset": "ravdess",
       "clips": 1440,
       "total_clips": 1440,
+      "subset": null,
+      "date": "2026-11-13"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "savee",
+      "clips": 480,
+      "total_clips": 480,
+      "subset": null,
+      "date": "2026-11-14"
+    },
+    {
+      "model": "qwen2_audio_7b",
+      "dataset": "tess",
+      "clips": 2800,
+      "total_clips": 2800,
       "subset": null,
       "date": "2026-11-13"
     },
@@ -4562,10 +5004,14 @@
     "analysis_report/figures/consensus_unanimous_accuracy_by_dataset.svg",
     "analysis_report/figures/consensus_ser5_accuracy_by_votes.png",
     "analysis_report/figures/consensus_ser5_accuracy_by_votes.svg",
+    "analysis_report/figures/consensus_audiollm4_accuracy_by_votes.png",
+    "analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg",
     "analysis_report/figures/consensus_unanimous_coverage_by_dataset.png",
     "analysis_report/figures/consensus_unanimous_coverage_by_dataset.svg",
     "analysis_report/figures/consensus_ser5_coverage_by_votes.png",
-    "analysis_report/figures/consensus_ser5_coverage_by_votes.svg"
+    "analysis_report/figures/consensus_ser5_coverage_by_votes.svg",
+    "analysis_report/figures/consensus_audiollm4_coverage_by_votes.png",
+    "analysis_report/figures/consensus_audiollm4_coverage_by_votes.svg"
   ],
   "matplotlib": "3.11.2"
 }

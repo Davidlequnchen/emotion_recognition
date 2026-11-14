@@ -1,0 +1,73 @@
+{
+  "validated_at_utc": "2026-11-14T05:25:38.851876+00:00",
+  "model": "qwen2_audio_7b",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_audio_7b/thai_ser_predictions.csv",
+      "sha256": "a7a31db749cab07220590c8d7ec316019fda28aef78dc1ae1a255b4f93dd8bae",
+      "bytes": 2322856
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/thai_ser_predictions.json",
+      "sha256": "8ebec4a1ae046c917f51381acd443bb780b89c0dc462afca6032f93329e1f162",
+      "bytes": 4206
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.252701,
+    "unweighted_accuracy": 0.264034,
+    "macro_f1": 0.257533,
+    "weighted_f1": 0.247986,
+    "accuracy_all_classes": 0.252701,
+    "accuracy_acted_or_listener": 0.25844,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.203494
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.2527008777852802,
+    "unweighted_accuracy": 0.2640344373006334,
+    "macro_f1": 0.25753255892122895,
+    "weighted_f1": 0.24798581985574011,
+    "accuracy_all_classes": 0.2527008777852802,
+    "accuracy_acted_or_listener": 0.25844024307900065,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.20349426063470627
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "e683d765d4ac",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 4604,
+    "invalid_rate": 0.3885887913571911,
+    "prediction_counts": {
+      "neutral": 252,
+      "angry": 5452,
+      "happy": 415,
+      "sad": 1125,
+      "invalid": 4604
+    },
+    "ground_truth_counts": {
+      "neutral": 2999,
+      "angry": 2883,
+      "happy": 3665,
+      "sad": 2301
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

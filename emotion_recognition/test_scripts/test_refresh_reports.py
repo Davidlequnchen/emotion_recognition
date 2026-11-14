@@ -128,7 +128,7 @@ class OfflineRefreshTests(unittest.TestCase):
                 pairs = [("neutral", "neutral")] * (90 - invalid) + [("neutral", "invalid")] * invalid \
                         + [("angry", "neutral")] * 10
                 rows = [{"audio_path": f"data/crema_d/imbalanced{i}.wav", "acted_emotion": gold,
-                         "prediction": answer if answer != "invalid" else "other answer",
+                         "prediction": answer if answer != "invalid" or i % 2 else "other answer",
                          "prediction_all_classes": answer, "correct": str(gold == answer),
                          **{f"p_{label}": int(label == answer) for label in meta["model_classes"]}}
                         for i, (gold, answer) in enumerate(pairs)]
@@ -144,6 +144,24 @@ class OfflineRefreshTests(unittest.TestCase):
                 self.assertAlmostEqual(result.metrics["weighted_f1"], .9 * neutral_f1)
                 np.testing.assert_array_equal(result.resolved_support, [10, 90])
                 self.assertEqual(result.other, bool(invalid))
+                diagnostics = result.audit["prediction_diagnostics"]
+                self.assertEqual(diagnostics["invalid_count"], invalid)
+                self.assertEqual(diagnostics["invalid_rate"], invalid / 100)
+                self.assertEqual(diagnostics["prediction_counts"],
+                                 {"angry": 0, "neutral": 100 - invalid, "invalid": invalid})
+                self.assertEqual(diagnostics["ground_truth_counts"], {"angry": 10, "neutral": 90})
+                self.assertEqual(sum(diagnostics["prediction_counts"].values()), 100)
+                self.assertEqual(sum(diagnostics["ground_truth_counts"].values()), 100)
+                before = [path.read_bytes(), path.with_suffix(".csv").read_bytes()]
+                with mock.patch.object(refresh_reports.reporting, "plot_confusion"):
+                    report = refresh_reports.render_report(result, self.entry, self.root.resolve())
+                text = report.read_text()
+                self.assertIn(f"| Invalid / outside-candidate answers | {invalid} ({invalid:.2f}%) |", text)
+                self.assertIn(f"| invalid / outside candidates | {invalid} | {invalid:.2f}% |", text)
+                self.assertNotIn("Small original ground-truth classes", text)
+                saved_audit = json.loads(report.with_name("crema_d_offline_audit.json").read_text())
+                self.assertEqual(saved_audit["prediction_diagnostics"], diagnostics)
+                self.assertEqual([path.read_bytes(), path.with_suffix(".csv").read_bytes()], before)
                 if not invalid:
                     self.assertAlmostEqual(result.metrics["weighted_f1"], 81 / 95)
                 # A newly saved weighted metric is checked as strictly as the pre-existing metrics.
@@ -172,6 +190,17 @@ class OfflineRefreshTests(unittest.TestCase):
         np.testing.assert_array_equal(result.resolved_support, [2, 1, 2])
         np.testing.assert_array_equal(result.f1, [.5, 0, 1])
         self.assertAlmostEqual(result.metrics["weighted_f1"], .6)
+        diagnostics = result.audit["prediction_diagnostics"]
+        self.assertEqual(diagnostics["ground_truth_counts"], {"angry": 2, "excited": 3})
+        self.assertEqual(sum(diagnostics["ground_truth_counts"].values()), 5)
+        self.assertEqual(sum(diagnostics["prediction_counts"].values()), 5)
+        with mock.patch.object(refresh_reports.reporting, "plot_confusion"):
+            report = refresh_reports.render_report(result, self.entry | {"api": False}, self.root.resolve())
+        text = report.read_text()
+        self.assertIn("Small original ground-truth classes (at most 5 clips): angry (2 clips), excited (3 clips)", text)
+        self.assertIn("UAR gives each original ground-truth row equal weight", text)
+        self.assertNotIn("happy (1 clip)", text)
+        self.assertNotIn("surprised (2 clips)", text)
 
     def test_evaluation_and_offline_refresh_agree_without_a_model_or_audio_files(self):
         module = refresh_reports.reporting

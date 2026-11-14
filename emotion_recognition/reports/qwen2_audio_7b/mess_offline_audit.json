@@ -1,0 +1,67 @@
+{
+  "validated_at_utc": "2026-11-14T05:25:38.507383+00:00",
+  "model": "qwen2_audio_7b",
+  "key": "mess",
+  "clips": 1800,
+  "unique_audio_paths": 1800,
+  "source_artifacts": [
+    {
+      "path": "outputs/qwen2_audio_7b/mess_predictions.csv",
+      "sha256": "f580986439ea9bcf1efd295e50373be9f280145f6da6965036ae9feb265eb15d",
+      "bytes": 284828
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mess_predictions.json",
+      "sha256": "a408b05b1b4f5cb9e0a7ef32957d6579bdda45eaed7027f6d50f0f4f061d8cc6",
+      "bytes": 3761
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.305,
+    "unweighted_accuracy": 0.305,
+    "macro_f1": 0.212585,
+    "weighted_f1": 0.212585,
+    "accuracy_all_classes": 0.305
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.305,
+    "unweighted_accuracy": 0.305,
+    "macro_f1": 0.21258530828404365,
+    "weighted_f1": 0.21258530828404365,
+    "accuracy_all_classes": 0.305
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "e683d765d4ac",
+    "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 6,
+    "invalid_rate": 0.0033333333333333335,
+    "prediction_counts": {
+      "angry": 1143,
+      "happy": 7,
+      "neutral": 636,
+      "sad": 8,
+      "invalid": 6
+    },
+    "ground_truth_counts": {
+      "angry": 450,
+      "happy": 450,
+      "neutral": 450,
+      "sad": 450
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

@@ -1,6 +1,6 @@
 # Bootstrap: 95% confidence intervals for scores and model differences
 
-Saved predictions only; no models were rerun. Models currently included: CREMA-D 7; RAVDESS 7; MELD 10.
+Saved predictions only; no models were rerun. Models currently included: CREMA-D 9; RAVDESS 9; MELD 10.
 Resample whole clusters with replacement 10,000 times; seed `20261111`. Percentile intervals use the 2.5th and 97.5th percentiles.
 
 Scores on all saved samples remain the point estimates. Bootstrap changes the mixture of speakers or dialogues and measures how scores and model differences vary. Narrower intervals indicate greater stability under that resampling scheme. The 95% level is nominal coverage of the procedure, not a 95% probability that a fixed parameter lies inside this particular interval.
@@ -9,8 +9,8 @@ Scores on all saved samples remain the point estimates. Bootstrap changes the mi
 
 | Dataset | Cluster unit | Current clips | Current clusters | Models |
 |---|---|---:|---:|---:|
-| CREMA-D | Speaker | 7,442 | 91 | 7 |
-| RAVDESS | Speaker | 1,440 | 24 | 7 |
+| CREMA-D | Speaker | 7,442 | 91 | 9 |
+| RAVDESS | Speaker | 1,440 | 24 | 9 |
 | MELD | Dialogue | 2,608 | 280 | 10 |
 
 Each draw samples the original number of clusters and includes every clip of each selected cluster; repeated clusters repeat all their clips. Metrics are pooled over clips, not averaged over speaker scores.
@@ -28,10 +28,12 @@ Cells are score [95% CI], in percent. N / G means clips / clusters. Each model u
 | Melati | 7,442 / 91 | 51.37 [49.41, 53.37] | 52.45 [50.53, 54.39] | 46.73 [44.27, 49.17] | 46.61 [44.13, 49.08] |
 | Vox-Profile Whisper | 7,442 / 91 | 33.66 [32.15, 35.26] | 35.20 [33.73, 36.76] | 29.93 [28.31, 31.58] | 29.78 [28.15, 31.45] |
 | Vox-Profile WavLM | 7,442 / 91 | 30.74 [29.52, 32.07] | 32.09 [30.90, 33.39] | 27.41 [26.08, 28.81] | 27.30 [25.95, 28.72] |
+| Qwen2.5-Omni | 7,442 / 91 | 22.25 [21.31, 23.26] | 24.11 [23.19, 25.10] | 17.24 [15.86, 18.66] | 16.96 [15.56, 18.42] |
+| Qwen2-Audio | 7,442 / 91 | 83.20 [81.90, 84.48] | 83.39 [82.11, 84.67] | 83.66 [82.40, 84.91] | 83.45 [82.18, 84.71] |
 | GPT Realtime | 7,442 / 91 | 16.00 [15.70, 16.34] | 18.02 [17.73, 18.34] | 7.00 [6.44, 7.60] | 6.53 [5.96, 7.14] |
 | Gemini 3.8 Flash | 7,442 / 91 | 32.68 [31.07, 34.42] | 33.94 [32.37, 35.64] | 30.24 [28.45, 32.10] | 30.05 [28.25, 31.93] |
 
-No current-protocol results: Qwen2.5-Omni, Qwen2-Audio, Gemma 4.
+No current-protocol results: Gemma 4.
 
 ### RAVDESS
 
@@ -42,10 +44,12 @@ No current-protocol results: Qwen2.5-Omni, Qwen2-Audio, Gemma 4.
 | Melati | 1,440 / 24 | 48.40 [44.51, 52.22] | 49.33 [45.31, 53.32] | 46.61 [42.10, 50.93] | 46.65 [42.27, 50.83] |
 | Vox-Profile Whisper | 1,440 / 24 | 50.76 [48.19, 53.61] | 49.33 [46.70, 52.16] | 44.50 [41.46, 47.71] | 45.15 [42.29, 48.18] |
 | Vox-Profile WavLM | 1,440 / 24 | 44.65 [42.08, 47.29] | 42.41 [39.86, 45.01] | 38.44 [35.58, 41.14] | 39.65 [36.94, 42.26] |
+| Qwen2.5-Omni | 1,440 / 24 | 46.25 [42.29, 50.42] | 42.44 [38.17, 46.90] | 45.90 [40.86, 50.65] | 45.94 [41.10, 50.55] |
+| Qwen2-Audio | 1,440 / 24 | 82.29 [78.96, 85.49] | 84.57 [81.75, 87.30] | 83.12 [79.78, 86.15] | 82.05 [78.20, 85.49] |
 | GPT Realtime | 1,440 / 24 | 27.01 [24.72, 29.44] | 21.83 [19.35, 24.40] | 17.76 [13.89, 21.50] | 19.06 [15.35, 22.62] |
 | Gemini 3.8 Flash | 1,440 / 24 | 46.94 [43.68, 50.35] | 45.76 [42.34, 49.23] | 46.13 [42.52, 49.54] | 46.51 [43.06, 49.83] |
 
-No current-protocol results: Qwen2.5-Omni, Qwen2-Audio, Gemma 4.
+No current-protocol results: Gemma 4.
 
 ### MELD
 
@@ -69,7 +73,11 @@ These comparisons use the existing selected-model set: emotion2vec+, Gemini and 
 | Dataset | A − B | Common N / G | Δ UAR | Δ Macro-F1 |
 |---|---|---:|---:|---:|
 | CREMA-D | emotion2vec+ − Gemini 3.8 Flash | 7,442 / 91 | +52.60 [+50.90, +54.21] | +56.33 [+54.49, +58.11] |
+| CREMA-D | emotion2vec+ − Qwen2.5-Omni | 7,442 / 91 | +62.43 [+61.10, +63.72] | +69.33 [+67.84, +70.80] |
+| CREMA-D | Gemini 3.8 Flash − Qwen2.5-Omni | 7,442 / 91 | +9.82 [+8.59, +11.10] | +13.00 [+11.58, +14.45] |
 | RAVDESS | emotion2vec+ − Gemini 3.8 Flash | 1,440 / 24 | +46.53 [+41.42, +51.34] | +46.08 [+40.95, +51.08] |
+| RAVDESS | emotion2vec+ − Qwen2.5-Omni | 1,440 / 24 | +49.85 [+43.90, +55.68] | +46.31 [+40.08, +52.86] |
+| RAVDESS | Gemini 3.8 Flash − Qwen2.5-Omni | 1,440 / 24 | +3.32 [-0.87, +7.27] | +0.23 [-4.08, +4.52] |
 | MELD | emotion2vec+ − Gemini 3.8 Flash | 2,608 / 280 | -11.75 [-15.15, -8.32] | -6.67 [-9.19, -4.07] |
 | MELD | emotion2vec+ − Qwen2.5-Omni | 2,608 / 280 | -13.61 [-17.09, -10.27] | -11.94 [-14.80, -9.10] |
 | MELD | Gemini 3.8 Flash − Qwen2.5-Omni | 2,608 / 280 | -1.86 [-5.48, +1.62] | -5.27 [-7.99, -2.60] |
@@ -77,7 +85,12 @@ These comparisons use the existing selected-model set: emotion2vec+, Gemini and 
 Current findings:
 
 - CREMA-D: The interval supports higher Macro-F1 for emotion2vec+ than Gemini 3.8 Flash.
+- CREMA-D: The interval supports higher Macro-F1 for emotion2vec+ than Qwen2.5-Omni.
+- CREMA-D: The interval supports higher Macro-F1 for Gemini 3.8 Flash than Qwen2.5-Omni.
 - RAVDESS: The interval supports higher Macro-F1 for emotion2vec+ than Gemini 3.8 Flash.
+- RAVDESS: The interval supports higher Macro-F1 for emotion2vec+ than Qwen2.5-Omni.
+- RAVDESS: The Macro-F1 difference between Gemini 3.8 Flash and Qwen2.5-Omni includes zero; its direction remains unresolved.
+- RAVDESS: The UAR difference between Gemini 3.8 Flash and Qwen2.5-Omni includes zero; neither has a resolved advantage.
 - MELD: The interval supports higher Macro-F1 for Gemini 3.8 Flash than emotion2vec+.
 - MELD: The interval supports higher Macro-F1 for Qwen2.5-Omni than emotion2vec+.
 - MELD: The interval supports higher Macro-F1 for Qwen2.5-Omni than Gemini 3.8 Flash.

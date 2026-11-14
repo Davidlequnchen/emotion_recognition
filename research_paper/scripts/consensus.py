@@ -41,6 +41,8 @@ GROUPS = {
 EXTRA_GROUPS = {
     "SER_API7": {"models": GROUPS["SER5"]["models"] + ["gpt_realtime", "gemini-3.8-flash"],
                  "require_all": True},
+    "AudioLLM4": {"models": ["gpt_realtime", "gemini-3.8-flash", "qwen2_5_omni_7b", "qwen2_audio_7b"],
+                  "require_all": True},
     "All10": {"models": GROUPS["SER5"]["models"] + GROUPS["AudioLLM5"]["models"],
               "require_all": True},
 }
@@ -451,7 +453,8 @@ def render_figure_guide(rows, language):
     if zh:
         lines += ["颜色只表示模型成员，不表示性能高低：蓝色 SER5 是五个 SER；橙色 Selected3 是 "
                   "emotion2vec+、Gemini、Qwen2.5-Omni；绿色 SER+API7 是五 SER 加 GPT Realtime、Gemini；"
-                  "粉色 All10 是全部十个模型。Selected3 是沿用的组名，不代表最优组合。", "",
+                  "粉色 All10 是全部十个模型；深紫色 AudioLLM4 是 GPT、Gemini、Qwen2.5-Omni、Qwen2-Audio。"
+                  "Selected3 是沿用的组名，不代表最优组合。", "",
                   "比较不同颜色时要先对齐规则。过半数分别是 3/5、2/3、4/7、6/10，要求的同意比例不同，"
                   "通过筛选的样本和投票标签都可能不同。例如五 SER 投出 3 票正确、2 票错误时，"
                   "如果两个 API 都投给原来的错误标签，七模型会变为 3 票正确、4 票错误。"
@@ -462,7 +465,8 @@ def render_figure_guide(rows, language):
     else:
         lines += ["Colour identifies members, not a quality ranking: blue SER5 is the five SER models; orange "
                   "Selected3 is emotion2vec+, Gemini and Qwen2.5-Omni; green SER+API7 adds GPT Realtime and Gemini to "
-                  "SER5; pink All10 includes all ten models. Selected3 is a legacy name, not an optimality claim.", "",
+                  "SER5; pink All10 includes all ten models; dark-purple AudioLLM4 is GPT, Gemini, Qwen2.5-Omni and "
+                  "Qwen2-Audio. Selected3 is a legacy name, not an optimality claim.", "",
                   "Align the rules before comparing colours. Strict majority means 3/5, 2/3, 4/7 or 6/10: different "
                   "agreement fractions, potentially different selected samples and labels. If five SER models vote three "
                   "for the correct label and two for a wrong label, two APIs voting for that wrong label turn the result "
@@ -538,6 +542,24 @@ def render_details(rows, language, *, plots=False):
             lines.append(f"| {NAMES[dataset]} | {a['accepted']:,} | {a['accepted_errors']:,} | "
                          f"{percent(a['coverage'])} | {percent(a['conditional_precision'])} | "
                          f"{b['accepted']:,} | {b['accepted_errors']:,} |")
+    lines += ["", "## 固定四个 Audio LLM/API 的共识" if zh else "## Consensus of four fixed audio LLM/API models", "",
+              ("AudioLLM4 = GPT Realtime、Gemini、Qwen2.5-Omni、Qwen2-Audio。"
+               "这个补充组依据成员完成情况固定，不按测试正确率挑选；缺任何成员都等待。"
+               "Qwen2-Audio 完成 16 个数据集后，可以在相同四个成员之间比较至少 3/4 票与 4/4 一致。"
+               "它不含 Gemma，不能把 4/4 的结果称为五个 Audio LLM 全部一致。" if zh else
+               "AudioLLM4 = GPT Realtime, Gemini, Qwen2.5-Omni and Qwen2-Audio. This supplemental group fixes "
+               "membership by availability, not evaluation accuracy, and waits for every member. With Qwen2-Audio "
+               "complete on all 16 datasets, the same four members can be compared at ≥3/4 and 4/4 votes. Gemma is "
+               "excluded; 4/4 must not be described as unanimity of all five audio LLMs."), "",
+              "| 数据集 | 共同样本 | ≥3/4 覆盖率 | ≥3/4 正确率 | 4/4 接受数 / 错误数 | 4/4 覆盖率 | 4/4 正确率 |" if zh else
+              "| Dataset | Common samples | ≥3/4 coverage | ≥3/4 accuracy | 4/4 accepted / errors | 4/4 coverage | 4/4 accuracy |",
+              "|---|---:|---:|---:|---:|---:|---:|"]
+    for dataset in DATASETS:
+        a, b = (indexed.get(("AudioLLM4", dataset, k)) for k in (3, 4))
+        if a is not None and b is not None:
+            lines.append(f"| {NAMES[dataset]} | {a['common_samples']:,} | {percent(a['coverage'])} | "
+                         f"{percent(a['conditional_precision'])} | {b['accepted']:,} / {b['accepted_errors']:,} | "
+                         f"{percent(b['coverage'])} | {percent(b['conditional_precision'])} |")
     lines += ["", "## 跨模型家族的固定组合" if zh else "## Fixed groups across model families", "",
               ("SER+API7 = 五个 SER + GPT Realtime + Gemini；All10 = 五个 SER + 五个 Audio LLM/API。"
                "这两个补充组合缺任何成员都等待，不缩小组合。下表为全部一致结果；完整整数阈值见 CSV。"
@@ -560,16 +582,18 @@ def render_details(rows, language, *, plots=False):
         lines += ["", "## 图表：分开看票数与模型组合" if zh else "## Figures: separate vote thresholds from group membership", "",
                   ("票数图只画五 SER，逐点标明至少几票同意。MELD 细图将四种组合分成独立面板。"
                    "柱状图沿用 benchmark 的数据集顺序、彩色柱和数值标注；文字使用更大的黑色字体。"
-                   "全体一致柱状图比较固定完整组合，不混入缺成员的 AudioLLM5。" if zh else
+                   "全体一致柱状图比较固定完整组合，包含现已完整的 AudioLLM4，不混入缺成员的 AudioLLM5。" if zh else
                    "The five-SER threshold plot labels each minimum vote count; MELD uses a separate panel for each group. "
                    "Bar charts follow the benchmark's dataset order, coloured bars and value labels, with larger black text. "
-                   "Unanimity bars compare complete fixed groups, excluding the variable-membership AudioLLM5."), "",
+                   "Unanimity bars include the now-complete AudioLLM4 and exclude the variable-membership AudioLLM5."), "",
                   "![Five-SER vote thresholds](figures/consensus_accuracy_coverage.png)", "",
                   "![MELD model groups and vote thresholds](figures/consensus_meld_accuracy_coverage.png)", "",
                   "![Accuracy of unanimous auto-labels](figures/consensus_unanimous_accuracy_by_dataset.png)", "",
                   "![Share of clips with unanimous auto-labels](figures/consensus_unanimous_coverage_by_dataset.png)", "",
                   "![Five-SER accuracy by minimum votes](figures/consensus_ser5_accuracy_by_votes.png)", "",
                   "![Five-SER auto-labelling share by minimum votes](figures/consensus_ser5_coverage_by_votes.png)", "",
+                  "![Four-audio-LLM accuracy by minimum votes](figures/consensus_audiollm4_accuracy_by_votes.png)", "",
+                  "![Four-audio-LLM auto-labelling share by minimum votes](figures/consensus_audiollm4_coverage_by_votes.png)", "",
                   ("柱顶数字按整数百分比显示，精确数值见表格和 CSV。n/a 表示组合成员尚未齐备；"
                    "筛出数为 0 时，覆盖率是 0%，正确率未定义，不能画成 0% 正确率。" if zh else
                    "Bar labels round to whole percentages; tables and CSVs retain full precision. n/a indicates missing "
