@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "models": [
     {
       "model": "emotion2vec_plus_large",
@@ -2411,6 +2411,177 @@
       }
     },
     "gemma4_e4b": {
+      "crema_d": {
+        "clips": 7442,
+        "total_clips": 7442,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.157619,
+        "unweighted_accuracy": 0.177322,
+        "macro_f1": 0.070784,
+        "weighted_f1": 0.066106,
+        "shared_clips": 4900,
+        "shared_accuracy": 0.23102,
+        "shared_unweighted_accuracy": 0.257919
+      },
+      "mcae_spps": {
+        "clips": 6675,
+        "total_clips": 6675,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.187116,
+        "unweighted_accuracy": 0.150644,
+        "macro_f1": 0.068763,
+        "weighted_f1": 0.082975,
+        "shared_clips": 4297,
+        "shared_accuracy": 0.283454,
+        "shared_unweighted_accuracy": 0.255306
+      },
+      "thai_ser": {
+        "clips": 11848,
+        "total_clips": 11848,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.428005,
+        "unweighted_accuracy": 0.423189,
+        "macro_f1": 0.401886,
+        "weighted_f1": 0.406509,
+        "shared_clips": 11848,
+        "shared_accuracy": 0.428005,
+        "shared_unweighted_accuracy": 0.423189
+      },
+      "nemo": {
+        "clips": 4481,
+        "total_clips": 4481,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.180094,
+        "unweighted_accuracy": 0.170607,
+        "macro_f1": 0.110866,
+        "weighted_f1": 0.114909,
+        "shared_clips": 3076,
+        "shared_accuracy": 0.257802,
+        "shared_unweighted_accuracy": 0.250679
+      },
+      "mess": {
+        "clips": 1800,
+        "total_clips": 1800,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.250556,
+        "unweighted_accuracy": 0.250556,
+        "macro_f1": 0.103463,
+        "weighted_f1": 0.103463,
+        "shared_clips": 1800,
+        "shared_accuracy": 0.250556,
+        "shared_unweighted_accuracy": 0.250556
+      },
+      "ravdess": {
+        "clips": 1440,
+        "total_clips": 1440,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.261111,
+        "unweighted_accuracy": 0.208333,
+        "macro_f1": 0.121585,
+        "weighted_f1": 0.140128,
+        "shared_clips": 864,
+        "shared_accuracy": 0.336806,
+        "shared_unweighted_accuracy": 0.253906
+      },
+      "tess": {
+        "clips": 2800,
+        "total_clips": 2800,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.145,
+        "unweighted_accuracy": 0.145,
+        "macro_f1": 0.04072,
+        "weighted_f1": 0.04072,
+        "shared_clips": 1600,
+        "shared_accuracy": 0.249375,
+        "shared_unweighted_accuracy": 0.249375
+      },
+      "jl_corpus": {
+        "clips": 1200,
+        "total_clips": 1200,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.23,
+        "unweighted_accuracy": 0.23,
+        "macro_f1": 0.216907,
+        "weighted_f1": 0.173637,
+        "shared_clips": 960,
+        "shared_accuracy": 0.245833,
+        "shared_unweighted_accuracy": 0.245833
+      },
+      "mead": {
+        "clips": 8000,
+        "total_clips": 8000,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.133,
+        "unweighted_accuracy": 0.175383,
+        "macro_f1": 0.121439,
+        "weighted_f1": 0.121045,
+        "shared_clips": 4280,
+        "shared_accuracy": 0.223832,
+        "shared_unweighted_accuracy": 0.285653
+      },
       "meld": {
         "clips": 2608,
         "total_clips": 2608,
@@ -2429,6 +2600,120 @@
         "shared_clips": 2210,
         "shared_accuracy": 0.530769,
         "shared_unweighted_accuracy": 0.415608
+      },
+      "emovo": {
+        "clips": 588,
+        "total_clips": 588,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.142857,
+        "unweighted_accuracy": 0.142857,
+        "macro_f1": 0.047424,
+        "weighted_f1": 0.047424,
+        "shared_clips": 336,
+        "shared_accuracy": 0.25,
+        "shared_unweighted_accuracy": 0.25
+      },
+      "emozionalmente": {
+        "clips": 6902,
+        "total_clips": 6902,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.169081,
+        "unweighted_accuracy": 0.169081,
+        "macro_f1": 0.100972,
+        "weighted_f1": 0.100972,
+        "shared_clips": 3944,
+        "shared_accuracy": 0.270791,
+        "shared_unweighted_accuracy": 0.270791
+      },
+      "savee": {
+        "clips": 480,
+        "total_clips": 480,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.23125,
+        "unweighted_accuracy": 0.178571,
+        "macro_f1": 0.156374,
+        "weighted_f1": 0.180517,
+        "shared_clips": 300,
+        "shared_accuracy": 0.33,
+        "shared_unweighted_accuracy": 0.2625
+      },
+      "emotiontalk": {
+        "clips": 1929,
+        "total_clips": 1929,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.51633,
+        "unweighted_accuracy": 0.290652,
+        "macro_f1": 0.293999,
+        "weighted_f1": 0.478833,
+        "shared_clips": 1560,
+        "shared_accuracy": 0.617308,
+        "shared_unweighted_accuracy": 0.447832
+      },
+      "dailytalk": {
+        "clips": 1197,
+        "total_clips": 1197,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.720969,
+        "unweighted_accuracy": 0.495793,
+        "macro_f1": 0.303052,
+        "weighted_f1": 0.753125,
+        "shared_clips": 1174,
+        "shared_accuracy": 0.726576,
+        "shared_unweighted_accuracy": 0.429041
+      },
+      "multidialog": {
+        "clips": 7672,
+        "total_clips": 7672,
+        "sample": false,
+        "in_training_data": false,
+        "training_status": "not_established",
+        "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+        "training_evidence": [
+          "https://ai.google.dev/gemma/docs/core/model_card_4",
+          "https://huggingface.co/google/gemma-4-E4B-it"
+        ],
+        "accuracy": 0.605188,
+        "unweighted_accuracy": 0.245075,
+        "macro_f1": 0.232139,
+        "weighted_f1": 0.582715,
+        "shared_clips": 6466,
+        "shared_accuracy": 0.70167,
+        "shared_unweighted_accuracy": 0.353601
       }
     },
     "gpt_realtime": {

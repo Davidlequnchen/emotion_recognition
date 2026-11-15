@@ -1,29 +1,34 @@
 # research_paper
 
 Preparation of an academic paper based on the speech emotion recognition benchmark in `emotion_recognition/`:
-open SER models vs audio LLMs on public, lexically neutral emotional speech.
+open SER models vs audio LLMs on public acted and dialogue-source emotional speech.
 
 Constraints: public data only; no company data, systems or business details; no method that could be commercially
 valuable or patentable (the paper is an evaluation and analysis). Publication needs the company's approval.
 
-Benchmark status, 2026-11-14: the five SER models, Qwen2.5-Omni, Qwen2-Audio, GPT Realtime and Gemini 3.8 Flash
-have current-protocol results on all 16 datasets (nine of ten models; 67,062 clips each). Gemma 4 has MELD only
-(1/16), for 145 compatible model–dataset runs in total. See [the benchmark summary](../emotion_recognition/reports/summary.md).
+Benchmark status, 2026-11-15: all ten models—the five SER models, Qwen2.5-Omni, Qwen2-Audio, Gemma 4,
+GPT Realtime and Gemini 3.8 Flash—have current-protocol results on all 16 datasets (67,062 clips each),
+for 160 compatible model–dataset runs. See [the benchmark summary](../emotion_recognition/reports/summary.md).
 
 | File | Content |
 |---|---|
 | [docs/research_angles.md](docs/research_angles.md) | candidate research questions, novelty against the closest work, two possible papers, what must be added |
+| [docs/experimental_design.md](docs/experimental_design.md) | the benchmark design of 2026-11-06 (datasets, models, scoring, run plan), with a 2026-11-15 completion update |
 | [docs/venues.md](docs/venues.md) | target venues: CCF 2026 classes, 2027 deadlines, precedents, recommended plan |
 | [docs/related_work.md](docs/related_work.md) | literature notes with links and numbers (audio-LLM limitations, audio in-context learning, novelty checks) |
 | [analysis_report/consensus_zh.md](analysis_report/consensus_zh.md) · [analysis_report/consensus_en.md](analysis_report/consensus_en.md) | model consensus for pseudo-label candidates: coverage, accepted-label accuracy, errors and vote thresholds; Chinese and English |
-| [analysis_report/figures/consensus_accuracy_coverage.svg](analysis_report/figures/consensus_accuracy_coverage.svg) | five-SER vote thresholds, with every 3/5, 4/5 and 5/5 point explicitly labelled |
-| [analysis_report/figures/consensus_meld_accuracy_coverage.svg](analysis_report/figures/consensus_meld_accuracy_coverage.svg) | detailed MELD vote thresholds, one panel per model group |
-| [analysis_report/figures/consensus_unanimous_accuracy_by_dataset.svg](analysis_report/figures/consensus_unanimous_accuracy_by_dataset.svg) · [coverage](analysis_report/figures/consensus_unanimous_coverage_by_dataset.svg) | benchmark-style bars comparing complete fixed groups under unanimity |
-| [analysis_report/figures/consensus_ser5_accuracy_by_votes.svg](analysis_report/figures/consensus_ser5_accuracy_by_votes.svg) · [coverage](analysis_report/figures/consensus_ser5_coverage_by_votes.svg) | five-SER bar comparisons of the three minimum vote rules |
-| [analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg](analysis_report/figures/consensus_audiollm4_accuracy_by_votes.svg) · [coverage](analysis_report/figures/consensus_audiollm4_coverage_by_votes.svg) | fixed four-audio-LLM bar comparisons of the 3/4 and 4/4 vote rules |
+| [analysis_report/figures/consensus_tradeoff_by_dataset.svg](analysis_report/figures/consensus_tradeoff_by_dataset.svg) | accuracy of agreed labels vs coverage for the four main groups (SER5, LLM3, AudioLLM5, All10), one panel per dataset, every vote threshold a point |
+| [analysis_report/figures/consensus_meld_tradeoff.svg](analysis_report/figures/consensus_meld_tradeoff.svg) | MELD, where all four main groups are complete on identical clips: every vote threshold labelled |
+| [analysis_report/figures/consensus_unanimous_by_dataset.svg](analysis_report/figures/consensus_unanimous_by_dataset.svg) | heat map of unanimous accuracy and coverage per dataset and main group |
+| [analysis_report/figures/consensus_tradeoff_extra_groups.svg](analysis_report/figures/consensus_tradeoff_extra_groups.svg) | the same grid for the appendix groups Selected3, SER+API7 and AudioLLM4 |
+| [presentation/consensus/](presentation/consensus/README.md) | slide deck on the consensus analysis (`consensus_analysis.pptx`, 14 slides + 4 hidden appendix slides, speaker notes), rebuilt with `./rebuild.sh` |
 | [analysis_report/bootstrap_zh.md](analysis_report/bootstrap_zh.md) · [analysis_report/bootstrap_en.md](analysis_report/bootstrap_en.md) | cluster-bootstrap score intervals and paired model differences; Chinese and English |
 | [analysis_report/cross_dataset_zh.md](analysis_report/cross_dataset_zh.md) · [analysis_report/cross_dataset_en.md](analysis_report/cross_dataset_en.md) | language, conversational source, neutral baselines, actual clip-duration distributions and adjusted duration associations; training-exposure hypotheses and limits |
 | [analysis_report/intensity_zh.md](analysis_report/intensity_zh.md) · [analysis_report/intensity_en.md](analysis_report/intensity_en.md) | emotion-classification accuracy by native strength, class/duration adjustment and matched recordings; MERaLiON VAD output audit |
+| [presentation/cross_dataset/](presentation/cross_dataset/README.md) | slide deck with the complete ten-model language, setting and duration analysis |
+| [presentation/intensity/](presentation/intensity/README.md) | slide deck with all ten models on the six native-intensity corpora |
+| [presentation/combined/](presentation/combined/README.md) | combined research presentation: consensus, cross-dataset analysis, intensity and the existing venue section |
+| [main benchmark presentation](../emotion_recognition/presentation/README.md) | complete 10 × 16 benchmark, selected playable listening examples and the adaptation proposal |
 
 Refresh both analyses from saved predictions, from this folder in the `emotion_recognition_llm` environment:
 
@@ -49,26 +54,40 @@ saved run per model/dataset. Rerun after more model results arrive.
 - `output/bootstrap_manifest.json`: parameters, software versions, input/code SHA256s, selected/excluded runs,
   sample-cohort hashes and grouping diagnostics.
 
-Consensus keeps the original `SER5`, `AudioLLM5` and `Selected3` groups. The latter is the legacy group name, not an
-accuracy ranking; it contains emotion2vec+, Gemini and Qwen2.5-Omni. `AudioLLM5` can use available members and therefore
-has varying membership across datasets, always reported explicitly. Supplementary fixed groups `AudioLLM4` (GPT,
-Gemini, Qwen2.5-Omni and Qwen2-Audio), `SER_API7` (five SER models + GPT + Gemini) and `All10` (all ten models)
-wait for every member; `AudioLLM4` is complete on all 16 datasets. Groups are defined by the existing analysis
-or model families, without searching these evaluation scores for an optimal combination. Compare groups only on matching
-cohort hashes. `python scripts/consensus.py --no-plots` skips matplotlib exports while refreshing reports and CSVs.
+Consensus keeps the original `SER5`, `AudioLLM5` and `Selected3` groups (`output/consensus.csv`). The latter is the
+legacy group name, not an accuracy ranking; it contains emotion2vec+, Gemini and Qwen2.5-Omni. The figures, report
+tables and slides compare four main groups: `SER5`, `LLM3` (the open audio LLMs Qwen2.5-Omni, Qwen2-Audio and
+Gemma 4), `AudioLLM5` (LLM3 + GPT Realtime + Gemini) and `All10` (all ten models). `LLM3`, `AudioLLM5` and `All10` vote
+with the available members (at least two) when results are incomplete. With the final Gemma 4 import on 2026-11-15,
+all four main groups are complete on every dataset: SER5 5/5, LLM3 3/3, AudioLLM5 5/5 and All10 10/10 at unanimity.
+There are no missing-member markers in the completed benchmark. Supplementary fixed groups
+`AudioLLM4` (GPT, Gemini, Qwen2.5-Omni and Qwen2-Audio) and `SER_API7` (five SER models + GPT + Gemini) wait for every
+member and are complete on all 16 datasets; with `Selected3` they form the appendix groups. Groups are defined by the
+existing analysis or model families, without searching these evaluation scores for an optimal combination. Compare
+groups only on matching cohort hashes. `python scripts/consensus.py --no-plots` skips matplotlib exports while
+refreshing reports and CSVs.
+
+After any prediction update, one command refreshes the consensus analysis, reports, paper figures and the slide deck
+(saved predictions only, no model runs), in the `emotion_recognition_llm` environment:
+
+```bash
+cd presentation/consensus && ./rebuild.sh
+```
 
 The paper can use this as a public-data selective-prediction analysis. Public coverage does not establish internal
 labelling effort savings: freeze a group/threshold on independent calibration labels, validate target-domain performance,
 then account for auditing and correction. See the bilingual report for the detailed interpretation and literature link.
 
-Figure axes use direct operational wording: **Samples auto-labelled (%) = accepted / common clips** and
-**Correct auto-labels (%) = correct accepted / accepted**. A group plus a minimum vote count defines one point;
-the five-SER line contains three rules, not three repeated measurements. Tighter vote thresholds cannot increase coverage,
-but accuracy is not guaranteed to rise. Adding members also does not guarantee higher accuracy: majority votes may change
-the answer, while unanimity adds a filter that can reject correct labels as well as wrong ones. The report includes an
-observed CREMA-D filtering example and a matched MELD endpoint table explaining this distinction. All chart text is black
-and enlarged; bars follow the benchmark's dataset order and whole-percentage value labels. Eight figure pairs are exported
-as SVG and PNG (16 files in total), including the fixed `AudioLLM4` 3/4 versus 4/4 comparisons.
+Figure axes: **Coverage (% of clips labelled) = accepted / common clips** and **Accuracy of agreed labels (%) =
+correct accepted / accepted**. A group plus a minimum vote count defines one point; the five-SER line contains three
+rules, not three repeated measurements. Tighter vote thresholds cannot increase coverage, but accuracy is not guaranteed
+to rise. Adding members also does not guarantee higher accuracy: majority votes may change the answer, while unanimity
+adds a filter that can reject correct labels as well as wrong ones. The report includes an observed CREMA-D filtering
+example and a matched MELD endpoint table explaining this distinction. `scripts/consensus_plot.py` is the single source
+of the figures: four paper figures (PNG 300 dpi + SVG, benchmark dataset order, one colour-blind-safe colour and marker
+per group, shared axes, no titles or footnotes inside) and, through `plot_slides`, the same figures drawn at slide size
+for the deck. Each trade-off point carries both metrics, which replaces the earlier separate accuracy and coverage bar
+charts.
 
 Bootstrap defaults: 10,000 resamples, seed `20261111`, 95% percentile intervals; speaker clusters for CREMA-D and
 RAVDESS, dialogue clusters for MELD. Model differences share the exact same cluster draws. Streams depend on the
@@ -97,10 +116,11 @@ manifest. Metadata, code and prediction hashes are recorded; cached inventories 
 `--refresh-inventory` or `--refresh-intensity` respectively after a relevant source change. `--no-plots` refreshes
 tables/reports only; `--data-only` refreshes statistics only.
 
-The reports include eight new PNG/SVG figure pairs: duration distributions, language/conversation bars, adjusted
-duration effects, dataset-specific duration slopes, accuracy by duration, native-strength accuracy, strength
-associations and matched higher-versus-lower strength recordings. Text is black and enlarged, with explicit axes,
-units, sample scopes and missing-data rules. Gemma remains MELD-only and is excluded from cross-dataset means.
+The current analyses export 16 PNG/SVG figure pairs: four consensus figures, six cross-dataset figures and six
+intensity figures. They cover agreement/coverage, duration distributions, language and recording-source comparisons,
+adjusted duration associations, native-strength changes, class-specific errors and matched recordings. Text is black and enlarged, with explicit axes,
+units, sample scopes and missing-data rules. All ten models, including Gemma 4, enter cross-dataset means;
+Gemma also has results on all six native-intensity corpora.
 
 Duration associations use original file duration including silence, not voiced time or a uniform model input window.
 The primary fit balances datasets and original gold classes, controls dataset-by-gold intercepts and reports

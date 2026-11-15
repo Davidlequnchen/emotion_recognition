@@ -1,6 +1,6 @@
 # Bootstrap: 95% confidence intervals for scores and model differences
 
-Saved predictions only; no models were rerun. Models currently included: CREMA-D 9; RAVDESS 9; MELD 10.
+Saved predictions only; no models were rerun. Models currently included: CREMA-D 10; RAVDESS 10; MELD 10.
 Resample whole clusters with replacement 10,000 times; seed `20261111`. Percentile intervals use the 2.5th and 97.5th percentiles.
 
 Scores on all saved samples remain the point estimates. Bootstrap changes the mixture of speakers or dialogues and measures how scores and model differences vary. Narrower intervals indicate greater stability under that resampling scheme. The 95% level is nominal coverage of the procedure, not a 95% probability that a fixed parameter lies inside this particular interval.
@@ -9,8 +9,8 @@ Scores on all saved samples remain the point estimates. Bootstrap changes the mi
 
 | Dataset | Cluster unit | Current clips | Current clusters | Models |
 |---|---|---:|---:|---:|
-| CREMA-D | Speaker | 7,442 | 91 | 9 |
-| RAVDESS | Speaker | 1,440 | 24 | 9 |
+| CREMA-D | Speaker | 7,442 | 91 | 10 |
+| RAVDESS | Speaker | 1,440 | 24 | 10 |
 | MELD | Dialogue | 2,608 | 280 | 10 |
 
 Each draw samples the original number of clusters and includes every clip of each selected cluster; repeated clusters repeat all their clips. Metrics are pooled over clips, not averaged over speaker scores.
@@ -30,10 +30,9 @@ Cells are score [95% CI], in percent. N / G means clips / clusters. Each model u
 | Vox-Profile WavLM | 7,442 / 91 | 30.74 [29.52, 32.07] | 32.09 [30.90, 33.39] | 27.41 [26.08, 28.81] | 27.30 [25.95, 28.72] |
 | Qwen2.5-Omni | 7,442 / 91 | 22.25 [21.31, 23.26] | 24.11 [23.19, 25.10] | 17.24 [15.86, 18.66] | 16.96 [15.56, 18.42] |
 | Qwen2-Audio | 7,442 / 91 | 83.20 [81.90, 84.48] | 83.39 [82.11, 84.67] | 83.66 [82.40, 84.91] | 83.45 [82.18, 84.71] |
+| Gemma 4 | 7,442 / 91 | 15.76 [15.49, 16.04] | 17.73 [17.46, 18.01] | 7.08 [6.61, 7.55] | 6.61 [6.14, 7.09] |
 | GPT Realtime | 7,442 / 91 | 16.00 [15.70, 16.34] | 18.02 [17.73, 18.34] | 7.00 [6.44, 7.60] | 6.53 [5.96, 7.14] |
 | Gemini 3.8 Flash | 7,442 / 91 | 32.68 [31.07, 34.42] | 33.94 [32.37, 35.64] | 30.24 [28.45, 32.10] | 30.05 [28.25, 31.93] |
-
-No current-protocol results: Gemma 4.
 
 ### RAVDESS
 
@@ -46,10 +45,9 @@ No current-protocol results: Gemma 4.
 | Vox-Profile WavLM | 1,440 / 24 | 44.65 [42.08, 47.29] | 42.41 [39.86, 45.01] | 38.44 [35.58, 41.14] | 39.65 [36.94, 42.26] |
 | Qwen2.5-Omni | 1,440 / 24 | 46.25 [42.29, 50.42] | 42.44 [38.17, 46.90] | 45.90 [40.86, 50.65] | 45.94 [41.10, 50.55] |
 | Qwen2-Audio | 1,440 / 24 | 82.29 [78.96, 85.49] | 84.57 [81.75, 87.30] | 83.12 [79.78, 86.15] | 82.05 [78.20, 85.49] |
+| Gemma 4 | 1,440 / 24 | 26.11 [24.51, 27.64] | 20.83 [19.12, 22.47] | 12.16 [10.72, 13.44] | 14.01 [12.62, 15.25] |
 | GPT Realtime | 1,440 / 24 | 27.01 [24.72, 29.44] | 21.83 [19.35, 24.40] | 17.76 [13.89, 21.50] | 19.06 [15.35, 22.62] |
 | Gemini 3.8 Flash | 1,440 / 24 | 46.94 [43.68, 50.35] | 45.76 [42.34, 49.23] | 46.13 [42.52, 49.54] | 46.51 [43.06, 49.83] |
-
-No current-protocol results: Gemma 4.
 
 ### MELD
 

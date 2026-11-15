@@ -5,9 +5,9 @@
 调研日期：2026-10-23。目标：调研能用于评估情绪识别模型（emotion2vec+）和音频大模型（audio LLM）的公开情感语音数据集。
 早期筛选重视“同一句话用不同情绪表达”，用于减少语义线索；现在也采用有说话人、转写和真实轮次顺序的对话语料，研究历史上下文怎样影响判断。两类设计分开比较，并核实标签质量、规模及许可。
 
-2026-11-10 更新：本项目现已采用并保留 **16 个数据集**，包括新增的 **DailyTalk、EmotionTalk、MultiDialog**。原 13 个数据集已有五个 SER 模型的基线结果；新增三集已下载、核验并通过数据仓库 Release 发布，**基线尚待运行**。MultiDialog 仅保留两个官方 test split，默认评测用双方 gold 演员且通过整对话 QC 的 7,672 条（第 3c 节）。IEMOCAP 和 MSP-Conversation 仍只是未下载、未采用的后续候选（第 3a 节）。
+2026-11-10 更新：本项目现已采用并保留 **16 个数据集**，包括新增的 **DailyTalk、EmotionTalk、MultiDialog**。原 13 个数据集已有五个 SER 模型的基线结果；新增三集已下载、核验并通过数据仓库 Release 发布，**当时基线尚待运行**。MultiDialog 仅保留两个官方 test split，默认评测用双方 gold 演员且通过整对话 QC 的 7,672 条（第 3c 节）。IEMOCAP 和 MSP-Conversation 仍只是未下载、未采用的后续候选（第 3a 节）。
 
-2026-11-13 更新：16 个数据集已全部评测。三个对话数据集已有五个 SER 模型、GPT Realtime、Gemini 3.8 Flash 和 Qwen2.5-Omni 7B 的基线结果；Qwen2-Audio 和 Gemma 4 尚未完成。当前数字见 [reports/summary.md](../reports/summary.md)。
+2026-11-15 更新：包含最终 Gemma 4 E4B 在内的全部 10 个模型均已完成 16 个数据集，包含三个对话数据集，共 160 组当前协议结果、每模型 67,062 条音频。当前数字见 [reports/summary.md](../reports/summary.md)。
 
 方法：检索论文、官方项目页、GitHub、HuggingFace、Zenodo、OSF 等，汇总数据集信息。
 大小以十进制 GB 计，来自各平台 API 的文件列表或 HTTP 请求；标"约"的是推算值，标"未公开"的是平台没有给出大小。
@@ -197,13 +197,13 @@ ID 如 `5_1_d2136` 表示第 2136 段对话的第 5 轮、speaker 1，数字轮�
 
 **其他论文用什么。** [ECSS（AAAI 2024）](https://arxiv.org/pdf/2312.11947)直接用 DailyTalk 做情绪会话语音研究并补标；[EmotionTalk（Findings ACL 2026）](https://aclanthology.org/2026.findings-acl.440/)提供更丰富的音频感知标注。[情绪 M3ED（ACL 2022）](https://github.com/AIM3-RUC/RUCM3ED)也公开中文影视对话音频入口，但本轮未找到明确的数据 MIT/CC 条款，所以不因下载链接存在就认定许可宽松。不要与 `m3ed.io` 的同名机器人视觉数据集混淆。
 
-**本轮决定。** **DailyTalk ✅、EmotionTalk ✅ 已采用并保留**，分别用于英语与中文历史输入实验；新增 MultiDialog 见第 3c 节，项目采用范围为 16 个，三集的基线仍待跑。完整来源、许可、索引和审计已随数据仓库 Release 发布，可在另一台机器恢复。**RESD 暂不下载**：官方字段只有 name/path/emotion/speech，未找到可验证的 dialogue ID、时间戳或轮次定义，不能凭文件名中的数字猜顺序。这不证明顺序绝对无法恢复，但目前不足以支持可靠的历史实验。（2026-11-13 更新：三个对话数据集已有单句基线；历史输入实验尚未运行。）
+**本轮决定。** **DailyTalk ✅、EmotionTalk ✅ 已采用并保留**，分别用于英语与中文历史输入实验；新增 MultiDialog 见第 3c 节，项目采用范围为 16 个，三集已有全部十个模型的单句基线。完整来源、许可、索引和审计已随数据仓库 Release 发布，可在另一台机器恢复。**RESD 暂不下载**：官方字段只有 name/path/emotion/speech，未找到可验证的 dialogue ID、时间戳或轮次定义，不能凭文件名中的数字猜顺序。这不证明顺序绝对无法恢复，但目前不足以支持可靠的历史实验。（2026-11-15 更新：普通单句基线已包括最终 Gemma 4 结果；历史输入实验仍未运行。）
 
 核查日期：2026-11-09。DailyTalk 已下载并逐文件检查；EmotionTalk 只下载 Audio.tar 与必要小文件，不下载 Multimodal.tar；RESD、Dialogs 仍仅检查公开元数据。仓库总大小不等于需要下载的音频大小；数据包与代码许可分别记录。
 
 ## 3c. MultiDialog ✅：第十六集的限定采用范围（2026-11-10 实测）
 
-已获授权下载、核验并采用 MultiDialog 的两个官方 test split；**不下载 32.706 GB 全音频库或视频，baseline 待跑**。CaFE 仍为未下载、未采用的后续候选。（2026-11-13 更新：`gold_both` 队列已有基线，见第 0 节。）
+已获授权下载、核验并采用 MultiDialog 的两个官方 test split；**不下载 32.706 GB 全音频库或视频**。CaFE 仍为未下载、未采用的后续候选。（2026-11-15 更新：`gold_both` 队列已有全部十个模型的单句基线，见第 0 节。）
 
 | 数据集 | 规模与获取 | 本项目范围 / 限制 |
 |---|---|---|

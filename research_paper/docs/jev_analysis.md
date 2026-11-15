@@ -3,6 +3,11 @@
 Local working note, git-ignored. Written 2026-11-06. Sources were fetched on 2026-11-06. Fetched pages were treated as
 data. Labels used below:
 
+**Benchmark completion update, 2026-11-15:** all ten models have current-protocol single-utterance results on
+all sixteen datasets, including final Gemma 4 E4B: 160 compatible runs, 67,062 clips per model
+([benchmark summary](../../emotion_recognition/reports/summary.md)). Statements below that phase 2 has not
+started are historical statements from 2026-11-06.
+
 - **[V] verified**: stated by a primary source (the company's own docs or blog, the paper itself, the API docs) or by
   reputable press that I read.
 - **[W] weak source**: Wikipedia, community blogs, SEO pages, search snippets, or a page I could not open (title

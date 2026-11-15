@@ -3,6 +3,7 @@
 From the repository root: python research_paper/scripts/consensus.py
 From research_paper/: python scripts/consensus.py
 Outputs: bilingual reports, accuracy–coverage figures, consensus/threshold/class/baseline CSVs and a manifest.
+Rerun after new model results arrive (e.g. Gemma 4): groups with missing members then fill in automatically.
 """
 from __future__ import annotations
 
@@ -38,14 +39,20 @@ GROUPS = {
 }
 # Supplemental fixed groups, chosen by model family rather than by observed accuracy.
 # Keep the original three groups/CSV stable so older results remain directly comparable.
+# SER_API7 and AudioLLM4 wait for every member. LLM3 (the three open audio LLMs) and All10 use the
+# available members (at least two) like AudioLLM5, and mark the missing ones (complete=False).
 EXTRA_GROUPS = {
     "SER_API7": {"models": GROUPS["SER5"]["models"] + ["gpt_realtime", "gemini-3.8-flash"],
                  "require_all": True},
     "AudioLLM4": {"models": ["gpt_realtime", "gemini-3.8-flash", "qwen2_5_omni_7b", "qwen2_audio_7b"],
                   "require_all": True},
     "All10": {"models": GROUPS["SER5"]["models"] + GROUPS["AudioLLM5"]["models"],
-              "require_all": True},
+              "require_all": False},
+    "LLM3": {"models": ["qwen2_5_omni_7b", "qwen2_audio_7b", "gemma4_e4b"], "require_all": False},
 }
+# The four groups of the main figures, tables and slides, in display order; the others go to an appendix.
+MAIN_GROUPS = ("SER5", "LLM3", "AudioLLM5", "All10")
+APPENDIX_GROUPS = ("Selected3", "SER_API7", "AudioLLM4")
 RULES = {"unanimous": {"unanimous": True}, "majority": {"fraction": [1, 2], "strict": True}}
 DATASETS = ("crema_d", "mcae_spps", "thai_ser", "nemo", "mess", "ravdess", "tess", "jl_corpus",
             "mead", "meld", "emovo", "emozionalmente", "savee", "emotiontalk", "dailytalk", "multidialog")
@@ -290,6 +297,7 @@ def render_report(rows, selected_count, excluded, language, *, selected, matched
     indexed = {(r["group"], r["dataset"], r["rule"]): r for r in rows}
     complete = {group: sum(indexed[group, dataset, "unanimous"]["complete"] for dataset in DATASETS)
                 for group in GROUPS}
+    partial_membership = complete["AudioLLM5"] < len(DATASETS)
     meld = {group: indexed[group, "meld", "unanimous"] for group in GROUPS}
     values_ready = matched_meld and all(r["complete"] and r["coverage"] is not None and r["conditional_precision"] is not None for r in meld.values())
     selected_more = values_ready and meld["Selected3"]["coverage"] > max(meld[g]["coverage"] for g in ("SER5", "AudioLLM5"))
@@ -348,12 +356,19 @@ def render_report(rows, selected_count, excluded, language, *, selected, matched
                    "on these evaluation labels."), ""]
     lines += (["下列结果是在各数据集既定评估范围内计算，不代表整个原始语料；THAI-SER 使用 high_agreement，"
                "MEAD 使用 stratified_8000。组成员齐备不等于成员已预测整个原始语料。"
-               "Audio LLM 组在不同数据集的参与成员不同，不汇总为一个固定 ensemble；Selected3 是沿用旧分析的组合，"
+               + ("AudioLLM5、LLM3 和 All10 在不同数据集的参与成员不同（缺成员时用现有成员），不汇总为一个固定 ensemble；"
+                  if partial_membership else
+                  "AudioLLM5、LLM3 和 All10 的全部目标成员现已覆盖所有 16 个数据集，各组的模型成员在数据集之间保持一致；")
+               + "Selected3 是沿用旧分析的组合，"
                "名称不表示它在本轮表现最佳。", ""] if zh else
               ["Results use each dataset's configured evaluation scope, not necessarily the entire source corpus: "
                "THAI-SER uses high_agreement and MEAD uses stratified_8000. Member availability does not imply "
-               "full-source-corpus coverage. AudioLLM5 membership varies across datasets, so it is not pooled as a fixed "
-               "ensemble. Selected3 is the legacy group name, not a claim that it is optimal in this refresh.", ""])
+               "full-source-corpus coverage. "
+               + ("AudioLLM5, LLM3 and All10 use available members, so their membership varies across datasets and they are not pooled as a fixed ensemble. "
+                  if partial_membership else
+                  "Every target member of AudioLLM5, LLM3 and All10 now covers all 16 datasets, so each group's model membership is fixed across datasets. ")
+               + "Selected3 is the legacy group name, not a claim that it is optimal in this refresh.", ""])
+    lines += render_main_groups(threshold_rows, language)
     for group, spec in GROUPS.items():
         target = len(spec["models"])
         lines += [f"## {GROUP_NAMES[language][group]}", "", ("目标成员：" if zh else "Target members: ")
@@ -407,15 +422,83 @@ def render_report(rows, selected_count, excluded, language, *, selected, matched
     return "\n".join(lines) + "\n"
 
 
+def unanimous_rows(rows):
+    """(group, dataset) -> the unanimity row, i.e. min_votes equal to the participating model count."""
+    return {(r["group"], r["dataset"]): r for r in rows if r["min_votes"] == r["model_count"]}
+
+
+def vote_rule(row):
+    """k/m with the participating model count; * marks a group with missing members."""
+    k, m = row["min_votes"], row["model_count"]
+    return f"{'' if k == m else '≥'}{k}/{m}" + ("" if row["complete"] in (True, "True") else "*")
+
+
+def missing_names(group, row):
+    spec = (GROUPS | EXTRA_GROUPS)[group]
+    members = set(json.loads(row["members"]))
+    return [SHORT_NAMES.get(m, m) for m in spec["models"] if m not in members]
+
+
+def pending_members(cohorts):
+    """(group, dataset) -> display names of missing members, for figure legends (from manifest cohorts)."""
+    result = {}
+    for cohort in cohorts:
+        missing = json.loads(cohort["missing_members"]) if isinstance(cohort["missing_members"], str) \
+            else cohort["missing_members"]
+        if missing and cohort.get("eligible", True):
+            result[cohort["group"], cohort["dataset"]] = [SHORT_NAMES.get(m, m) for m in missing]
+    return result
+
+
+def render_main_groups(rows, language):
+    """Unanimity of the four main groups per dataset; incomplete groups are marked, never pooled."""
+    zh = language == "zh"
+    unanimous = unanimous_rows(rows)
+    if not any((g, d) in unanimous for g in MAIN_GROUPS for d in DATASETS):
+        return []
+    complete = {g: sum((g, d) in unanimous and unanimous[g, d]["complete"] in (True, "True") for d in DATASETS)
+                for g in MAIN_GROUPS}
+    pending = sorted({name for g in MAIN_GROUPS for d in DATASETS if (g, d) in unanimous
+                      for name in missing_names(g, unanimous[g, d])})
+    if zh:
+        lines = ["## 主图四组：全部一致时的覆盖率与正确率", "",
+                 "四组按模型家族固定：SER5 = 五个 SER 模型；LLM3 = 三个开源 Audio LLM（Qwen2.5-Omni 7B、"
+                 "Qwen2-Audio 7B Instruct、Gemma 4 E4B）；AudioLLM5 = LLM3 + GPT Realtime + Gemini 3.8 Flash；"
+                 "All10 = 全部十个模型。LLM3、AudioLLM5、All10 缺成员时用现有成员（至少两个）计票，"
+                 "规则写成实际参与的模型数（例如 2/2、4/4、9/9），并以 * 标出。"
+                 "成员齐备的数据集数：" + "；".join(f"{g} {complete[g]}/{len(DATASETS)}" for g in MAIN_GROUPS) + "。"
+                 + (f"待补成员：{', '.join(pending)}；这些结果是初步结果。" if pending else ""), "",
+                 "| 数据集 | " + " | ".join(f"{g} 规则 | 覆盖率 | 正确率" for g in MAIN_GROUPS) + " |"]
+    else:
+        lines = ["## Main groups: unanimous coverage and accuracy", "",
+                 "The four groups are fixed by model family: SER5 = the five SER models; LLM3 = the three open audio "
+                 "LLMs (Qwen2.5-Omni 7B, Qwen2-Audio 7B Instruct, Gemma 4 E4B); AudioLLM5 = LLM3 + GPT Realtime + "
+                 "Gemini 3.8 Flash; All10 = all ten models. When members are missing, LLM3, AudioLLM5 and All10 vote "
+                 "with the available members (at least two); the rule shows the participating count (e.g. 2/2, 4/4, "
+                 "9/9) and * marks it. Datasets with every member: "
+                 + "; ".join(f"{g} {complete[g]}/{len(DATASETS)}" for g in MAIN_GROUPS) + "."
+                 + (f" Pending: {', '.join(pending)}; these results are preliminary." if pending else ""), "",
+                 "| Dataset | " + " | ".join(f"{g} rule | Coverage | Accuracy" for g in MAIN_GROUPS) + " |"]
+    lines.append("|---|" + "---:|" * (3 * len(MAIN_GROUPS)))
+    for dataset in DATASETS:
+        cells = []
+        for group in MAIN_GROUPS:
+            r = unanimous.get((group, dataset))
+            cells += [vote_rule(r), percent(r["coverage"]), percent(r["conditional_precision"])] if r else \
+                     [("待补" if zh else "Pending"), "—", "—"]
+        lines.append(f"| {NAMES[dataset]} | " + " | ".join(cells) + " |")
+    return lines + [""]
+
+
 def render_figure_guide(rows, language):
     """Keep the rule, two denominators and model-group comparison explicit."""
     zh = language == "zh"
     indexed = {(r["group"], r["dataset"], r["min_votes"]): r for r in rows}
     if zh:
         lines = ["## 图怎么读：一个点是一组模型加一条投票规则", "",
-                 "横轴 Samples auto-labelled (%) 表示：同一批可比较音频中，有多少比例通过投票规则，"
-                 "可以作为自动标签候选。它等于接受数 / 共同样本数。纵轴 Correct auto-labels (%) 表示："
-                 "这些候选标签里，有多少与数据集参考标签相符。它等于正确接受数 / 接受数，"
+                 "横轴 Coverage (% of clips labelled) 表示：同一批可比较音频中，有多少比例通过投票规则、"
+                 "得到一致标签，即接受数 / 共同样本数。纵轴 Accuracy of agreed labels (%) 表示："
+                 "这些一致标签里，有多少与数据集参考标签相符，即正确接受数 / 接受数，"
                  "不是整个数据集的准确率，也不是模型自己给出的置信度。这里的‘自动标注’是对基准数据的模拟筛选。", "",
                  "例如横轴 20%、纵轴 97% 的点，可以读作：每 1,000 条音频约筛出 200 条候选标签，"
                  "其中约 194 条正确、6 条错误，其余 800 条未通过筛选。参考标签来自数据集；内部未标注音频"
@@ -423,13 +506,15 @@ def render_figure_guide(rows, language):
                  "固定模型组合之后，还需要指定至少几票同意，才能确定一个结果。五个 SER 的三个点分别是"
                  "至少 3/5、至少 4/5、5/5 一致；不是同一规则被重复测了三次，也没有改变共同样本分母。"
                  "3/5 包含 4 票和 5 票样本，4/5 包含 5 票样本。收紧票数后覆盖率一定不增加，"
-                 "但正确率不保证上升。连线仅帮助看离散票数的变化，不表示任意覆盖率都有可实现的规则。", ""]
+                 "但正确率不保证上升。每条线最左边的点是全部一致，最右边是严格过半数；"
+                 "连线仅帮助看离散票数的变化，不表示任意覆盖率都有可实现的规则。", ""]
     else:
         lines = ["## Reading the figures: one model group plus one vote rule defines a point", "",
-                 "The x-axis, Samples auto-labelled (%), is the share of the common audio cohort that passes the vote "
-                 "rule: accepted / common samples. The y-axis, Correct auto-labels (%), is the share of those selected "
-                 "labels matching the dataset reference: correct accepted / accepted. This is neither full-dataset "
-                 "accuracy nor a model's confidence score. Auto-labelling here is a simulated selection on benchmark data.", "",
+                 "The x-axis, Coverage (% of clips labelled), is the share of the common audio cohort that passes the "
+                 "vote rule and receives an agreed label: accepted / common samples. The y-axis, Accuracy of agreed "
+                 "labels (%), is the share of those labels matching the dataset reference: correct accepted / accepted. "
+                 "This is neither full-dataset accuracy nor a model's confidence score. Auto-labelling here is a "
+                 "simulated selection on benchmark data.", "",
                  "A point at 20% x and 97% y means that out of 1,000 clips, about 200 receive candidate labels: "
                  "194 correct and six wrong, with 800 unselected. Unlabelled internal audio has no known y-value; "
                  "independent human verification is needed.", "",
@@ -437,24 +522,28 @@ def render_figure_guide(rows, language):
                  "The three five-SER points mean at least 3/5, at least 4/5 and all 5/5 agreeing. They are not repetitions "
                  "of one rule, and their common-cohort denominator is unchanged. The 3/5 rule includes four- and five-vote "
                  "cases; 4/5 includes five-vote cases. Raising the threshold cannot increase coverage, but need not improve "
-                 "accuracy. Lines only guide the eye between discrete rules; intermediate coverage is not an evaluated rule.", ""]
+                 "accuracy. The leftmost point of each line is unanimity and the rightmost is strict majority. Lines only "
+                 "guide the eye between discrete rules; intermediate coverage is not an evaluated rule.", ""]
     example = [indexed.get(("SER5", "crema_d", k)) for k in (3, 4, 5)]
     if all(r is not None for r in example):
         lines += [f"CREMA-D，始终使用同一批 {example[0]['common_samples']:,} 条音频：" if zh else
                   f"CREMA-D, always the same {example[0]['common_samples']:,} clips:", "",
-                  "| 五 SER 规则 | 筛出数 | 正确 / 错误 | 横轴：筛出比例 | 纵轴：筛出标签正确率 |" if zh else
-                  "| Five-SER rule | Selected | Correct / wrong | x: selected share | y: selected-label accuracy |",
+                  "| 五 SER 规则 | 筛出数 | 正确 / 错误 | 横轴：覆盖率 | 纵轴：一致标签正确率 |" if zh else
+                  "| Five-SER rule | Selected | Correct / wrong | x: coverage | y: accuracy of agreed labels |",
                   "|---|---:|---:|---:|---:|"]
         for r in example:
-            lines.append(f"| ≥{r['min_votes']}/5 | {r['accepted']:,} | "
+            lines.append(f"| {vote_rule(r)} | {r['accepted']:,} | "
                          f"{r['accepted_correct']:,} / {r['accepted_errors']:,} | "
                          f"{percent(r['coverage'])} | {percent(r['conditional_precision'])} |")
         lines.append("")
     if zh:
-        lines += ["颜色只表示模型成员，不表示性能高低：蓝色 SER5 是五个 SER；橙色 Selected3 是 "
-                  "emotion2vec+、Gemini、Qwen2.5-Omni；绿色 SER+API7 是五 SER 加 GPT Realtime、Gemini；"
-                  "粉色 All10 是全部十个模型；深紫色 AudioLLM4 是 GPT、Gemini、Qwen2.5-Omni、Qwen2-Audio。"
-                  "Selected3 是沿用的组名，不代表最优组合。", "",
+        lines += ["颜色只表示模型成员，不表示性能高低；配色为色盲友好的 Okabe–Ito 色，每组另有固定标记形状。"
+                  "主图四组：蓝色圆点 SER5（五个 SER）；橙色三角 LLM3（Qwen2.5-Omni、Qwen2-Audio、Gemma 4）；"
+                  "绿色菱形 AudioLLM5（LLM3 + GPT Realtime + Gemini）；粉紫色方块 All10（全部十个模型）。"
+                  "附录三组：朱红色 Selected3（emotion2vec+、Gemini、Qwen2.5-Omni）；天蓝色 SER+API7（五 SER + "
+                  "GPT Realtime + Gemini）；深靛色 AudioLLM4（GPT、Gemini、Qwen2.5-Omni、Qwen2-Audio）。"
+                  "Selected3 是沿用的组名，不代表最优组合。空心标记和虚线表示该组在该数据集缺成员"
+                  "（只用现有成员计票），表格中以 * 标出。", "",
                   "比较不同颜色时要先对齐规则。过半数分别是 3/5、2/3、4/7、6/10，要求的同意比例不同，"
                   "通过筛选的样本和投票标签都可能不同。例如五 SER 投出 3 票正确、2 票错误时，"
                   "如果两个 API 都投给原来的错误标签，七模型会变为 3 票正确、4 票错误。"
@@ -463,10 +552,14 @@ def render_figure_guide(rows, language):
                   "覆盖率因此不会增加。但只有新增模型更容易淘汰错误标签、而不是正确标签时，"
                   "筛出标签的正确率才会上升；相关错误、共同偏好都可能破坏这个条件。", ""]
     else:
-        lines += ["Colour identifies members, not a quality ranking: blue SER5 is the five SER models; orange "
-                  "Selected3 is emotion2vec+, Gemini and Qwen2.5-Omni; green SER+API7 adds GPT Realtime and Gemini to "
-                  "SER5; pink All10 includes all ten models; dark-purple AudioLLM4 is GPT, Gemini, Qwen2.5-Omni and "
-                  "Qwen2-Audio. Selected3 is a legacy name, not an optimality claim.", "",
+        lines += ["Colour identifies members, not a quality ranking; colours are colour-blind-safe Okabe–Ito hues and "
+                  "each group also has a fixed marker shape. Main groups: blue circles SER5 (the five SER models); "
+                  "orange triangles LLM3 (Qwen2.5-Omni, Qwen2-Audio, Gemma 4); green diamonds AudioLLM5 (LLM3 + GPT "
+                  "Realtime + Gemini); reddish-purple squares All10 (all ten models). Appendix groups: vermillion "
+                  "Selected3 (emotion2vec+, Gemini, Qwen2.5-Omni); sky-blue SER+API7 (SER5 + GPT Realtime + Gemini); "
+                  "indigo AudioLLM4 (GPT, Gemini, Qwen2.5-Omni, Qwen2-Audio). Selected3 is a legacy name, not an "
+                  "optimality claim. Hollow markers and dashed lines mark a group with missing members on that dataset "
+                  "(voting with the available members); tables mark it with *.", "",
                   "Align the rules before comparing colours. Strict majority means 3/5, 2/3, 4/7 or 6/10: different "
                   "agreement fractions, potentially different selected samples and labels. If five SER models vote three "
                   "for the correct label and two for a wrong label, two APIs voting for that wrong label turn the result "
@@ -477,12 +570,12 @@ def render_figure_guide(rows, language):
                   "reject wrong labels rather than correct ones; shared errors or label preferences can prevent that.", ""]
     majority_a, majority_b = (indexed.get((g, "crema_d", k)) for g, k in (("SER5", 3), ("SER_API7", 4)))
     if majority_a and majority_b and majority_a["cohort_sha256"] == majority_b["cohort_sha256"]:
-        lines += [(f"例如 CREMA-D，蓝色 3/5 筛出 {majority_a['accepted']:,} 条，正确率 "
-                   f"{percent(majority_a['conditional_precision'])}；绿色 4/7 筛出 {majority_b['accepted']:,} 条，"
-                   f"正确率 {percent(majority_b['conditional_precision'])}。这不是在蓝色已接受标签上做同一种更严格筛选，"
+        lines += [(f"例如 CREMA-D，SER5 的 ≥3/5 筛出 {majority_a['accepted']:,} 条，正确率 "
+                   f"{percent(majority_a['conditional_precision'])}；SER+API7 的 ≥4/7 筛出 {majority_b['accepted']:,} 条，"
+                   f"正确率 {percent(majority_b['conditional_precision'])}。这不是在 SER5 已接受标签上做同一种更严格筛选，"
                    "而是换了投票组合和最低票数。" if zh else
-                   f"For example, CREMA-D blue 3/5 selects {majority_a['accepted']:,} clips at "
-                   f"{percent(majority_a['conditional_precision'])} accuracy; green 4/7 selects "
+                   f"For example, CREMA-D SER5 ≥3/5 selects {majority_a['accepted']:,} clips at "
+                   f"{percent(majority_a['conditional_precision'])} accuracy; SER+API7 ≥4/7 selects "
                    f"{majority_b['accepted']:,} at {percent(majority_b['conditional_precision'])}. This changes the voters "
                    "and minimum vote count rather than simply applying a tighter version of the same filter."), ""]
     a, b = (indexed.get((g, "crema_d", k)) for g, k in (("SER5", 5), ("SER_API7", 7)))
@@ -499,27 +592,34 @@ def render_figure_guide(rows, language):
                    f"({b['accepted_correct']:,} correct, {b['accepted_errors']:,} wrong). The added condition retains "
                    f"{percent(kept_correct)} of the original correct cases but {percent(kept_errors)} of the errors, "
                    f"changing precision from {percent(a['conditional_precision'])} to {percent(b['conditional_precision'])}."), ""]
-    meld = [indexed.get((g, "meld", k)) for g, k in (("SER5", 5), ("Selected3", 3),
-                                                     ("SER_API7", 7), ("All10", 10))]
-    if all(r is not None for r in meld) and len({r["cohort_sha256"] for r in meld}) == 1:
-        lines += ["MELD 的公平端点比较：全部一致，且共同样本完全相同。" if zh else
-                  "Matched MELD endpoints: unanimity on the identical common cohort.", "",
-                  "| 组合 | 规则 | 筛出数 | 正确 / 错误 | 筛出比例 | 筛出标签正确率 |" if zh else
-                  "| Group | Rule | Selected | Correct / wrong | Selected share | Selected-label accuracy |",
+    unanimous = unanimous_rows(rows)
+    meld = [unanimous.get((g, "meld")) for g in MAIN_GROUPS]
+    if all(r is not None and r["complete"] in (True, "True") for r in meld) and len({r["cohort_sha256"] for r in meld}) == 1:
+        lines += ["MELD 的公平端点比较：主图四组全部一致，成员齐备，共同样本完全相同。" if zh else
+                  "Matched MELD endpoints: unanimity of the four main groups, all members present, identical common cohort.", "",
+                  "| 组合 | 规则 | 筛出数 | 正确 / 错误 | 覆盖率 | 一致标签正确率 |" if zh else
+                  "| Group | Rule | Selected | Correct / wrong | Coverage | Accuracy of agreed labels |",
                   "|---|---|---:|---:|---:|---:|"]
-        for r in meld:
-            lines.append(f"| {r['group']} | {r['min_votes']}/{r['model_count']} | {r['accepted']:,} | "
+        for group, r in zip(MAIN_GROUPS, meld):
+            lines.append(f"| {group} | {vote_rule(r)} | {r['accepted']:,} | "
                          f"{r['accepted_correct']:,} / {r['accepted_errors']:,} | {percent(r['coverage'])} | "
                          f"{percent(r['conditional_precision'])} |")
-        lines += ["", ("粉色曲线不是其他曲线的平均值，每个点都重新对十个模型计票。MELD 的 10/10 只筛出 "
-                       f"{meld[3]['accepted']:,} 条，其中 {meld[3]['accepted_errors']:,} 条仍错误；"
-                       "它以更低覆盖率换来与 Selected3 的 3/3 相近的观测正确率，而非自动成为最优组合。"
-                       "粉色曲线中间的点是 6/10 到 9/10，不能与其他颜色的全体一致端点混作同一规则比较。" if zh else
-                       "The pink curve is not an average of the others: every point recounts all ten model votes. "
-                       f"MELD 10/10 selects only {meld[3]['accepted']:,} clips, including {meld[3]['accepted_errors']:,} errors. "
-                       "It trades much lower coverage for an observed accuracy close to Selected3 at 3/3, rather than "
-                       "automatically becoming optimal. Its other points are 6/10 through 9/10 and should not be treated "
-                       "as the same rule as another group's unanimous endpoint."), ""]
+        scored = [(group, r) for group, r in zip(MAIN_GROUPS, meld) if r["conditional_precision"] is not None]
+        best_group, best = max(scored, key=lambda item: item[1]["conditional_precision"])
+        all10 = meld[MAIN_GROUPS.index("All10")]
+        lines += ["", (f"All10 不是其他曲线的平均值，每个点都重新对十个模型计票。MELD 的 10/10 只筛出 "
+                       f"{all10['accepted']:,} 条（覆盖率 {percent(all10['coverage'])}），其中 {all10['accepted_errors']:,} 条仍错误。"
+                       f"四组中全部一致正确率最高的是 {best_group} 的 {vote_rule(best)}："
+                       f"{percent(best['conditional_precision'])}，覆盖率 {percent(best['coverage'])}。"
+                       "增加成员会降低覆盖率，但本身不保证更高的正确率；不同组的中间点（例如 6/10 到 9/10）"
+                       "不能与其他组的全体一致端点混作同一规则比较。" if zh else
+                       "All10 is not an average of the other curves: every point recounts all ten model votes. "
+                       f"MELD 10/10 selects only {all10['accepted']:,} clips ({percent(all10['coverage'])} coverage), "
+                       f"including {all10['accepted_errors']:,} errors. The highest unanimous accuracy of the four groups "
+                       f"is {best_group} {vote_rule(best)}: {percent(best['conditional_precision'])} at "
+                       f"{percent(best['coverage'])} coverage. Adding members lowers coverage but does not by itself "
+                       "guarantee higher accuracy; intermediate points (e.g. 6/10 to 9/10) are different rules from "
+                       "another group's unanimous endpoint."), ""]
     return lines
 
 
@@ -561,43 +661,49 @@ def render_details(rows, language, *, plots=False):
                          f"{percent(a['conditional_precision'])} | {b['accepted']:,} / {b['accepted_errors']:,} | "
                          f"{percent(b['coverage'])} | {percent(b['conditional_precision'])} |")
     lines += ["", "## 跨模型家族的固定组合" if zh else "## Fixed groups across model families", "",
-              ("SER+API7 = 五个 SER + GPT Realtime + Gemini；All10 = 五个 SER + 五个 Audio LLM/API。"
-               "这两个补充组合缺任何成员都等待，不缩小组合。下表为全部一致结果；完整整数阈值见 CSV。"
+              ("SER+API7 = 五个 SER + GPT Realtime + Gemini，缺任何成员都等待。All10 = 五个 SER + 五个 Audio LLM/API；"
+               "它和 AudioLLM5、LLM3 一样用现有成员（至少两个）计票，规则写成实际参与的模型数（例如 9/9），"
+               "缺成员时以 * 标出。下表为全部一致结果；完整整数阈值见 CSV。"
                "不同组只有在共同样本路径完全相同时才能直接比较。" if zh else
-               "SER+API7 = five SER models + GPT Realtime + Gemini; All10 = five SER models + all five audio LLM/API "
-               "models. Both supplemental groups wait for every member. The table reports unanimity; the CSV contains "
-               "all integer thresholds. Direct group comparisons require identical common audio-path cohorts."), "",
-              "| 数据集 | SER+API7 共同样本 | 7/7 接受数 / 错误数 | 覆盖率 | 正确率 | All10 共同样本 | 10/10 接受数 / 错误数 | 覆盖率 | 正确率 |" if zh else
-              "| Dataset | SER+API7 common | 7/7 accepted / errors | Coverage | Accuracy | All10 common | 10/10 accepted / errors | Coverage | Accuracy |",
-              "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+               "SER+API7 = five SER models + GPT Realtime + Gemini and waits for every member. All10 = five SER models + "
+               "all five audio LLM/API models; like AudioLLM5 and LLM3 it votes with the available members (at least "
+               "two), so the rule shows the participating count (e.g. 9/9) and * marks missing members. The table "
+               "reports unanimity; the CSV contains all integer thresholds. Direct group comparisons require identical "
+               "common audio-path cohorts."), "",
+              "| 数据集 | SER+API7 共同样本 | 7/7 接受数 / 错误数 | 覆盖率 | 正确率 | All10 规则 | All10 共同样本 | 全部一致接受数 / 错误数 | 覆盖率 | 正确率 |" if zh else
+              "| Dataset | SER+API7 common | 7/7 accepted / errors | Coverage | Accuracy | All10 rule | All10 common | Unanimous accepted / errors | Coverage | Accuracy |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    unanimous = unanimous_rows(rows)
     for dataset in DATASETS:
         cells = []
-        for group, k in (("SER_API7", 7), ("All10", 10)):
-            r = indexed.get((group, dataset, k))
+        for group in ("SER_API7", "All10"):
+            r = unanimous.get((group, dataset))
+            if group == "All10":
+                cells.append(vote_rule(r) if r else ("待补" if zh else "Pending"))
             cells.extend([f"{r['common_samples']:,}", f"{r['accepted']:,} / {r['accepted_errors']:,}",
-                          percent(r["coverage"]), percent(r["conditional_precision"]) ] if r else
+                          percent(r["coverage"]), percent(r["conditional_precision"])] if r else
                          [("待齐备" if zh else "Pending"), "—", "—", "—"])
         lines.append(f"| {NAMES[dataset]} | " + " | ".join(cells) + " |")
     if plots:
-        lines += ["", "## 图表：分开看票数与模型组合" if zh else "## Figures: separate vote thresholds from group membership", "",
-                  ("票数图只画五 SER，逐点标明至少几票同意。MELD 细图将四种组合分成独立面板。"
-                   "柱状图沿用 benchmark 的数据集顺序、彩色柱和数值标注；文字使用更大的黑色字体。"
-                   "全体一致柱状图比较固定完整组合，包含现已完整的 AudioLLM4，不混入缺成员的 AudioLLM5。" if zh else
-                   "The five-SER threshold plot labels each minimum vote count; MELD uses a separate panel for each group. "
-                   "Bar charts follow the benchmark's dataset order, coloured bars and value labels, with larger black text. "
-                   "Unanimity bars include the now-complete AudioLLM4 and exclude the variable-membership AudioLLM5."), "",
-                  "![Five-SER vote thresholds](figures/consensus_accuracy_coverage.png)", "",
-                  "![MELD model groups and vote thresholds](figures/consensus_meld_accuracy_coverage.png)", "",
-                  "![Accuracy of unanimous auto-labels](figures/consensus_unanimous_accuracy_by_dataset.png)", "",
-                  "![Share of clips with unanimous auto-labels](figures/consensus_unanimous_coverage_by_dataset.png)", "",
-                  "![Five-SER accuracy by minimum votes](figures/consensus_ser5_accuracy_by_votes.png)", "",
-                  "![Five-SER auto-labelling share by minimum votes](figures/consensus_ser5_coverage_by_votes.png)", "",
-                  "![Four-audio-LLM accuracy by minimum votes](figures/consensus_audiollm4_accuracy_by_votes.png)", "",
-                  "![Four-audio-LLM auto-labelling share by minimum votes](figures/consensus_audiollm4_coverage_by_votes.png)", "",
-                  ("柱顶数字按整数百分比显示，精确数值见表格和 CSV。n/a 表示组合成员尚未齐备；"
-                   "筛出数为 0 时，覆盖率是 0%，正确率未定义，不能画成 0% 正确率。" if zh else
-                   "Bar labels round to whole percentages; tables and CSVs retain full precision. n/a indicates missing "
-                   "group members. With zero selected clips, coverage is 0% but accuracy is undefined, not 0%."), ""]
+        lines += ["", "## 图表" if zh else "## Figures", "",
+                  ("四组图各有 PNG（300 dpi）和 SVG。每组模型的颜色和标记形状在所有图和幻灯片中一致；"
+                   "空心标记和虚线表示该组在该数据集缺成员，只用现有成员计票（热图中以 * 标出）。"
+                   "折线上的点是不同最低票数：最左是全部一致，最右是严格过半数。所有子图共用坐标轴："
+                   "Coverage (% of clips labelled) 和 Accuracy of agreed labels (%)。图中不放说明文字，解释见本报告和幻灯片。" if zh else
+                   "Four figures, each as PNG (300 dpi) and SVG. Every group keeps its colour and marker shape in all "
+                   "figures and slides; hollow markers and dashed lines mark a group with missing members on that "
+                   "dataset, voting with the available members (* in the heat map). Points on a line are minimum vote "
+                   "counts: the leftmost is unanimity and the rightmost strict majority. All panels share the axes "
+                   "Coverage (% of clips labelled) and Accuracy of agreed labels (%). Explanations stay in this report "
+                   "and the slides, not inside the figures."), "",
+                  "![Accuracy–coverage trade-off of the four main groups by dataset](figures/consensus_tradeoff_by_dataset.png)", "",
+                  "![MELD, identical cohort: every vote threshold of the four main groups](figures/consensus_meld_tradeoff.png)", "",
+                  "![Unanimous accuracy and coverage by dataset and main group](figures/consensus_unanimous_by_dataset.png)", "",
+                  "![Appendix groups Selected3, SER+API7 and AudioLLM4 by dataset](figures/consensus_tradeoff_extra_groups.png)", "",
+                  ("热图数字按整数百分比显示，精确数值见表格和 CSV。筛出数为 0 时，覆盖率是 0%，"
+                   "正确率未定义（显示为 —），不能当作 0% 正确率。" if zh else
+                   "Heat-map values round to whole percentages; tables and CSVs retain full precision. With zero "
+                   "selected clips, coverage is 0% but accuracy is undefined (shown as —), not 0%."), ""]
     lines += ["", "## 用于标注与论文时如何解释" if zh else "## Interpretation for labelling and the paper", ""]
     if zh:
         lines += ["覆盖率 = accepted / common_samples；候选标签正确率 = accepted_correct / accepted；"
@@ -750,7 +856,7 @@ def run(project=PROJECT, paper=None, *, plots=False):
     if plots:
         import matplotlib
         from consensus_plot import plot_thresholds
-        figure_paths = plot_thresholds(thresholds, paper / "analysis_report/figures")
+        figure_paths = plot_thresholds(thresholds, paper / "analysis_report/figures", pending=pending_members(cohorts))
         manifest["figures"] = [path.relative_to(paper).as_posix() for path in figure_paths]
         manifest["matplotlib"] = matplotlib.__version__
     for language, content in reports.items():

@@ -6,7 +6,7 @@ const DIR = __dirname;
 const W = 13.333, H = 7.5, MX = 0.6;            // slide size and side margin (inches)
 const FONT = "Calibri";
 const C = {
-  ink: "1B2A41", text: "2F3B4C", muted: "6B7785", faint: "9AA4B1", line: "D5DAE1", panel: "F4F6F9",
+  ink: "1B2A41", text: "2F3B4C", muted: "000000", faint: "000000", line: "D5DAE1", panel: "F4F6F9",
   accent: "0072B2", accent2: "D55E00", good: "2E8B57", bad: "C0392B", warn: "B7791F", white: "FFFFFF",
 };
 // Same colours as the bar charts (Okabe-Ito, scripts/viewer/plot_results.py)
@@ -16,12 +16,17 @@ const MODEL = {
   melati: { name: "Melati", color: "009E73" },
   voxw: { name: "Vox-Profile Whisper", color: "CC79A7" },
   voxl: { name: "Vox-Profile WavLM", color: "56B4E9" },
-  gpt: { name: "GPT Realtime", color: "D55E00" },
-  gemini: { name: "Gemini 3.5 Flash", color: "F0E442" },
+  omni: { name: "Qwen2.5-Omni 7B", color: "D55E00" },
+  qaudio: { name: "Qwen2-Audio 7B Instruct", color: "F0E442" },
+  gemma: { name: "Gemma 4 E4B", color: "999999" },
+  gpt: { name: "GPT Realtime", color: "332288" },
+  gemini: { name: "Gemini 3.8 Flash", color: "AA4499" },
 };
 const MODEL_KEY = {
   emotion2vec_plus_large: "e2v", meralion_ser_v1: "meralion", melati_emotion: "melati",
   vox_profile_whisper: "voxw", vox_profile_wavlm: "voxl",
+  qwen2_5_omni_7b: "omni", qwen2_audio_7b: "qaudio", gemma4_e4b: "gemma",
+  gpt_realtime: "gpt", "gemini-3.8-flash": "gemini",
 };
 // Emotion colours (the labeling tool's palette)
 const EMO = {

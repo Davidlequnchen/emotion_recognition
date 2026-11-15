@@ -1,0 +1,256 @@
+{
+  "archive": "outputs/gemma4_e4b/gemma4_e4b_predictions.zip",
+  "archive_sha256": "647a9d19c29ba1cbcfccefeba099452f872cd0a9f4ea2917975c3cf27074632a",
+  "review_directory": "/private/tmp/gemma-final-review-60e7iuyv",
+  "reviewed_at_utc": "2026-11-15T13:08:45.066579+00:00",
+  "members": [
+    {
+      "name": "crema_d_predictions.csv",
+      "bytes": 1516188,
+      "sha256": "55ffac338deaa72772b7abf48564176de3ee22a2c33350096f896c7d886b998d",
+      "crc32": "14190b49"
+    },
+    {
+      "name": "crema_d_predictions.json",
+      "bytes": 4260,
+      "sha256": "d3d13f975a2d0f087c83eb6d10e8a3fc8e356456911f53bd71a7e1733b976960",
+      "crc32": "cf94c0ac"
+    },
+    {
+      "name": "dailytalk_predictions.csv",
+      "bytes": 232345,
+      "sha256": "1b83dcdbbc959ad74a2428049f6522d9ebc13aa7735bf2cab73b07cf79520090",
+      "crc32": "a3b0a213"
+    },
+    {
+      "name": "dailytalk_predictions.json",
+      "bytes": 3938,
+      "sha256": "893fc19aa3d6749697669af8a1ce606b7fc41fd6b00c5435f41cf84b30cc9ddd",
+      "crc32": "6c491d25"
+    },
+    {
+      "name": "emotiontalk_predictions.csv",
+      "bytes": 450838,
+      "sha256": "c1494ecaf3f9beca303d0944e660c459e67158563e07f8742a46d7ee88cfb25c",
+      "crc32": "6de7f4a7"
+    },
+    {
+      "name": "emotiontalk_predictions.json",
+      "bytes": 3878,
+      "sha256": "264917613bc9a53afa1f2b3f0de973bb1bef37eeea9db474423519545852401d",
+      "crc32": "f9d8ff84"
+    },
+    {
+      "name": "emovo_predictions.csv",
+      "bytes": 113255,
+      "sha256": "623762d9f398ace4b04baa9e419b57fd32f5e386a13ccc22f73b2ddb8e063f8e",
+      "crc32": "9ae149d7"
+    },
+    {
+      "name": "emovo_predictions.json",
+      "bytes": 3905,
+      "sha256": "a51ecbe1d563c02071c7aa13e0f6822eb9631b8df5e8cd10c653e272e1327c0f",
+      "crc32": "d3918bd9"
+    },
+    {
+      "name": "emozionalmente_predictions.csv",
+      "bytes": 1634186,
+      "sha256": "1b2af1774ee6ff84e378bb6ec14f27a9482d3a86b318d2ebf53ef15c6fa6ae5d",
+      "crc32": "c901e212"
+    },
+    {
+      "name": "emozionalmente_predictions.json",
+      "bytes": 4357,
+      "sha256": "35d4fb4b1bdc2165e757254a636ddecaa5f8b607bc025c83a44fd9a1a7fed77a",
+      "crc32": "a3a2a2f0"
+    },
+    {
+      "name": "jl_corpus_predictions.csv",
+      "bytes": 282336,
+      "sha256": "3ff13a397f8f178cf9657085f720271dd09dcce2be276bd9db7e57a9c1a0bcbe",
+      "crc32": "789cb2e3"
+    },
+    {
+      "name": "jl_corpus_predictions.json",
+      "bytes": 3792,
+      "sha256": "2f668512c54e9da4e04fd59096fa7af37480569a1ecd77ddde4e1b918464b227",
+      "crc32": "c52d8d56"
+    },
+    {
+      "name": "mcae_spps_predictions.csv",
+      "bytes": 1392789,
+      "sha256": "56637c0e8da2848f85c5a87568121f3c996437f668b8cf86a12ca0446369ff1d",
+      "crc32": "2866dffd"
+    },
+    {
+      "name": "mcae_spps_predictions.json",
+      "bytes": 4305,
+      "sha256": "6c7a0baf8d86c59848f8d633c151946105813b796fb7f6c8f8dbe7bef9127c7e",
+      "crc32": "a356f7db"
+    },
+    {
+      "name": "mead_predictions.csv",
+      "bytes": 1608852,
+      "sha256": "17bc483451da6d5948c09ed84b3fa8c53c9d787071b3bba0b1b6cac77c21a0b4",
+      "crc32": "6ebc7812"
+    },
+    {
+      "name": "mead_predictions.json",
+      "bytes": 3928,
+      "sha256": "ad6d62349031d084d8145caa2cb8d4b25323dde21e983afe40515645efd55dab",
+      "crc32": "72579bfc"
+    },
+    {
+      "name": "meld_predictions.csv",
+      "bytes": 488825,
+      "sha256": "08e8d21b3b6f791dabc6e444bf8e7c60d452450a13f5c14e72b3d0fb5b39be81",
+      "crc32": "40f23633"
+    },
+    {
+      "name": "mess_predictions.csv",
+      "bytes": 287656,
+      "sha256": "c52c63ca8dad4ba4f7948cce967f05fd582dea885bee66c0351d6a111f182add",
+      "crc32": "1cc55f96"
+    },
+    {
+      "name": "mess_predictions.json",
+      "bytes": 3676,
+      "sha256": "78df3e79d0403a57862c079dbc83b99f25ddfe5343fea10b66e97d90640279d6",
+      "crc32": "aa681690"
+    },
+    {
+      "name": "multidialog_predictions.csv",
+      "bytes": 2119900,
+      "sha256": "392411353c6fd459e169a754763a211c9eb3d1a1337fcbbf84cf9fdb0ff54420",
+      "crc32": "3ff36dbc"
+    },
+    {
+      "name": "multidialog_predictions.json",
+      "bytes": 3905,
+      "sha256": "f6e30465743c02153f54c01e06d8ef47d95579d99e377fec506472012ee1f898",
+      "crc32": "087d057b"
+    },
+    {
+      "name": "nemo_predictions.csv",
+      "bytes": 810780,
+      "sha256": "9b7f7d121f886227007a4491b0141b6af7a0c2205470426d85efa742efd736d5",
+      "crc32": "ecab4d3c"
+    },
+    {
+      "name": "nemo_predictions.json",
+      "bytes": 3721,
+      "sha256": "b06bbb8733ec6bdbb6d1a66c0683d25b2d8295fbbb584dfab65f1e723ea4cdc3",
+      "crc32": "47200b22"
+    },
+    {
+      "name": "ravdess_predictions.csv",
+      "bytes": 303870,
+      "sha256": "5e5c8e7554e5e48f59d4faca5359cf2e277515cc082e442216c29d27e88de2a9",
+      "crc32": "d08058b0"
+    },
+    {
+      "name": "ravdess_predictions.json",
+      "bytes": 3928,
+      "sha256": "33e667703197f332a366ae1215895318b614464b5aebe67a5ac72db837a7c8e5",
+      "crc32": "5120cc5f"
+    },
+    {
+      "name": "savee_predictions.csv",
+      "bytes": 91308,
+      "sha256": "0e5a9561d7ce305319192806dcad0048a71460820914e784e97f7b09ead3cc88",
+      "crc32": "d443eb03"
+    },
+    {
+      "name": "savee_predictions.json",
+      "bytes": 3926,
+      "sha256": "ea1482547482190f6dc2581f75f4944a340b11453ae208fe9cb7ba8f5154c073",
+      "crc32": "1a3cfed6"
+    },
+    {
+      "name": "tess_predictions.csv",
+      "bytes": 521415,
+      "sha256": "119f5a0b82c9b73dc1696d7aa9cbcb8250e810c606d2908b8dab5c09717a1aec",
+      "crc32": "8a299723"
+    },
+    {
+      "name": "tess_predictions.json",
+      "bytes": 3907,
+      "sha256": "575b22193c1970b4b74f9ef00797c0951faab0ad11f999d6651e02bb2a0b4b71",
+      "crc32": "8ebee793"
+    },
+    {
+      "name": "thai_ser_predictions.csv",
+      "bytes": 2298716,
+      "sha256": "89e511822ca6d2439f0014754d619bc9d5eccddc816c89b356b0031d95009f56",
+      "crc32": "5aed6872"
+    },
+    {
+      "name": "thai_ser_predictions.json",
+      "bytes": 4059,
+      "sha256": "3eb2e8630c628fa8cb42663169be6fb8cd8158785ab1ba653209de039c9b69af",
+      "crc32": "e1464b22"
+    },
+    {
+      "name": "responses.jsonl",
+      "bytes": 45862203,
+      "sha256": "2bce3b6c9bc0cffd38f78524feab515adc712a3363517ab338cae16e64465ccd",
+      "crc32": "d8af07ea"
+    }
+  ],
+  "imported_at_utc": "2026-11-15T13:12:06.232822+00:00",
+  "imported_at_singapore": "2026-11-15T21:12:06.233588+08:00",
+  "backup_directory": "/private/tmp/gemma-before-final-import-y2pke1pp",
+  "replaced_previous_files": [
+    {
+      "name": "meld_predictions.csv",
+      "bytes": 491434,
+      "sha256": "d14695e0250fa2544534e2af90eee8dbf58d069f18a36b12e4dab2e95f167a5e"
+    },
+    {
+      "name": "meld_predictions.json",
+      "bytes": 3937,
+      "sha256": "67f164b466cee23a13761122649b427e7b261b4a8e383044214290a2a5814d72"
+    },
+    {
+      "name": "responses.jsonl",
+      "bytes": 1392255,
+      "sha256": "69506d170df2e702f18d75cb3f9a94ad9a8c18292e00ce6fd58141249f553307"
+    }
+  ],
+  "retained_metadata": {
+    "name": "meld_predictions.json",
+    "sha256": "67f164b466cee23a13761122649b427e7b261b4a8e383044214290a2a5814d72",
+    "reason": "Archive omits this JSON. Retained existing same-run metadata: all 2,608 CSV rows and every field match exactly; only CRLF-to-LF line endings differ. All 2,608 current-protocol raw response records match exactly. Retained metadata metrics independently verified against imported CSV."
+  },
+  "validation": {
+    "archive_crc": "passed",
+    "unsafe_paths": 0,
+    "executable_or_symlink_members": 0,
+    "dataset_pairs": 16,
+    "clips": 67062,
+    "full_evaluation_scope": true,
+    "current_protocol_matches": 16,
+    "csv_json_metrics_verified": 16,
+    "reference_model": "qwen2_audio_7b",
+    "reference_cohort_and_gold_matches": 16,
+    "raw_journal_records": 71936,
+    "raw_current_protocol_unique_records": 63936,
+    "raw_missing_records": 3126,
+    "raw_missing_by_dataset": {
+      "dailytalk": 1197,
+      "emotiontalk": 1929
+    },
+    "raw_label_mismatches_in_final_matching_record": 0,
+    "raw_matching_duplicate_records": 8000,
+    "raw_duplicate_scope": "MEAD has two matching-protocol records per path; the last record is compared with the final CSV.",
+    "raw_outside_prediction_paths": 0,
+    "raw_absolute_audio_paths": 69328,
+    "raw_path_validation": "For validation only, absolute source-machine prefixes are removed through the unique data/ component. The imported journal remains byte-for-byte unchanged; original machine paths are not rewritten.",
+    "meld_csv_newline_only_change": true,
+    "no_inference_or_archive_code_execution": true
+  },
+  "limitations": [
+    "The supplied responses journal has no EmotionTalk or DailyTalk records (3,126 clips total). Their predictions are verified against CSV/JSON metadata and aligned benchmark gold labels, but raw generated answers are unavailable in this archive.",
+    "Internal CSV/JSON/cache consistency does not independently authenticate original model execution."
+  ]
+}

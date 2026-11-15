@@ -8,8 +8,8 @@ module.exports = function (L, A) {
   {
     const s = L.slide(SEC, "Model Shortlist for Adaptation");
     const rows = [
-      ["Accuracy, corpora not in training", "51% (2 corpora)", "65% (5 corpora)"],
-      ["Accuracy, all 6 corpora (mean)", "76% (4 seen)", "68% (1 seen)"],
+      ["Accuracy, exposure not established", A.exposureMean("emotion2vec_plus_large", false), A.exposureMean("meralion_ser_v1", false)],
+      ["Accuracy, all 16 datasets (equal weight)", `${A.mean("emotion2vec_plus_large").toFixed(1)}%`, `${A.mean("meralion_ser_v1").toFixed(1)}%`],
       ["Parameters", "162.1M", A.mer?.params || "313.4M"],
       ["Backbone", "data2vec 2.0-style encoder (CNN + 12 Transformer blocks)", "Whisper-medium encoder + ECAPA-TDNN"],
       ["Classes", "9 (includes our 7)", "exactly our 7 + arousal, valence, dominance"],
@@ -19,28 +19,27 @@ module.exports = function (L, A) {
       ["Fine-tuning code", "none official; small PyTorch loop", A.mer?.code || "none official; small PyTorch loop"],
     ];
     L.table(s, ["", MODEL.e2v.name, MODEL.meralion.name], rows.map((r) => [{ text: r[0], bold: true }, r[1], r[2]]), { y: 1.4, colW: [3.1, 4.5, 4.53], fontSize: 12, rowH: 0.4 });
-    L.text(s, "Melati and Vox-Profile are excluded: non-commercial licences, and weaker on unseen data. The audio LLMs are excluded: far less accurate, and no control over the model.", MX, 6.35, W - 2 * MX, 0.6, { fontSize: 14, color: C.text });
-    L.notes(s, `Why these two. They are the two best models, they both allow commercial use, and they are complementary: emotion2vec+ is smaller and handles any clip length, and is strongest where it has seen similar data; MERaLiON generalises better to unseen corpora, matches our seven classes exactly and is multilingual.
-    Melati and Vox-Profile are research-only licences. The LLMs are not competitive and are black boxes.`);
+    L.text(s, "Operational shortlist for a local adaptation pilot; licence and deployment constraints matter alongside scores. Audio LLMs remain research comparators, with corpus-specific strengths.", MX, 6.35, W - 2 * MX, 0.6, { fontSize: 14, color: C.text });
+    L.notes(s, `These are operational candidates for a local pilot, not universally the top two systems. The two score rows are rebuilt from the current sixteen-dataset analysis, with equal dataset weights. Exposure not established is a provenance category, not confirmed unseen evaluation. Licence, memory, target-language performance and independent target labels must guide selection. Open audio LLMs can run locally and are inspectable; API systems have different deployment constraints.`);
   }
 
   // ---- Domain gap
   {
     const s = L.slide(SEC, "Domain Gap: Public Corpora vs Call-Centre Audio");
     const rows = [
-      ["Speech", "acted, exaggerated, one emotion per clip", "spontaneous, subtle, mixed and changing within a call"],
+      ["Speech", "acted, TV and performed dialogue sources; one category per utterance", "spontaneous, subtle, mixed and changing within a call"],
       ["Channel", "studio microphone, 16–48 kHz", "telephone, 8 kHz G.711, compression, noise"],
-      ["Length", "1–5 s sentences", "long turns: need segmentation (VAD) into 3–10 s pieces"],
-      ["Class balance", "balanced by design", "mostly neutral; angry or upset callers are rare but matter most"],
-      ["Labels", "the actor's intended emotion", "none: must be created by listeners"],
+      ["Length", "heterogeneous lengths; dataset medians about 1.2–5.6 s", "long turns: need segmentation (VAD) into 3–10 s pieces"],
+      ["Class balance", "balanced acted corpora and strongly skewed dialogue labels", "mostly neutral; angry or upset callers are rare but matter most"],
+      ["Labels", "intended, perceived or inherited labels, depending on the corpus", "none: must be created by listeners"],
     ];
     L.table(s, ["", "Public corpora (benchmark)", "Our customer calls"], rows.map((r) => [{ text: r[0], bold: true }, r[1], r[2]]), { y: 1.45, colW: [2.0, 4.9, 5.23], fontSize: 15, rowH: 0.58 });
     L.bullets(s, [
-      "Unseen-corpus accuracy (51–65%) is the realistic starting point, before any channel or spontaneity effects",
+      "Public benchmark scores cannot forecast internal-call accuracy; validate on independent target-domain labels",
       "Quick check before labelling: re-run the benchmark through a simulated telephone channel (G.711, already built for the deepfake work)",
     ], { y: 5.5, h: 1.45, fontSize: 17 });
     L.notes(s, `Everything that made the benchmark clean is different on our calls: spontaneous speech, the telephone channel, long turns, and a heavy neutral majority. And there are no labels.
-    So the realistic expectation is the unseen-corpus accuracy or lower. A cheap first experiment is to pass the benchmark through a simulated G.711 telephone channel, which we already implemented for the anti-deepfake evaluation, to measure the channel effect alone.`);
+    No fixed target-domain accuracy can be inferred from these public-corpus scores. A cheap first experiment is to pass the benchmark through a simulated G.711 telephone channel, which we already implemented for the anti-deepfake evaluation, to measure the channel effect alone.`);
   }
 
   // ---- Problem formulation
@@ -388,7 +387,7 @@ module.exports = function (L, A) {
         ["Measure κ in the seed round before scaling up", "Keep vote distributions as soft labels", "Merge rare or confusable classes if κ stays low"], C.accent2],
       ["Class imbalance", "Most call segments are neutral; angry segments, the most important ones, may be only a few percent.",
         ["Active learning targets clips predicted as rare emotions", "Class-weighted loss or balanced sampling", "Report unweighted accuracy and macro-F1, not accuracy"], C.accent],
-      ["Lexical content carries emotion", "The benchmark removed lexical cues on purpose; in real calls the words (\"this is ridiculous\") are informative, and acoustic models ignore them.",
+      ["Lexical content carries emotion", "Some benchmark corpora control the words; dialogue and call speech also carry semantic cues. Their contribution requires an explicit text/audio comparison.",
         ["Fuse the acoustic model with a text-emotion model on ASR transcripts", "Start with late fusion of the two probability vectors"], C.good],
       ["Telephone channel (8 kHz)", "Both models were trained on 16 kHz wideband speech; telephone audio has no content above 4 kHz.",
         ["Re-run the benchmark through a simulated G.711 channel to measure the drop", "Option E and fine-tuning on telephone audio", "Same resampling in training and inference"], C.accent],
@@ -407,7 +406,7 @@ module.exports = function (L, A) {
     L.notes(s, `Four challenges stand out.
     First, inter-rater agreement. Natural speech is far more ambiguous than acted speech, and agreement between listeners sets the ceiling for any model. We measure it in the seed round before scaling up, keep vote distributions as soft labels, and merge classes if agreement stays low.
     Second, class imbalance. Most segments are neutral, and angry segments, which matter most, may be only a few percent. Active learning deliberately looks for them, the loss is class-weighted, and we report unweighted accuracy and macro-F1 rather than plain accuracy.
-    Third, words matter in real calls. Our benchmark removed lexical cues on purpose, but customers often say what they feel, and purely acoustic models ignore it. Fusing the acoustic model with a text-emotion model on ASR transcripts is a clear opportunity; the LISTEN finding that LLMs rely on words becomes an asset here.
+    Third, words matter in real calls. Parallel-sentence corpora reduce lexical confounds; the dialogue datasets and customer speech can also convey emotion in words. Acoustic encoders are not guaranteed to ignore lexical content. Text/audio comparisons and fusion are proposed experiments, not established improvements.
     Fourth, the telephone channel. Both models were trained on 16 kHz speech; telephone audio has nothing above 4 kHz. We first measure the drop by re-running the benchmark through a simulated G.711 channel, then address it with continued pre-training and fine-tuning on telephone audio.`);
   }
 
@@ -488,9 +487,9 @@ module.exports = function (L, A) {
     const s = L.slide("Conclusion", "Summary");
     const items = [
       ["Emotion labels are subjective", "Listeners disagree with actors and with each other; annotation requires multiple listeners and soft labels."],
-      ["Dedicated SER models outperform audio LLMs", "Best open model 65–99.5% per corpus vs Gemini 27–45% and GPT Realtime 2–29%; audio LLMs rely on lexical content (consistent with LISTEN)."],
-      ["Training-data overlap inflates benchmark scores", "Corpora seen in training score 20–52 points higher; on call-centre audio, unseen-level accuracy (≈50–65%) is expected before adaptation."],
-      ["Shortlist: emotion2vec+ large and MERaLiON-SER-v1", "Highest accuracy, licences permitting commercial use, complementary strengths."],
+      ["Model rankings depend on corpus and metric", "Ten models complete all sixteen datasets. Dialogue-source gains coexist with strong failures on several acted corpora; inspect UAR and macro-F1 as well as Accuracy."],
+      ["Training provenance and label priors affect interpretation", "Documented corpus involvement does not prove test-clip leakage; unmarked is not certified unseen. Public results cannot establish internal-call accuracy."],
+      ["Shortlist: emotion2vec+ large and MERaLiON-SER-v1", "Candidates for a local adaptation pilot, subject to licence, operational requirements and independent target-domain validation."],
       ["Adaptation strategy", "Frozen encoder with a new head first (B), LoRA (C) from ≈5k and full fine-tuning (D) from ≥10k labelled clips on 4 × H100; unlabelled call audio through E / pseudo-labelling."],
       ["Annotation strategy", "1k seed clips × 4 listeners, then active learning on ≈100k unlabelled clips: 3–5k verified labels for B and C, ≥10k for D."],
     ];

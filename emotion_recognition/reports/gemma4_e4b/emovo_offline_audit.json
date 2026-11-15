@@ -1,0 +1,77 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.095855+00:00",
+  "model": "gemma4_e4b",
+  "key": "emovo",
+  "clips": 588,
+  "unique_audio_paths": 588,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/emovo_predictions.csv",
+      "sha256": "623762d9f398ace4b04baa9e419b57fd32f5e386a13ccc22f73b2ddb8e063f8e",
+      "bytes": 113255
+    },
+    {
+      "path": "outputs/gemma4_e4b/emovo_predictions.json",
+      "sha256": "a51ecbe1d563c02071c7aa13e0f6822eb9631b8df5e8cd10c653e272e1327c0f",
+      "bytes": 3905
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.142857,
+    "unweighted_accuracy": 0.142857,
+    "macro_f1": 0.047424,
+    "accuracy_all_classes": 0.142857
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.14285714285714285,
+    "unweighted_accuracy": 0.14285714285714285,
+    "macro_f1": 0.04742442830576724,
+    "weighted_f1": 0.047424428305767236,
+    "accuracy_all_classes": 0.14285714285714285
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 2,
+      "disgusted": 4,
+      "fearful": 8,
+      "happy": 21,
+      "neutral": 552,
+      "sad": 0,
+      "surprised": 1,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 84,
+      "disgusted": 84,
+      "fearful": 84,
+      "happy": 84,
+      "neutral": 84,
+      "sad": 84,
+      "surprised": 84
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

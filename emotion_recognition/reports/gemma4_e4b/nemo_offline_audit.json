@@ -1,0 +1,74 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.608185+00:00",
+  "model": "gemma4_e4b",
+  "key": "nemo",
+  "clips": 4481,
+  "unique_audio_paths": 4481,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/nemo_predictions.csv",
+      "sha256": "9b7f7d121f886227007a4491b0141b6af7a0c2205470426d85efa742efd736d5",
+      "bytes": 810780
+    },
+    {
+      "path": "outputs/gemma4_e4b/nemo_predictions.json",
+      "sha256": "b06bbb8733ec6bdbb6d1a66c0683d25b2d8295fbbb584dfab65f1e723ea4cdc3",
+      "bytes": 3721
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.180094,
+    "unweighted_accuracy": 0.170607,
+    "macro_f1": 0.110866,
+    "accuracy_all_classes": 0.180094
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.18009372907833074,
+    "unweighted_accuracy": 0.17060699486385209,
+    "macro_f1": 0.11086550489906427,
+    "weighted_f1": 0.11490927104591088,
+    "accuracy_all_classes": 0.18009372907833074
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "6c3ec6823d3d",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 58,
+      "fearful": 0,
+      "happy": 1004,
+      "neutral": 2943,
+      "sad": 396,
+      "surprised": 80,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 749,
+      "fearful": 736,
+      "happy": 749,
+      "neutral": 809,
+      "sad": 769,
+      "surprised": 669
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

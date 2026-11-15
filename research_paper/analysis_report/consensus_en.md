@@ -1,10 +1,10 @@
 # Can model agreement help select pseudo-labels?
 
-Updated: 2026-11-14 13:24 SGT.
+Updated: 2026-11-15 21:12 SGT.
 
-This analysis reuses 145 compatible saved prediction runs across 16 public datasets; no model was rerun.
-Model completion (datasets with a full run in the current evaluation scope / 16): Gemini 3.8 Flash 16/16; GPT Realtime 16/16; Each of the five SER models 16/16; Qwen2.5-Omni 16/16; Qwen2-Audio 16/16; Gemma 4 1/16.
-Datasets with every target member available: five-SER group 16; audio-LLM group 1; selected-model group 16. Group completeness requires results from every target member; available and missing members are listed below.
+This analysis reuses 160 compatible saved prediction runs across 16 public datasets; no model was rerun.
+Model completion (datasets with a full run in the current evaluation scope / 16): Gemini 3.8 Flash 16/16; GPT Realtime 16/16; Each of the five SER models 16/16; Each of the three local audio LLMs 16/16.
+Datasets with every target member available: five-SER group 16; audio-LLM group 16; selected-model group 16. Group completeness requires results from every target member; available and missing members are listed below.
 On the same MELD samples, unanimous accepted-label accuracy / coverage is: Five SER models 54.12% / 10.70%; Audio LLMs (including APIs) 72.87% / 12.58%; Selected models 70.38% / 27.19%.
 The selected models retain more samples, while their accepted-label accuracy is not the highest of the three groups.
 Public-data results do not establish accuracy on company calls; calibrate the group and threshold on a small manually labelled call sample first.
@@ -13,44 +13,67 @@ Coverage is the accepted share of common samples; accepted-label accuracy is the
 
 ## Reading the figures: one model group plus one vote rule defines a point
 
-The x-axis, Samples auto-labelled (%), is the share of the common audio cohort that passes the vote rule: accepted / common samples. The y-axis, Correct auto-labels (%), is the share of those selected labels matching the dataset reference: correct accepted / accepted. This is neither full-dataset accuracy nor a model's confidence score. Auto-labelling here is a simulated selection on benchmark data.
+The x-axis, Coverage (% of clips labelled), is the share of the common audio cohort that passes the vote rule and receives an agreed label: accepted / common samples. The y-axis, Accuracy of agreed labels (%), is the share of those labels matching the dataset reference: correct accepted / accepted. This is neither full-dataset accuracy nor a model's confidence score. Auto-labelling here is a simulated selection on benchmark data.
 
 A point at 20% x and 97% y means that out of 1,000 clips, about 200 receive candidate labels: 194 correct and six wrong, with 800 unselected. Unlabelled internal audio has no known y-value; independent human verification is needed.
 
-A model group alone does not define the result: the minimum vote count must also be fixed. The three five-SER points mean at least 3/5, at least 4/5 and all 5/5 agreeing. They are not repetitions of one rule, and their common-cohort denominator is unchanged. The 3/5 rule includes four- and five-vote cases; 4/5 includes five-vote cases. Raising the threshold cannot increase coverage, but need not improve accuracy. Lines only guide the eye between discrete rules; intermediate coverage is not an evaluated rule.
+A model group alone does not define the result: the minimum vote count must also be fixed. The three five-SER points mean at least 3/5, at least 4/5 and all 5/5 agreeing. They are not repetitions of one rule, and their common-cohort denominator is unchanged. The 3/5 rule includes four- and five-vote cases; 4/5 includes five-vote cases. Raising the threshold cannot increase coverage, but need not improve accuracy. The leftmost point of each line is unanimity and the rightmost is strict majority. Lines only guide the eye between discrete rules; intermediate coverage is not an evaluated rule.
 
 CREMA-D, always the same 7,442 clips:
 
-| Five-SER rule | Selected | Correct / wrong | x: selected share | y: selected-label accuracy |
+| Five-SER rule | Selected | Correct / wrong | x: coverage | y: accuracy of agreed labels |
 |---|---:|---:|---:|---:|
 | ≥3/5 | 5,843 | 4,177 / 1,666 | 78.51% | 71.49% |
 | ≥4/5 | 2,523 | 2,331 / 192 | 33.90% | 92.39% |
-| ≥5/5 | 1,448 | 1,415 / 33 | 19.46% | 97.72% |
+| 5/5 | 1,448 | 1,415 / 33 | 19.46% | 97.72% |
 
-Colour identifies members, not a quality ranking: blue SER5 is the five SER models; orange Selected3 is emotion2vec+, Gemini and Qwen2.5-Omni; green SER+API7 adds GPT Realtime and Gemini to SER5; pink All10 includes all ten models; dark-purple AudioLLM4 is GPT, Gemini, Qwen2.5-Omni and Qwen2-Audio. Selected3 is a legacy name, not an optimality claim.
+Colour identifies members, not a quality ranking; colours are colour-blind-safe Okabe–Ito hues and each group also has a fixed marker shape. Main groups: blue circles SER5 (the five SER models); orange triangles LLM3 (Qwen2.5-Omni, Qwen2-Audio, Gemma 4); green diamonds AudioLLM5 (LLM3 + GPT Realtime + Gemini); reddish-purple squares All10 (all ten models). Appendix groups: vermillion Selected3 (emotion2vec+, Gemini, Qwen2.5-Omni); sky-blue SER+API7 (SER5 + GPT Realtime + Gemini); indigo AudioLLM4 (GPT, Gemini, Qwen2.5-Omni, Qwen2-Audio). Selected3 is a legacy name, not an optimality claim. Hollow markers and dashed lines mark a group with missing members on that dataset (voting with the available members); tables mark it with *.
 
 Align the rules before comparing colours. Strict majority means 3/5, 2/3, 4/7 or 6/10: different agreement fractions, potentially different selected samples and labels. If five SER models vote three for the correct label and two for a wrong label, two APIs voting for that wrong label turn the result into three correct votes against four wrong votes. Adding models can change the answer, and majority acceptance sets need not shrink.
 
 On the same common cohort, 7/7 unanimity is a subset of 5/5, and 10/10 is a subset of both 7/7 and 3/3: coverage cannot increase. Selected-label accuracy improves only when added models preferentially reject wrong labels rather than correct ones; shared errors or label preferences can prevent that.
 
-For example, CREMA-D blue 3/5 selects 5,843 clips at 71.49% accuracy; green 4/7 selects 5,481 at 52.51%. This changes the voters and minimum vote count rather than simply applying a tighter version of the same filter.
+For example, CREMA-D SER5 ≥3/5 selects 5,843 clips at 71.49% accuracy; SER+API7 ≥4/7 selects 5,481 at 52.51%. This changes the voters and minimum vote count rather than simply applying a tighter version of the same filter.
 
 An observed CREMA-D example: 5/5 selects 1,448 clips (1,415 correct, 33 wrong). Requiring both APIs to agree leaves 758 (738 correct, 20 wrong). The added condition retains 52.16% of the original correct cases but 60.61% of the errors, changing precision from 97.72% to 97.36%.
 
-Matched MELD endpoints: unanimity on the identical common cohort.
+Matched MELD endpoints: unanimity of the four main groups, all members present, identical common cohort.
 
-| Group | Rule | Selected | Correct / wrong | Selected share | Selected-label accuracy |
+| Group | Rule | Selected | Correct / wrong | Coverage | Accuracy of agreed labels |
 |---|---|---:|---:|---:|---:|
 | SER5 | 5/5 | 279 | 151 / 128 | 10.70% | 54.12% |
-| Selected3 | 3/3 | 709 | 499 / 210 | 27.19% | 70.38% |
-| SER_API7 | 7/7 | 184 | 109 / 75 | 7.06% | 59.24% |
+| LLM3 | 3/3 | 560 | 373 / 187 | 21.47% | 66.61% |
+| AudioLLM5 | 5/5 | 328 | 239 / 89 | 12.58% | 72.87% |
 | All10 | 10/10 | 79 | 56 / 23 | 3.03% | 70.89% |
 
-The pink curve is not an average of the others: every point recounts all ten model votes. MELD 10/10 selects only 79 clips, including 23 errors. It trades much lower coverage for an observed accuracy close to Selected3 at 3/3, rather than automatically becoming optimal. Its other points are 6/10 through 9/10 and should not be treated as the same rule as another group's unanimous endpoint.
+All10 is not an average of the other curves: every point recounts all ten model votes. MELD 10/10 selects only 79 clips (3.03% coverage), including 23 errors. The highest unanimous accuracy of the four groups is AudioLLM5 5/5: 72.87% at 12.58% coverage. Adding members lowers coverage but does not by itself guarantee higher accuracy; intermediate points (e.g. 6/10 to 9/10) are different rules from another group's unanimous endpoint.
 
 Five-SER unanimity reaches an observed 95% accepted-label accuracy on 8/16 datasets. Agreement can select reliable labels in some domains, but does not guarantee high accuracy across datasets, and adding members need not improve it. The supplement adds 4/5 votes, fixed mixed-family groups, error counts and class distributions; every threshold is retained without selecting a best rule on these evaluation labels.
 
-Results use each dataset's configured evaluation scope, not necessarily the entire source corpus: THAI-SER uses high_agreement and MEAD uses stratified_8000. Member availability does not imply full-source-corpus coverage. AudioLLM5 membership varies across datasets, so it is not pooled as a fixed ensemble. Selected3 is the legacy group name, not a claim that it is optimal in this refresh.
+Results use each dataset's configured evaluation scope, not necessarily the entire source corpus: THAI-SER uses high_agreement and MEAD uses stratified_8000. Member availability does not imply full-source-corpus coverage. Every target member of AudioLLM5, LLM3 and All10 now covers all 16 datasets, so each group's model membership is fixed across datasets. Selected3 is the legacy group name, not a claim that it is optimal in this refresh.
+
+## Main groups: unanimous coverage and accuracy
+
+The four groups are fixed by model family: SER5 = the five SER models; LLM3 = the three open audio LLMs (Qwen2.5-Omni 7B, Qwen2-Audio 7B Instruct, Gemma 4 E4B); AudioLLM5 = LLM3 + GPT Realtime + Gemini 3.8 Flash; All10 = all ten models. When members are missing, LLM3, AudioLLM5 and All10 vote with the available members (at least two); the rule shows the participating count (e.g. 2/2, 4/4, 9/9) and * marks it. Datasets with every member: SER5 16/16; LLM3 16/16; AudioLLM5 16/16; All10 16/16.
+
+| Dataset | SER5 rule | Coverage | Accuracy | LLM3 rule | Coverage | Accuracy | AudioLLM5 rule | Coverage | Accuracy | All10 rule | Coverage | Accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| CREMA-D | 5/5 | 19.46% | 97.72% | 3/3 | 14.59% | 93.65% | 5/5 | 11.95% | 93.36% | 10/10 | 8.86% | 98.79% |
+| MCAE-SPPS | 5/5 | 15.13% | 94.46% | 3/3 | 6.05% | 67.57% | 5/5 | 3.63% | 71.90% | 10/10 | 0.63% | 97.62% |
+| THAI-SER | 5/5 | 24.59% | 96.02% | 3/3 | 9.34% | 87.44% | 5/5 | 7.64% | 94.92% | 10/10 | 2.62% | 99.04% |
+| nEMO | 5/5 | 13.68% | 83.36% | 3/3 | 1.92% | 36.05% | 5/5 | 1.03% | 39.13% | 10/10 | 0.20% | 77.78% |
+| MESS | 5/5 | 17.06% | 68.73% | 3/3 | 35.22% | 33.12% | 5/5 | 28.56% | 35.41% | 10/10 | 6.22% | 80.36% |
+| RAVDESS | 5/5 | 20.83% | 95.33% | 3/3 | 12.71% | 99.45% | 5/5 | 8.40% | 100.00% | 10/10 | 3.75% | 100.00% |
+| TESS | 5/5 | 11.79% | 100.00% | 3/3 | 8.61% | 99.17% | 5/5 | 4.25% | 99.16% | 10/10 | 0.00% | — |
+| JL-Corpus | 5/5 | 22.67% | 99.63% | 3/3 | 19.83% | 49.16% | 5/5 | 13.92% | 50.30% | 10/10 | 3.92% | 100.00% |
+| MEAD | 5/5 | 8.22% | 91.19% | 3/3 | 20.61% | 26.20% | 5/5 | 11.85% | 25.00% | 10/10 | 1.31% | 90.48% |
+| MELD | 5/5 | 10.70% | 54.12% | 3/3 | 21.47% | 66.61% | 5/5 | 12.58% | 72.87% | 10/10 | 3.03% | 70.89% |
+| EMOVO | 5/5 | 20.24% | 98.32% | 3/3 | 3.40% | 40.00% | 5/5 | 3.23% | 42.11% | 10/10 | 1.02% | 100.00% |
+| Emozionalmente | 5/5 | 15.27% | 96.68% | 3/3 | 2.98% | 44.66% | 5/5 | 1.71% | 57.63% | 10/10 | 0.57% | 94.87% |
+| SAVEE | 5/5 | 15.83% | 98.68% | 3/3 | 21.04% | 65.35% | 5/5 | 12.50% | 90.00% | 10/10 | 6.46% | 100.00% |
+| EmotionTalk | 5/5 | 12.13% | 83.33% | 3/3 | 11.98% | 73.59% | 5/5 | 9.33% | 80.00% | 10/10 | 2.70% | 96.15% |
+| DailyTalk | 5/5 | 26.40% | 87.66% | 3/3 | 41.10% | 78.86% | 5/5 | 27.74% | 83.13% | 10/10 | 10.86% | 94.62% |
+| MultiDialog | 5/5 | 30.03% | 73.57% | 3/3 | 24.52% | 68.10% | 5/5 | 17.74% | 73.03% | 10/10 | 7.59% | 83.33% |
 
 ## Five SER models
 
@@ -83,29 +106,28 @@ This group waits until every member is available.
 
 Target members: GPT Realtime, Gemini 3.8 Flash, Qwen2.5-Omni, Qwen2-Audio, Gemma 4.
 
-the 15 datasets other than MELD: GPT Realtime, Gemini 3.8 Flash, Qwen2.5-Omni, Qwen2-Audio; awaiting: Gemma 4.
-MELD: all target members.
+16 datasets: all target members.
 
 * marks a group missing other members; available members are included. Consensus is calculated when at least two members are available.
 
 | Dataset | Participating / target members | Common samples | Unanimous coverage | Unanimous accuracy | Majority coverage | Majority accuracy |
 |---|---:|---:|---:|---:|---:|---:|
-| CREMA-D | 4/5* | 7,442 | 12.66% | 93.63% | 54.64% | 34.19% |
-| MCAE-SPPS | 4/5* | 6,675 | 4.69% | 69.97% | 39.36% | 44.04% |
-| THAI-SER | 4/5* | 11,848 | 11.20% | 95.40% | 60.53% | 75.46% |
-| nEMO | 4/5* | 4,481 | 1.32% | 37.29% | 34.72% | 23.46% |
-| MESS | 4/5* | 1,800 | 28.61% | 35.34% | 84.33% | 26.42% |
-| RAVDESS | 4/5* | 1,440 | 12.78% | 100.00% | 48.96% | 67.80% |
-| TESS | 4/5* | 2,800 | 4.29% | 99.17% | 36.89% | 47.92% |
-| JL-Corpus | 4/5* | 1,200 | 16.33% | 54.08% | 55.83% | 40.15% |
-| MEAD | 4/5* | 8,000 | 13.41% | 27.03% | 61.51% | 17.21% |
+| CREMA-D | 5/5 | 7,442 | 11.95% | 93.36% | 93.72% | 20.59% |
+| MCAE-SPPS | 5/5 | 6,675 | 3.63% | 71.90% | 73.27% | 30.22% |
+| THAI-SER | 5/5 | 11,848 | 7.64% | 94.92% | 80.46% | 65.02% |
+| nEMO | 5/5 | 4,481 | 1.03% | 39.13% | 72.68% | 21.19% |
+| MESS | 5/5 | 1,800 | 28.56% | 35.41% | 99.17% | 25.04% |
+| RAVDESS | 5/5 | 1,440 | 8.40% | 100.00% | 83.82% | 48.05% |
+| TESS | 5/5 | 2,800 | 4.25% | 99.16% | 82.93% | 24.63% |
+| JL-Corpus | 5/5 | 1,200 | 13.92% | 50.30% | 84.42% | 32.28% |
+| MEAD | 5/5 | 8,000 | 11.85% | 25.00% | 85.39% | 16.02% |
 | MELD | 5/5 | 2,608 | 12.58% | 72.87% | 75.73% | 56.71% |
-| EMOVO | 4/5* | 588 | 3.74% | 45.45% | 45.58% | 31.34% |
-| Emozionalmente | 4/5* | 6,902 | 2.36% | 62.58% | 32.54% | 37.49% |
-| SAVEE | 4/5* | 480 | 15.42% | 86.49% | 59.58% | 42.66% |
-| EmotionTalk | 4/5* | 1,929 | 17.68% | 72.73% | 54.69% | 68.72% |
-| DailyTalk | 4/5* | 1,197 | 29.82% | 81.23% | 69.76% | 78.20% |
-| MultiDialog | 4/5* | 7,672 | 19.66% | 70.95% | 67.86% | 65.39% |
+| EMOVO | 5/5 | 588 | 3.23% | 42.11% | 85.20% | 20.36% |
+| Emozionalmente | 5/5 | 6,902 | 1.71% | 57.63% | 71.08% | 23.46% |
+| SAVEE | 5/5 | 480 | 12.50% | 90.00% | 83.54% | 33.17% |
+| EmotionTalk | 5/5 | 1,929 | 9.33% | 80.00% | 71.38% | 67.39% |
+| DailyTalk | 5/5 | 1,197 | 27.74% | 83.13% | 90.56% | 75.74% |
+| MultiDialog | 5/5 | 7,672 | 17.74% | 73.03% | 89.31% | 62.92% |
 
 ## Selected models
 
@@ -182,48 +204,40 @@ AudioLLM4 = GPT Realtime, Gemini, Qwen2.5-Omni and Qwen2-Audio. This supplementa
 
 ## Fixed groups across model families
 
-SER+API7 = five SER models + GPT Realtime + Gemini; All10 = five SER models + all five audio LLM/API models. Both supplemental groups wait for every member. The table reports unanimity; the CSV contains all integer thresholds. Direct group comparisons require identical common audio-path cohorts.
+SER+API7 = five SER models + GPT Realtime + Gemini and waits for every member. All10 = five SER models + all five audio LLM/API models; like AudioLLM5 and LLM3 it votes with the available members (at least two), so the rule shows the participating count (e.g. 9/9) and * marks missing members. The table reports unanimity; the CSV contains all integer thresholds. Direct group comparisons require identical common audio-path cohorts.
 
-| Dataset | SER+API7 common | 7/7 accepted / errors | Coverage | Accuracy | All10 common | 10/10 accepted / errors | Coverage | Accuracy |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| CREMA-D | 7,442 | 758 / 20 | 10.19% | 97.36% | Pending | — | — | — |
-| MCAE-SPPS | 6,675 | 181 / 4 | 2.71% | 97.79% | Pending | — | — | — |
-| THAI-SER | 11,848 | 1,595 / 43 | 13.46% | 97.30% | Pending | — | — | — |
-| nEMO | 4,481 | 360 / 61 | 8.03% | 83.06% | Pending | — | — | — |
-| MESS | 1,800 | 265 / 80 | 14.72% | 69.81% | Pending | — | — | — |
-| RAVDESS | 1,440 | 112 / 5 | 7.78% | 95.54% | Pending | — | — | — |
-| TESS | 2,800 | 0 / 0 | 0.00% | — | Pending | — | — | — |
-| JL-Corpus | 1,200 | 104 / 1 | 8.67% | 99.04% | Pending | — | — | — |
-| MEAD | 8,000 | 327 / 34 | 4.09% | 89.60% | Pending | — | — | — |
-| MELD | 2,608 | 184 / 75 | 7.06% | 59.24% | 2,608 | 79 / 23 | 3.03% | 70.89% |
-| EMOVO | 588 | 54 / 1 | 9.18% | 98.15% | Pending | — | — | — |
-| Emozionalmente | 6,902 | 463 / 13 | 6.71% | 97.19% | Pending | — | — | — |
-| SAVEE | 480 | 57 / 0 | 11.88% | 100.00% | Pending | — | — | — |
-| EmotionTalk | 1,929 | 161 / 16 | 8.35% | 90.06% | Pending | — | — | — |
-| DailyTalk | 1,197 | 206 / 12 | 17.21% | 94.17% | Pending | — | — | — |
-| MultiDialog | 7,672 | 1,745 / 370 | 22.75% | 78.80% | Pending | — | — | — |
+| Dataset | SER+API7 common | 7/7 accepted / errors | Coverage | Accuracy | All10 rule | All10 common | Unanimous accepted / errors | Coverage | Accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| CREMA-D | 7,442 | 758 / 20 | 10.19% | 97.36% | 10/10 | 7,442 | 659 / 8 | 8.86% | 98.79% |
+| MCAE-SPPS | 6,675 | 181 / 4 | 2.71% | 97.79% | 10/10 | 6,675 | 42 / 1 | 0.63% | 97.62% |
+| THAI-SER | 11,848 | 1,595 / 43 | 13.46% | 97.30% | 10/10 | 11,848 | 311 / 3 | 2.62% | 99.04% |
+| nEMO | 4,481 | 360 / 61 | 8.03% | 83.06% | 10/10 | 4,481 | 9 / 2 | 0.20% | 77.78% |
+| MESS | 1,800 | 265 / 80 | 14.72% | 69.81% | 10/10 | 1,800 | 112 / 22 | 6.22% | 80.36% |
+| RAVDESS | 1,440 | 112 / 5 | 7.78% | 95.54% | 10/10 | 1,440 | 54 / 0 | 3.75% | 100.00% |
+| TESS | 2,800 | 0 / 0 | 0.00% | — | 10/10 | 2,800 | 0 / 0 | 0.00% | — |
+| JL-Corpus | 1,200 | 104 / 1 | 8.67% | 99.04% | 10/10 | 1,200 | 47 / 0 | 3.92% | 100.00% |
+| MEAD | 8,000 | 327 / 34 | 4.09% | 89.60% | 10/10 | 8,000 | 105 / 10 | 1.31% | 90.48% |
+| MELD | 2,608 | 184 / 75 | 7.06% | 59.24% | 10/10 | 2,608 | 79 / 23 | 3.03% | 70.89% |
+| EMOVO | 588 | 54 / 1 | 9.18% | 98.15% | 10/10 | 588 | 6 / 0 | 1.02% | 100.00% |
+| Emozionalmente | 6,902 | 463 / 13 | 6.71% | 97.19% | 10/10 | 6,902 | 39 / 2 | 0.57% | 94.87% |
+| SAVEE | 480 | 57 / 0 | 11.88% | 100.00% | 10/10 | 480 | 31 / 0 | 6.46% | 100.00% |
+| EmotionTalk | 1,929 | 161 / 16 | 8.35% | 90.06% | 10/10 | 1,929 | 52 / 2 | 2.70% | 96.15% |
+| DailyTalk | 1,197 | 206 / 12 | 17.21% | 94.17% | 10/10 | 1,197 | 130 / 7 | 10.86% | 94.62% |
+| MultiDialog | 7,672 | 1,745 / 370 | 22.75% | 78.80% | 10/10 | 7,672 | 582 / 97 | 7.59% | 83.33% |
 
-## Figures: separate vote thresholds from group membership
+## Figures
 
-The five-SER threshold plot labels each minimum vote count; MELD uses a separate panel for each group. Bar charts follow the benchmark's dataset order, coloured bars and value labels, with larger black text. Unanimity bars include the now-complete AudioLLM4 and exclude the variable-membership AudioLLM5.
+Four figures, each as PNG (300 dpi) and SVG. Every group keeps its colour and marker shape in all figures and slides; hollow markers and dashed lines mark a group with missing members on that dataset, voting with the available members (* in the heat map). Points on a line are minimum vote counts: the leftmost is unanimity and the rightmost strict majority. All panels share the axes Coverage (% of clips labelled) and Accuracy of agreed labels (%). Explanations stay in this report and the slides, not inside the figures.
 
-![Five-SER vote thresholds](figures/consensus_accuracy_coverage.png)
+![Accuracy–coverage trade-off of the four main groups by dataset](figures/consensus_tradeoff_by_dataset.png)
 
-![MELD model groups and vote thresholds](figures/consensus_meld_accuracy_coverage.png)
+![MELD, identical cohort: every vote threshold of the four main groups](figures/consensus_meld_tradeoff.png)
 
-![Accuracy of unanimous auto-labels](figures/consensus_unanimous_accuracy_by_dataset.png)
+![Unanimous accuracy and coverage by dataset and main group](figures/consensus_unanimous_by_dataset.png)
 
-![Share of clips with unanimous auto-labels](figures/consensus_unanimous_coverage_by_dataset.png)
+![Appendix groups Selected3, SER+API7 and AudioLLM4 by dataset](figures/consensus_tradeoff_extra_groups.png)
 
-![Five-SER accuracy by minimum votes](figures/consensus_ser5_accuracy_by_votes.png)
-
-![Five-SER auto-labelling share by minimum votes](figures/consensus_ser5_coverage_by_votes.png)
-
-![Four-audio-LLM accuracy by minimum votes](figures/consensus_audiollm4_accuracy_by_votes.png)
-
-![Four-audio-LLM auto-labelling share by minimum votes](figures/consensus_audiollm4_coverage_by_votes.png)
-
-Bar labels round to whole percentages; tables and CSVs retain full precision. n/a indicates missing group members. With zero selected clips, coverage is 0% but accuracy is undefined, not 0%.
+Heat-map values round to whole percentages; tables and CSVs retain full precision. With zero selected clips, coverage is 0% but accuracy is undefined (shown as —), not 0%.
 
 
 ## Interpretation for labelling and the paper

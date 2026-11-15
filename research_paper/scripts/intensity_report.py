@@ -106,6 +106,105 @@ def _mead_class_diagnostics(data, zh):
     return lines
 
 
+def _interval_class(low, high):
+    if low is None or high is None:
+        return "withheld"
+    return "positive" if float(low) > 0 else "negative" if float(high) < 0 else "includes_zero"
+
+
+def contrast_summary(data):
+    """Counts behind the heat maps (shared by the report and the slides); contrast rows come from the analysis."""
+    rows = data.get("contrast_rows", [])
+    out = {"pairs": len(rows), "observed_positive": sum(r["observed_change_pp"] > 0 for r in rows), "datasets": {}}
+    for row in rows:
+        entry = out["datasets"].setdefault(row["dataset"], {"models": 0, "observed_positive": 0,
+            "adjusted": {"positive": 0, "negative": 0, "includes_zero": 0, "withheld": 0},
+            "matched": {"positive": 0, "negative": 0, "includes_zero": 0, "withheld": 0},
+            "neutral_majority_low": 0, "low_label": row["low_label"], "high_label": row["high_label"]})
+        entry["models"] += 1
+        entry["observed_positive"] += row["observed_change_pp"] > 0
+        entry["adjusted"][_interval_class(row["adjusted_ci_lower_pp"], row["adjusted_ci_upper_pp"])] += 1
+        if row.get("matched_pairs"):
+            entry["matched"][_interval_class(row["matched_ci_lower_pp"], row["matched_ci_upper_pp"])] += 1
+        entry["neutral_majority_low"] += (row.get("low_neutral_rate") or 0) > .5
+    return out
+
+
+def _contrast_lines(data, zh, dataset_name, model_name):
+    summary = contrast_summary(data)
+    if not summary["pairs"]:
+        return []
+    small = sorted({f"{dataset_name(r['dataset'])} {str(r['level_label']).replace('ECSS level ', 'level ')} "
+                    f"({int(r['n'])}{' 条' if zh else ' clips'})" for r in data["level_rows"] if int(r["n"]) < 20})
+    parts = []
+    for dataset, entry in summary["datasets"].items():
+        adjusted = entry["adjusted"]
+        if adjusted["withheld"] == entry["models"]:
+            tail = "区间不展示" if zh else "intervals withheld"
+        else:
+            tail = (f"调整后区间 {adjusted['positive']} 个高于 0、{adjusted['negative']} 个低于 0、{adjusted['includes_zero']} 个含 0"
+                    if zh else f"adjusted interval above 0 for {adjusted['positive']}, below 0 for {adjusted['negative']}, "
+                    f"including 0 for {adjusted['includes_zero']}")
+        low, high = (str(entry[k]).replace("ECSS level ", "level ") for k in ("low_label", "high_label"))
+        parts.append(f"{dataset_name(dataset)} {low}→{high}："
+                     f"上升 {entry['observed_positive']}/{entry['models']}，{tail}" if zh else
+                     f"{dataset_name(dataset)} {low}→{high}: "
+                     f"{entry['observed_positive']}/{entry['models']} higher, {tail}")
+    if zh:
+        return ["", "![最弱到最强显示等级的分类正确率变化](figures/emotion_intensity_change.png)", "",
+                "第一张热图直接比较每个模型在最弱与最强显示等级（各至少 20 条）的 Accuracy 差，单位为百分点，"
+                "不做调整；MCAE-SPPS 比较听众评分最低与最高四分位。" + ("不足 20 条、未显示的层：" + "、".join(small) + "。" if small else "") +
+                f"{summary['pairs']} 个模型–数据集组合中有 {summary['observed_positive']} 个在更强等级更准确。"
+                "后面的调整热图把类别平衡并调整时长的斜率乘以两个等级的原生距离，白色括号格表示区间含 0 或不展示。"
+                "各组合：" + "；".join(parts) + "。"]
+    return ["", "![Accuracy change from the weakest to the strongest displayed level](figures/emotion_intensity_change.png)", "",
+            "The first heat map compares each model's Accuracy at the weakest and strongest displayed level (each with "
+            "at least 20 clips), in percentage points and without adjustment. MCAE-SPPS compares the lowest and highest "
+            "listener-rating quartiles. " + ("Strata with fewer than 20 clips are not shown: " + ", ".join(small) + ". " if small else "") +
+            f"{summary['observed_positive']} of {summary['pairs']} model–dataset pairs are more accurate at the stronger "
+            "level. The adjusted heat map further below multiplies the class-balanced, duration-adjusted slope by the "
+            "native distance between the two levels; white cells in brackets mark intervals that include 0 or are withheld. "
+            "By dataset: " + "; ".join(parts) + "."]
+
+
+def _neutral_lines(data, zh, dataset_name, model_name):
+    rows = [r for r in data.get("contrast_rows", []) if r.get("low_neutral_rate") is not None]
+    if not rows:
+        return []
+    def pct(value):
+        return f"{100 * float(value):.0f}%"
+    picks = []
+    for dataset in ("crema_d", "ravdess"):
+        chosen = sorted((r for r in rows if r["dataset"] == dataset), key=lambda r: -r["low_neutral_rate"])[:2]
+        picks += [f"{model_name(r['model'])} {dataset_name(dataset)} {pct(r['low_neutral_rate'])} → {pct(r['high_neutral_rate'])}"
+                  for r in chosen]
+    rare_rows = [r for r in rows if r["dataset"] == "crema_d" and r["low_neutral_rate"] < .05]
+    rare = sorted(model_name(r["model"]) for r in rare_rows)
+    rare_range = (f"{pct(min(r['low_accuracy'] for r in rare_rows))}–{pct(max(r['low_accuracy'] for r in rare_rows))}"
+                  if rare_rows else "—")
+    summary = contrast_summary(data)["datasets"]
+    crema = summary.get("crema_d", {})
+    if zh:
+        return ["", "### 弱表达常被答成 neutral", "",
+                "下图统计非 neutral 参考音频中模型回答 neutral 的比例（空心为最弱等级，实心为最强等级）。"
+                f"CREMA-D 最弱等级有 {crema.get('neutral_majority_low', 0)}/{crema.get('models', 0)} 个模型把一半以上的情绪音频答成 neutral，"
+                "例如 " + "，".join(picks) + "。"
+                f"很少回答 neutral 的模型（CREMA-D 最弱等级低于 5%：{', '.join(rare)}）在最弱等级已有 {rare_range} 的 Accuracy。"
+                "这说明更强表达带来的正确率上升，很大一部分是‘不再听成中性’；弱表演对人类听者也可能接近中性，"
+                "因此这不一定是模型错误。", "",
+                "![情绪音频被回答为 neutral 的比例](figures/emotion_intensity_neutral.png)"]
+    return ["", "### Weak expressions are often answered neutral", "",
+            "The figure shows the share of non-neutral reference clips that a model answered neutral (open circle: "
+            f"weakest level; filled: strongest). At the weakest CREMA-D level, {crema.get('neutral_majority_low', 0)} of "
+            f"{crema.get('models', 0)} models answer neutral for more than half of the emotional clips, for example "
+            + ", ".join(picks) + ". "
+            f"Models that rarely answer neutral (under 5% at the weakest CREMA-D level: {', '.join(rare)}) are already "
+            f"{rare_range} accurate at that level. Much of the accuracy gain at higher strength is therefore no longer hearing the clip as neutral; a "
+            "weak acted expression may sound close to neutral to human listeners as well, so this is not necessarily a "
+            "model error.", "",
+            "![Emotional clips answered neutral](figures/emotion_intensity_neutral.png)"]
+
+
 def render_report(data, language):
     """Return Markdown for the data contract supplied by intensity_analysis.py."""
     zh = language == "zh"
@@ -233,6 +332,8 @@ def render_report(data, language):
                   "Level columns report category Accuracy; n is the number of clips in that stratum. The two effect "
                   "columns give class-balanced and additionally duration-adjusted percentage-point changes. They measure "
                   "association with correct classification, not intensity-prediction accuracy."]
+    lines += _contrast_lines(data, zh, dataset_name, model_name)
+    lines += _neutral_lines(data, zh, dataset_name, model_name)
     focus_models = [model for model in ("qwen2_audio_7b", "qwen2_5_omni_7b") if model in models]
     if focus_models:
         lines += ["", "### Qwen2-Audio 与 Qwen2.5-Omni 的跨语料观察" if zh else
@@ -322,7 +423,13 @@ def render_report(data, language):
             clusters = b.get("nclusters", "—") if b else a.get("nclusters", "—") if a else "—"
             lines.append("| " + " | ".join([model_name(model), *cells, _effect(a), _effect(b), str(clusters)]) + " |")
     lines += ["", "![Emotion-category accuracy by native intensity](figures/emotion_intensity_accuracy.png)", "",
-              "![Class- and duration-adjusted intensity associations](figures/emotion_intensity_associations.png)", ""]
+              ("类别平衡并调整时长后的最弱→最强变化（斜率 × 原生等级距离；白色括号格：区间含 0 或不展示）：" if zh else
+               "Class-balanced, duration-adjusted change from the weakest to the strongest level (slope × native level "
+               "distance; white cells in brackets: interval includes 0 or is withheld):"), "",
+              "![Class- and duration-adjusted intensity associations](figures/emotion_intensity_associations.png)", "",
+              ("每个原生单位的调整斜率与 95% 区间（MCAE-SPPS 少于 20 个聚类，不画区间）：" if zh else
+               "Adjusted slopes per native unit with 95% intervals (MCAE-SPPS has fewer than 20 clusters, so no interval):"), "",
+              "![Adjusted per-unit intensity slopes with intervals](figures/emotion_intensity_forest.png)", ""]
     if zh:
         lines += ["## 同键高低强度对照", "",
                   "另检查同一内容键内较高与较低强度的分类正确率差。CREMA-D 的键固定演员、IEO 句子与情绪；"

@@ -1,0 +1,83 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.207136+00:00",
+  "model": "gemma4_e4b",
+  "key": "emozionalmente",
+  "clips": 6902,
+  "unique_audio_paths": 6902,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/emozionalmente_predictions.csv",
+      "sha256": "1b2af1774ee6ff84e378bb6ec14f27a9482d3a86b318d2ebf53ef15c6fa6ae5d",
+      "bytes": 1634186
+    },
+    {
+      "path": "outputs/gemma4_e4b/emozionalmente_predictions.json",
+      "sha256": "35d4fb4b1bdc2165e757254a636ddecaa5f8b607bc025c83a44fd9a1a7fed77a",
+      "bytes": 4357
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.169081,
+    "unweighted_accuracy": 0.169081,
+    "macro_f1": 0.100972,
+    "accuracy_all_classes": 0.169081,
+    "accuracy_acted_or_listener": 0.257172,
+    "listeners_vs_acted": 0.812187,
+    "model_vs_listeners": 0.219977
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.16908142567371776,
+    "unweighted_accuracy": 0.16908142567371778,
+    "macro_f1": 0.10097161329319485,
+    "weighted_f1": 0.10097161329319486,
+    "accuracy_all_classes": 0.16908142567371776,
+    "accuracy_acted_or_listener": 0.25717183425094176,
+    "listeners_vs_acted": 0.8121868433812833,
+    "model_vs_listeners": 0.21997737190884112
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 44,
+      "disgusted": 28,
+      "fearful": 2,
+      "happy": 1436,
+      "neutral": 4786,
+      "sad": 187,
+      "surprised": 419,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 986,
+      "disgusted": 986,
+      "fearful": 986,
+      "happy": 986,
+      "neutral": 986,
+      "sad": 986,
+      "surprised": 986
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

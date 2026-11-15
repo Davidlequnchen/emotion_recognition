@@ -4,7 +4,7 @@
 
 **2026-11-06 按方案 B 更新**：13 个数据集（新加 SAVEE；ESD 不在范围内），THAI-SER 只用一致率 ≥ 0.71 的片段，MEAD 分层取 8,000 条，所有模型都一样；API 模型现在跑每个数据集的全部片段（不再抽 200 条）。下面的音频量、费用和运行时间都按方案 B 算：56,264 条、52.2 小时，全部实测。
 
-**2026-11-13 更新**：基准现在有 16 个数据集。三个对话数据集 EmotionTalk（官方 test，1,929 条）、DailyTalk（validation，1,197 条）和 MultiDialog（`gold_both`，7,672 条）加入后共 67,062 条。GPT Realtime（`gpt-realtime`）、Gemini 3.8 Flash（`gemini-3.8-flash`）和 Qwen2.5-Omni 7B 已有全部 16 个数据集的结果；Qwen2-Audio 7B Instruct 正在跑，Gemma 4 E4B 会重跑（进度和数字见 [reports/summary.md](../reports/summary.md)）。GPT Realtime 和 Gemini 已经跑完，所以删去了它们的价格行和费用估算。下面的音频量和费用仍只算方案 B 的 13 个数据集；候选模型如果加跑这 10,798 条对话片段，费用会增加：API 按音频时长计费，单 MultiDialog 就有约 13.1 小时（方案 B 共 52.2 小时），所以增幅会超过 19% 的条数比例，具体没有重新估算。
+**2026-11-15 更新**：基准现在有 16 个数据集。三个对话数据集 EmotionTalk（官方 test，1,929 条）、DailyTalk（validation，1,197 条）和 MultiDialog（`gold_both`，7,672 条）加入后共 67,062 条。包含五个 SER 模型、GPT Realtime（`gpt-realtime`）、Gemini 3.8 Flash（`gemini-3.8-flash`）、Qwen2.5-Omni 7B、Qwen2-Audio 7B Instruct 和最终 Gemma 4 E4B 在内的全部 10 个模型均已完成全部 16 个数据集，共 160 组当前协议结果（进度和数字见 [reports/summary.md](../reports/summary.md)）。GPT Realtime 和 Gemini 已经跑完，所以删去了它们的价格行和费用估算。下面的音频量和费用仍只算方案 B 的 13 个数据集；候选模型如果加跑这 10,798 条对话片段，费用会增加：API 按音频时长计费，单 MultiDialog 就有约 13.1 小时（方案 B 共 52.2 小时），所以增幅会超过 19% 的条数比例，具体没有重新估算。
 
 调研日期：2026-11-05。目标：在 5 个 SER 模型、GPT Realtime、Gemini 和正在接入的 3 个本地音频大模型（Qwen2.5-Omni-7B、Qwen2-Audio-7B-Instruct、Gemma 4 E4B-it）之后，决定本项目的基准测试下一步加哪些音频大模型：走 API 要花多少钱，在这里跑需要什么硬件，接入有多难。
 前提：只做学术研究，所以非商用许可可以接受（标出来，不排除）。硬件：Mac M4 Max 48 GB；确定有 NVIDIA L40（48 GB）；可能有 NVIDIA L4（24 GB）和 4×H100 80 GB。

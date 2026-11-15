@@ -1,0 +1,83 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.312744+00:00",
+  "model": "gemma4_e4b",
+  "key": "mcae_spps",
+  "clips": 6675,
+  "unique_audio_paths": 6675,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/mcae_spps_predictions.csv",
+      "sha256": "56637c0e8da2848f85c5a87568121f3c996437f668b8cf86a12ca0446369ff1d",
+      "bytes": 1392789
+    },
+    {
+      "path": "outputs/gemma4_e4b/mcae_spps_predictions.json",
+      "sha256": "6c7a0baf8d86c59848f8d633c151946105813b796fb7f6c8f8dbe7bef9127c7e",
+      "bytes": 4305
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.187116,
+    "unweighted_accuracy": 0.150644,
+    "macro_f1": 0.068763,
+    "accuracy_all_classes": 0.187116,
+    "accuracy_acted_or_listener": 0.187116,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.187116
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.18711610486891386,
+    "unweighted_accuracy": 0.15064426080287127,
+    "macro_f1": 0.06876327228048783,
+    "weighted_f1": 0.08297463555349148,
+    "accuracy_all_classes": 0.18711610486891386,
+    "accuracy_acted_or_listener": 0.18711610486891386,
+    "listeners_vs_acted": 1.0,
+    "model_vs_listeners": 0.18711610486891386
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "neutral": 6139,
+      "happy": 67,
+      "angry": 59,
+      "fearful": 0,
+      "sad": 210,
+      "disgusted": 48,
+      "surprised": 152,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "neutral": 1196,
+      "happy": 785,
+      "angry": 1129,
+      "fearful": 671,
+      "sad": 1187,
+      "disgusted": 738,
+      "surprised": 969
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

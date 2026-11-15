@@ -1,0 +1,77 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.086673+00:00",
+  "model": "gemma4_e4b",
+  "key": "emotiontalk",
+  "clips": 1929,
+  "unique_audio_paths": 1929,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/emotiontalk_predictions.csv",
+      "sha256": "c1494ecaf3f9beca303d0944e660c459e67158563e07f8742a46d7ee88cfb25c",
+      "bytes": 450838
+    },
+    {
+      "path": "outputs/gemma4_e4b/emotiontalk_predictions.json",
+      "sha256": "264917613bc9a53afa1f2b3f0de973bb1bef37eeea9db474423519545852401d",
+      "bytes": 3878
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.51633,
+    "unweighted_accuracy": 0.290652,
+    "macro_f1": 0.293999,
+    "accuracy_all_classes": 0.51633
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.5163297045101088,
+    "unweighted_accuracy": 0.29065209639908113,
+    "macro_f1": 0.2939991771623189,
+    "weighted_f1": 0.47883308725842044,
+    "accuracy_all_classes": 0.5163297045101088
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 274,
+      "disgusted": 33,
+      "fearful": 5,
+      "happy": 125,
+      "neutral": 1256,
+      "sad": 191,
+      "surprised": 45,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 345,
+      "disgusted": 137,
+      "fearful": 89,
+      "happy": 177,
+      "neutral": 944,
+      "sad": 94,
+      "surprised": 143
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

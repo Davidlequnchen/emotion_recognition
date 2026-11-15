@@ -1,0 +1,77 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.667837+00:00",
+  "model": "gemma4_e4b",
+  "key": "tess",
+  "clips": 2800,
+  "unique_audio_paths": 2800,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/tess_predictions.csv",
+      "sha256": "119f5a0b82c9b73dc1696d7aa9cbcb8250e810c606d2908b8dab5c09717a1aec",
+      "bytes": 521415
+    },
+    {
+      "path": "outputs/gemma4_e4b/tess_predictions.json",
+      "sha256": "575b22193c1970b4b74f9ef00797c0951faab0ad11f999d6651e02bb2a0b4b71",
+      "bytes": 3907
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.145,
+    "unweighted_accuracy": 0.145,
+    "macro_f1": 0.04072,
+    "accuracy_all_classes": 0.145
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.145,
+    "unweighted_accuracy": 0.145,
+    "macro_f1": 0.04072037638022783,
+    "weighted_f1": 0.040720376380227824,
+    "accuracy_all_classes": 0.145
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 2,
+      "disgusted": 21,
+      "fearful": 0,
+      "happy": 2,
+      "neutral": 2772,
+      "surprised": 3,
+      "sad": 0,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 400,
+      "disgusted": 400,
+      "fearful": 400,
+      "happy": 400,
+      "neutral": 400,
+      "surprised": 400,
+      "sad": 400
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

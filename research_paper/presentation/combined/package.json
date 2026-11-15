@@ -1,0 +1,12 @@
+{
+  "name": "research-analyses-combined-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "One deck from the consensus, cross-dataset, intensity and venue decks (rebuilt from their sources)",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "jszip": "^3.10.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

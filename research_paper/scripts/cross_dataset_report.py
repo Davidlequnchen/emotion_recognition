@@ -91,6 +91,32 @@ def _evidence(row, zh):
     return "方向未确定，区间跨 0" if zh else "Direction unresolved; interval crosses 0"
 
 
+def _gap(first, second, metric):
+    """Difference of one-decimal equal-dataset means in percentage points, or None if a side is empty."""
+    if not first or not second:
+        return None
+    mean = lambda rows: round(100 * sum(float(row[metric]) for row in rows) / len(rows), 1)
+    return round(mean(first) - mean(second), 1)
+
+
+def group_checks(models, datasets, model):
+    """Language gap within acted corpora, and the setting gap with and without documented training exposure."""
+    rows = [row for row in models if row["model"] == model]
+    if len(rows) != len(datasets):
+        return {}
+    acted = [row for row in rows if row["dataset"] not in CONVERSATIONS]
+    english = [row for row in acted if datasets[row["dataset"]].get("language") == "English"]
+    other = [row for row in acted if datasets[row["dataset"]].get("language") != "English"]
+    clean = [row for row in rows if row.get("training_status") not in ("confirmed_exposure", "probable_exposure")]
+    clean_conv = [row for row in clean if row["dataset"] in CONVERSATIONS]
+    clean_acted = [row for row in clean if row["dataset"] not in CONVERSATIONS]
+    pair = lambda a, b: " / ".join(_decimal(_gap(a, b, metric), 1, signed=True) for metric in ("accuracy", "uar"))
+    return {"language_acted": pair(english, other),
+            "setting_all": pair([row for row in rows if row["dataset"] in CONVERSATIONS], acted),
+            "setting_clean": pair(clean_conv, clean_acted),
+            "kept": f"{len(clean_conv)} + {len(clean_acted)}"}
+
+
 def render_report(data, language):
     """Return Markdown for ``language='zh'`` or ``'en'`` from analysis dictionaries.
 
@@ -119,13 +145,22 @@ def render_report(data, language):
     present_conversations = [key for key in CONVERSATIONS if key in ds]
     model_name = lambda model: names.get(model, model)
     dataset_name = lambda key: ds.get(key, {}).get("name", key)
+    # Models without all datasets (e.g. a re-run in progress); every sentence about them follows the data.
+    partial = [model for model in order if model not in full and any(row["model"] == model for row in models)]
+    covered = {model: [row["dataset"] for row in models if row["model"] == model] for model in partial}
+
+    def coverage(model):
+        present = covered.get(model, [])
+        if len(present) <= 3:
+            return ("、" if zh else ", ").join(dataset_name(key) for key in present)
+        return f"{len(present)}/{len(datasets)} 个数据集" if zh else f"{len(present)}/{len(datasets)} datasets"
+
+    partial_names = ("、" if zh else ", ").join(model_name(model) for model in partial)
 
     def row_for(model, fit, cluster="dataset"):
         candidates = [row for row in effects if row["model"] == model and row["fit"] == fit
                       and row["cluster_kind"] == cluster]
-        scope = "16 datasets" if model in full else "MELD only"
-        return next((row for row in candidates if row.get("scope") == scope),
-                    candidates[0] if candidates else {})
+        return candidates[0] if candidates else {}
 
     def best_ser(key, metric):
         candidates = [mr[(key, model)] for model in SER_MODELS if (key, model) in mr
@@ -150,11 +185,13 @@ def render_report(data, language):
     selected = manifest.get("selected_run_count", len(models))
     out.append((f"生成时间：{generated}（Singapore）。本报告复核 {len(datasets)} 个数据集、"
                 f"{total_n:,} 条不同音频及 {selected} 个采用的 model–dataset runs。"
-                f"{len(full)} 个模型覆盖全部数据集；Gemma 4 当前只提供 MELD 结果。"
+                f"{len(full)} 个模型覆盖全部数据集" + "".join(f"；{model_name(m)} 当前只提供 {coverage(m)} 结果"
+                                                          for m in partial) + "。"
                 "所有数字来自已经保存的预测与音频文件元数据，本次分析没有重新运行模型或调用 API。") if zh else
                (f"Generated: {generated} (Singapore). This report audits {len(datasets)} datasets, "
                 f"{total_n:,} distinct clips and {selected} selected model–dataset runs. "
-                f"{len(full)} models cover all datasets; Gemma 4 currently contributes MELD only. "
+                f"{len(full)} models cover all datasets" + "".join(f"; {model_name(m)} currently contributes {coverage(m)} only"
+                                                            for m in partial) + ". "
                 "All results use saved predictions and audio-file metadata; this analysis runs no new inference or API requests."))
     out.append("## 1. 先校正对四个对话数据集的观察" if zh else
                "## 1. First, refine the observation about the four conversational datasets")
@@ -224,9 +261,15 @@ def render_report(data, language):
                "## 2. Actual duration distributions and model input windows")
     out.append("![十六数据集原始音频时长分布](figures/duration_distributions.png)" if zh else
                "![Raw audio duration distributions across sixteen datasets](figures/duration_distributions.png)")
+    out.append("图中每个面板为一个数据集，柱高是各时长区间的音频占比（不是概率密度），橙色为对话语料、蓝色为表演语料，"
+               "黑色竖线标出中位数。为了让 16 pt 的刻度在小面板中可读，图中把 10–15、15–30 与 ≥30 s 合并为 ≥10 s；"
+               "下表保留精确分位数。" if zh else
+               "Each panel is one dataset; bar heights are the share of its clips in each duration bin (not a density), "
+               "orange marks conversational and blue acted corpora, and the black line marks the median. To keep 16 pt tick "
+               "labels legible in small panels, the figure pools the 10–15, 15–30 and ≥30 s bins into ≥10 s; the table keeps the exact quantiles.")
     duration_rows = [[row.get("name", row["dataset"]), row.get("language", "—"),
-                      ("对话" if row["conversation"] else "非对话") if zh else
-                      ("Conversational" if row["conversation"] else "Other"), _integer(row["n"]),
+                      ("对话" if row["conversation"] else "表演") if zh else
+                      ("Conversational" if row["conversation"] else "Acted"), _integer(row["n"]),
                       _decimal(row.get("median_seconds")),
                       f"{_decimal(row.get('q25_seconds'))}–{_decimal(row.get('q75_seconds'))}",
                       _decimal(row.get("q95_seconds")), _percent(row.get("pct_under3"), 1),
@@ -263,23 +306,49 @@ def render_report(data, language):
 
     out.append("## 3. 英语与非英语、对话与非对话：等数据集比较" if zh else
                "## 3. English/non-English and conversational/other settings: equal-dataset comparisons")
-    out.append("![语言与对话类型分组表现](figures/language_context_performance.png)" if zh else
-               "![Performance grouped by language and conversational setting](figures/language_context_performance.png)")
+    out.append("![对话与表演语料的分组表现](figures/performance_by_setting.png)" if zh else
+               "![Performance on conversational versus acted corpora](figures/performance_by_setting.png)")
+    out.append("![英语与非英语语料的分组表现](figures/performance_by_language.png)" if zh else
+               "![Performance on English versus non-English corpora](figures/performance_by_language.png)")
+    out.append("两张热图给出每组的等数据集平均 Accuracy 与 UAR，以及两组之差 Δ（百分点）：橙色表示在对话（或英语）语料上更高，"
+               "蓝色表示在表演（或非英语）语料上更高；Δ 由图中显示的一位小数均值相减，因此每行可以直接核对。"
+               "非对话的 12 套语料都是表演或众包演绎的单句语料，所以图中称为“表演”；macro-F1 见下表。" if zh else
+               "The two heat maps show equal-dataset mean Accuracy and UAR per group and the difference Δ in percentage points: "
+               "orange means higher on conversational (or English) corpora, blue higher on acted (or non-English) corpora. "
+               "Δ subtracts the displayed one-decimal means, so every row adds up as printed. The 12 non-conversational corpora "
+               "are all acted or crowd-acted single utterances, hence the label Acted; the table adds macro-F1.")
     out.append((f"下面只比较覆盖全部 {len(datasets)} 个数据集的 {len(full)} 个模型，每套数据集在组内权重相同，"
-                "而非让大数据集贡献更多样本权重；Gemma 4 不参加这项比较。每格依次为 Accuracy / UAR / macro-F1。"
+                "而非让大数据集贡献更多样本权重" + (f"；{partial_names} 不参加这项比较" if partial else "") +
+                "。每格依次为 Accuracy / UAR / macro-F1。"
                 "这些是所选语料的描述统计，类别数、类别语义、标注方式和训练接触情况并未被分组消除，"
                 "不同组的平均值不是同一任务难度下的语言效应。") if zh else
                (f"This comparison includes only the {len(full)} models covering all {len(datasets)} datasets and gives each "
-                "dataset equal weight within a group; larger corpora do not dominate through clip count. Gemma 4 is excluded. "
+                "dataset equal weight within a group; larger corpora do not dominate through clip count. " +
+                (f"{partial_names} {'is' if len(partial) == 1 else 'are'} excluded. " if partial else "") +
                 "Each cell is Accuracy / UAR / macro-F1. These are descriptive means for the selected corpora. "
                 "Grouping does not remove differences in class inventory, label meaning, annotation or training exposure, "
                 "so a group difference is not an isolated language effect at matched task difficulty."))
-    out.append(_table((["模型", "英语", "非英语", "对话", "非对话"] if zh else
-                       ["Model", "English", "Non-English", "Conversational", "Other"]),
+    out.append(_table((["模型", "英语", "非英语", "对话", "表演"] if zh else
+                       ["Model", "English", "Non-English", "Conversational", "Acted"]),
                       [[model_name(model), group_cell(model, "language", "English"),
                         group_cell(model, "language", "non_English"),
                         group_cell(model, "context", "conversational"),
                         group_cell(model, "context", "non_conversational")] for model in full]))
+    checks = [(model, check) for model in full if (check := group_checks(models, ds, model))]
+    if checks:
+        out.append("两项拆分检查：其一只在 12 套表演语料内比较英语与非英语，去掉对话语料对语言分组的混入；"
+                   "其二只保留训练来源审查中未发现训练接触（not_established）的 runs，再比较对话与表演。"
+                   "两者都是同一批已保存结果的描述性均值，Δ 由一位小数均值相减。" if zh else
+                   "Two splitting checks: the first compares English with non-English corpora within the 12 acted corpora only, "
+                   "removing the conversational corpora from the language contrast; the second keeps only runs whose training "
+                   "provenance review found no documented exposure (not_established) before comparing conversational with acted corpora. "
+                   "Both are descriptive means of the same saved results; Δ subtracts one-decimal means.")
+        out.append(_table((["模型", "英语 − 非英语，仅表演语料（Acc / UAR）", "对话 − 表演，全部 runs（Acc / UAR）",
+                            "对话 − 表演，排除训练接触（Acc / UAR）", "保留数据集（对话 + 表演）"] if zh else
+                           ["Model", "English − non-English, acted only (Acc / UAR)", "Conversational − acted, all runs (Acc / UAR)",
+                            "Conversational − acted, no documented exposure (Acc / UAR)", "Datasets kept (conv. + acted)"]),
+                          [[model_name(model), check["language_acted"], check["setting_all"], check["setting_clean"],
+                            check["kept"]] for model, check in checks]))
     out.append("所有模型本次均输入单条 utterance，没有前后轮次、说话人历史或视频；“对话数据集”只描述录音来源，"
                "不表示模型在做带上下文的对话情绪识别。MELD 来自影视对话；DailyTalk 与 MultiDialog 为依据脚本表演的对话，"
                "EmotionTalk 也包含基于情境的演员表演，不能把四者都称为 spontaneous speech。DailyTalk 的情绪类别继承文本对话标签，"
@@ -295,8 +364,21 @@ def render_report(data, language):
 
     out.append("## 4. 核心检验：较长音频是否与更高正确率相关？" if zh else
                "## 4. Primary test: is longer audio associated with higher correctness?")
-    out.append("![控制数据集与真实类别后的时长关联及敏感性](figures/duration_effects.png)" if zh else
-               "![Duration associations adjusted for dataset and gold class, with sensitivities](figures/duration_effects.png)")
+    out.append("![全部音频合并与逐数据集比较的时长关联](figures/duration_effects.png)" if zh else
+               "![Duration association with all clips pooled versus within each dataset](figures/duration_effects.png)")
+    single = [model for model in partial if len(covered[model]) < 2]
+    out.append("左图把所有数据集的音频合并后直接拟合一条斜率，不做任何调整；数据集之间的时长与难度同时不同，"
+               "所以它混合了“哪个语料更难”与“同一语料中更长的音频是否更容易”。右图是主分析：只在同一数据集、同一真实类别内比较长短音频。"
+               "圆点为估计值，横线为按数据集聚类的 95% 区间，竖线为 0（没有关联）。" +
+               "".join(f"{model_name(m)} 只有 {coverage(m)}，没有跨数据集区间，因此不在此图中。" for m in single)
+               if zh else
+               "The left panel fits one slope to all clips of all datasets, without any adjustment. Datasets differ in both clip "
+               "length and difficulty, so this slope mixes which corpus is harder with whether longer clips within a corpus are easier. "
+               "The right panel is the primary analysis: it only compares longer and shorter clips within the same dataset and gold class. "
+               "Dots are estimates, bars dataset-clustered 95% intervals, and the vertical line is 0 (no association)." +
+               (f" {', '.join(model_name(m) for m in single)} {'has' if len(single) == 1 else 'have'} only "
+                f"{'; '.join(coverage(m) for m in single)} and no across-dataset interval, so {'it is' if len(single) == 1 else 'they are'} "
+                "not in this figure." if single else ""))
     out.append("主分析拟合 `correct = 数据集×真实类别截距 + β·log2(原始时长)`，采用加权组内去均值。"
                "权重使每个数据集的总权重相同，并使一个数据集内各真实类别的总权重相同；这样既避免大语料主导，"
                "也避免 neutral 等多数类单独决定斜率。代价是稀有类别中每条样本会获得较大权重，所以必须同时查看未平衡估计与逐数据集结果。"
@@ -309,13 +391,15 @@ def render_report(data, language):
                "β is reported in percentage points (pp) of correctness per doubling: +2 pp uses the same association unit for 2→4 s and 4→8 s. "
                "It is not a probability prediction or evidence that lengthening a particular clip improves correctness by 2 pp.")
     out.append("主要 95% 区间使用以数据集为 cluster 的 CR1 标准误与 `t(G−1)` 分布；完整模型只有 16 个数据集单位，"
-               "这比把数万条音频视为独立证据更保守，但仍依赖数据集 cluster 的建模假设，不自动推广到任意新语料。"
-               "Gemma 4 只有 MELD 一个数据集，因此保留其描述性斜率，不生成数据集聚类区间。区间与 p 值未做多重比较校正，"
-               "不应按单个显著结果挑选结论。" if zh else
+               "这比把数万条音频视为独立证据更保守，但仍依赖数据集 cluster 的建模假设，不自动推广到任意新语料。" +
+               "".join(f"{model_name(m)} 只有 {coverage(m)} 一个数据集，因此保留其描述性斜率，不生成数据集聚类区间。" for m in single) +
+               "区间与 p 值未做多重比较校正，不应按单个显著结果挑选结论。" if zh else
                "Primary 95% intervals use dataset-clustered CR1 standard errors and t(G−1). Complete models have only sixteen "
                "dataset units, rather than tens of thousands of independent clips. This still depends on the cluster assumptions "
-               "and does not guarantee generalization to arbitrary new corpora. Gemma 4 has one dataset, MELD, so its descriptive "
-               "slope is retained without a dataset-clustered interval. Intervals and p-values are not multiplicity-adjusted; "
+               "and does not guarantee generalization to arbitrary new corpora. " +
+               "".join(f"{model_name(m)} has one dataset, {coverage(m)}, so its descriptive slope is retained without a "
+                       "dataset-clustered interval. " for m in single) +
+               "Intervals and p-values are not multiplicity-adjusted; "
                "individual favorable results must not be selected as the conclusion.")
     primary_rows = []
     positive, negative, unresolved, no_interval = [], [], [], []
@@ -364,6 +448,36 @@ def render_report(data, language):
     out.append(_table((["模型", "合并样本", "组内未平衡", "组内平衡（主分析）", "说话人/对话聚类敏感性"] if zh else
                        ["Model", "Pooled", "Within strata, unbalanced", "Within strata, balanced (primary)", "Speaker/dialogue clustering sensitivity"]),
                       sensitivity_rows))
+    window_rows = []
+    unresolved_window = []
+    for model in order:
+        window = row_for(model, "balanced_within_dataset_gold_1to15")
+        if not window:
+            continue
+        window_rows.append([model_name(model), _integer(window.get("n")),
+                            _decimal(window.get("slope_pp"), signed=True), _ci(window), _evidence(window, zh)])
+        main = row_for(model, "balanced_within_dataset_gold")
+        main_lo, window_lo, window_hi = (_number(row.get(key)) for row, key in
+                                       ((main, "ci_lower_pp"), (window, "ci_lower_pp"), (window, "ci_upper_pp")))
+        if main_lo is not None and main_lo > 0 and window_lo is not None and window_hi is not None \
+                and window_lo <= 0 <= window_hi:
+            unresolved_window.append(model_name(model))
+    if window_rows:
+        out.append("输入窗口敏感性：另将原始时长限制在 1–15 s，重新计算保留样本中的数据集/类别平衡权重，"
+                   "使用同样的固定效应与数据集聚类区间。这样移除极短音频及超过最短本地模型窗口的长音频，"
+                   "但仍未统一 padding、pooling、静音比例或 API 的内部处理。该子集估计与全范围主分析的样本组成不同。" if zh else
+                   "Input-window sensitivity restricts original duration to 1–15 s, recomputes dataset/class-balanced weights "
+                   "within retained clips and uses the same fixed effects and dataset-clustered intervals. This removes very "
+                   "short clips and clips beyond the shortest local window, while padding, pooling, silence and API internals "
+                   "remain unmatched. The subset has a different sample composition from the primary full-range fit.")
+        out.append(_table((["模型", "1–15 s 样本数", "β pp/翻倍", "95% CI", "解释"] if zh else
+                           ["Model", "Clips of 1–15 s", "β pp/doubling", "95% CI", "Interpretation"]), window_rows))
+        if unresolved_window:
+            out.append(("、".join(unresolved_window) + " 的全范围主区间完全高于 0，但 1–15 s 子集区间跨 0；"
+                        "这项正关联没有在该范围检查中保持明确方向，不能声称所有时长范围均有稳定收益。") if zh else
+                       (", ".join(unresolved_window) + " have positive full-range primary intervals, but their 1–15 s "
+                        "intervals cross zero. The direction is unresolved in that range check; a stable benefit across "
+                        "duration ranges is not established."))
     out.append("每格为斜率与 95% CI，单位均为 pp/时长翻倍。Pooled 不控制数据集或类别，可出现 Simpson reversal："
                "较长录音来自更难语料，会让总斜率为负，即使同一数据集同一类别内为正，反向情况也可能出现。"
                "说话人/对话 cluster 使用带数据集命名空间的可恢复 ID，只检查同人/同对话相关性对区间的影响；"
@@ -375,6 +489,19 @@ def render_report(data, language):
                "train/test split, evaluate new speakers, or replace the primary uncertainty across datasets.")
     out.append("![逐数据集时长关联的异质性](figures/duration_within_dataset_slopes.png)" if zh else
                "![Heterogeneity in duration associations across datasets](figures/duration_within_dataset_slopes.png)")
+    with_ci = [key for key in ds if any(r["dataset"] == key and _number(r.get("ci_lower_pp")) is not None
+                                        for r in dataset_effects)]
+    out.append("热图每行是一个模型、每列是一个数据集（顺序同基准图：对话、英语表演、其他语言，粗竖线分隔），"
+               "格内为该数据集内控制真实类别后的斜率（pp/时长翻倍，取整显示；超过 ±50 的格显示为 ≥50 / ≤−50，精确值见 CSV）。颜色在 ±20 pp 处饱和：橙色表示较长音频正确率较高，"
+               "蓝色表示较低；粗体表示该数据集的 95% 区间不含 0，只有说话人/对话 cluster 不少于 20 的数据集能计算区间（"
+               + "、".join(dataset_name(key) for key in with_ci) + "）；“—”表示尚无结果。粗体未做多重比较校正。" if zh else
+               "Each row of the heat map is a model and each column a dataset (benchmark order: conversational, English acted, "
+               "other languages, separated by thick lines). Cells show the within-dataset slope adjusted for gold class "
+               "(pp per doubling, rounded to integers; cells beyond ±50 show ≥50 / ≤−50, exact values are in the CSV). "
+               "Colours saturate at ±20 pp: orange means higher accuracy on longer clips, "
+               "blue lower. Bold marks a per-dataset 95% interval that excludes 0; intervals exist only for datasets with at least "
+               "20 speaker/dialogue clusters (" + ", ".join(dataset_name(key) for key in with_ci) + "). A dash means no result yet. "
+               "Bold cells are not multiplicity-adjusted.")
     out.append("主表中的“正斜率数据集”仅为可识别点估计的方向计数，不是显著结果计数，也不保证每套数据集均有同方向关联。"
                "逐数据集图展示这种异质性；单一共同斜率只是摘要，不能代替各领域、各类别的错误分析。"
                "时长变化范围很窄的语料可产生很大的单位斜率，例如 RAVDESS；超过 100 pp/翻倍的系数"
@@ -399,6 +526,10 @@ def render_report(data, language):
                "## 5. What raw bins and correlations of dataset medians can tell us")
     out.append("![按原始时长分箱的实际 Accuracy](figures/accuracy_by_duration.png)" if zh else
                "![Observed Accuracy by raw-duration bin](figures/accuracy_by_duration.png)")
+    out.append("与时长分布图相同，图中把 10–15、15–30 与 ≥30 s 合并为 ≥10 s（由各区间的正确数与样本数相加），"
+               "CSV 保留全部八个区间。" if zh else
+               "As in the duration distribution figure, the plot pools the 10–15, 15–30 and ≥30 s bins into ≥10 s (summing "
+               "correct counts and clips); the CSV keeps all eight bins.")
     out.append("时长分箱图的 x 轴是原始音频时长区间，y 轴是该区间内预测正确的样本比例；只有至少 50 条音频的点才展示。"
                "它便于定位短音频或长音频的错误集中位置，但分箱后的真实类别和数据集混合比例仍会变化，"
                "不是在相同音频上增加信息的实验。不能把曲线的上升或下降直接解释为时长造成的改善或退化。" if zh else
@@ -412,11 +543,14 @@ def render_report(data, language):
                         correlation_cell(model, "macro_f1")] for model in full]))
     out.append("这些 Spearman 相关性把每套数据集作为一个点，仅有 16 个点，衡量“典型时长较长的语料是否更容易”。"
                "它与逐音频、控制数据集与真实类别的主检验回答不同问题；较高相关性可由语料难度、标签先验和语言构成造成。"
-               "p 值为未校正的探索性描述，不能据此选择部署时长阈值；Gemma 4 只有一个点，不计算跨数据集相关性。" if zh else
+               "p 值为未校正的探索性描述，不能据此选择部署时长阈值" +
+               (f"；{partial_names} 尚未覆盖全部数据集，不计算跨数据集相关性" if partial else "") + "。" if zh else
                "These Spearman correlations treat each corpus as one point, only sixteen points, asking whether corpora with "
                "longer typical clips are easier. That differs from the clip-level within-dataset/gold-class question. "
                "Corpus difficulty, label priors and language composition can generate such correlations. The unadjusted p-values "
-               "are exploratory and do not establish a deployment duration threshold. Gemma 4 has one point and receives no cross-dataset correlation.")
+               "are exploratory and do not establish a deployment duration threshold." +
+               (f" {partial_names} {'does' if len(partial) == 1 else 'do'} not cover all datasets yet and "
+                f"{'receives' if len(partial) == 1 else 'receive'} no cross-dataset correlation." if partial else ""))
 
     out.append("## 6. 模型差异的可检验解释与当前证据边界" if zh else
                "## 6. Testable explanations for model differences and the limits of current evidence")
@@ -433,12 +567,14 @@ def render_report(data, language):
     out.append(_table((["模型", "数据集数", "平均 invalid", "最高 invalid", "仅有效输出 Accuracy − 总 Accuracy (pp)"] if zh else
                        ["Model", "Datasets", "Mean invalid", "Maximum invalid", "Valid-only Accuracy − overall (pp)"]),
                       diagnostic_rows))
-    out.append("上表为各模型已完成数据集的等权均值，Gemma 4 的一套语料均值不能与其余模型的十六套语料均值公平排名。"
+    out.append("上表为各模型已完成数据集的等权均值" +
+               "".join(f"，{model_name(m)} 的 {coverage(m)} 均值不能与其余模型的十六套语料均值公平排名" for m in partial) + "。"
                "invalid 仍计入主指标的错误；valid-only Accuracy 只描述有效回答子集，可能选择性保留较容易样本，"
                "不是修复格式后的预期 Accuracy。SER 从候选类分数中选最高者，Audio LLM 在自由生成后按协议解析单词，"
                "所以格式/候选集遵从也会影响后者。需要把这类协议损失与情绪辨别错误分开验证。" if zh else
-               "These are equal-dataset averages over each model's completed runs. Gemma 4's one-corpus mean cannot fairly "
-               "rank against sixteen-corpus means. Invalid outputs remain errors in the primary metrics. Valid-only Accuracy "
+               "These are equal-dataset averages over each model's completed runs. " +
+               "".join(f"{model_name(m)}'s mean over {coverage(m)} cannot fairly rank against sixteen-corpus means. " for m in partial) +
+               "Invalid outputs remain errors in the primary metrics. Valid-only Accuracy "
                "conditions on a potentially easier selected subset; it is not the expected Accuracy after fixing formatting. "
                "SER selects the highest score among candidates, while Audio LLMs generate text followed by protocol-specific "
                "one-word parsing. Candidate/format compliance can therefore affect the latter and must be distinguished from emotion discrimination.")

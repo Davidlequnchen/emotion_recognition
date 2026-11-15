@@ -229,6 +229,7 @@ def analyse(selected, registry, inventory):
                 group_rows.append({"model": model, "grouping": grouping, "level": level,
                     "n_datasets": len(chosen), "n_clips": sum(r["n"] for r in chosen),
                     **{metric: float(np.mean([r[metric] for r in chosen])) for metric in METRICS}})
+    scopes = {}
     for model in registry:
         records = arrays.get(model)
         if not records:
@@ -242,6 +243,7 @@ def analyse(selected, registry, inventory):
         groups = [cluster_identity(e) for e in entries]
         balanced = balanced_weights(datasets, gold)
         scope = "16 datasets" if model in full_models else ", ".join(consensus.NAMES[d] for d in dict.fromkeys(datasets)) + " only"
+        scopes[model] = scope
         for kind, clusters in (("dataset", datasets), ("speaker_dialogue", groups)):
             for fit in ("pooled", "within_dataset_gold", "balanced_within_dataset_gold"):
                 fit_strata = ["all"] * len(correct) if fit == "pooled" else strata
@@ -279,7 +281,7 @@ def analyse(selected, registry, inventory):
                 if result[key] is not None:
                     result[key] *= 2
             gap_effects.append({"model": model, "reference": reference,
-                "scope": "16 datasets" if model in full_models else "MELD only", **result})
+                "scope": scopes[model], **result})
     return {"dataset_rows": dataset_rows, "model_rows": model_rows, "group_rows": group_rows,
             "bin_rows": bin_rows, "effects": effects, "dataset_effects": dataset_effects,
             "gap_effects": gap_effects, "correlations": correlations, "full_models": full_models}
@@ -301,6 +303,7 @@ def run(*, refresh_inventory=False, plots=True, data_only=False):
             paths.append(path)
     implementation = {p.relative_to(consensus.REPO).as_posix(): consensus.sha256(p) for p in paths}
     data = analyse(selected, registry, inventory)
+    full = data["full_models"]
     sources = {s["path"]: s for runs in selected.values() for run in runs.values() for s in run.sources}
     manifest = {"analysis": "cross_dataset_language_context_duration_v1",
         "generated_at_singapore": datetime.now(ZoneInfo("Asia/Singapore")).strftime("%Y-%m-%d %H:%M SGT"),
@@ -311,13 +314,16 @@ def run(*, refresh_inventory=False, plots=True, data_only=False):
         "inventory_sha256": consensus.sha256(output / "audio_inventory.csv"),
         "implementation": implementation,
         "parameters": {"duration_bins_seconds": [0, 1, 2, 3, 5, 10, 15, 30, "inf"],
-            "display_min_bin_n": 50, "predictor": "log2(original clip duration)",
+            "display_min_bin_n": 50, "figure_bins_seconds": [0, 1, 2, 3, 5, 10, "inf"],
+            "predictor": "log2(original clip duration)",
             "primary_fit": "dataset-by-original-gold fixed intercepts; equal dataset and equal gold-class total weights",
             "primary_interval": "dataset-cluster CR1, t(G-1); 16 clusters for complete models; no multiplicity adjustment",
             "sensitivity_interval": "speaker/dialogue clusters, EmotionTalk source groups; no new-speaker guarantee",
             "outcome": "saved emotion prediction correct under original accepted-label rules",
             "zero_header_policy": "retained in summaries/bins; excluded explicitly from log-duration fits",
-            "missing_coverage": "Gemma MELD only; excluded from multi-dataset group means"},
+            "missing_coverage": "; ".join(f"{m}: {len(r)}/{len(consensus.DATASETS)} datasets" for m, r in selected.items()
+                                          if m not in full) + ("; " if len(selected) > len(full) else "")
+                                + "models without every dataset are excluded from multi-dataset group means"},
         "interpretation": "Observational fixed-prediction analysis; no causal claims; raw duration includes silence"}
     data["manifest"] = manifest
     for name, digest in implementation.items():

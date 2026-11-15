@@ -1,9 +1,105 @@
 {
   "model": "gemma4_e4b",
   "name": "Gemma 4 E4B",
-  "date": "2026-11-11",
+  "date": "2026-11-15",
   "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
   "datasets": [
+    {
+      "dataset": "DailyTalk (validation)",
+      "key": "dailytalk",
+      "language": "English",
+      "clips": 1197,
+      "total_clips": 1197,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.720969,
+        "unweighted_accuracy": 0.495793,
+        "macro_f1": 0.303052,
+        "accuracy_all_classes": 0.720969,
+        "weighted_f1": 0.7531251150500762
+      }
+    },
+    {
+      "dataset": "MultiDialog (gold_both)",
+      "key": "multidialog",
+      "language": "English",
+      "clips": 7672,
+      "total_clips": 7672,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.605188,
+        "unweighted_accuracy": 0.245075,
+        "macro_f1": 0.232139,
+        "accuracy_all_classes": 0.605188,
+        "weighted_f1": 0.5827149327231018
+      }
+    },
+    {
+      "dataset": "EmotionTalk (test)",
+      "key": "emotiontalk",
+      "language": "Mandarin",
+      "clips": 1929,
+      "total_clips": 1929,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.51633,
+        "unweighted_accuracy": 0.290652,
+        "macro_f1": 0.293999,
+        "accuracy_all_classes": 0.51633,
+        "weighted_f1": 0.47883308725842044
+      }
+    },
     {
       "dataset": "MELD",
       "key": "meld",
@@ -35,13 +131,684 @@
         "accuracy_all_classes": 0.478144,
         "weighted_f1": 0.460877934433173
       }
+    },
+    {
+      "dataset": "THAI-SER (high-agreement subset)",
+      "key": "thai_ser",
+      "language": "Thai",
+      "clips": 11848,
+      "total_clips": 11848,
+      "emotions": 4,
+      "labels": [
+        "neutral",
+        "angry",
+        "happy",
+        "sad"
+      ],
+      "chance": 0.25,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.428005,
+        "unweighted_accuracy": 0.423189,
+        "macro_f1": 0.401886,
+        "accuracy_all_classes": 0.428005,
+        "accuracy_acted_or_listener": 0.497974,
+        "listeners_vs_acted": 0.772282,
+        "model_vs_listeners": 0.452735,
+        "weighted_f1": 0.4065094864275367
+      }
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 1440,
+      "total_clips": 1440,
+      "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.261111,
+        "unweighted_accuracy": 0.208333,
+        "macro_f1": 0.121585,
+        "accuracy_all_classes": 0.261111,
+        "weighted_f1": 0.14012758069680153
+      }
+    },
+    {
+      "dataset": "MESS",
+      "key": "mess",
+      "language": "English",
+      "clips": 1800,
+      "total_clips": 1800,
+      "emotions": 4,
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "chance": 0.25,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.250556,
+        "unweighted_accuracy": 0.250556,
+        "macro_f1": 0.103463,
+        "accuracy_all_classes": 0.250556,
+        "weighted_f1": 0.10346345446726678
+      }
+    },
+    {
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 480,
+      "total_clips": 480,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.23125,
+        "unweighted_accuracy": 0.178571,
+        "macro_f1": 0.156374,
+        "accuracy_all_classes": 0.23125,
+        "weighted_f1": 0.1805166271575376
+      }
+    },
+    {
+      "dataset": "JL-Corpus",
+      "key": "jl_corpus",
+      "language": "English (New Zealand)",
+      "clips": 1200,
+      "total_clips": 1200,
+      "emotions": 5,
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad",
+        "excited"
+      ],
+      "chance": 0.24,
+      "accept": {
+        "excited": [
+          "happy",
+          "surprised"
+        ]
+      },
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.23,
+        "unweighted_accuracy": 0.23,
+        "macro_f1": 0.216907,
+        "accuracy_all_classes": 0.23,
+        "weighted_f1": 0.17363715721268355
+      }
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 6675,
+      "total_clips": 6675,
+      "emotions": 7,
+      "labels": [
+        "neutral",
+        "happy",
+        "angry",
+        "fearful",
+        "sad",
+        "disgusted",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.187116,
+        "unweighted_accuracy": 0.150644,
+        "macro_f1": 0.068763,
+        "accuracy_all_classes": 0.187116,
+        "accuracy_acted_or_listener": 0.187116,
+        "listeners_vs_acted": 1.0,
+        "model_vs_listeners": 0.187116,
+        "weighted_f1": 0.08297463555349148
+      }
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 4481,
+      "total_clips": 4481,
+      "emotions": 6,
+      "labels": [
+        "angry",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.166667,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.180094,
+        "unweighted_accuracy": 0.170607,
+        "macro_f1": 0.110866,
+        "accuracy_all_classes": 0.180094,
+        "weighted_f1": 0.11490927104591088
+      }
+    },
+    {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 6902,
+      "total_clips": 6902,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.169081,
+        "unweighted_accuracy": 0.169081,
+        "macro_f1": 0.100972,
+        "accuracy_all_classes": 0.169081,
+        "accuracy_acted_or_listener": 0.257172,
+        "listeners_vs_acted": 0.812187,
+        "model_vs_listeners": 0.219977,
+        "weighted_f1": 0.10097161329319486
+      }
+    },
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 7442,
+      "total_clips": 7442,
+      "emotions": 6,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "chance": 0.166667,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.157619,
+        "unweighted_accuracy": 0.177322,
+        "macro_f1": 0.070784,
+        "accuracy_all_classes": 0.157619,
+        "accuracy_acted_or_listener": 0.592448,
+        "listeners_vs_acted": 0.455869,
+        "model_vs_listeners": 0.574434,
+        "weighted_f1": 0.06610605149170415
+      }
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 2800,
+      "total_clips": 2800,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "surprised",
+        "sad"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.145,
+        "unweighted_accuracy": 0.145,
+        "macro_f1": 0.04072,
+        "accuracy_all_classes": 0.145,
+        "weighted_f1": 0.040720376380227824
+      }
+    },
+    {
+      "dataset": "EMOVO",
+      "key": "emovo",
+      "language": "Italian",
+      "clips": 588,
+      "total_clips": 588,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.142857,
+        "unweighted_accuracy": 0.142857,
+        "macro_f1": 0.047424,
+        "accuracy_all_classes": 0.142857,
+        "weighted_f1": 0.047424428305767236
+      }
+    },
+    {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
+      "language": "English",
+      "clips": 8000,
+      "total_clips": 8000,
+      "emotions": 7,
+      "labels": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "chance": 0.142857,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ],
+      "metrics": {
+        "accuracy": 0.133,
+        "unweighted_accuracy": 0.175383,
+        "macro_f1": 0.121439,
+        "accuracy_all_classes": 0.133,
+        "weighted_f1": 0.12104477952599094
+      }
     }
   ],
   "figure": "figures/summary_confusion.png",
   "figure_datasets": [
-    "MELD"
+    "CREMA-D",
+    "MCAE-SPPS",
+    "MESS",
+    "RAVDESS",
+    "TESS",
+    "JL-Corpus",
+    "THAI-SER (high-agreement subset)",
+    "nEMO",
+    "MEAD (8,000-clip subset)",
+    "MELD",
+    "EMOVO",
+    "Emozionalmente",
+    "SAVEE",
+    "EmotionTalk (test)",
+    "DailyTalk (validation)",
+    "MultiDialog (gold_both)"
   ],
-  "acted_or_listener": [],
-  "shared_emotions": [],
-  "shared": []
+  "acted_or_listener": [
+    "CREMA-D"
+  ],
+  "shared_emotions": [
+    "angry",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "shared": [
+    {
+      "dataset": "DailyTalk (validation)",
+      "key": "dailytalk",
+      "language": "English",
+      "clips": 1174,
+      "sample": false,
+      "accuracy": 0.726576,
+      "unweighted_accuracy": 0.429041,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "MultiDialog (gold_both)",
+      "key": "multidialog",
+      "language": "English",
+      "clips": 6466,
+      "sample": false,
+      "accuracy": 0.70167,
+      "unweighted_accuracy": 0.353601,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "EmotionTalk (test)",
+      "key": "emotiontalk",
+      "language": "Mandarin",
+      "clips": 1560,
+      "sample": false,
+      "accuracy": 0.617308,
+      "unweighted_accuracy": 0.447832,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "MELD",
+      "key": "meld",
+      "language": "English",
+      "clips": 2210,
+      "sample": false,
+      "accuracy": 0.530769,
+      "unweighted_accuracy": 0.415608,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "THAI-SER (high-agreement subset)",
+      "key": "thai_ser",
+      "language": "Thai",
+      "clips": 11848,
+      "sample": false,
+      "accuracy": 0.428005,
+      "unweighted_accuracy": 0.423189,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "RAVDESS",
+      "key": "ravdess",
+      "language": "English",
+      "clips": 864,
+      "sample": false,
+      "accuracy": 0.336806,
+      "unweighted_accuracy": 0.253906,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "SAVEE",
+      "key": "savee",
+      "language": "English (British)",
+      "clips": 300,
+      "sample": false,
+      "accuracy": 0.33,
+      "unweighted_accuracy": 0.2625,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "MCAE-SPPS",
+      "key": "mcae_spps",
+      "language": "Mandarin",
+      "clips": 4297,
+      "sample": false,
+      "accuracy": 0.283454,
+      "unweighted_accuracy": 0.255306,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "Emozionalmente",
+      "key": "emozionalmente",
+      "language": "Italian",
+      "clips": 3944,
+      "sample": false,
+      "accuracy": 0.270791,
+      "unweighted_accuracy": 0.270791,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "nEMO",
+      "key": "nemo",
+      "language": "Polish",
+      "clips": 3076,
+      "sample": false,
+      "accuracy": 0.257802,
+      "unweighted_accuracy": 0.250679,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "MESS",
+      "key": "mess",
+      "language": "English",
+      "clips": 1800,
+      "sample": false,
+      "accuracy": 0.250556,
+      "unweighted_accuracy": 0.250556,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "EMOVO",
+      "key": "emovo",
+      "language": "Italian",
+      "clips": 336,
+      "sample": false,
+      "accuracy": 0.25,
+      "unweighted_accuracy": 0.25,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "TESS",
+      "key": "tess",
+      "language": "English",
+      "clips": 1600,
+      "sample": false,
+      "accuracy": 0.249375,
+      "unweighted_accuracy": 0.249375,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "JL-Corpus",
+      "key": "jl_corpus",
+      "language": "English (New Zealand)",
+      "clips": 960,
+      "sample": false,
+      "accuracy": 0.245833,
+      "unweighted_accuracy": 0.245833,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "CREMA-D",
+      "key": "crema_d",
+      "language": "English",
+      "clips": 4900,
+      "sample": false,
+      "accuracy": 0.23102,
+      "unweighted_accuracy": 0.257919,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    },
+    {
+      "dataset": "MEAD (8,000-clip subset)",
+      "key": "mead",
+      "language": "English",
+      "clips": 4280,
+      "sample": false,
+      "accuracy": 0.223832,
+      "unweighted_accuracy": 0.285653,
+      "in_training_data": false,
+      "training_status": "not_established",
+      "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+      "training_evidence": [
+        "https://ai.google.dev/gemma/docs/core/model_card_4",
+        "https://huggingface.co/google/gemma-4-E4B-it"
+      ]
+    }
+  ]
 }

@@ -53,11 +53,37 @@ for name in names:
     data = zin.read(name)
     if name == "[Content_Types].xml":
         data = data.replace(b'ContentType="audio/mp3"', b'ContentType="audio/mpeg"')
+        # pptxgenjs lists unused slide masters in Content_Types without writing those parts.
+        data = re.sub(rb'<Override PartName="/([^"]+)"[^>]*/>',
+                      lambda match: match.group(0) if match.group(1).decode() in names else b"", data)
+    if re.fullmatch(r"ppt/charts/chart\d+\.xml", name):
+        # These charts have a single category level. Use the equivalent strRef cache so portable chart readers
+        # can validate the existing workbook references, without replacing the workbook or its values.
+        def one_category_level(match):
+            if "<c:lvl>" in match.group(3):
+                return match.group(0)
+            return "<c:strRef>" + match.group(1) + "<c:strCache>" + match.group(2) + match.group(3) + "</c:strCache></c:strRef>"
+        data = re.sub(r"<c:multiLvlStrRef>\s*(<c:f>.*?</c:f>)\s*<c:multiLvlStrCache>\s*(<c:ptCount[^>]*/>)\s*<c:lvl>(.*?)</c:lvl>\s*</c:multiLvlStrCache>\s*</c:multiLvlStrRef>",
+                      one_category_level, data.decode(), flags=re.S).encode()
+    if re.fullmatch(r"ppt/(slides|notesSlides)/[^/]+\.xml", name):
+        # Preserve the first paragraph-properties element for each paragraph. Multiple text runs otherwise
+        # produce repeated a:pPr elements, which can make LibreOffice drop bullets.
+        def clean_paragraph(match):
+            seen = False
+            def first_only(properties):
+                nonlocal seen
+                if seen:
+                    return ""
+                seen = True
+                return properties.group(0)
+            return "<a:p>" + re.sub(r"<a:pPr\b[^>]*/>|<a:pPr\b[^>]*>.*?</a:pPr>",
+                                     first_only, match.group(1), flags=re.S) + "</a:p>"
+        data = re.sub(r"<a:p>(.*?)</a:p>", clean_paragraph, data.decode(), flags=re.S).encode()
     m = re.fullmatch(r"ppt/slides/slide(\d+)\.xml", name)
     if m:
         rels = zin.read(f"ppt/slides/_rels/slide{m.group(1)}.xml.rels").decode()
         mp3 = set(re.findall(r'Id="(rId\d+)"[^>]*Target="[^"]+\.mp3"', rels))
-        xml = data.decode()
+        xml = data.decode().replace(' r:id=""', '')
         # pptxgenjs gives media shapes ids that other shapes on the slide also use; PowerPoint then renumbers them
         # and the click triggers point nowhere (repair prompt). Give every shape a unique id first.
         counter = iter(range(1, 100000))

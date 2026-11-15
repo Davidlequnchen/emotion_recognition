@@ -1,5 +1,11 @@
 # Facts for the SER evaluation presentation
 
+**Benchmark completion update, 2026-11-15:** all ten models have current-protocol results on all sixteen datasets,
+67,062 clips per model and 160 runs. Current slide metrics are read from
+`research_paper/output/cross_dataset_analysis.json`; see `reports/summary.md`. The architecture measurements and
+resource estimates below retain their original collection dates. Any six-dataset / seven-model / 200-clip API
+figures below describe the earlier snapshot and are not the current benchmark scope.
+
 Collected 2026-11-02. Read-only: nothing in the public repository was changed. Paths: `ER` =
 `emotion_recognition/emotion_recognition/` in the public repo. Parameter counts come from the safetensors headers (tensor
 shapes, no weights loaded), via a scratch script. FLOPs: `torch.utils.flop_counter.FlopCounterMode` on meta-device
@@ -17,7 +23,7 @@ modules built from the local configs (counts only matmul and conv, 2 FLOPs per M
 | Vox-Profile Whisper | **639.9M** (636.0M encoder + 3.07M LoRA + 0.80M heads) | Whisper-large-v3 encoder (750 positions), frozen + LoRA r=16 on fc1/fc2 of layers 17–31, **LoRA B = 0, so no effect** | heads (+ the ineffective LoRA) | **fixed 15 s** | **1.05 TFLOP** (12×) |
 | Vox-Profile WavLM | **316.2M** (315.5M backbone + 0.73M heads) | WavLM-large, **fully fine-tuned** (config `finetune_method: finetune`) | everything | real length (≤ 15 s) | 0.147 TFLOP for 4 s (1.7×) |
 
-Survey counts: **37 datasets surveyed → 9 downloaded → 6 evaluated**; **42 model entries surveyed → 5 open models + 2
+Historical survey snapshot (2026-11-02): **37 datasets surveyed → 9 downloaded → 6 evaluated**; **42 model entries surveyed → 5 open models + 2
 audio LLMs (GPT Realtime, Gemini) chosen** (section 4).
 
 LISTEN (arXiv 2510.10444): on sentences with neutral words, six audio LLMs reach only **16.5–34.9 % accuracy from audio

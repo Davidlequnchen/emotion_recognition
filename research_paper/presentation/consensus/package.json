@@ -1,0 +1,12 @@
+{
+  "name": "consensus-analysis-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slides for the model-consensus (pseudo-label) analysis of the SER benchmark",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "jszip": "^3.10.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

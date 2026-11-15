@@ -1,0 +1,74 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.807417+00:00",
+  "model": "gemma4_e4b",
+  "key": "thai_ser",
+  "clips": 11848,
+  "unique_audio_paths": 11848,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/thai_ser_predictions.csv",
+      "sha256": "89e511822ca6d2439f0014754d619bc9d5eccddc816c89b356b0031d95009f56",
+      "bytes": 2298716
+    },
+    {
+      "path": "outputs/gemma4_e4b/thai_ser_predictions.json",
+      "sha256": "3eb2e8630c628fa8cb42663169be6fb8cd8158785ab1ba653209de039c9b69af",
+      "bytes": 4059
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.428005,
+    "unweighted_accuracy": 0.423189,
+    "macro_f1": 0.401886,
+    "accuracy_all_classes": 0.428005,
+    "accuracy_acted_or_listener": 0.497974,
+    "listeners_vs_acted": 0.772282,
+    "model_vs_listeners": 0.452735
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.42800472653612426,
+    "unweighted_accuracy": 0.42318852442390453,
+    "macro_f1": 0.40188556106163625,
+    "weighted_f1": 0.4065094864275367,
+    "accuracy_all_classes": 0.42800472653612426,
+    "accuracy_acted_or_listener": 0.4979743416610398,
+    "listeners_vs_acted": 0.7722822417285617,
+    "model_vs_listeners": 0.45273463875759623
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "e683d765d4ac",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "neutral": 8529,
+      "angry": 1089,
+      "happy": 1343,
+      "sad": 887,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "neutral": 2999,
+      "angry": 2883,
+      "happy": 3665,
+      "sad": 2301
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

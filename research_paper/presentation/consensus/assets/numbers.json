@@ -1,0 +1,781 @@
+{
+ "refreshed": "2026-11-15 21:12 SGT",
+ "runs": 160,
+ "main": [
+  "SER5",
+  "LLM3",
+  "AudioLLM5",
+  "All10"
+ ],
+ "extra": [
+  "Selected3",
+  "SER_API7",
+  "AudioLLM4"
+ ],
+ "groups": {
+  "SER5": {
+   "label": "SER5",
+   "colour": "0072B2",
+   "marker": "o",
+   "describe": "five SER models",
+   "members": [
+    "emotion2vec+",
+    "MERaLiON",
+    "Melati",
+    "Vox-Profile Whisper",
+    "Vox-Profile WavLM"
+   ],
+   "size": 5,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": true
+  },
+  "LLM3": {
+   "label": "LLM3",
+   "colour": "E69F00",
+   "marker": "^",
+   "describe": "three open audio LLMs",
+   "members": [
+    "Qwen2.5-Omni",
+    "Qwen2-Audio",
+    "Gemma 4"
+   ],
+   "size": 3,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": false
+  },
+  "AudioLLM5": {
+   "label": "AudioLLM5",
+   "colour": "009E73",
+   "marker": "D",
+   "describe": "LLM3 + GPT Realtime + Gemini",
+   "members": [
+    "GPT Realtime",
+    "Gemini 3.8 Flash",
+    "Qwen2.5-Omni",
+    "Qwen2-Audio",
+    "Gemma 4"
+   ],
+   "size": 5,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": false
+  },
+  "All10": {
+   "label": "All10",
+   "colour": "CC79A7",
+   "marker": "s",
+   "describe": "all ten models",
+   "members": [
+    "emotion2vec+",
+    "MERaLiON",
+    "Melati",
+    "Vox-Profile Whisper",
+    "Vox-Profile WavLM",
+    "GPT Realtime",
+    "Gemini 3.8 Flash",
+    "Qwen2.5-Omni",
+    "Qwen2-Audio",
+    "Gemma 4"
+   ],
+   "size": 10,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": false
+  },
+  "Selected3": {
+   "label": "Selected3",
+   "colour": "D55E00",
+   "marker": "v",
+   "describe": "emotion2vec+, Gemini, Qwen2.5-Omni",
+   "members": [
+    "emotion2vec+",
+    "Gemini 3.8 Flash",
+    "Qwen2.5-Omni"
+   ],
+   "size": 3,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": false
+  },
+  "SER_API7": {
+   "label": "SER+API7",
+   "colour": "56B4E9",
+   "marker": "p",
+   "describe": "SER5 + GPT Realtime + Gemini",
+   "members": [
+    "emotion2vec+",
+    "MERaLiON",
+    "Melati",
+    "Vox-Profile Whisper",
+    "Vox-Profile WavLM",
+    "GPT Realtime",
+    "Gemini 3.8 Flash"
+   ],
+   "size": 7,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": true
+  },
+  "AudioLLM4": {
+   "label": "AudioLLM4",
+   "colour": "332288",
+   "marker": "h",
+   "describe": "GPT Realtime, Gemini, Qwen2.5-Omni, Qwen2-Audio",
+   "members": [
+    "GPT Realtime",
+    "Gemini 3.8 Flash",
+    "Qwen2.5-Omni",
+    "Qwen2-Audio"
+   ],
+   "size": 4,
+   "complete": 16,
+   "partial": 0,
+   "missing": [],
+   "waits": true
+  }
+ },
+ "pending": {
+  "names": [],
+  "datasets": 0
+ },
+ "crema": [
+  {
+   "rule": "≥3/5",
+   "k": 3,
+   "m": 5,
+   "accepted": 5843,
+   "correct": 4177,
+   "errors": 1666,
+   "common": 7442,
+   "coverage": 78.51,
+   "accuracy": 71.49,
+   "complete": true,
+   "cohort": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+  },
+  {
+   "rule": "≥4/5",
+   "k": 4,
+   "m": 5,
+   "accepted": 2523,
+   "correct": 2331,
+   "errors": 192,
+   "common": 7442,
+   "coverage": 33.9,
+   "accuracy": 92.39,
+   "complete": true,
+   "cohort": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+  },
+  {
+   "rule": "5/5",
+   "k": 5,
+   "m": 5,
+   "accepted": 1448,
+   "correct": 1415,
+   "errors": 33,
+   "common": 7442,
+   "coverage": 19.46,
+   "accuracy": 97.72,
+   "complete": true,
+   "cohort": "1cee2f3389426ed1aad6feeba7cdcbfe4efb4abb3ae17438bedb5b31a72c622f"
+  }
+ ],
+ "meld": [
+  {
+   "rule": "5/5",
+   "k": 5,
+   "m": 5,
+   "accepted": 279,
+   "correct": 151,
+   "errors": 128,
+   "common": 2608,
+   "coverage": 10.7,
+   "accuracy": 54.12,
+   "complete": true,
+   "cohort": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d",
+   "group": "SER5",
+   "label": "SER5"
+  },
+  {
+   "rule": "3/3",
+   "k": 3,
+   "m": 3,
+   "accepted": 560,
+   "correct": 373,
+   "errors": 187,
+   "common": 2608,
+   "coverage": 21.47,
+   "accuracy": 66.61,
+   "complete": true,
+   "cohort": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d",
+   "group": "LLM3",
+   "label": "LLM3"
+  },
+  {
+   "rule": "5/5",
+   "k": 5,
+   "m": 5,
+   "accepted": 328,
+   "correct": 239,
+   "errors": 89,
+   "common": 2608,
+   "coverage": 12.58,
+   "accuracy": 72.87,
+   "complete": true,
+   "cohort": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d",
+   "group": "AudioLLM5",
+   "label": "AudioLLM5"
+  },
+  {
+   "rule": "10/10",
+   "k": 10,
+   "m": 10,
+   "accepted": 79,
+   "correct": 56,
+   "errors": 23,
+   "common": 2608,
+   "coverage": 3.03,
+   "accuracy": 70.89,
+   "complete": true,
+   "cohort": "355b4b92b7d3c71820ce5c1bc37396c95d89276a4779a5d6ca1c40f0a1fb9b0d",
+   "group": "All10",
+   "label": "All10"
+  }
+ ],
+ "meld_matched": true,
+ "unanimous": {
+  "crema_d": {
+   "SER5": {
+    "coverage": 19.46,
+    "accuracy": 97.72,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 14.59,
+    "accuracy": 93.65,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 11.95,
+    "accuracy": 93.36,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 8.86,
+    "accuracy": 98.79,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "mcae_spps": {
+   "SER5": {
+    "coverage": 15.13,
+    "accuracy": 94.46,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 6.05,
+    "accuracy": 67.57,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 3.63,
+    "accuracy": 71.9,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 0.63,
+    "accuracy": 97.62,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "thai_ser": {
+   "SER5": {
+    "coverage": 24.59,
+    "accuracy": 96.02,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 9.34,
+    "accuracy": 87.44,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 7.64,
+    "accuracy": 94.92,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 2.62,
+    "accuracy": 99.04,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "nemo": {
+   "SER5": {
+    "coverage": 13.68,
+    "accuracy": 83.36,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 1.92,
+    "accuracy": 36.05,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 1.03,
+    "accuracy": 39.13,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 0.2,
+    "accuracy": 77.78,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "mess": {
+   "SER5": {
+    "coverage": 17.06,
+    "accuracy": 68.73,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 35.22,
+    "accuracy": 33.12,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 28.56,
+    "accuracy": 35.41,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 6.22,
+    "accuracy": 80.36,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "ravdess": {
+   "SER5": {
+    "coverage": 20.83,
+    "accuracy": 95.33,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 12.71,
+    "accuracy": 99.45,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 8.4,
+    "accuracy": 100.0,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 3.75,
+    "accuracy": 100.0,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "tess": {
+   "SER5": {
+    "coverage": 11.79,
+    "accuracy": 100.0,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 8.61,
+    "accuracy": 99.17,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 4.25,
+    "accuracy": 99.16,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 0.0,
+    "accuracy": null,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "jl_corpus": {
+   "SER5": {
+    "coverage": 22.67,
+    "accuracy": 99.63,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 19.83,
+    "accuracy": 49.16,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 13.92,
+    "accuracy": 50.3,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 3.92,
+    "accuracy": 100.0,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "mead": {
+   "SER5": {
+    "coverage": 8.22,
+    "accuracy": 91.19,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 20.61,
+    "accuracy": 26.2,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 11.85,
+    "accuracy": 25.0,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 1.31,
+    "accuracy": 90.48,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "meld": {
+   "SER5": {
+    "coverage": 10.7,
+    "accuracy": 54.12,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 21.47,
+    "accuracy": 66.61,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 12.58,
+    "accuracy": 72.87,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 3.03,
+    "accuracy": 70.89,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "emovo": {
+   "SER5": {
+    "coverage": 20.24,
+    "accuracy": 98.32,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 3.4,
+    "accuracy": 40.0,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 3.23,
+    "accuracy": 42.11,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 1.02,
+    "accuracy": 100.0,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "emozionalmente": {
+   "SER5": {
+    "coverage": 15.27,
+    "accuracy": 96.68,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 2.98,
+    "accuracy": 44.66,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 1.71,
+    "accuracy": 57.63,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 0.57,
+    "accuracy": 94.87,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "savee": {
+   "SER5": {
+    "coverage": 15.83,
+    "accuracy": 98.68,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 21.04,
+    "accuracy": 65.35,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 12.5,
+    "accuracy": 90.0,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 6.46,
+    "accuracy": 100.0,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "emotiontalk": {
+   "SER5": {
+    "coverage": 12.13,
+    "accuracy": 83.33,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 11.98,
+    "accuracy": 73.59,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 9.33,
+    "accuracy": 80.0,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 2.7,
+    "accuracy": 96.15,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "dailytalk": {
+   "SER5": {
+    "coverage": 26.4,
+    "accuracy": 87.66,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 41.1,
+    "accuracy": 78.86,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 27.74,
+    "accuracy": 83.13,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 10.86,
+    "accuracy": 94.62,
+    "rule": "10/10",
+    "partial": false
+   }
+  },
+  "multidialog": {
+   "SER5": {
+    "coverage": 30.03,
+    "accuracy": 73.57,
+    "rule": "5/5",
+    "partial": false
+   },
+   "LLM3": {
+    "coverage": 24.52,
+    "accuracy": 68.1,
+    "rule": "3/3",
+    "partial": false
+   },
+   "AudioLLM5": {
+    "coverage": 17.74,
+    "accuracy": 73.03,
+    "rule": "5/5",
+    "partial": false
+   },
+   "All10": {
+    "coverage": 7.59,
+    "accuracy": 83.33,
+    "rule": "10/10",
+    "partial": false
+   }
+  }
+ },
+ "stats": {
+  "ser5_u95": 8,
+  "datasets": 16,
+  "ser5_u95_names": [
+   "CREMA-D",
+   "THAI-SER",
+   "RAVDESS",
+   "TESS",
+   "JL-Corpus",
+   "EMOVO",
+   "Emozionalmente",
+   "SAVEE"
+  ],
+  "ser5_cov": [
+   8.22,
+   30.03
+  ],
+  "ser5_dialogue_acc": [
+   54.12,
+   87.66
+  ],
+  "ser5_english_acted_acc": [
+   95.33,
+   99.63
+  ],
+  "ser5_english_acted_cov": [
+   15.83,
+   22.67
+  ],
+  "ser5_second_ge90": 6,
+  "audio_second_below50": 4,
+  "llm3_second_below50": 5,
+  "all10_cov_max": 10.86,
+  "all10_cov_median": 2.9,
+  "all10_zero": [
+   "TESS"
+  ],
+  "all10_acc_ge90": 11,
+  "all10_acc_defined": 15,
+  "meld_single": [
+   28.8,
+   51.3
+  ],
+  "meld_single_names": [
+   "Melati",
+   "Qwen2.5-Omni"
+  ],
+  "neutral": {
+   "crema_d_SER5": 56.0,
+   "crema_d_AudioLLM5": 97.0,
+   "crema_d_All10": 97.0,
+   "multidialog_SER5": 76.0,
+   "multidialog_AudioLLM5": 68.0,
+   "multidialog_All10": 75.0,
+   "meld_SER5": 6.0,
+   "meld_AudioLLM5": 28.0,
+   "meld_All10": 6.0,
+   "mead_SER5": 40.0,
+   "mead_AudioLLM5": 73.0,
+   "mead_All10": 50.0
+  },
+  "all10_best": 11,
+  "mead_audio_acc": 25.0,
+  "meld_best": 72.87,
+  "extra_zero": {
+   "Selected3": [],
+   "SER_API7": [
+    "TESS"
+   ],
+   "AudioLLM4": []
+  }
+ },
+ "names": {
+  "meld": "MELD",
+  "emotiontalk": "EmotionTalk",
+  "dailytalk": "DailyTalk",
+  "multidialog": "MultiDialog",
+  "crema_d": "CREMA-D",
+  "ravdess": "RAVDESS",
+  "savee": "SAVEE",
+  "jl_corpus": "JL-Corpus",
+  "tess": "TESS",
+  "mead": "MEAD",
+  "mess": "MESS",
+  "mcae_spps": "MCAE-SPPS",
+  "thai_ser": "THAI-SER",
+  "nemo": "nEMO",
+  "emovo": "EMOVO",
+  "emozionalmente": "Emozionalmente"
+ },
+ "first": [
+  "meld",
+  "emotiontalk",
+  "dailytalk",
+  "multidialog",
+  "crema_d",
+  "ravdess",
+  "savee",
+  "jl_corpus"
+ ],
+ "second": [
+  "tess",
+  "mead",
+  "mess",
+  "mcae_spps",
+  "thai_ser",
+  "nemo",
+  "emovo",
+  "emozionalmente"
+ ]
+}

@@ -1,6 +1,6 @@
 # Emotion intensity: are stronger expressions easier to classify?
 
-Updated: 2026-11-14 14:30 SGT. Saved results from 145 model–dataset runs; no inference rerun.
+Updated: 2026-11-15 21:16 SGT. Saved results from 160 model–dataset runs; no inference rerun.
 
 There are two distinct questions. First, are existing emotion-category predictions more often correct when a clip has a higher native intensity annotation? Second, can a model accurately predict intensity itself? Saved category predictions support the first analysis here. Better category accuracy at higher strength does not demonstrate successful intensity estimation.
 
@@ -21,8 +21,6 @@ The table covers only the 6 intensity-analysable corpora, containing 36,602 clip
 
 The full benchmark contains 16 corpora and 67,062 clips. The other 10 corpora have no available native emotion-intensity annotation and therefore do not enter this intensity analysis. Their category predictions still exist; they are not zero-scoring corpora.
 
-Models without current intensity-stratum results: Gemma 4. This indicates missing matching predictions or intensity annotations, not a score of zero.
-
 The six scales require separate interpretations. CREMA-D LO/MD/HI covers only the IEO sentence; XX is unspecified. RAVDESS uses normal/strong, with native neutral only normal; this benchmark also merges calm into neutral. MEAD has three emotional levels but only a level_1 neutral reference. THAI-SER Low/High exists only for scripted speech and must not be assigned to improvised clips.
 
 MCAE-SPPS supplies the mean of 40 listeners' strength ratings on 1–9; the continuous analysis retains the original values. This is not its meanIntensity acoustic-dB field. Display quantiles do not become invented native low/medium/high labels in the continuous fit. DailyTalk uses additional public ECSS 1–3 annotations, an observed rating rather than an acting condition randomized in our experiment. The authors describe weak/medium/strong levels, but these do not create an independent audio-only category-gold set. See the [ECSS paper](https://arxiv.org/html/2312.11947v1) and [author-supplied format](https://github.com/walker-hyf/ECSS).
@@ -36,6 +34,16 @@ Intervals follow the recorded speaker/dialogue clustering scheme. With fewer tha
 ## Model results at native intensity strata
 
 Level columns report category Accuracy; n is the number of clips in that stratum. The two effect columns give class-balanced and additionally duration-adjusted percentage-point changes. They measure association with correct classification, not intensity-prediction accuracy.
+
+![Accuracy change from the weakest to the strongest displayed level](figures/emotion_intensity_change.png)
+
+The first heat map compares each model's Accuracy at the weakest and strongest displayed level (each with at least 20 clips), in percentage points and without adjustment. MCAE-SPPS compares the lowest and highest listener-rating quartiles. Strata with fewer than 20 clips are not shown: DailyTalk level 3 (12 clips). 56 of 60 model–dataset pairs are more accurate at the stronger level. The adjusted heat map further below multiplies the class-balanced, duration-adjusted slope by the native distance between the two levels; white cells in brackets mark intervals that include 0 or are withheld. By dataset: CREMA-D low→high: 10/10 higher, adjusted interval above 0 for 9, below 0 for 0, including 0 for 1; RAVDESS normal→strong: 9/10 higher, adjusted interval above 0 for 6, below 0 for 0, including 0 for 4; MEAD weak→strong: 10/10 higher, adjusted interval above 0 for 9, below 0 for 0, including 0 for 1; THAI-SER low→high: 7/10 higher, adjusted interval above 0 for 0, below 0 for 1, including 0 for 9; MCAE-SPPS Q1→Q4: 10/10 higher, intervals withheld; DailyTalk level 1→level 2: 10/10 higher, adjusted interval above 0 for 10, below 0 for 0, including 0 for 0.
+
+### Weak expressions are often answered neutral
+
+The figure shows the share of non-neutral reference clips that a model answered neutral (open circle: weakest level; filled: strongest). At the weakest CREMA-D level, 7 of 10 models answer neutral for more than half of the emotional clips, for example GPT Realtime CREMA-D 100% → 88%, Gemma 4 CREMA-D 99% → 79%, GPT Realtime RAVDESS 98% → 71%, Gemma 4 RAVDESS 92% → 58%. Models that rarely answer neutral (under 5% at the weakest CREMA-D level: MERaLiON, Qwen2-Audio, emotion2vec+) are already 68%–80% accurate at that level. Much of the accuracy gain at higher strength is therefore no longer hearing the clip as neutral; a weak acted expression may sound close to neutral to human listeners as well, so this is not necessarily a model error.
+
+![Emotional clips answered neutral](figures/emotion_intensity_neutral.png)
 
 ### Qwen2-Audio and Qwen2.5-Omni across corpora
 
@@ -84,6 +92,7 @@ Native effect unit: per native ordinal step.
 | Vox-Profile WavLM | 5.93% | 10.77% | 29.23% | +11.65 [+9.70, +13.60] | +11.96 [+9.92, +14.00] | 91 |
 | Qwen2.5-Omni | 6.37% | 6.37% | 27.69% | +10.66 [+8.49, +12.83] | +12.27 [+9.99, +14.55] | 91 |
 | Qwen2-Audio | 67.69% | 76.48% | 83.08% | +7.69 [+5.43, +9.96] | +9.23 [+6.80, +11.67] | 91 |
+| Gemma 4 | 0.22% | 1.98% | 10.55% | +5.16 [+4.07, +6.26] | +4.90 [+3.78, +6.02] | 91 |
 | GPT Realtime | 0.00% | 0.22% | 9.01% | +4.51 [+3.29, +5.72] | +4.05 [+2.96, +5.14] | 91 |
 | Gemini 3.8 Flash | 10.55% | 19.34% | 39.56% | +14.51 [+11.92, +17.09] | +13.91 [+11.03, +16.79] | 91 |
 
@@ -100,6 +109,7 @@ Native effect unit: per native ordinal step.
 | Vox-Profile WavLM | 30.73% | 42.88% | +12.15 [+7.77, +16.53] | +8.90 [+4.34, +13.46] | 24 |
 | Qwen2.5-Omni | 16.84% | 48.96% | +32.12 [+26.46, +37.78] | +25.60 [+19.38, +31.82] | 24 |
 | Qwen2-Audio | 88.72% | 91.84% | +3.12 [-0.74, +6.99] | +3.43 [-0.76, +7.63] | 24 |
+| Gemma 4 | 4.69% | 10.59% | +5.90 [+3.58, +8.22] | +4.83 [+1.85, +7.81] | 24 |
 | GPT Realtime | 1.04% | 16.67% | +15.62 [+9.64, +21.61] | +13.66 [+8.31, +19.01] | 24 |
 | Gemini 3.8 Flash | 30.38% | 55.21% | +24.83 [+18.86, +30.79] | +20.42 [+13.80, +27.03] | 24 |
 
@@ -116,6 +126,7 @@ Native effect unit: per native ordinal step.
 | Vox-Profile WavLM | 12.48% | 15.23% | 19.90% | +3.74 [+2.77, +4.72] | +3.70 [+2.73, +4.68] | 48 |
 | Qwen2.5-Omni | 11.48% | 13.09% | 14.89% | +1.71 [+1.01, +2.42] | +1.70 [+1.00, +2.40] | 48 |
 | Qwen2-Audio | 18.22% | 19.31% | 21.24% | +1.57 [+0.64, +2.49] | +1.57 [+0.64, +2.49] | 48 |
+| Gemma 4 | 8.67% | 9.54% | 9.39% | +0.36 [-0.36, +1.08] | +0.35 [-0.37, +1.07] | 48 |
 | GPT Realtime | 6.58% | 7.96% | 9.51% | +1.48 [+0.84, +2.11] | +1.47 [+0.83, +2.10] | 48 |
 | Gemini 3.8 Flash | 11.12% | 14.30% | 16.38% | +2.64 [+1.71, +3.56] | +2.67 [+1.74, +3.59] | 48 |
 
@@ -132,6 +143,7 @@ Native effect unit: per native ordinal step.
 | Vox-Profile WavLM | 44.27% | 45.34% | +1.70 [-0.55, +3.94] | +0.93 [-1.33, +3.18] | 200 |
 | Qwen2.5-Omni | 35.57% | 33.60% | -1.32 [-3.89, +1.25] | -1.49 [-4.04, +1.06] | 200 |
 | Qwen2-Audio | 30.10% | 26.49% | -2.42 [-4.89, +0.04] | -3.01 [-5.48, -0.53] | 200 |
+| Gemma 4 | 5.53% | 6.36% | +0.57 [-0.79, +1.93] | +0.63 [-0.74, +2.00] | 200 |
 | GPT Realtime | 30.28% | 31.58% | +0.80 [-1.28, +2.89] | +0.24 [-1.76, +2.24] | 200 |
 | Gemini 3.8 Flash | 49.38% | 53.04% | +3.10 [+0.38, +5.83] | +1.74 [-0.93, +4.41] | 200 |
 
@@ -148,6 +160,7 @@ Native effect unit: per listener-rating point.
 | Vox-Profile WavLM | 13.88% | 25.35% | 39.06% | 42.86% | +9.67 [—] | +9.19 [—] | 6 |
 | Qwen2.5-Omni | 7.39% | 17.85% | 29.96% | 45.25% | +15.81 [—] | +16.18 [—] | 6 |
 | Qwen2-Audio | 13.37% | 27.85% | 45.05% | 51.85% | +7.02 [—] | +7.90 [—] | 6 |
+| Gemma 4 | 0.59% | 1.47% | 1.73% | 3.70% | +0.86 [—] | +0.54 [—] | 6 |
 | GPT Realtime | 3.03% | 3.89% | 4.33% | 5.22% | +2.95 [—] | +2.54 [—] | 6 |
 | Gemini 3.8 Flash | 8.71% | 22.12% | 30.25% | 45.76% | +13.43 [—] | +13.63 [—] | 6 |
 
@@ -164,12 +177,19 @@ Native effect unit: per native ordinal step.
 | Vox-Profile WavLM | 42.11% | 61.42% | 75.00% | +23.13 [+7.29, +38.96] | +24.43 [+7.37, +41.48] | 93 |
 | Qwen2.5-Omni | 45.61% | 73.60% | 75.00% | +37.24 [+7.07, +67.42] | +38.27 [+10.58, +65.96] | 93 |
 | Qwen2-Audio | 36.84% | 52.79% | 83.33% | +30.48 [+0.90, +60.06] | +31.72 [+3.02, +60.43] | 93 |
+| Gemma 4 | 47.37% | 65.99% | 83.33% | +26.52 [+8.68, +44.37] | +26.89 [+8.69, +45.08] | 93 |
 | GPT Realtime | 35.09% | 57.36% | 100.00% | +25.48 [+7.18, +43.78] | +25.26 [+6.53, +44.00] | 93 |
 | Gemini 3.8 Flash | 50.88% | 77.16% | 91.67% | +14.51 [+1.71, +27.30] | +13.52 [+2.43, +24.61] | 93 |
 
 ![Emotion-category accuracy by native intensity](figures/emotion_intensity_accuracy.png)
 
+Class-balanced, duration-adjusted change from the weakest to the strongest level (slope × native level distance; white cells in brackets: interval includes 0 or is withheld):
+
 ![Class- and duration-adjusted intensity associations](figures/emotion_intensity_associations.png)
+
+Adjusted slopes per native unit with 95% intervals (MCAE-SPPS has fewer than 20 clusters, so no interval):
+
+![Adjusted per-unit intensity slopes with intervals](figures/emotion_intensity_forest.png)
 
 ## Higher-versus-lower intensity within recorded keys
 
@@ -183,6 +203,7 @@ MEAD currently has only 3 complete pairs from 2 actors, and lexical keys have no
 |---|---|---:|---:|---:|
 | CREMA-D | emotion2vec+ | 455 | +3.52 [-1.36, +8.39] | 91 |
 | CREMA-D | Gemini 3.8 Flash | 455 | +29.01 [+23.84, +34.18] | 91 |
+| CREMA-D | Gemma 4 | 455 | +10.33 [+8.15, +12.51] | 91 |
 | CREMA-D | GPT Realtime | 455 | +9.01 [+6.59, +11.44] | 91 |
 | CREMA-D | Melati | 455 | +16.92 [+12.00, +21.85] | 91 |
 | CREMA-D | MERaLiON | 455 | +5.27 [+0.68, +9.87] | 91 |
@@ -192,6 +213,7 @@ MEAD currently has only 3 complete pairs from 2 actors, and lexical keys have no
 | CREMA-D | Vox-Profile Whisper | 455 | +29.23 [+25.34, +33.12] | 91 |
 | RAVDESS | emotion2vec+ | 576 | +4.69 [-0.64, +10.01] | 24 |
 | RAVDESS | Gemini 3.8 Flash | 576 | +24.83 [+18.88, +30.78] | 24 |
+| RAVDESS | Gemma 4 | 576 | +5.90 [+3.59, +8.22] | 24 |
 | RAVDESS | GPT Realtime | 576 | +15.62 [+9.66, +21.59] | 24 |
 | RAVDESS | Melati | 576 | -6.08 [-13.79, +1.64] | 24 |
 | RAVDESS | MERaLiON | 576 | +3.12 [-3.74, +9.99] | 24 |
@@ -201,6 +223,7 @@ MEAD currently has only 3 complete pairs from 2 actors, and lexical keys have no
 | RAVDESS | Vox-Profile Whisper | 576 | +15.80 [+8.48, +23.12] | 24 |
 | MEAD | emotion2vec+ | 3 | +33.33 [—] | 2 |
 | MEAD | Gemini 3.8 Flash | 3 | +0.00 [—] | 2 |
+| MEAD | Gemma 4 | 3 | +0.00 [—] | 2 |
 | MEAD | GPT Realtime | 3 | +0.00 [—] | 2 |
 | MEAD | Melati | 3 | +0.00 [—] | 2 |
 | MEAD | MERaLiON | 3 | +0.00 [—] | 2 |
@@ -210,6 +233,7 @@ MEAD currently has only 3 complete pairs from 2 actors, and lexical keys have no
 | MEAD | Vox-Profile Whisper | 3 | +0.00 [—] | 2 |
 | THAI-SER | emotion2vec+ | 1,005 | -0.38 [-3.08, +2.31] | 195 |
 | THAI-SER | Gemini 3.8 Flash | 1,005 | +1.82 [-0.82, +4.45] | 195 |
+| THAI-SER | Gemma 4 | 1,005 | -0.34 [-2.16, +1.49] | 195 |
 | THAI-SER | GPT Realtime | 1,005 | +0.46 [-1.86, +2.77] | 195 |
 | THAI-SER | Melati | 1,005 | +1.88 [-0.55, +4.32] | 195 |
 | THAI-SER | MERaLiON | 1,005 | -0.13 [-0.75, +0.49] | 195 |

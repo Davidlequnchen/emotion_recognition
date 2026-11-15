@@ -125,6 +125,9 @@ def analyse(selected, inventory, strengths):
                     "invalid_rate": float(invalid[mask].mean()) if mask.any() else None,
                     "predicted_angry_rate": float(np.mean(predictions[mask] == "angry")) if mask.any() else None,
                     "predicted_disgusted_rate": float(np.mean(predictions[mask] == "disgusted")) if mask.any() else None,
+                    # Non-neutral reference clips answered "neutral": weak expressions heard as no emotion.
+                    "predicted_neutral_rate": float(np.mean(predictions[mask] == "neutral")) if mask.any() else None,
+                    "neutral_candidate": "neutral" in getattr(run, "classes", ()),
                     "median_duration_seconds": float(np.median(duration[mask])) if mask.any() else None})
                 for truth in sorted(covered):
                     chosen = mask & (gold == truth)
@@ -170,7 +173,55 @@ def analyse(selected, inventory, strengths):
                     **paired_difference(differences, pair_gold, pair_groups),
                     "low_level": native_levels[0], "high_level": native_levels[-1], "pair_rule": spec["pair_rule"]})
     return {"scope_rows": scope_rows, "level_rows": level_rows, "class_rows": class_rows,
-            "effect_rows": effect_rows, "matched_rows": matched_rows}
+            "effect_rows": effect_rows, "matched_rows": matched_rows,
+            "contrast_rows": contrast_rows(level_rows, effect_rows, matched_rows)}
+
+
+DISPLAY_MIN_LEVEL_N = 20  # strata with fewer clips are not shown and do not define the weakest/strongest contrast
+
+
+def contrast_rows(level_rows, effect_rows, matched_rows, *, min_n=DISPLAY_MIN_LEVEL_N):
+    """One weakest-versus-strongest summary per dataset and model, for heat maps, report and slides.
+
+    The weakest and strongest levels are the lowest and highest displayed strata (at least `min_n` clips).
+    observed_change_pp: raw accuracy difference between them (no adjustment).
+    adjusted_change_pp: the class-balanced, duration-adjusted slope times the native distance between the two
+    levels (ordinal steps; for MCAE-SPPS the difference of the quartile median listener ratings), with its
+    interval scaled the same way and withheld where the slope interval is withheld.
+    matched_*: the complete-pair high-minus-low difference, copied unchanged.
+    """
+    effects = {(r["dataset"], r["model"]): r for r in effect_rows if r["fit"] == "class_balanced_duration_adjusted"}
+    matched = {(r["dataset"], r["model"]): r for r in matched_rows}
+    groups = defaultdict(list)
+    for row in level_rows:
+        if row["n"] >= min_n and row["accuracy"] is not None:
+            groups[row["dataset"], row["model"]].append(row)
+    rows = []
+    for (dataset, model), levels in groups.items():
+        if len(levels) < 2:
+            continue
+        low, high = min(levels, key=lambda r: r["level_id"]), max(levels, key=lambda r: r["level_id"])
+        span = float(high["level"]) - float(low["level"])
+        effect, pair = effects.get((dataset, model)), matched.get((dataset, model))
+        scale = (lambda value: None if value is None else float(value) * span)
+        slope = effect.get("slope_pp") if effect else None
+        rows.append({"dataset": dataset, "model": model,
+            "low_label": low["level_label"], "high_label": high["level_label"],
+            "low_level": low["level"], "high_level": high["level"], "level_span": span,
+            "low_n": low["n"], "high_n": high["n"],
+            "low_accuracy": low["accuracy"], "high_accuracy": high["accuracy"],
+            "observed_change_pp": 100 * (high["accuracy"] - low["accuracy"]),
+            "low_neutral_rate": low.get("predicted_neutral_rate"), "high_neutral_rate": high.get("predicted_neutral_rate"),
+            "adjusted_slope_pp": slope, "adjusted_change_pp": scale(slope),
+            "adjusted_ci_lower_pp": scale(effect.get("ci_lower_pp")) if effect else None,
+            "adjusted_ci_upper_pp": scale(effect.get("ci_upper_pp")) if effect else None,
+            "adjusted_nclusters": effect.get("nclusters") if effect else None,
+            "matched_pairs": pair["n_pairs"] if pair else None,
+            "matched_difference_pp": pair["difference_pp"] if pair else None,
+            "matched_ci_lower_pp": pair["ci_lower_pp"] if pair else None,
+            "matched_ci_upper_pp": pair["ci_upper_pp"] if pair else None,
+            "matched_nclusters": pair["nclusters"] if pair else None})
+    return rows
 
 
 def run(*, refresh_intensity=False, plots=True, data_only=False):
@@ -206,7 +257,8 @@ def run(*, refresh_intensity=False, plots=True, data_only=False):
             "duration_control": "log2(original clip duration) as additional covariate",
             "intervals": "source-cluster CR1 and t(G-1); withheld below 20 source clusters; exploratory, not multiplicity-adjusted",
             "matched_cases": "complete native levels on published take keys; class-balanced high-minus-low accuracy",
-            "display_min_level_n": 20},
+            "display_min_level_n": DISPLAY_MIN_LEVEL_N,
+            "contrast": "lowest vs highest displayed level; adjusted change = duration-adjusted slope x native level distance"},
         "notes": ["Classification sensitivity to native strength is not a test of predicted intensity accuracy.",
             "Neutral references and unspecified XX are not weak-emotion examples.",
             "MERaLiON native VAD outputs are absent from saved predictions; no additional inference was performed.",
@@ -218,13 +270,12 @@ def run(*, refresh_intensity=False, plots=True, data_only=False):
     for source in sources.values():
         if consensus.sha256(project / source["path"]) != source["sha256"]:
             raise RuntimeError("Source predictions changed while analysing intensity")
-    for key in ("scope_rows", "level_rows", "class_rows", "effect_rows", "matched_rows"):
+    for key in ("scope_rows", "level_rows", "class_rows", "effect_rows", "matched_rows", "contrast_rows"):
         write_csv(output / f"intensity_{key}.csv", data[key])
     if not data_only:
         if plots:
             from intensity_plot import plot_intensity
-            paths = plot_intensity(data["level_rows"], data["effect_rows"], data["matched_rows"],
-                                   data["scope_rows"], paper / "analysis_report/figures")
+            paths = plot_intensity(data, paper / "analysis_report/figures")
             manifest["figures"] = [p.relative_to(paper).as_posix() for p in paths]
         from intensity_report import render_report
         for language in ("zh", "en"):

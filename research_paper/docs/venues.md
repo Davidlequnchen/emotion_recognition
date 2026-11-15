@@ -200,19 +200,19 @@ selected research question, and move supporting benchmark tables to the appendix
 These are planning criteria, not a prediction of main-conference or Findings acceptance. Both outcomes require
 convincing evidence and a clear contribution.
 
-**Where we stand (updated 2026-11-09; current scope in [research_angles.md](research_angles.md)).**
+**Where we stand (benchmark status updated 2026-11-15; current research scope in [research_angles.md](research_angles.md)).**
 
 | Reviewers will want | What we have | Gap |
 |---|---|---|
-| Broad, fair comparison | planned 10 models × 13 datasets, 56,264 clips, dataset-specific candidate labels | five SER models completed; current-protocol local LLM evaluation incomplete, with a three-model MELD baseline in progress; API runs remain |
-| Current baselines | Qwen2.5-Omni, Qwen2-Audio, Gemma 4, GPT Realtime, Gemini | Qwen3-Omni and Audio Flamingo 3 deferred; reviewers may ask for them |
+| Broad, fair comparison | 10 models × 16 datasets, 67,062 clips, dataset-specific candidate labels | as of 2026-11-15: all ten models complete on all 16 datasets, including validated final Gemma 4 results; 160 compatible single-utterance runs; provenance and domain-transfer limitations remain |
+| Current baselines | Qwen2.5-Omni, Qwen2-Audio, Gemma 4, GPT Realtime, Gemini 3.8 Flash | Qwen3-Omni and Audio Flamingo 3 deferred; reviewers may ask for them |
 | Lexical vs acoustic evidence | parallel vs emotion-worded corpora; THAI-SER scripted vs improvised | **text-only control** (ASR transcript or gold text → text LLM) is "later, optional"; it should be core for this claim |
 | Prompt robustness | one fixed prompt | a few prompt variants on a subset |
 | Stability | greedy local decoding | **repeat runs** of GPT Realtime (no temperature 0) on a subset |
-| Statistics | point estimates | **bootstrap CIs and paired tests** (cheap, from the prediction files) |
+| Statistics | cluster-bootstrap intervals and paired model differences for CREMA-D, RAVDESS and MELD ([analysis_report/bootstrap_en.md](../analysis_report/bootstrap_en.md)) | all ten models included on those three datasets; intervals for the other datasets remain outside the current bootstrap design |
 | Human reference | actor-intent and listener-perception information for some corpora | distinguish annotation targets and class priors; a human context comparison needs matched evidence conditions and new ratings, not just actor–listener agreement |
 | Training provenance | documented corpus exposure and unknown sources | absence from a published list is not proof of no exposure; corpus exposure alone is not test-file contamination |
-| Fair LLM vs SER scoring | implemented dataset-specific choices for both model families | rerun incompatible legacy LLM outputs; added-context inputs must be reported separately from single-utterance SER comparisons |
+| Fair LLM vs SER scoring | implemented dataset-specific choices for both model families | all ten current-protocol baselines complete as of 2026-11-15; added-context inputs must still be reported separately from single-utterance SER comparisons |
 | Release and approval | licence-checked data plan; no company data or patentable methods | company approval for publication still open |
 
 **Honest assessment (updated 2026-11-09).** ACL is an aspirational main target, not evidence that the current design

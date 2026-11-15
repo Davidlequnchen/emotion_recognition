@@ -7,39 +7,26 @@ module.exports = function (L, A) {
   const clips = (A.manifest && A.manifest.audio) || [];
   const ex = (sub) => clips.filter((c) => c.group === "dataset_example" && c.subgroup === sub);
 
-  // ---- Survey and selection
+  // ---- Complete adopted evaluation cohort
   {
-    const s = L.slide(SEC, "Dataset Survey and Selection");
-    // funnel
-    const f = [["37", "corpora surveyed", "papers, project pages, HF, Zenodo, OSF"], ["9", "downloaded", "licence and access checked"], ["6", "evaluated", "ESD left out (licence), THAI-SER and nEMO (language)"]];
-    f.forEach(([n, t, d], i) => {
-      const w = 3.6 - i * 0.55, x = MX + (3.6 - w) / 2, y = 1.55 + i * 1.15;
-      s.addText(`${n}  ${t}`, { x, y, w, h: 0.9, shape: p.ShapeType.rect, fill: { color: [C.ink, "34507A", C.accent][i] }, line: { color: C.white, width: 0 }, fontFace: FONT, fontSize: 18, bold: true, color: C.white, align: "center", valign: "middle", margin: 0 });
-      L.text(s, d, MX, y + 0.92, 3.6, 0.22, { fontSize: 10, color: C.muted, align: "center" });
-    });
-    L.text(s, "Selection criteria", MX, 5.15, 3.6, 0.3, { fontSize: 14, bold: true, color: C.ink });
-    L.bullets(s, ["Same sentences in every emotion (words give no clue)", "Good labels, ideally listener-validated", "Size, and a clear licence and download"], { x: MX, y: 5.45, w: 3.7, h: 1.5, fontSize: 13, gap: 3 });
-    const rows = [
-      ["CREMA-D", "US English", "91", "7,442", "5.3", "6", "12 sentences", "actor + ≈9 listeners", "ODbL"],
-      ["MCAE-SPPS", "Mandarin", "6", "6,675", "2.3", "7", "200 sentences", "actor + 40 listeners", "CC BY-NC"],
-      ["MESS", "US English", "6", "1,800", "1.3", "4", "90 sentences", "actor", "CC BY"],
-      ["RAVDESS", "N. Am. English", "24", "1,440", "1.5", "7", "2 sentences", "actor", "CC BY-NC-SA"],
-      ["TESS", "Canadian Eng.", "2", "2,800", "1.6", "7", "200 words", "actor", "CC BY-NC"],
-      ["JL-Corpus", "NZ English", "4", "1,200", "0.7", "5", "15 sentences", "actor", "CC0"],
-    ];
-    L.table(s, ["Dataset", "Language", "Speakers", "Clips", "Hours", "Emotions", "Parallel text", "Labels", "Licence"], rows.map((r) => r.map((c, j) => ({ text: c, bold: j === 0, options: { align: j >= 2 && j <= 5 ? "center" : "left" } }))),
-      { x: 4.6, y: 1.55, w: 8.13, colW: [1.05, 1.15, 0.75, 0.7, 0.6, 0.75, 1.05, 1.18, 0.9], fontSize: 11, rowH: 0.5 });
-    L.bullets(s, [
-      "21,357 clips, 12.7 hours, 133 speakers, 2 languages",
-      "None is spontaneous speech; MCAE-SPPS and MESS are in no model's training data",
-    ], { x: 4.6, y: 5.4, w: 8.1, h: 1.4, fontSize: 15 });
-    L.notes(s, `We surveyed 37 public corpora, downloaded nine and evaluate six. The deciding criterion is parallel text: the same sentence in every emotion, so the words cannot give the answer away.
-    Two corpora, CREMA-D and MCAE-SPPS, also have listener votes per clip, which we use to show how subjective the task is. MCAE-SPPS and MESS are the two corpora no model has trained on; they are the most honest test.`);
+    const s = L.slide(SEC, "Sixteen Public Benchmark Datasets");
+    const data = A.datasetOrder.map(key => A.benchmark.dataset_rows.find(r => r.dataset === key));
+    L.text(s, "67,062 clips per model · 10 complete models · 10 English / 6 non-English datasets", MX, 1.45, W - 2 * MX, 0.5, { fontSize: 18, bold: true, color: C.ink });
+    for (let half = 0; half < 2; half++) {
+      const rows = data.slice(half * 8, half * 8 + 8).map(r => [
+        { text: r.name, bold: true }, r.language, r.n.toLocaleString("en-US"), r.conversation ? "dialogue" : "standalone",
+      ]);
+      L.table(s, ["Dataset", "Language", "Clips", "Source"], rows,
+        { x: MX + half * 6.17, y: 2.12, w: 5.96, colW: [2.05, 1.15, 1.1, 1.66], fontSize: 13, rowH: 0.43 });
+    }
+    L.text(s, "Fixed cohorts include THAI-SER agreement filtering, the 8,000-clip MEAD subset and MultiDialog segmentation QC. ESD remains excluded.", MX, 6.25, W - 2 * MX, 0.6, { fontSize: 14, color: C.ink });
+    L.source(s, "Sources: reports/summary.md; research_paper/output/cross_dataset_dataset_rows.csv");
+    L.notes(s, `All ten models completed these same sixteen dataset cohorts. Dialogue denotes recording source, not an input with dialogue history. The next six dataset pages contain selected public listening examples retained from the earlier presentation; they are not the full benchmark inventory. Dataset-specific labels, licences and quality filters are documented in the data survey. Lack of a training provenance link does not certify unseen data.`);
   }
 
   // ---- Label space
   {
-    const s = L.slide(SEC, "Unified Label Space");
+    const s = L.slide(SEC, "Label Mapping: Six Listening-Example Corpora");
     const emos = ["angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised", "unknown / other"];
     const D_ = "●";
     const cov = {
@@ -62,46 +49,49 @@ module.exports = function (L, A) {
       [{ text: "●  ", options: { color: C.accent, bold: true } }, { text: "the dataset's own label is identical to the project class" }],
       [{ text: "orange  ", options: { color: C.accent2, bold: true } }, { text: "the dataset's own label name, mapped to the project class of that column (e.g. MESS \"calm\" is scored as neutral)" }],
       [{ text: "*  ", options: { color: C.accent2, bold: true } }, { text: "JL-Corpus \"excited\" is scored as correct if the prediction is happy or surprised" }],
-      [{ text: "unknown / other  ", options: { color: C.muted, bold: true } }, { text: "no corpus uses it; the models' extra classes (emotion2vec+ other, <unk>; Vox-Profile contempt, other) are excluded, since the prediction is the most probable of the dataset's own emotions" }],
-      [{ text: "Shared by all six corpora:  ", options: { bold: true } }, { text: "angry, happy, neutral, sad (basis of the 4-class comparison in Part 4)" }],
+      [{ text: "unknown / other  ", options: { color: C.muted, bold: true } }, { text: "no corpus uses it; the SER models' extra classes (emotion2vec+ other, <unk>; Vox-Profile contempt, other) are excluded, since the prediction is the most probable of the dataset's own emotions" }],
+      [{ text: "Shared by these six corpora:  ", options: { bold: true } }, { text: "angry, happy, neutral, sad; the primary results still use each dataset's full candidate set" }],
     ];
     lg.forEach((runs, i) => s.addText(runs.map((r) => ({ text: r.text, options: { fontFace: FONT, fontSize: 11, color: C.text, ...r.options } })), { x: MX, y: 4.8 + i * 0.42, w: 6.75, h: 0.42, margin: 0, valign: "top", fit: "shrink" }));
     L.image(s, "assets/fig/emotion_counts.png", 7.55, 1.4, W - MX - 7.55, 4.9);
-    L.text(s, "Clips per emotion in each corpus: balanced by design, unlike call-centre audio", 7.55, 6.35, W - MX - 7.55, 0.4, { fontSize: 12, color: C.muted, align: "center" });
+    L.text(s, "Selected acted corpora; class balance differs in the complete dialogue datasets", 7.55, 6.35, W - MX - 7.55, 0.4, { fontSize: 12, color: C.muted, align: "center" });
     L.notes(s, `All dataset labels are mapped to the project label set: the seven emotion classes of emotion2vec+, plus unknown or other, which no corpus uses. A dot means the dataset uses the same label. Orange text shows the dataset's own label name where it had to be mapped: calm is scored as neutral in MESS and RAVDESS, pleasant surprise as surprised in TESS, and JL-Corpus excited is counted as correct if a model predicts happy or surprised.
-    Models with additional classes, such as emotion2vec+ "other" or Vox-Profile "contempt", never have those classes chosen, because the prediction is restricted to the dataset's own emotions. On the right, the corpora are balanced by design, which is very different from real calls, where neutral dominates.`);
+    The dedicated SER prediction is restricted to dataset candidates. Audio LLMs receive the same candidates in the prompt, but free-generation violations count as errors. The figure describes the six selected listening corpora, not the class balance of every benchmark dataset; DailyTalk and MultiDialog have large neutral majorities.`);
   }
 
   // ---- One slide per dataset
   const D = [
-    { sub: "crema_d", title: "Dataset: CREMA-D",
-      facts: [["Language", "US English"], ["Speakers", "91 actors (48 m, 43 f, aged 20–74)"], ["Size", "7,442 clips · 5.3 h · 16 kHz"], ["Emotions", "6: no surprised"], ["Design", "12 sentences × 6 emotions"], ["Labels", "actor's intent + crowd votes (≈9 listeners per clip, voice only; 2,443 raters)"], ["Licence", "ODbL"], ["In training of", "emotion2vec+, MERaLiON"]],
+    { sub: "crema_d", title: "Listening Example: CREMA-D",
+      facts: [["Language", "US English"], ["Speakers", "91 actors (48 m, 43 f, aged 20–74)"], ["Size", "7,442 clips · 5.3 h · 16 kHz"], ["Emotions", "6: no surprised"], ["Design", "12 sentences × 6 emotions"], ["Labels", "actor's intent + crowd votes (≈9 listeners per clip, voice only; 2,443 raters)"], ["Licence", "ODbL"], ["Training involvement", "emotion2vec+, MERaLiON"]],
       note: "The most used benchmark. Listener votes show what people actually hear (next slides).",
       notes: `CREMA-D, 2014: 91 actors of different ages and ethnicities, each saying 12 sentences in six emotions. It is the only large corpus with crowd-sourced votes for every clip, which makes it valuable for studying subjectivity. Here one actress says "I'm on my way to the meeting" in four emotions; listeners agree with her on all four. Let's listen.` },
-    { sub: "mcae_spps", title: "Dataset: MCAE-SPPS",
-      facts: [["Language", "Mandarin Chinese"], ["Speakers", "6 professional actors (3 m, 3 f)"], ["Size", "6,675 clips · 2.3 h · 48 kHz"], ["Emotions", "all 7"], ["Design", "200 sentences × 7 emotions × 6 actors"], ["Labels", "actor's intent; kept only if listeners' top choice (40 native listeners, 720 in total)"], ["Licence", "CC BY-NC 4.0 (Sci Data 2026)"], ["In training of", "none"]],
-      note: "Newest corpus, unseen by every model: the cleanest test of generalisation.",
-      notes: `MCAE-SPPS was published in Scientific Data in 2026: six professional Mandarin actors, 200 sentences, all seven emotions, and 40 native listeners per clip. Clips were kept only if listeners recognised the intended emotion more than any other. No model has seen it. The sentence here means "They attended a lecture".` },
-    { sub: "mess", title: "Dataset: MESS",
-      facts: [["Language", "US English"], ["Speakers", "6 (3 m, 3 f)"], ["Size", "1,800 clips · 1.3 h · 24.4 kHz"], ["Emotions", "4: angry, calm (→ neutral), happy, sad"], ["Design", "90 sentences × 4 emotions"], ["Labels", "actor's intent (listener ratings in the paper, not public)"], ["Licence", "CC BY 4.0 (2019)"], ["In training of", "none"]],
+    { sub: "mcae_spps", title: "Listening Example: MCAE-SPPS",
+      facts: [["Language", "Mandarin Chinese"], ["Speakers", "6 professional actors (3 m, 3 f)"], ["Size", "6,675 clips · 2.3 h · 48 kHz"], ["Emotions", "all 7"], ["Design", "200 sentences × 7 emotions × 6 actors"], ["Labels", "actor's intent; kept only if listeners' top choice (40 native listeners, 720 in total)"], ["Licence", "CC BY-NC 4.0 (Sci Data 2026)"], ["Training involvement", "not established"]],
+      note: "Recent Mandarin corpus; training exposure is not established, rather than certified absent.",
+      notes: `MCAE-SPPS was published in Scientific Data in 2026: six professional Mandarin actors, 200 sentences, all seven emotions, and 40 native listeners per clip. Clips were kept only if listeners recognised the intended emotion more than any other. Training exposure is not established for these checkpoints. The sentence here means "They attended a lecture".` },
+    { sub: "mess", title: "Listening Example: MESS",
+      facts: [["Language", "US English"], ["Speakers", "6 (3 m, 3 f)"], ["Size", "1,800 clips · 1.3 h · 24.4 kHz"], ["Emotions", "4: angry, calm (→ neutral), happy, sad"], ["Design", "90 sentences × 4 emotions"], ["Labels", "actor's intent (listener ratings in the paper, not public)"], ["Licence", "CC BY 4.0 (2019)"], ["Training involvement", "not established"]],
       note: "Every clip is normalised to the same loudness (≈ −27 dBFS RMS): loudness gives no clue, only pitch, timbre and timing.",
       notes: `MESS, 2019: six speakers, 90 sentences, four emotions, with calm instead of neutral. One detail matters: all clips were normalised to the same loudness, so an angry clip is not louder than a sad one. Models that rely on loudness will struggle. Listen to the same speaker and sentence in four emotions.` },
-    { sub: "ravdess", title: "Dataset: RAVDESS",
-      facts: [["Language", "North American English"], ["Speakers", "24 actors (12 m, 12 f)"], ["Size", "1,440 clips · 1.5 h · 48 kHz"], ["Emotions", "8 → 7 (calm → neutral)"], ["Design", "2 sentences × 8 emotions × 2 intensities × 2 takes"], ["Labels", "actor's intent (validated: 10 ratings per file, 247 raters)"], ["Licence", "CC BY-NC-SA 4.0 (2018)"], ["In training of", "emotion2vec+"]],
+    { sub: "ravdess", title: "Listening Example: RAVDESS",
+      facts: [["Language", "North American English"], ["Speakers", "24 actors (12 m, 12 f)"], ["Size", "1,440 clips · 1.5 h · 48 kHz"], ["Emotions", "8 → 7 (calm → neutral)"], ["Design", "2 sentences × 8 emotions × 2 intensities × 2 takes"], ["Labels", "actor's intent (validated: 10 ratings per file, 247 raters)"], ["Licence", "CC BY-NC-SA 4.0 (2018)"], ["Training involvement", "emotion2vec+"]],
       note: "Many speakers, few words: tests voice variation more than lexical variety.",
-      notes: `RAVDESS, 2018: 24 actors, but only two sentences, "Kids are talking by the door" and "Dogs are sitting by the door", at normal and strong intensity. The strong versions are very expressive. emotion2vec+ has seen it.` },
-    { sub: "tess", title: "Dataset: TESS",
-      facts: [["Language", "Canadian English"], ["Speakers", "2 actresses, aged 26 and 64"], ["Size", "2,800 clips · 1.6 h · 24.4 kHz"], ["Emotions", "7 (pleasant surprise → surprised)"], ["Design", "\"Say the word ___\" × 200 words × 7 emotions"], ["Labels", "actor's intent"], ["Licence", "CC BY-NC 4.0"], ["In training of", "emotion2vec+"]],
+      notes: `RAVDESS, 2018: 24 actors, but only two sentences, "Kids are talking by the door" and "Dogs are sitting by the door", at normal and strong intensity. The strong versions are very expressive. emotion2vec+ has documented upstream training involvement; this does not establish clip-level leakage.` },
+    { sub: "tess", title: "Listening Example: TESS",
+      facts: [["Language", "Canadian English"], ["Speakers", "2 actresses, aged 26 and 64"], ["Size", "2,800 clips · 1.6 h · 24.4 kHz"], ["Emotions", "7 (pleasant surprise → surprised)"], ["Design", "\"Say the word ___\" × 200 words × 7 emotions"], ["Labels", "actor's intent"], ["Licence", "CC BY-NC 4.0"], ["Training involvement", "emotion2vec+"]],
       note: "Very clean and very narrow: two voices only, so one voice misjudged shifts a whole class.",
       notes: `TESS, from Toronto: two actresses, 26 and 64 years old, saying "Say the word" followed by one of 200 words. Very clean recordings, very exaggerated emotions, but only two voices. Remember this when we look at MERaLiON's confusion matrix.` },
-    { sub: "jl_corpus", title: "Dataset: JL-Corpus",
-      facts: [["Language", "New Zealand English"], ["Speakers", "4 (2 m, 2 f)"], ["Size", "1,200 clips evaluated (of 2,400) · 0.7 h · 44.1 kHz"], ["Emotions", "5 primary: angry, excited, happy, neutral, sad"], ["Design", "15 sentences × 5 emotions"], ["Labels", "actor's intent (≈70% listener recognition for primary emotions)"], ["Licence", "CC0"], ["In training of", "emotion2vec+, Melati"]],
+    { sub: "jl_corpus", title: "Listening Example: JL-Corpus",
+      facts: [["Language", "New Zealand English"], ["Speakers", "4 (2 m, 2 f)"], ["Size", "1,200 clips evaluated (of 2,400) · 0.7 h · 44.1 kHz"], ["Emotions", "5 primary: angry, excited, happy, neutral, sad"], ["Design", "15 sentences × 5 emotions"], ["Labels", "actor's intent (≈70% listener recognition for primary emotions)"], ["Licence", "CC0"], ["Training involvement", "emotion2vec+, Melati"]],
       note: "Secondary emotions (anxious, apologetic, …) are not in our label set and are not scored.",
       notes: `JL-Corpus, New Zealand English: four speakers and fifteen sentences. It also has secondary emotions such as apologetic or concerned, interesting for call centres, but outside our seven classes, so we score only the five primary emotions. Excited counts as happy or surprised.` },
   ];
   D.forEach((d) => {
     const s = L.slide(SEC, d.title);
-    // facts
+    // Current training-process involvement, including upstream lineage; not a clip-leakage claim.
+    const shortNames = { emotion2vec_plus_large: "emotion2vec+", meralion_ser_v1: "MERaLiON", melati_emotion: "Melati", vox_profile_whisper: "Vox Whisper", vox_profile_wavlm: "Vox WavLM", qwen2_5_omni_7b: "Omni", qwen2_audio_7b: "Qwen-Audio", gemma4_e4b: "Gemma", gpt_realtime: "GPT", "gemini-3.8-flash": "Gemini" };
+    const involvement = A.benchmark.model_rows.filter(r => r.dataset === d.sub && r.training_status !== "not_established").map(r => shortNames[r.model]).join(", ") || "not established";
+    d.facts = d.facts.map(([k, v]) => [k, k === "Training involvement" ? involvement : v]);
     d.facts.forEach(([k, v], i) => {
       const y = 1.5 + i * 0.52;
       L.text(s, k, MX, y, 1.45, 0.48, { fontSize: 13, bold: true, color: C.muted, valign: "middle" });
@@ -172,10 +162,10 @@ module.exports = function (L, A) {
       });
       L.text(s, OBS[stem] || c.why_interesting, cols[5][0] + 0.08, y + 0.1, cols[5][1] - 0.15, h - 0.2, { fontSize: 12, color: C.text, valign: "middle" });
     });
-    L.source(s, "Prediction colours: green = the actor's emotion · orange = the listeners' majority · grey = neither. † = CREMA-D is in the model's training data.");
+    L.source(s, "Prediction colours: green = the actor's emotion · orange = the listeners' majority · grey = neither. † = documented CREMA-D training-process involvement.");
     L.notes(s, `Four clips where the actor and the listeners disagree completely. Play each and decide for yourself before revealing the labels.
     First: acted happy, all ten listeners heard angry. Second: acted fearful, all heard sad. Third: acted disgusted, nine heard angry. Fourth: acted sad, all heard neutral.
-    Notice that emotion2vec+ and MERaLiON, both trained on CREMA-D's acted labels, often side with the actor, even when every human disagrees.`);
+    These selected SER predictions often follow the actor despite listener disagreement; the example does not isolate the effect of training exposure.`);
   }
 
   // ---- Subjectivity 3: MCAE-SPPS

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-14T06:03:27+00:00",
+  "generated_at_utc": "2026-11-15T13:12:56+00:00",
   "method": "soundfile.info headers only; duration = frames / sampling_rate; no audio decoding",
   "soundfile": "0.14.0",
   "clips": 67062,
@@ -330,14 +330,164 @@
       "bytes": 3382
     },
     {
+      "path": "outputs/gemma4_e4b/crema_d_predictions.csv",
+      "sha256": "55ffac338deaa72772b7abf48564176de3ee22a2c33350096f896c7d886b998d",
+      "bytes": 1516188
+    },
+    {
+      "path": "outputs/gemma4_e4b/crema_d_predictions.json",
+      "sha256": "d3d13f975a2d0f087c83eb6d10e8a3fc8e356456911f53bd71a7e1733b976960",
+      "bytes": 4260
+    },
+    {
+      "path": "outputs/gemma4_e4b/dailytalk_predictions.csv",
+      "sha256": "1b83dcdbbc959ad74a2428049f6522d9ebc13aa7735bf2cab73b07cf79520090",
+      "bytes": 232345
+    },
+    {
+      "path": "outputs/gemma4_e4b/dailytalk_predictions.json",
+      "sha256": "893fc19aa3d6749697669af8a1ce606b7fc41fd6b00c5435f41cf84b30cc9ddd",
+      "bytes": 3938
+    },
+    {
+      "path": "outputs/gemma4_e4b/emotiontalk_predictions.csv",
+      "sha256": "c1494ecaf3f9beca303d0944e660c459e67158563e07f8742a46d7ee88cfb25c",
+      "bytes": 450838
+    },
+    {
+      "path": "outputs/gemma4_e4b/emotiontalk_predictions.json",
+      "sha256": "264917613bc9a53afa1f2b3f0de973bb1bef37eeea9db474423519545852401d",
+      "bytes": 3878
+    },
+    {
+      "path": "outputs/gemma4_e4b/emovo_predictions.csv",
+      "sha256": "623762d9f398ace4b04baa9e419b57fd32f5e386a13ccc22f73b2ddb8e063f8e",
+      "bytes": 113255
+    },
+    {
+      "path": "outputs/gemma4_e4b/emovo_predictions.json",
+      "sha256": "a51ecbe1d563c02071c7aa13e0f6822eb9631b8df5e8cd10c653e272e1327c0f",
+      "bytes": 3905
+    },
+    {
+      "path": "outputs/gemma4_e4b/emozionalmente_predictions.csv",
+      "sha256": "1b2af1774ee6ff84e378bb6ec14f27a9482d3a86b318d2ebf53ef15c6fa6ae5d",
+      "bytes": 1634186
+    },
+    {
+      "path": "outputs/gemma4_e4b/emozionalmente_predictions.json",
+      "sha256": "35d4fb4b1bdc2165e757254a636ddecaa5f8b607bc025c83a44fd9a1a7fed77a",
+      "bytes": 4357
+    },
+    {
+      "path": "outputs/gemma4_e4b/jl_corpus_predictions.csv",
+      "sha256": "3ff13a397f8f178cf9657085f720271dd09dcce2be276bd9db7e57a9c1a0bcbe",
+      "bytes": 282336
+    },
+    {
+      "path": "outputs/gemma4_e4b/jl_corpus_predictions.json",
+      "sha256": "2f668512c54e9da4e04fd59096fa7af37480569a1ecd77ddde4e1b918464b227",
+      "bytes": 3792
+    },
+    {
+      "path": "outputs/gemma4_e4b/mcae_spps_predictions.csv",
+      "sha256": "56637c0e8da2848f85c5a87568121f3c996437f668b8cf86a12ca0446369ff1d",
+      "bytes": 1392789
+    },
+    {
+      "path": "outputs/gemma4_e4b/mcae_spps_predictions.json",
+      "sha256": "6c7a0baf8d86c59848f8d633c151946105813b796fb7f6c8f8dbe7bef9127c7e",
+      "bytes": 4305
+    },
+    {
+      "path": "outputs/gemma4_e4b/mead_predictions.csv",
+      "sha256": "17bc483451da6d5948c09ed84b3fa8c53c9d787071b3bba0b1b6cac77c21a0b4",
+      "bytes": 1608852
+    },
+    {
+      "path": "outputs/gemma4_e4b/mead_predictions.json",
+      "sha256": "ad6d62349031d084d8145caa2cb8d4b25323dde21e983afe40515645efd55dab",
+      "bytes": 3928
+    },
+    {
       "path": "outputs/gemma4_e4b/meld_predictions.csv",
-      "sha256": "d14695e0250fa2544534e2af90eee8dbf58d069f18a36b12e4dab2e95f167a5e",
-      "bytes": 491434
+      "sha256": "08e8d21b3b6f791dabc6e444bf8e7c60d452450a13f5c14e72b3d0fb5b39be81",
+      "bytes": 488825
     },
     {
       "path": "outputs/gemma4_e4b/meld_predictions.json",
       "sha256": "67f164b466cee23a13761122649b427e7b261b4a8e383044214290a2a5814d72",
       "bytes": 3937
+    },
+    {
+      "path": "outputs/gemma4_e4b/mess_predictions.csv",
+      "sha256": "c52c63ca8dad4ba4f7948cce967f05fd582dea885bee66c0351d6a111f182add",
+      "bytes": 287656
+    },
+    {
+      "path": "outputs/gemma4_e4b/mess_predictions.json",
+      "sha256": "78df3e79d0403a57862c079dbc83b99f25ddfe5343fea10b66e97d90640279d6",
+      "bytes": 3676
+    },
+    {
+      "path": "outputs/gemma4_e4b/multidialog_predictions.csv",
+      "sha256": "392411353c6fd459e169a754763a211c9eb3d1a1337fcbbf84cf9fdb0ff54420",
+      "bytes": 2119900
+    },
+    {
+      "path": "outputs/gemma4_e4b/multidialog_predictions.json",
+      "sha256": "f6e30465743c02153f54c01e06d8ef47d95579d99e377fec506472012ee1f898",
+      "bytes": 3905
+    },
+    {
+      "path": "outputs/gemma4_e4b/nemo_predictions.csv",
+      "sha256": "9b7f7d121f886227007a4491b0141b6af7a0c2205470426d85efa742efd736d5",
+      "bytes": 810780
+    },
+    {
+      "path": "outputs/gemma4_e4b/nemo_predictions.json",
+      "sha256": "b06bbb8733ec6bdbb6d1a66c0683d25b2d8295fbbb584dfab65f1e723ea4cdc3",
+      "bytes": 3721
+    },
+    {
+      "path": "outputs/gemma4_e4b/ravdess_predictions.csv",
+      "sha256": "5e5c8e7554e5e48f59d4faca5359cf2e277515cc082e442216c29d27e88de2a9",
+      "bytes": 303870
+    },
+    {
+      "path": "outputs/gemma4_e4b/ravdess_predictions.json",
+      "sha256": "33e667703197f332a366ae1215895318b614464b5aebe67a5ac72db837a7c8e5",
+      "bytes": 3928
+    },
+    {
+      "path": "outputs/gemma4_e4b/savee_predictions.csv",
+      "sha256": "0e5a9561d7ce305319192806dcad0048a71460820914e784e97f7b09ead3cc88",
+      "bytes": 91308
+    },
+    {
+      "path": "outputs/gemma4_e4b/savee_predictions.json",
+      "sha256": "ea1482547482190f6dc2581f75f4944a340b11453ae208fe9cb7ba8f5154c073",
+      "bytes": 3926
+    },
+    {
+      "path": "outputs/gemma4_e4b/tess_predictions.csv",
+      "sha256": "119f5a0b82c9b73dc1696d7aa9cbcb8250e810c606d2908b8dab5c09717a1aec",
+      "bytes": 521415
+    },
+    {
+      "path": "outputs/gemma4_e4b/tess_predictions.json",
+      "sha256": "575b22193c1970b4b74f9ef00797c0951faab0ad11f999d6651e02bb2a0b4b71",
+      "bytes": 3907
+    },
+    {
+      "path": "outputs/gemma4_e4b/thai_ser_predictions.csv",
+      "sha256": "89e511822ca6d2439f0014754d619bc9d5eccddc816c89b356b0031d95009f56",
+      "bytes": 2298716
+    },
+    {
+      "path": "outputs/gemma4_e4b/thai_ser_predictions.json",
+      "sha256": "3eb2e8630c628fa8cb42663169be6fb8cd8158785ab1ba653209de039c9b69af",
+      "bytes": 4059
     },
     {
       "path": "outputs/gpt_realtime/crema_d_predictions.csv",

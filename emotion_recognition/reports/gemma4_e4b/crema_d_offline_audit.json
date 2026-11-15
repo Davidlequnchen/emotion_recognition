@@ -1,0 +1,82 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.037382+00:00",
+  "model": "gemma4_e4b",
+  "key": "crema_d",
+  "clips": 7442,
+  "unique_audio_paths": 7442,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/crema_d_predictions.csv",
+      "sha256": "55ffac338deaa72772b7abf48564176de3ee22a2c33350096f896c7d886b998d",
+      "bytes": 1516188
+    },
+    {
+      "path": "outputs/gemma4_e4b/crema_d_predictions.json",
+      "sha256": "d3d13f975a2d0f087c83eb6d10e8a3fc8e356456911f53bd71a7e1733b976960",
+      "bytes": 4260
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.157619,
+    "unweighted_accuracy": 0.177322,
+    "macro_f1": 0.070784,
+    "accuracy_all_classes": 0.157619,
+    "accuracy_acted_or_listener": 0.592448,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.574434
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.15761891964525665,
+    "unweighted_accuracy": 0.17732236422580863,
+    "macro_f1": 0.07078443990456175,
+    "weighted_f1": 0.06610605149170415,
+    "accuracy_all_classes": 0.15761891964525665,
+    "accuracy_acted_or_listener": 0.5924482665950014,
+    "listeners_vs_acted": 0.4558693733451015,
+    "model_vs_listeners": 0.5744336569579288
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "8bf25e176a1f",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 136,
+      "disgusted": 61,
+      "fearful": 144,
+      "happy": 19,
+      "neutral": 7059,
+      "sad": 23,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 1271,
+      "disgusted": 1271,
+      "fearful": 1271,
+      "happy": 1271,
+      "neutral": 1087,
+      "sad": 1271
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": [
+    "The known empty CREMA-D recording 1076_MTI_SAD_XX.wav is retained in the saved predictions, matching the existing project evaluation scope."
+  ]
+}

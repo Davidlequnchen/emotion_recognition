@@ -1,0 +1,12 @@
+{
+  "name": "target-venues-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slides: target venues for the research_paper benchmark paper (from docs/venues.md)",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "jszip": "^3.10.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

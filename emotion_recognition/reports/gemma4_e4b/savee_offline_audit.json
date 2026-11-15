@@ -1,0 +1,77 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.634801+00:00",
+  "model": "gemma4_e4b",
+  "key": "savee",
+  "clips": 480,
+  "unique_audio_paths": 480,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/savee_predictions.csv",
+      "sha256": "0e5a9561d7ce305319192806dcad0048a71460820914e784e97f7b09ead3cc88",
+      "bytes": 91308
+    },
+    {
+      "path": "outputs/gemma4_e4b/savee_predictions.json",
+      "sha256": "ea1482547482190f6dc2581f75f4944a340b11453ae208fe9cb7ba8f5154c073",
+      "bytes": 3926
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.23125,
+    "unweighted_accuracy": 0.178571,
+    "macro_f1": 0.156374,
+    "accuracy_all_classes": 0.23125
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.23125,
+    "unweighted_accuracy": 0.17857142857142858,
+    "macro_f1": 0.15637406487907213,
+    "weighted_f1": 0.1805166271575376,
+    "accuracy_all_classes": 0.23125
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 42,
+      "disgusted": 62,
+      "fearful": 0,
+      "happy": 41,
+      "neutral": 292,
+      "sad": 41,
+      "surprised": 2,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 60,
+      "disgusted": 60,
+      "fearful": 60,
+      "happy": 60,
+      "neutral": 120,
+      "sad": 60,
+      "surprised": 60
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

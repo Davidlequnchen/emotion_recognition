@@ -1,0 +1,77 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.408083+00:00",
+  "model": "gemma4_e4b",
+  "key": "mead",
+  "clips": 8000,
+  "unique_audio_paths": 8000,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/mead_predictions.csv",
+      "sha256": "17bc483451da6d5948c09ed84b3fa8c53c9d787071b3bba0b1b6cac77c21a0b4",
+      "bytes": 1608852
+    },
+    {
+      "path": "outputs/gemma4_e4b/mead_predictions.json",
+      "sha256": "ad6d62349031d084d8145caa2cb8d4b25323dde21e983afe40515645efd55dab",
+      "bytes": 3928
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.133,
+    "unweighted_accuracy": 0.175383,
+    "macro_f1": 0.121439,
+    "accuracy_all_classes": 0.133
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.133,
+    "unweighted_accuracy": 0.17538263391936357,
+    "macro_f1": 0.12143877683695599,
+    "weighted_f1": 0.12104477952599094,
+    "accuracy_all_classes": 0.133
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 361,
+      "disgusted": 558,
+      "fearful": 34,
+      "happy": 940,
+      "neutral": 5361,
+      "sad": 728,
+      "surprised": 18,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 1223,
+      "disgusted": 1248,
+      "fearful": 1233,
+      "happy": 1247,
+      "neutral": 561,
+      "sad": 1249,
+      "surprised": 1239
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

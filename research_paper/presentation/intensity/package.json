@@ -1,0 +1,11 @@
+{
+  "name": "intensity-analysis-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slides: is a stronger emotional expression easier to classify? (research_paper intensity analysis)",
+  "type": "commonjs",
+  "dependencies": {
+    "jszip": "^3.10.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

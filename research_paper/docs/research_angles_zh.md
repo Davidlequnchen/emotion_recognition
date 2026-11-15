@@ -4,8 +4,8 @@
 英文版：[research_angles.md](research_angles.md)。另见 [datasets_survey.md](../../emotion_recognition/docs/datasets_survey.md)、
 [related_work.md](related_work.md)、[venues.md](venues.md)。[experimental_design.md](experimental_design.md) 保留了旧设计，执行前应核对本页的新范围。
 
-目前采用 16 个数据集：原 13 个已有 SER 基线，DailyTalk、EmotionTalk、MultiDialog 已下载核验并接入 loader，待跑基线。有 5 个专用 SER 模型；三个开源音频 LLM 是 Gemma 4 E4B、Qwen2.5-Omni 7B、Qwen2-Audio 7B。
-API 模型属于后续可选验证。只使用获准用于相应实验的公开研究数据，不使用公司数据。
+目前采用并评测 16 个数据集，包括对话数据集 DailyTalk、EmotionTalk、MultiDialog。有 5 个专用 SER 模型；三个开源音频 LLM 是 Gemma 4 E4B、Qwen2.5-Omni 7B、Qwen2-Audio 7B；基准里另有两个 API 音频 LLM：GPT Realtime 和 Gemini 3.8 Flash。截至 2026-11-15，包含 Gemma 4 E4B 在内的全部 10 个模型均已完成 16 个数据集的当前协议单句评测，共 160 组有效结果、每模型 67,062 条音频；最终 Gemma 压缩包已导入并核验（[reports/summary.md](../../emotion_recognition/reports/summary.md)）。
+只使用获准用于相应实验的公开研究数据，不使用公司数据。
 
 ## 1. 我们现在真正想问什么？
 
@@ -40,7 +40,7 @@ API 模型属于后续可选验证。只使用获准用于相应实验的公开�
 | **A1：说话人参照** | 核心候选之一 | 设计 pilot；尚未实现参照输入 |
 | **A2：真实对话历史** | 核心候选之一；先从 MELD 开始 | 三模型 MELD 单句基线已完成；EmotionTalk train 的 Omni 240 条 H0–H3 已准备，暂缓推理 |
 | **B：GEPA 与反馈信息** | 有明确问题后再做的改善实验 | 保留方向，不先铺开大网格 |
-| **0：13 数据集基准** | 已有研究地基 | 5 个 SER 已完成；音频 LLM 评测进行中 |
+| **0：16 数据集基准** | 已有研究地基 | 截至 2026-11-15：全部 10 个模型均已完成 16 个数据集，含最终 Gemma 4 结果，共 160 组当前协议单句评测 |
 | **C：训练来源** | 必要的背景分层 | 核对公开来源；不能仅凭成绩认定污染 |
 | **D：重复与分歧** | 可靠性检查；有条件再研究人类分歧 | 先做代表性子集，不承诺全量十次调用 |
 | **E：文字对照** | A2 的关键对照，A1 的辅助对照 | 与 pilot 一起设计 |
@@ -309,3 +309,5 @@ JEV 式结构化输出、电话编码不纳入本轮；背景分别见 [jev_anal
 
 
 2026-11-10 实现状态：240 个 EmotionTalk train 目标，七类各 34–35 条；H3 按其他对话的相同发布 speaker ID 与时长配对。H2 已去除 ASCII/全角方括号内人工声学标记。当前无新模型结果，不自动开始后台运行。MultiDialog 以双方 gold actor＋整对话分段 QC 的 7,672 条作为默认基线，不将 actor筛选称逐句听感 gold。
+
+2026-11-15 状态更新：包含最终 Gemma 4 E4B 在内的全部 10 个模型均已完成 16 个数据集的当前协议单句评测，共 160 组结果、每模型 67,062 条音频（[reports/summary.md](../../emotion_recognition/reports/summary.md)）。EmotionTalk 上下文 pilot 仍只准备、没有结果。

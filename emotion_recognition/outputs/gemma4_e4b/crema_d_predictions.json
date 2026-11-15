@@ -1,0 +1,100 @@
+{
+  "dataset": "CREMA-D",
+  "key": "crema_d",
+  "language": "English",
+  "model": "gemma4_e4b",
+  "model_name": "Gemma 4 E4B",
+  "date": "2026-11-13",
+  "clips": 7442,
+  "total_clips": 7442,
+  "classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "labels": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "accept": {},
+  "chance": 0.166667,
+  "in_training_data": false,
+  "training_status": "not_established",
+  "training_source": "Broad multimodal pretraining and instruction tuning; complete corpus-level provenance not published (Google)",
+  "training_evidence": [
+    "https://ai.google.dev/gemma/docs/core/model_card_4",
+    "https://huggingface.co/google/gemma-4-E4B-it"
+  ],
+  "model_classes": [
+    "angry",
+    "disgusted",
+    "fearful",
+    "happy",
+    "neutral",
+    "sad",
+    "surprised",
+    "invalid"
+  ],
+  "versions": {
+    "transformers": "5.18.0"
+  },
+  "notes": [
+    "Gemma 4 E4B (thinking off) gets one conversation per clip in its chat template: the system prompt, then one user turn with the user prompt first and the audio after it (as the model card advises), with the system and user prompts of `scripts/llm_eval/prompts.yaml` (the same as for GPT Realtime); the clip as 16 kHz mono (at most its first 30 s)",
+    "Greedy decoding (do_sample=False, no repetition penalty), at most 24 new tokens, bfloat16 on `cuda:0`, sdpa attention; so the answers are the same from run to run (up to rounding differences between devices)",
+    "The answer is read by `scripts/llm_eval/parsing.py` and becomes a one-hot vector over the 7 configured emotions plus `invalid`. Allowed answers for this run: angry, disgusted, fearful, happy, neutral, sad. An answer that is not exactly one allowed label gets a follow-up in the same conversation (\"Answer with exactly one word from this list, in lowercase, and nothing else: angry, disgusted, fearful, happy, neutral, sad.\"), up to 1 time(s); then `invalid`",
+    "An answer that is not one of the dataset's emotions counts as wrong (column *other answer* of the confusion matrices); the raw answers are in `outputs/gemma4_e4b/responses.jsonl`"
+  ],
+  "metrics": {
+    "accuracy": 0.157619,
+    "unweighted_accuracy": 0.177322,
+    "macro_f1": 0.070784,
+    "accuracy_all_classes": 0.157619,
+    "accuracy_acted_or_listener": 0.592448,
+    "listeners_vs_acted": 0.455869,
+    "model_vs_listeners": 0.574434
+  },
+  "ground_truth": "acted_emotion",
+  "correct_columns": {
+    "correct": "acted emotion",
+    "correct_acted_or_listener": "acted emotion or listener vote"
+  },
+  "columns": {
+    "audio_path": "audio file, relative to the emotion_recognition/ folder",
+    "acted_emotion": "ground truth: the emotion each actor was asked to portray, from the file name (`ANG`, `DIS`, `FEA`, `HAP`, `NEU`, `SAD`)",
+    "listener_vote": "the majority vote of crowd-sourced listeners who heard the voice only (`summaryTable.csv`, `VoiceVote`); a tie counts every tied emotion; 'a or b' is a tie",
+    "prediction": "model prediction: the most probable of the 6 emotions evaluated (angry, disgusted, fearful, happy, neutral, sad)",
+    "prediction_all_classes": "model prediction: the most probable of all 8 model classes",
+    "correct": "whether prediction equals acted_emotion",
+    "correct_acted_or_listener": "whether prediction equals acted_emotion or the listener_vote (any emotion of a tie)",
+    "p_*": "model probability of each of its 8 classes (they add up to 1)",
+    "token_p_*": "audio LLMs: the model's probability of each label at the first generated position (first-token probabilities, renormalised over the labels; they add up to 1); the prediction is still the parsed answer",
+    "token_mass": "audio LLMs: the share of the whole vocabulary that the labels' first tokens get at that position"
+  },
+  "runtime": {
+    "device": "cuda:0",
+    "hardware": "NVIDIA L4",
+    "seconds": 8851.3,
+    "ms_per_clip": 1189.4,
+    "on_cpu": 0
+  },
+  "inference_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "8bf25e176a1f",
+    "model_id": "google/gemma-4-E4B-it"
+  }
+}

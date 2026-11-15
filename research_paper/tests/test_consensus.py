@@ -124,12 +124,14 @@ class ConsensusTests(unittest.TestCase):
                               "output/consensus_baselines.csv", "output/consensus_manifest.json"})
             with (paper / "output/consensus_thresholds.csv").open() as stream:
                 thresholds = list(csv.DictReader(stream))
-            self.assertEqual(len(thresholds), 1)
-            self.assertEqual((thresholds[0]["min_votes"], thresholds[0]["accepted_errors"]), ("2", "0"))
+            # Selected3 and All10 (available members) vote with the two models; groups that wait do not.
+            self.assertEqual([(r["group"], r["min_votes"], r["accepted_errors"], r["complete"]) for r in thresholds],
+                             [("Selected3", "2", "0", "False"), ("All10", "2", "0", "False")])
             manifest = json.loads((paper / "output/consensus_manifest.json").read_text())
             self.assertEqual(manifest["selected_run_count"], 2)
             self.assertEqual(len(manifest["sources"]), 4)
-            self.assertFalse(any(c["eligible"] for c in manifest["cohorts"] if c["group"] in consensus.EXTRA_GROUPS))
+            eligible = {c["group"] for c in manifest["cohorts"] if c["eligible"] and c["group"] in consensus.EXTRA_GROUPS}
+            self.assertEqual(eligible, {"All10"})
             for p, content in before.items():
                 self.assertEqual(p.read_bytes(), content)
             report = (paper / "analysis_report/consensus_zh.md").read_text()
@@ -208,6 +210,58 @@ class ConsensusTests(unittest.TestCase):
             self.assertEqual([r["min_votes"] for r in fixed], ["3", "4"])
             self.assertTrue(all(r["complete"] == "True" and r["target_count"] == "4" for r in fixed))
             self.assertTrue(all(r["accepted"] == "2" and r["accepted_correct"] == "2" for r in fixed))
+
+    def test_open_audio_llm_group_uses_available_members_and_marks_gemma_pending(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "emotion_recognition"
+            paper = Path(directory) / "research_paper"
+            for model in ("qwen2_5_omni_7b", "qwen2_audio_7b"):
+                self.artifact(root, model)
+            (root / "config").mkdir()
+            registry = {m: {} for spec in consensus.GROUPS.values() for m in spec["models"]}
+            (root / "config/models.yaml").write_text(yaml.safe_dump(registry))
+            consensus.run(root, paper)
+            with (paper / "output/consensus_thresholds.csv").open() as stream:
+                rows = {r["group"]: r for r in csv.DictReader(stream)}
+            self.assertEqual(set(rows), {"AudioLLM5", "All10", "LLM3"})
+            llm3 = rows["LLM3"]
+            self.assertEqual((llm3["min_votes"], llm3["model_count"], llm3["target_count"], llm3["complete"]),
+                             ("2", "2", "3", "False"))
+            self.assertEqual(json.loads(llm3["members"]), ["qwen2_5_omni_7b", "qwen2_audio_7b"])
+            manifest = json.loads((paper / "output/consensus_manifest.json").read_text())
+            pending = consensus.pending_members(manifest["cohorts"])
+            self.assertEqual(pending["LLM3", "crema_d"], ["Gemma 4"])
+            self.assertNotIn(("SER_API7", "crema_d"), pending)  # waiting groups are not plotted as partial
+            for language, marker in (("en", r"Pending: [^\n]*Gemma 4[^\n]*preliminary"), ("zh", r"待补成员：[^\n]*Gemma 4")):
+                report = (paper / "analysis_report" / f"consensus_{language}.md").read_text()
+                self.assertRegex(report, marker)
+                self.assertIn("| 2/2* |", report)
+            self.assertEqual(consensus.MAIN_GROUPS, ("SER5", "LLM3", "AudioLLM5", "All10"))
+
+    def test_all_ten_models_fill_every_group_without_partial_membership_claim(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "emotion_recognition"
+            paper = Path(directory) / "research_paper"
+            registry = {m: {} for spec in consensus.GROUPS.values() for m in spec["models"]}
+            for model in registry:
+                for dataset in consensus.DATASETS:
+                    self.artifact(root, model, dataset=dataset)
+            (root / "config").mkdir()
+            (root / "config/models.yaml").write_text(yaml.safe_dump(registry))
+            consensus.run(root, paper)
+            manifest = json.loads((paper / "output/consensus_manifest.json").read_text())
+            self.assertEqual(manifest["selected_run_count"], 160)
+            self.assertEqual(len(manifest["cohorts"]), 16 * 7)
+            self.assertTrue(all(c["complete"] and c["eligible"] for c in manifest["cohorts"]))
+            self.assertEqual(consensus.pending_members(manifest["cohorts"]), {})
+            with (paper / "output/consensus_thresholds.csv").open() as stream:
+                thresholds = list(csv.DictReader(stream))
+            self.assertTrue(all(r["complete"] == "True" and r["model_count"] == r["target_count"]
+                                for r in thresholds))
+            report = (paper / "analysis_report/consensus_en.md").read_text()
+            self.assertIn("each group's model membership is fixed across datasets", report)
+            self.assertNotIn("their membership varies across datasets", report)
+            self.assertNotIn("these results are preliminary", report)
 
     def test_path_aliases_are_rejected(self):
         for path in ("../a.wav", "/a.wav", "data/../a.wav", "data//a.wav", "C:/a.wav", "data\\a.wav"):

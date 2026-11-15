@@ -1,0 +1,68 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.462508+00:00",
+  "model": "gemma4_e4b",
+  "key": "mess",
+  "clips": 1800,
+  "unique_audio_paths": 1800,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/mess_predictions.csv",
+      "sha256": "c52c63ca8dad4ba4f7948cce967f05fd582dea885bee66c0351d6a111f182add",
+      "bytes": 287656
+    },
+    {
+      "path": "outputs/gemma4_e4b/mess_predictions.json",
+      "sha256": "78df3e79d0403a57862c079dbc83b99f25ddfe5343fea10b66e97d90640279d6",
+      "bytes": 3676
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.250556,
+    "unweighted_accuracy": 0.250556,
+    "macro_f1": 0.103463,
+    "accuracy_all_classes": 0.250556
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.25055555555555553,
+    "unweighted_accuracy": 0.25055555555555553,
+    "macro_f1": 0.10346345446726678,
+    "weighted_f1": 0.10346345446726678,
+    "accuracy_all_classes": 0.25055555555555553
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "happy",
+      "neutral",
+      "sad"
+    ],
+    "prompt_hash": "e683d765d4ac",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 1,
+    "invalid_rate": 0.0005555555555555556,
+    "prediction_counts": {
+      "angry": 0,
+      "happy": 1,
+      "neutral": 1785,
+      "sad": 13,
+      "invalid": 1
+    },
+    "ground_truth_counts": {
+      "angry": 450,
+      "happy": 450,
+      "neutral": 450,
+      "sad": 450
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

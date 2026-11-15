@@ -1,0 +1,77 @@
+{
+  "validated_at_utc": "2026-11-15T13:12:29.061476+00:00",
+  "model": "gemma4_e4b",
+  "key": "dailytalk",
+  "clips": 1197,
+  "unique_audio_paths": 1197,
+  "source_artifacts": [
+    {
+      "path": "outputs/gemma4_e4b/dailytalk_predictions.csv",
+      "sha256": "1b83dcdbbc959ad74a2428049f6522d9ebc13aa7735bf2cab73b07cf79520090",
+      "bytes": 232345
+    },
+    {
+      "path": "outputs/gemma4_e4b/dailytalk_predictions.json",
+      "sha256": "893fc19aa3d6749697669af8a1ce606b7fc41fd6b00c5435f41cf84b30cc9ddd",
+      "bytes": 3938
+    }
+  ],
+  "source_metrics": {
+    "accuracy": 0.720969,
+    "unweighted_accuracy": 0.495793,
+    "macro_f1": 0.303052,
+    "accuracy_all_classes": 0.720969
+  },
+  "recomputed_metrics": {
+    "accuracy": 0.720969089390142,
+    "unweighted_accuracy": 0.4957927165750872,
+    "macro_f1": 0.30305158859820164,
+    "weighted_f1": 0.7531251150500762,
+    "accuracy_all_classes": 0.720969089390142
+  },
+  "metric_tolerance": 1e-06,
+  "derived_metrics": [
+    "weighted_f1"
+  ],
+  "probability_columns": "one-hot answer encoding",
+  "candidate_protocol": {
+    "label_scope": "dataset",
+    "labels": [
+      "angry",
+      "disgusted",
+      "fearful",
+      "happy",
+      "neutral",
+      "sad",
+      "surprised"
+    ],
+    "prompt_hash": "aab2967fd07a",
+    "model_id": "google/gemma-4-E4B-it"
+  },
+  "protocol_matches_configuration": true,
+  "prediction_diagnostics": {
+    "invalid_count": 0,
+    "invalid_rate": 0.0,
+    "prediction_counts": {
+      "angry": 24,
+      "disgusted": 18,
+      "fearful": 12,
+      "happy": 287,
+      "neutral": 770,
+      "sad": 49,
+      "surprised": 37,
+      "invalid": 0
+    },
+    "ground_truth_counts": {
+      "angry": 4,
+      "disgusted": 3,
+      "fearful": 1,
+      "happy": 217,
+      "neutral": 931,
+      "sad": 22,
+      "surprised": 19
+    }
+  },
+  "verification_scope": "CSV/JSON internal consistency; no inference, API calls or source edits. This does not independently authenticate the original remote requests.",
+  "scope_notes": []
+}

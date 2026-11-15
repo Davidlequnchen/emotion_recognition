@@ -1,24 +1,28 @@
 // Appendix: other metrics, label mapping
 module.exports = function (L, A) {
   const { C, MX, MODEL } = L;
-  const ms = ["e2v", "meralion", "melati", "voxw", "voxl"];
-  const ds = ["CREMA-D", "MCAE-SPPS", "MESS", "RAVDESS", "TESS", "JL-Corpus"];
-  const seen = { "CREMA-D": ["e2v", "meralion"], RAVDESS: ["e2v"], TESS: ["e2v"], "JL-Corpus": ["e2v", "melati"] };
-  const UA = [[86.5, 84.9, 52.4, 35.2, 32.1], [54.2, 57.8, 48.1, 40.9, 36.7], [40.8, 74.5, 40.4, 36.4, 36.3], [92.3, 61.3, 49.3, 49.3, 42.4], [85.5, 49.2, 50.4, 30.1, 40.1], [92.5, 75.9, 99.5, 45.1, 48.3]];
-  const F1 = [[86.6, 84.7, 46.7, 29.9, 27.4], [50.1, 54.4, 43.3, 35.2, 33.6], [35.2, 74.7, 37.5, 26.8, 28.7], [92.2, 59.7, 46.6, 44.5, 38.4], [79.8, 37.9, 43.4, 17.4, 31.6], [92.3, 77.3, 99.5, 47.3, 50.5]];
-  const tbl = (vals) => ds.map((d, i) => { const best = Math.max(...vals[i]); return [{ text: d, bold: true }, ...vals[i].map((v, j) => ({ text: v.toFixed(1) + ((seen[d] || []).includes(ms[j]) ? " †" : ""), bold: v === best, options: { align: "center", color: (seen[d] || []).includes(ms[j]) ? C.muted : C.ink } }))]; });
-  const hdr = ["Dataset", ...ms.map((m) => MODEL[m].name)];
-  {
-    const s = L.slide("Appendix", "A1 · Unweighted accuracy and macro-F1 (open models, all clips)");
-    L.text(s, "Unweighted accuracy (mean recall per emotion, %)", MX, 1.4, 6, 0.3, { fontSize: 14, bold: true, color: C.ink });
-    L.table(s, hdr, tbl(UA), { x: MX, y: 1.75, w: 5.95, colW: [1.25, 1.0, 1.0, 0.85, 0.95, 0.9], fontSize: 11, rowH: 0.4 });
-    L.text(s, "Macro-F1 (%)", 6.85, 1.4, 6, 0.3, { fontSize: 14, bold: true, color: C.ink });
-    L.table(s, hdr, tbl(F1), { x: 6.85, y: 1.75, w: 5.95, colW: [1.25, 1.0, 1.0, 0.85, 0.95, 0.9], fontSize: 11, rowH: 0.4 });
-    L.text(s, "† in the model's training data · bold = best · same ranking as accuracy", MX, 4.95, 10, 0.3, { fontSize: 12, color: C.muted });
-    L.source(s, "Source: emotion_recognition/reports/summary.md (evaluate.py, 2026-10-29)");
+  const order = A.benchmark.manifest.model_order;
+  const names = { emotion2vec_plus_large: "e2v+", meralion_ser_v1: "MER", melati_emotion: "Melati", vox_profile_whisper: "Vox W", vox_profile_wavlm: "Vox L", qwen2_5_omni_7b: "Omni", qwen2_audio_7b: "Qwen-A", gemma4_e4b: "Gemma", gpt_realtime: "GPT", "gemini-3.8-flash": "Gemini" };
+  let appendix = 0;
+  for (const [metric, label] of [["uar", "UAR"], ["macro_f1", "Macro-F1"]]) {
+    for (let half = 0; half < 2; half++) {
+      appendix++;
+      const s = L.slide("Appendix", `A${appendix} · ${label}: All Ten Models (${half * 8 + 1}–${half * 8 + 8} of 16 datasets)`);
+      const rows = A.datasetOrder.slice(half * 8, half * 8 + 8).map(d => {
+        const dataset = A.benchmark.dataset_rows.find(r => r.dataset === d);
+        const values = order.map(m => A.metric(m, d, metric));
+        const best = Math.max(...values);
+        return [{ text: dataset.name, bold: true }, ...values.map(v => ({ text: v.toFixed(1), bold: v === best, align: "center" }))];
+      });
+      L.table(s, ["Dataset", ...order.map(m => names[m])], rows,
+        { y: 1.65, colW: [2.13, ...order.map(() => 1.0)], fontSize: 16, rowH: 0.48 });
+      L.text(s, "Percentages; bold = highest within this dataset. Invalid answers remain errors. Candidate sets and original composite-label scoring are preserved.", MX, 6.25, 12.1, 0.6, { fontSize: 14, color: C.ink });
+      L.source(s, "Source: research_paper/output/cross_dataset_model_rows.csv; complete benchmark refreshed 2026-11-15");
+      L.notes(s, `Native editable ${label} table over the same full cohorts for all ten models. UAR averages original gold-class recall. Macro-F1 follows the benchmark composite-label convention, including JL-Corpus excited, and invalid predictions remain false negatives. These are point estimates, not cross-model significance claims. Sources: reports/summary.md and research_paper/output/cross_dataset_analysis.json.`);
+    }
   }
   {
-    const s = L.slide("Appendix", "A2 · Label mapping to the seven project classes");
+    const s = L.slide("Appendix", "A5 · Label Mapping: Six Listening-Example Corpora");
     const rows = [
       ["angry", "ANG", "Anger", "A", "05 angry", "angry", "angry"],
       ["disgusted", "DIS", "Disgust", "–", "07 disgust", "disgust", "–"],
@@ -34,7 +38,7 @@ module.exports = function (L, A) {
     L.source(s, "Source: emotion_recognition/docs/label_mapping.md");
   }
   {
-    const s = L.slide("Appendix", "A3 · emotion2vec+ large: Detailed Architecture");
+    const s = L.slide("Appendix", "A6 · emotion2vec+ large: Detailed Architecture");
     L.image(s, "img/e2v_arch.png", MX, 1.35, L.W - 2 * MX, 5.65);
     L.notes(s, `Detailed architecture of emotion2vec+ large with tensor shapes for a 4-second clip at 16 kHz, measured with forward hooks on the released model.`);
   }

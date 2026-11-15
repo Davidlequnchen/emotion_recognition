@@ -1,15 +1,33 @@
 // Content that depends on the assets (manifest, stats) and on facts.md
 module.exports = function (L, { manifest, stats }) {
-  const A = { manifest, stats };
+  const fs = require("fs"), path = require("path");
+  const benchmark = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../research_paper/output/cross_dataset_analysis.json"), "utf8"));
+  if (benchmark.manifest.selected_run_count !== 160 || benchmark.manifest.full_models.length !== 10)
+    throw new Error("Rebuild the complete 10-model / 16-dataset analysis before this deck");
+  const A = { manifest, stats, benchmark };
+  A.datasetOrder = ["meld", "emotiontalk", "dailytalk", "multidialog", "crema_d", "ravdess", "savee", "jl_corpus", "tess", "mead", "mess", "mcae_spps", "thai_ser", "nemo", "emovo", "emozionalmente"];
+  A.metric = (model, dataset, metric = "accuracy") => {
+    const row = benchmark.model_rows.find(r => r.model === model && r.dataset === dataset);
+    if (!row || row[metric] == null) throw new Error(`Missing benchmark metric ${model}/${dataset}/${metric}`);
+    return 100 * row[metric];
+  };
+  A.mean = (model, metric = "accuracy", filter = () => true) => {
+    const rows = benchmark.model_rows.filter(r => r.model === model && filter(r));
+    return rows.length ? 100 * rows.reduce((sum, r) => sum + r[metric], 0) / rows.length : null;
+  };
+  A.exposureMean = (model, established) => {
+    const rows = benchmark.model_rows.filter(r => r.model === model && ((r.training_status !== "not_established") === established));
+    return rows.length ? `${(100 * rows.reduce((sum, r) => sum + r.accuracy, 0) / rows.length).toFixed(1)}% (${rows.length} datasets)` : "not available";
+  };
   const { C, W, MX, FONT, MODEL } = L;
 
   // ---- Survey numbers (facts.md §4)
   A.surveyTitle = "Model Survey and Selection";
   A.surveyBullets = [
-    "Survey: 42 entries (dedicated SER, dimensional, community checkpoints, open audio LLMs); selection: downloadable weights + runnable code, English, classes close to our 7",
-    "Dedicated SER models: 0.16–0.64B parameters; open audio LLMs: 5.5–35B; closed LLMs: size not published",
+    "Ten evaluated models: five dedicated SER, three open audio LLMs and two API audio LLMs; current registry and inference protocol",
+    "All ten models completed the same 67,062 clips across 16 datasets; no new training or inference in this refresh",
   ];
-  A.geminiDate = "2026-05";
+  A.geminiDate = "2026";
 
   // ---- MERaLiON numbers used on the shortlist and compute slides
   A.mer = {
@@ -78,7 +96,7 @@ module.exports = function (L, { manifest, stats }) {
           ["Waveform\n≤ 15 s window", 1.5, ...IO, ""], ["Whisper large-v3 encoder\n+ LoRA r16 on FFN, blocks 17–31", 3.3, ...ENC, "636.0M + 3.1M LoRA"],
           ["1×1 convs +\nmean pooling", 2.1, ...DOWN, ""], ["MLP heads\n9 classes (+ others)", 1.9, ...DOWN, "0.8M"]]],
         ["Vox-Profile WavLM · 316.2M · USC 2025 · non-commercial", MODEL.voxl.color, [
-          ["Waveform\nreal length", 1.5, ...IO, ""], ["WavLM-large\nfully fine-tuned", 3.3, ...ENC, "315.5M"],
+          ["Waveform\nreal frames ≤ 15 s", 1.5, ...IO, ""], ["WavLM-large\nfully fine-tuned", 3.3, ...ENC, "315.5M"],
           ["1×1 convs +\nmean pooling", 2.1, ...DOWN, ""], ["MLP heads\n9 classes (+ others)", 1.9, ...DOWN, "0.7M"]]],
       ];
       blocks.forEach(([t, col, items], i) => {
@@ -94,7 +112,7 @@ module.exports = function (L, { manifest, stats }) {
       L.text(s, "TFLOP. Whisper models pay for the full window on every clip.", 10.6, 4.25, 2.0, 0.8, { fontSize: 11, color: C.muted });
       L.text(s, "Melati and Vox-Profile Whisper keep the Whisper encoder as released (Vox-Profile's LoRA weights are all zero, so it has no effect).", 10.6, 5.05, 2.0, 1.5, { fontSize: 11, color: C.muted });
       L.source(s, "", [["Melati model card", "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3"], ["Vox-Profile (Feng et al., arXiv 2505.14648)", "https://arxiv.org/abs/2505.14648"], ["Whisper (Radford et al., ICML 2023)", "https://arxiv.org/abs/2212.04356"], ["WavLM (Chen et al., IEEE JSTSP 2022)", "https://arxiv.org/abs/2110.13900"]]);
-      L.notes(s, `Input handling: Melati and Vox-Profile Whisper use a fixed window, 30 and 15 seconds; shorter clips are padded with zeros, which is digital silence, not white noise, and longer audio is cut. Melati pools only over the real frames. Vox-Profile WavLM processes the real length of the clip; its card recommends at most 15 seconds and warns that clips under 3 seconds are unreliable. The next slide compares all five models.
+      L.notes(s, `Input handling: Melati and Vox-Profile Whisper use a fixed window, 30 and 15 seconds; shorter clips are padded with zeros, which is digital silence, not white noise, and longer audio is cut. Melati pools only over the real frames. Vox-Profile WavLM processes real frames after the local fifteen-second cap; its card warns that clips under three seconds are unreliable. The next slide compares all five models.
       The other three open models follow the same recipe with bigger encoders. Melati freezes the Whisper large-v3 encoder, 637 million parameters, and trains only a third of a million: a learned mix of the 33 layer outputs and a small MLP. Vox-Profile has a Whisper version and a WavLM version, trained on natural podcast speech; the WavLM one is fully fine-tuned.
       All three are research-only licences. And note the compute column: the Whisper-based models cost about ten to twenty-five times more per clip than emotion2vec+.`);
     },
@@ -139,22 +157,18 @@ module.exports = function (L, { manifest, stats }) {
     Unlabelled audio cannot be used through continued self-supervised pre-training here, because the Whisper encoder was trained on transcripts rather than with a self-supervised objective. Instead we use pseudo-labelling: both models label the unlabelled call audio, and clips on which they agree with high confidence are added as training data. MERaLiON's own training used exactly this idea, with labels from emotion2vec+. Full fine-tuning of all 311.8 million parameters, option D, is computationally easy on four H100 GPUs, about half an H100-hour per ten thousand clips and ten epochs, and becomes worthwhile once we have at least ten thousand labelled clips. Fine-tuning is also the moment to fix the unmasked padding and possibly shorten the 30-second window, which would make inference about four times cheaper.`);
   };
 
-  // ---- LISTEN bullets
+  // ---- Current results and the limits of semantic/acoustic explanations
   A.listen = [
-    { t: "Our result", b: true, sub: ["GPT Realtime: below chance on 4 of 6 corpora (mean 16% vs 18% chance)", "Gemini 3.5 Flash: above chance everywhere, but 31–64 points behind the best open model"] },
-    { runs: [{ text: "LISTEN benchmark (Ohio State et al., 2025): ", options: { bold: true } }, { text: "arxiv.org/abs/2510.10444", options: { hyperlink: { url: "https://arxiv.org/abs/2510.10444", tooltip: "LISTEN paper on arXiv" }, color: C.accent, bold: true } }], sub: [
-      "\"Do audio LLMs really listen, or just transcribe?\" 6 models incl. Gemini 2.5 Flash / Pro, Qwen-Omni",
-      "Neutral words, audio only: 16.5–34.9% accuracy; models default to \"neutral\"",
-      "Adding the transcript often hurts (Qwen2.5-Omni 34.0 → 19.8%)",
-      "Non-verbal sounds (laughs, sighs): 15.7–22.7%, near chance"] },
-    { t: "Interpretation: current audio LLMs rely predominantly on lexical content, which the parallel-sentence design of our corpora removes", b: true, color: C.accent2 },
+    { t: "Complete benchmark", b: true, sub: ["10 models × 16 datasets; 67,062 clips per model", "Audio LLM performance depends on the corpus and metric; there is no universal SER-versus-LLM ranking"] },
+    { t: "Qwen2.5-Omni on dialogue sources", b: true, sub: ["Its macro-F1 exceeds the best dedicated SER on all four dialogue datasets", "Accuracy exceeds every SER on only two; neutral-only beats every model on DailyTalk and MultiDialog"] },
+    { t: "LISTEN: a related evaluation", b: true, sub: ["Lexically neutral and non-verbal stimuli can expose weak use of emotional voice cues", "Different prompts, labels and datasets prevent direct score comparisons"] },
+    { t: "Interpretation", b: true, sub: ["Semantic versus acoustic reliance, training exposure and label conventions are hypotheses to test with controls", "Observed score differences do not identify training leakage or prove that a model ignores prosody"] },
   ];
-  A.listenNotes = `Our LLM results agree with a 2025 benchmark called LISTEN. Its authors tested six audio LLMs, including Gemini 2.5, and found that when the words are emotionally neutral, the models mostly answer neutral: 16 to 35 percent accuracy. Adding the transcript often made things worse, and on purely non-verbal sounds they were near chance.
-  Our corpora are designed exactly this way: neutral words, emotional voice. GPT Realtime is at or below chance on four of six corpora; Gemini does better but is far behind the dedicated models. Today's audio LLMs mostly read emotion from what is said, not how it is said.`;
+  A.listenNotes = `Sources: research_paper/output/cross_dataset_analysis.json and the bilingual cross-dataset report, refreshed from all 160 compatible runs. The four dialogue datasets are evaluated as isolated utterances, without dialogue history. Neutral priors and reference-label sources differ. LISTEN (https://arxiv.org/abs/2510.10444) supplies related evidence under another protocol, not a causal explanation of these results. Use transcript-only and controlled acoustic/text comparisons before attributing a failure to semantic reliance. No result in this deck establishes training leakage.`;
 
   // ---- Which ground truth do models follow? (after the confusion matrices)
   A.afterCms = [(L) => {
-    const s = L.slide("4 · Evaluation Results", "Model Agreement with Actor vs Listener Labels (CREMA-D)");
+    const s = L.slide("4 · Evaluation Results", "Selected SER Models: Actor vs Listener Labels (CREMA-D)");
     const w = stats.crema_d_listeners.when_listeners_disagree_with_actor;
     const keys = ["emotion2vec_plus_large", "meralion_ser_v1", "melati_emotion", "vox_profile_whisper", "vox_profile_wavlm"];
     const names = keys.map((k) => MODEL[L.MODEL_KEY[k]].name.replace("Vox-Profile ", "Vox "));
@@ -175,7 +189,7 @@ module.exports = function (L, { manifest, stats }) {
       { t: "Implication", b: true, color: C.accent2, sub: ["Our annotation will record perceived emotion; the models must therefore be adapted to perceived labels"] },
     ], { x: 8.5, y: 1.45, w: 4.25, h: 5.4, fontSize: 15 });
     L.notes(s, `This analysis uses CREMA-D only, because it is the corpus with both acted labels and listener votes for every clip. We take the 3,699 clips on which the listeners' majority differs from the acted emotion. For each model, the dark part of the bar is the share of those clips where the model predicts the acted emotion, the orange part where it predicts what the listeners heard, and the grey part where it predicts something else.
-    emotion2vec+ and MERaLiON, both trained on CREMA-D's acted labels, side with the actor in about 80 percent of the disputed clips: they have learned the acted labels rather than what people hear. The Vox-Profile models, trained on listener annotations of natural podcast speech, side with the listeners about two thirds of the time. Part of Vox-Profile's low accuracy therefore reflects which reference label we score against.`);
+    emotion2vec+ and MERaLiON, with documented CREMA-D training involvement, side with the actor in about 80 percent of these disputed clips. This association does not isolate the effect of training labels. The Vox-Profile models, trained on listener annotations of natural podcast speech, side with the listeners about two thirds of the time. Part of Vox-Profile's low accuracy therefore reflects which reference label we score against.`);
   }];
 
   // ---- Confusion matrix slides
@@ -186,8 +200,8 @@ module.exports = function (L, { manifest, stats }) {
         { t: "Shared failures", sub: ["disgusted → neutral (67–68%)", "fearful → sad (60–62%)", "surprised → angry (46–54%)"] },
         { t: "Listeners find these hard too", sub: ["MCAE-SPPS listener recognition: disgusted 63%, fearful 65% (lowest)"] },
       ],
-      notes: `MCAE-SPPS is Mandarin and neither model has seen it, so this is the cleanest comparison. The two models behave almost identically: very good on angry, neutral and sad; disgust collapses to neutral, fear to sad, and surprise to anger.
-      When two independently trained models make the same mistakes, and listeners also find disgust and fear the hardest, the cue is probably ambiguous in the audio itself.` },
+      notes: `MCAE-SPPS is Mandarin. Exposure is not established for these checkpoints; that is not certification that every training component was unseen. The two models behave almost identically: very good on angry, neutral and sad; disgust collapses to neutral, fear to sad, and surprise to anger.
+      Shared model mistakes and lower listener recognition motivate inspection of cue ambiguity, but do not establish its cause.` },
     { key: "mess", title: "Confusion Matrices: MESS",
       bullets: [
         { t: "emotion2vec+ (41%)", sub: ["85% of angry and 92% of sad clips → neutral", "MESS equalises loudness, which may remove a cue it relies on (not yet tested)"] },
@@ -198,12 +212,12 @@ module.exports = function (L, { manifest, stats }) {
       MERaLiON is good on three classes; its main error is calm heard as sad. Remember we mapped MESS calm to neutral, so part of this is our label mapping.` },
     { key: "tess", title: "Confusion Matrices: TESS",
       bullets: [
-        { t: "emotion2vec+ (seen, 86%)", sub: ["perfect on six emotions", "\"pleasant surprise\" → fearful in 70%, never surprised"] },
-        { t: "MERaLiON (unseen, 49%)", sub: ["neutral → sad in 100%", "disgusted → happy 60%, fearful → sad 66%"] },
+        { t: "emotion2vec+ (training involvement, 86%)", sub: ["perfect on six emotions", "\"pleasant surprise\" → fearful in 70%, never surprised"] },
+        { t: "MERaLiON (upstream involvement, 49%)", sub: ["neutral → sad in 100%", "disgusted → happy 60%, fearful → sad 66%"] },
         { t: "Only 2 speakers", sub: ["a systematic misjudgement of one voice shifts an entire class; speaker diversity matters as much as the number of clips"] },
       ],
-      notes: `TESS has only two speakers. emotion2vec+ has seen it and is perfect except for pleasant surprise, which it calls fearful: a label-convention issue.
-      MERaLiON, which has not seen TESS, hears every neutral clip as sad. With only two voices, one systematic misjudgement of a voice moves an entire class. For our own data: many different callers, not many clips from a few callers.` },
+      notes: `TESS has only two speakers. Both systems have documented training-process involvement, including upstream lineage. emotion2vec+ is nearly perfect except for pleasant surprise, which it calls fearful; label conventions are a possible contributor, not an isolated cause.
+      MERaLiON has probable upstream training involvement in TESS and hears every neutral clip as sad in this saved analysis. This is not a seen-versus-unseen experiment. With only two voices, one systematic misjudgement of a voice moves an entire class. For our own data: many different callers, not many clips from a few callers.` },
   ];
   return A;
 };

@@ -1,0 +1,4602 @@
+{
+ "facts": {
+  "generated": {
+   "value": "2026-11-15 21:14 SGT",
+   "text": "2026-11-15 21:14 SGT"
+  },
+  "runs": {
+   "value": 160,
+   "text": "160"
+  },
+  "clips": {
+   "value": 67062,
+   "text": "67,062"
+  },
+  "n_datasets": {
+   "value": 16,
+   "text": "16"
+  },
+  "n_models": {
+   "value": 10,
+   "text": "10"
+  },
+  "n_full": {
+   "value": 10,
+   "text": "10"
+  },
+  "n_conv": {
+   "value": 4,
+   "text": "4"
+  },
+  "n_acted": {
+   "value": 12,
+   "text": "12"
+  },
+  "n_english": {
+   "value": 10,
+   "text": "10"
+  },
+  "n_non_english": {
+   "value": 6,
+   "text": "6"
+  },
+  "pct_under3": {
+   "value": 0.5017893889236825,
+   "text": "50.2"
+  },
+  "pct_over10": {
+   "value": 0.030926605230980286,
+   "text": "3.1"
+  },
+  "median_min": {
+   "value": 1.1721041666666667,
+   "text": "1.2"
+  },
+  "median_min_name": {
+   "value": "MCAE-SPPS",
+   "text": "MCAE-SPPS"
+  },
+  "median_max": {
+   "value": 5.632,
+   "text": "5.6"
+  },
+  "median_max_name": {
+   "value": "MultiDialog",
+   "text": "MultiDialog"
+  },
+  "multidialog_under3": {
+   "value": 0.13086548488008343,
+   "text": "13"
+  },
+  "multidialog_over10": {
+   "value": 0.11001042752867571,
+   "text": "11"
+  },
+  "multidialog_q25": {
+   "value": 3.9413437499999997,
+   "text": "3.9"
+  },
+  "multidialog_q75": {
+   "value": 7.7226875,
+   "text": "7.7"
+  },
+  "multidialog_q5": {
+   "value": 2.1333125,
+   "text": "2.1"
+  },
+  "multidialog_q95": {
+   "value": 11.84,
+   "text": "11.8"
+  },
+  "multidialog_groups": {
+   "value": 353,
+   "text": "353"
+  },
+  "ravdess_under3": {
+   "value": 0.001388888888888889,
+   "text": "0"
+  },
+  "ravdess_over10": {
+   "value": 0.0,
+   "text": "0"
+  },
+  "ravdess_q25": {
+   "value": 3.4701458333333335,
+   "text": "3.5"
+  },
+  "ravdess_q75": {
+   "value": 3.8705416666666665,
+   "text": "3.9"
+  },
+  "ravdess_q5": {
+   "value": 3.2032083333333334,
+   "text": "3.2"
+  },
+  "ravdess_q95": {
+   "value": 4.305980208333332,
+   "text": "4.3"
+  },
+  "ravdess_groups": {
+   "value": 24,
+   "text": "24"
+  },
+  "thai_ser_under3": {
+   "value": 0.2288993923024983,
+   "text": "23"
+  },
+  "thai_ser_over10": {
+   "value": 0.08701890614449696,
+   "text": "9"
+  },
+  "thai_ser_q25": {
+   "value": 3.17,
+   "text": "3.2"
+  },
+  "thai_ser_q75": {
+   "value": 6.230249433106576,
+   "text": "6.2"
+  },
+  "thai_ser_q5": {
+   "value": 1.105360544217687,
+   "text": "1.1"
+  },
+  "thai_ser_q95": {
+   "value": 11.973955782312924,
+   "text": "12.0"
+  },
+  "thai_ser_groups": {
+   "value": 200,
+   "text": "200"
+  },
+  "spread_min": {
+   "value": 38.0,
+   "text": "38"
+  },
+  "spread_max": {
+   "value": 72.8,
+   "text": "73"
+  },
+  "mead_lowest": {
+   "value": 8,
+   "text": "8"
+  },
+  "conv_up": {
+   "value": [
+    "Qwen2.5-Omni",
+    "Gemma 4",
+    "GPT Realtime",
+    "Gemini 3.8 Flash"
+   ],
+   "text": "Qwen2.5-Omni, Gemma 4, GPT Realtime, Gemini 3.8 Flash"
+  },
+  "acted_up": {
+   "value": [
+    "emotion2vec+",
+    "MERaLiON",
+    "Melati",
+    "Qwen2-Audio"
+   ],
+   "text": "emotion2vec+, MERaLiON, Melati, Qwen2-Audio"
+  },
+  "setting_gap_accuracy_emotion2vec_plus_large": {
+   "value": -27.7,
+   "text": "−27.7"
+  },
+  "setting_clean_gap_accuracy_emotion2vec_plus_large": {
+   "value": -3.9,
+   "text": "−3.9"
+  },
+  "language_gap_accuracy_emotion2vec_plus_large": {
+   "value": 5.4,
+   "text": "+5.4"
+  },
+  "language_acted_gap_accuracy_emotion2vec_plus_large": {
+   "value": 11.3,
+   "text": "+11.3"
+  },
+  "setting_gap_uar_emotion2vec_plus_large": {
+   "value": -46.4,
+   "text": "−46.4"
+  },
+  "setting_clean_gap_uar_emotion2vec_plus_large": {
+   "value": -22.3,
+   "text": "−22.3"
+  },
+  "language_gap_uar_emotion2vec_plus_large": {
+   "value": 2.4,
+   "text": "+2.4"
+  },
+  "language_acted_gap_uar_emotion2vec_plus_large": {
+   "value": 13.2,
+   "text": "+13.2"
+  },
+  "conv_accuracy_emotion2vec_plus_large": {
+   "value": 50.6,
+   "text": "50.6"
+  },
+  "setting_gap_accuracy_meralion_ser_v1": {
+   "value": -8.6,
+   "text": "−8.6"
+  },
+  "setting_clean_gap_accuracy_meralion_ser_v1": {
+   "value": -4.4,
+   "text": "−4.4"
+  },
+  "language_gap_accuracy_meralion_ser_v1": {
+   "value": 3.5,
+   "text": "+3.5"
+  },
+  "language_acted_gap_accuracy_meralion_ser_v1": {
+   "value": 7.9,
+   "text": "+7.9"
+  },
+  "setting_gap_uar_meralion_ser_v1": {
+   "value": -15.6,
+   "text": "−15.6"
+  },
+  "setting_clean_gap_uar_meralion_ser_v1": {
+   "value": -15.0,
+   "text": "−15.0"
+  },
+  "language_gap_uar_meralion_ser_v1": {
+   "value": 2.6,
+   "text": "+2.6"
+  },
+  "language_acted_gap_uar_meralion_ser_v1": {
+   "value": 9.9,
+   "text": "+9.9"
+  },
+  "conv_accuracy_meralion_ser_v1": {
+   "value": 49.5,
+   "text": "49.5"
+  },
+  "setting_gap_accuracy_melati_emotion": {
+   "value": -13.3,
+   "text": "−13.3"
+  },
+  "setting_clean_gap_accuracy_melati_emotion": {
+   "value": -5.4,
+   "text": "−5.4"
+  },
+  "language_gap_accuracy_melati_emotion": {
+   "value": -5.6,
+   "text": "−5.6"
+  },
+  "language_acted_gap_accuracy_melati_emotion": {
+   "value": -10.6,
+   "text": "−10.6"
+  },
+  "setting_gap_uar_melati_emotion": {
+   "value": -30.8,
+   "text": "−30.8"
+  },
+  "setting_clean_gap_uar_melati_emotion": {
+   "value": -23.0,
+   "text": "−23.0"
+  },
+  "language_gap_uar_melati_emotion": {
+   "value": -14.4,
+   "text": "−14.4"
+  },
+  "language_acted_gap_uar_melati_emotion": {
+   "value": -9.9,
+   "text": "−9.9"
+  },
+  "conv_accuracy_melati_emotion": {
+   "value": 45.7,
+   "text": "45.7"
+  },
+  "setting_gap_accuracy_vox_profile_whisper": {
+   "value": 7.4,
+   "text": "+7.4"
+  },
+  "setting_clean_gap_accuracy_vox_profile_whisper": {
+   "value": 7.4,
+   "text": "+7.4"
+  },
+  "language_gap_accuracy_vox_profile_whisper": {
+   "value": -4.0,
+   "text": "−4.0"
+  },
+  "language_acted_gap_accuracy_vox_profile_whisper": {
+   "value": -8.1,
+   "text": "−8.1"
+  },
+  "setting_gap_uar_vox_profile_whisper": {
+   "value": 2.5,
+   "text": "+2.5"
+  },
+  "setting_clean_gap_uar_vox_profile_whisper": {
+   "value": 2.5,
+   "text": "+2.5"
+  },
+  "language_gap_uar_vox_profile_whisper": {
+   "value": -6.7,
+   "text": "−6.7"
+  },
+  "language_acted_gap_uar_vox_profile_whisper": {
+   "value": -7.4,
+   "text": "−7.4"
+  },
+  "conv_accuracy_vox_profile_whisper": {
+   "value": 46.8,
+   "text": "46.8"
+  },
+  "setting_gap_accuracy_vox_profile_wavlm": {
+   "value": 11.3,
+   "text": "+11.3"
+  },
+  "setting_clean_gap_accuracy_vox_profile_wavlm": {
+   "value": 11.3,
+   "text": "+11.3"
+  },
+  "language_gap_accuracy_vox_profile_wavlm": {
+   "value": 1.6,
+   "text": "+1.6"
+  },
+  "language_acted_gap_accuracy_vox_profile_wavlm": {
+   "value": -0.3,
+   "text": "−0.3"
+  },
+  "setting_gap_uar_vox_profile_wavlm": {
+   "value": 3.5,
+   "text": "+3.5"
+  },
+  "setting_clean_gap_uar_vox_profile_wavlm": {
+   "value": 3.5,
+   "text": "+3.5"
+  },
+  "language_gap_uar_vox_profile_wavlm": {
+   "value": 2.5,
+   "text": "+2.5"
+  },
+  "language_acted_gap_uar_vox_profile_wavlm": {
+   "value": 0.8,
+   "text": "+0.8"
+  },
+  "conv_accuracy_vox_profile_wavlm": {
+   "value": 47.6,
+   "text": "47.6"
+  },
+  "setting_gap_accuracy_qwen2_5_omni_7b": {
+   "value": 27.5,
+   "text": "+27.5"
+  },
+  "setting_clean_gap_accuracy_qwen2_5_omni_7b": {
+   "value": 27.5,
+   "text": "+27.5"
+  },
+  "language_gap_accuracy_qwen2_5_omni_7b": {
+   "value": 3.0,
+   "text": "+3.0"
+  },
+  "language_acted_gap_accuracy_qwen2_5_omni_7b": {
+   "value": -1.7,
+   "text": "−1.7"
+  },
+  "setting_gap_uar_qwen2_5_omni_7b": {
+   "value": 19.0,
+   "text": "+19.0"
+  },
+  "setting_clean_gap_uar_qwen2_5_omni_7b": {
+   "value": 19.0,
+   "text": "+19.0"
+  },
+  "language_gap_uar_qwen2_5_omni_7b": {
+   "value": 0.0,
+   "text": "0.0"
+  },
+  "language_acted_gap_uar_qwen2_5_omni_7b": {
+   "value": -1.1,
+   "text": "−1.1"
+  },
+  "conv_accuracy_qwen2_5_omni_7b": {
+   "value": 57.3,
+   "text": "57.3"
+  },
+  "setting_gap_accuracy_qwen2_audio_7b": {
+   "value": -16.8,
+   "text": "−16.8"
+  },
+  "setting_clean_gap_accuracy_qwen2_audio_7b": {
+   "value": -16.8,
+   "text": "−16.8"
+  },
+  "language_gap_accuracy_qwen2_audio_7b": {
+   "value": 25.6,
+   "text": "+25.6"
+  },
+  "language_acted_gap_accuracy_qwen2_audio_7b": {
+   "value": 33.6,
+   "text": "+33.6"
+  },
+  "setting_gap_uar_qwen2_audio_7b": {
+   "value": -5.8,
+   "text": "−5.8"
+  },
+  "setting_clean_gap_uar_qwen2_audio_7b": {
+   "value": -5.8,
+   "text": "−5.8"
+  },
+  "language_gap_uar_qwen2_audio_7b": {
+   "value": 28.0,
+   "text": "+28.0"
+  },
+  "language_acted_gap_uar_qwen2_audio_7b": {
+   "value": 34.4,
+   "text": "+34.4"
+  },
+  "conv_accuracy_qwen2_audio_7b": {
+   "value": 30.5,
+   "text": "30.5"
+  },
+  "setting_gap_accuracy_gemma4_e4b": {
+   "value": 37.0,
+   "text": "+37.0"
+  },
+  "setting_clean_gap_accuracy_gemma4_e4b": {
+   "value": 37.0,
+   "text": "+37.0"
+  },
+  "language_gap_accuracy_gemma4_e4b": {
+   "value": 5.0,
+   "text": "+5.0"
+  },
+  "language_acted_gap_accuracy_gemma4_e4b": {
+   "value": -2.0,
+   "text": "−2.0"
+  },
+  "setting_gap_uar_gemma4_e4b": {
+   "value": 13.0,
+   "text": "+13.0"
+  },
+  "setting_clean_gap_uar_gemma4_e4b": {
+   "value": 13.0,
+   "text": "+13.0"
+  },
+  "language_gap_uar_gemma4_e4b": {
+   "value": 1.5,
+   "text": "+1.5"
+  },
+  "language_acted_gap_uar_gemma4_e4b": {
+   "value": -1.6,
+   "text": "−1.6"
+  },
+  "conv_accuracy_gemma4_e4b": {
+   "value": 58.0,
+   "text": "58.0"
+  },
+  "setting_gap_accuracy_gpt_realtime": {
+   "value": 35.9,
+   "text": "+35.9"
+  },
+  "setting_clean_gap_accuracy_gpt_realtime": {
+   "value": 35.9,
+   "text": "+35.9"
+  },
+  "language_gap_accuracy_gpt_realtime": {
+   "value": 2.2,
+   "text": "+2.2"
+  },
+  "language_acted_gap_accuracy_gpt_realtime": {
+   "value": -4.1,
+   "text": "−4.1"
+  },
+  "setting_gap_uar_gpt_realtime": {
+   "value": 17.9,
+   "text": "+17.9"
+  },
+  "setting_clean_gap_uar_gpt_realtime": {
+   "value": 17.9,
+   "text": "+17.9"
+  },
+  "language_gap_uar_gpt_realtime": {
+   "value": -2.2,
+   "text": "−2.2"
+  },
+  "language_acted_gap_uar_gpt_realtime": {
+   "value": -3.7,
+   "text": "−3.7"
+  },
+  "conv_accuracy_gpt_realtime": {
+   "value": 59.5,
+   "text": "59.5"
+  },
+  "setting_gap_accuracy_gemini_3_8_flash": {
+   "value": 16.8,
+   "text": "+16.8"
+  },
+  "setting_clean_gap_accuracy_gemini_3_8_flash": {
+   "value": 16.8,
+   "text": "+16.8"
+  },
+  "language_gap_accuracy_gemini_3_8_flash": {
+   "value": -1.9,
+   "text": "−1.9"
+  },
+  "language_acted_gap_accuracy_gemini_3_8_flash": {
+   "value": -5.1,
+   "text": "−5.1"
+  },
+  "setting_gap_uar_gemini_3_8_flash": {
+   "value": 9.9,
+   "text": "+9.9"
+  },
+  "setting_clean_gap_uar_gemini_3_8_flash": {
+   "value": 9.9,
+   "text": "+9.9"
+  },
+  "language_gap_uar_gemini_3_8_flash": {
+   "value": -5.4,
+   "text": "−5.4"
+  },
+  "language_acted_gap_uar_gemini_3_8_flash": {
+   "value": -4.5,
+   "text": "−4.5"
+  },
+  "conv_accuracy_gemini_3_8_flash": {
+   "value": 51.5,
+   "text": "51.5"
+  },
+  "neutral_conv_mean": {
+   "value": 0.6093709677045105,
+   "text": "60.9"
+  },
+  "best_conv_accuracy": {
+   "value": 59.5,
+   "text": "59.5"
+  },
+  "best_conv_model": {
+   "value": "GPT Realtime",
+   "text": "GPT Realtime"
+  },
+  "neutral_beats_all": {
+   "value": [
+    "DailyTalk",
+    "MultiDialog"
+   ],
+   "text": "DailyTalk and MultiDialog"
+  },
+  "lang_big": {
+   "value": [
+    "Melati",
+    "Qwen2-Audio"
+   ],
+   "text": "Melati, Qwen2-Audio"
+  },
+  "lang_small_max": {
+   "value": 6.7,
+   "text": "7"
+  },
+  "lang_small_n": {
+   "value": 8,
+   "text": "8"
+  },
+  "dur_positive": {
+   "value": [
+    "Gemini 3.8 Flash",
+    "GPT Realtime",
+    "Melati",
+    "Gemma 4"
+   ],
+   "text": "Gemini 3.8 Flash, GPT Realtime, Melati, Gemma 4"
+  },
+  "dur_unclear_n": {
+   "value": 6,
+   "text": "6"
+  },
+  "dur_negative_n": {
+   "value": 0,
+   "text": "0"
+  },
+  "dur_pooled_emotion2vec_plus_large": {
+   "value": 0.6,
+   "text": "+0.6"
+  },
+  "dur_pooled_ci_emotion2vec_plus_large": {
+   "value": [
+    -7.9,
+    9.2
+   ],
+   "text": "[−7.9, +9.2]"
+  },
+  "dur_within_emotion2vec_plus_large": {
+   "value": 1.8,
+   "text": "+1.8"
+  },
+  "dur_within_ci_emotion2vec_plus_large": {
+   "value": [
+    -0.4,
+    4.0
+   ],
+   "text": "[−0.4, +4.0]"
+  },
+  "dur_pooled_meralion_ser_v1": {
+   "value": -7.0,
+   "text": "−7.0"
+  },
+  "dur_pooled_ci_meralion_ser_v1": {
+   "value": [
+    -11.0,
+    -2.9
+   ],
+   "text": "[−11.0, −2.9]"
+  },
+  "dur_within_meralion_ser_v1": {
+   "value": 0.6,
+   "text": "+0.6"
+  },
+  "dur_within_ci_meralion_ser_v1": {
+   "value": [
+    -1.2,
+    2.4
+   ],
+   "text": "[−1.2, +2.4]"
+  },
+  "dur_pooled_melati_emotion": {
+   "value": 2.6,
+   "text": "+2.6"
+  },
+  "dur_pooled_ci_melati_emotion": {
+   "value": [
+    -2.6,
+    7.9
+   ],
+   "text": "[−2.6, +7.9]"
+  },
+  "dur_within_melati_emotion": {
+   "value": 2.4,
+   "text": "+2.4"
+  },
+  "dur_within_ci_melati_emotion": {
+   "value": [
+    0.2,
+    4.6
+   ],
+   "text": "[+0.2, +4.6]"
+  },
+  "dur_pooled_vox_profile_whisper": {
+   "value": 3.2,
+   "text": "+3.2"
+  },
+  "dur_pooled_ci_vox_profile_whisper": {
+   "value": [
+    -5.1,
+    11.6
+   ],
+   "text": "[−5.1, +11.6]"
+  },
+  "dur_within_vox_profile_whisper": {
+   "value": 1.7,
+   "text": "+1.7"
+  },
+  "dur_within_ci_vox_profile_whisper": {
+   "value": [
+    -0.7,
+    4.1
+   ],
+   "text": "[−0.7, +4.1]"
+  },
+  "dur_pooled_vox_profile_wavlm": {
+   "value": 2.7,
+   "text": "+2.7"
+  },
+  "dur_pooled_ci_vox_profile_wavlm": {
+   "value": [
+    -2.4,
+    7.8
+   ],
+   "text": "[−2.4, +7.8]"
+  },
+  "dur_within_vox_profile_wavlm": {
+   "value": 0.9,
+   "text": "+0.9"
+  },
+  "dur_within_ci_vox_profile_wavlm": {
+   "value": [
+    -1.1,
+    2.9
+   ],
+   "text": "[−1.1, +2.9]"
+  },
+  "dur_pooled_qwen2_5_omni_7b": {
+   "value": 3.5,
+   "text": "+3.5"
+  },
+  "dur_pooled_ci_qwen2_5_omni_7b": {
+   "value": [
+    -2.0,
+    9.0
+   ],
+   "text": "[−2.0, +9.0]"
+  },
+  "dur_within_qwen2_5_omni_7b": {
+   "value": 0.4,
+   "text": "+0.4"
+  },
+  "dur_within_ci_qwen2_5_omni_7b": {
+   "value": [
+    -1.4,
+    2.3
+   ],
+   "text": "[−1.4, +2.3]"
+  },
+  "dur_pooled_qwen2_audio_7b": {
+   "value": -7.2,
+   "text": "−7.2"
+  },
+  "dur_pooled_ci_qwen2_audio_7b": {
+   "value": [
+    -15.3,
+    0.9
+   ],
+   "text": "[−15.3, +0.9]"
+  },
+  "dur_within_qwen2_audio_7b": {
+   "value": 0.3,
+   "text": "+0.3"
+  },
+  "dur_within_ci_qwen2_audio_7b": {
+   "value": [
+    -2.0,
+    2.6
+   ],
+   "text": "[−2.0, +2.6]"
+  },
+  "dur_pooled_gemma4_e4b": {
+   "value": 7.1,
+   "text": "+7.1"
+  },
+  "dur_pooled_ci_gemma4_e4b": {
+   "value": [
+    1.2,
+    13.0
+   ],
+   "text": "[+1.2, +13.0]"
+  },
+  "dur_within_gemma4_e4b": {
+   "value": 2.3,
+   "text": "+2.3"
+  },
+  "dur_within_ci_gemma4_e4b": {
+   "value": [
+    0.4,
+    4.2
+   ],
+   "text": "[+0.4, +4.2]"
+  },
+  "dur_pooled_gpt_realtime": {
+   "value": 8.9,
+   "text": "+8.9"
+  },
+  "dur_pooled_ci_gpt_realtime": {
+   "value": [
+    2.2,
+    15.6
+   ],
+   "text": "[+2.2, +15.6]"
+  },
+  "dur_within_gpt_realtime": {
+   "value": 4.8,
+   "text": "+4.8"
+  },
+  "dur_within_ci_gpt_realtime": {
+   "value": [
+    1.7,
+    7.8
+   ],
+   "text": "[+1.7, +7.8]"
+  },
+  "dur_pooled_gemini_3_8_flash": {
+   "value": 8.5,
+   "text": "+8.5"
+  },
+  "dur_pooled_ci_gemini_3_8_flash": {
+   "value": [
+    2.0,
+    14.9
+   ],
+   "text": "[+2.0, +14.9]"
+  },
+  "dur_within_gemini_3_8_flash": {
+   "value": 5.1,
+   "text": "+5.1"
+  },
+  "dur_within_ci_gemini_3_8_flash": {
+   "value": [
+    1.9,
+    8.3
+   ],
+   "text": "[+1.9, +8.3]"
+  },
+  "dur_flips": {
+   "value": [
+    "MERaLiON",
+    "Qwen2-Audio"
+   ],
+   "text": "MERaLiON and Qwen2-Audio"
+  },
+  "heat_ci_datasets": {
+   "value": [
+    "MELD",
+    "DailyTalk",
+    "MultiDialog",
+    "CREMA-D",
+    "RAVDESS",
+    "MEAD",
+    "THAI-SER",
+    "Emozionalmente"
+   ],
+   "text": "MELD, DailyTalk, MultiDialog, CREMA-D, RAVDESS, MEAD, THAI-SER, Emozionalmente"
+  },
+  "heat_ci_n": {
+   "value": 8,
+   "text": "8"
+  },
+  "heat_thai_ser_pos": {
+   "value": 9,
+   "text": "9"
+  },
+  "heat_thai_ser_neg": {
+   "value": 1,
+   "text": "1"
+  },
+  "heat_thai_ser_boldpos": {
+   "value": 9,
+   "text": "9"
+  },
+  "heat_thai_ser_boldneg": {
+   "value": 0,
+   "text": "0"
+  },
+  "heat_jl_corpus_pos": {
+   "value": 2,
+   "text": "2"
+  },
+  "heat_jl_corpus_neg": {
+   "value": 8,
+   "text": "8"
+  },
+  "heat_jl_corpus_boldpos": {
+   "value": 0,
+   "text": "0"
+  },
+  "heat_jl_corpus_boldneg": {
+   "value": 0,
+   "text": "0"
+  },
+  "heat_crema_d_pos": {
+   "value": 7,
+   "text": "7"
+  },
+  "heat_crema_d_neg": {
+   "value": 3,
+   "text": "3"
+  },
+  "heat_crema_d_boldpos": {
+   "value": 5,
+   "text": "5"
+  },
+  "heat_crema_d_boldneg": {
+   "value": 2,
+   "text": "2"
+  },
+  "heat_mead_pos": {
+   "value": 9,
+   "text": "9"
+  },
+  "heat_mead_neg": {
+   "value": 1,
+   "text": "1"
+  },
+  "heat_mead_boldpos": {
+   "value": 6,
+   "text": "6"
+  },
+  "heat_mead_boldneg": {
+   "value": 0,
+   "text": "0"
+  },
+  "heat_ravdess_pos": {
+   "value": 7,
+   "text": "7"
+  },
+  "heat_ravdess_neg": {
+   "value": 3,
+   "text": "3"
+  },
+  "heat_ravdess_boldpos": {
+   "value": 5,
+   "text": "5"
+  },
+  "heat_ravdess_boldneg": {
+   "value": 0,
+   "text": "0"
+  },
+  "heat_ravdess_max": {
+   "value": 100.3,
+   "text": "100"
+  },
+  "n_full_text": {
+   "value": 10,
+   "text": "10"
+  },
+  "raw_multidialog_fall_n": {
+   "value": 10,
+   "text": "10"
+  },
+  "raw_multidialog_qwen2_audio_7b": {
+   "value": [
+    50.4,
+    16.0
+   ],
+   "text": "50% → 16%"
+  },
+  "raw_thai_qwen2_audio_7b": {
+   "value": [
+    33.1,
+    35.2
+   ],
+   "text": "33% → 35%"
+  },
+  "heat_multidialog_qwen2_audio_7b": {
+   "value": -3.0,
+   "text": "−3"
+  },
+  "heat_thai_qwen2_audio_7b": {
+   "value": 2.0,
+   "text": "+2"
+  },
+  "raw_multidialog_gpt_realtime": {
+   "value": [
+    73.7,
+    52.5
+   ],
+   "text": "74% → 52%"
+  },
+  "raw_thai_gpt_realtime": {
+   "value": [
+    29.3,
+    74.8
+   ],
+   "text": "29% → 75%"
+  },
+  "heat_multidialog_gpt_realtime": {
+   "value": 1.4,
+   "text": "+1"
+  },
+  "heat_thai_gpt_realtime": {
+   "value": 10.9,
+   "text": "+11"
+  },
+  "raw_multidialog_gemini_3_8_flash": {
+   "value": [
+    56.4,
+    51.1
+   ],
+   "text": "56% → 51%"
+  },
+  "raw_thai_gemini_3_8_flash": {
+   "value": [
+    49.8,
+    86.1
+   ],
+   "text": "50% → 86%"
+  },
+  "heat_multidialog_gemini_3_8_flash": {
+   "value": -1.1,
+   "text": "−1"
+  },
+  "heat_thai_gemini_3_8_flash": {
+   "value": 7.2,
+   "text": "+7"
+  },
+  "rho_min": {
+   "value": -0.58,
+   "text": "−0.58"
+  },
+  "rho_max": {
+   "value": 0.42,
+   "text": "+0.42"
+  },
+  "rho_sig": {
+   "value": [
+    "MERaLiON (UAR, ρ = −0.53, p = 0.035)",
+    "Qwen2-Audio (accuracy, ρ = −0.58, p = 0.019)",
+    "Gemma 4 (macro-F1, ρ = +0.55, p = 0.028)",
+    "GPT Realtime (UAR, ρ = +0.56, p = 0.024)",
+    "GPT Realtime (macro-F1, ρ = +0.56, p = 0.024)"
+   ],
+   "text": "MERaLiON (UAR, ρ = −0.53, p = 0.035); Qwen2-Audio (accuracy, ρ = −0.58, p = 0.019); Gemma 4 (macro-F1, ρ = +0.55, p = 0.028); GPT Realtime (UAR, ρ = +0.56, p = 0.024); GPT Realtime (macro-F1, ρ = +0.56, p = 0.024)"
+  },
+  "gemma_datasets": {
+   "value": [
+    "MELD",
+    "EmotionTalk",
+    "DailyTalk",
+    "MultiDialog",
+    "CREMA-D",
+    "RAVDESS",
+    "SAVEE",
+    "JL-Corpus",
+    "TESS",
+    "MEAD",
+    "MESS",
+    "MCAE-SPPS",
+    "THAI-SER",
+    "nEMO",
+    "EMOVO",
+    "Emozionalmente"
+   ],
+   "text": "MELD, EmotionTalk, DailyTalk, MultiDialog, CREMA-D, RAVDESS, SAVEE, JL-Corpus, TESS, MEAD, MESS, MCAE-SPPS, THAI-SER, nEMO, EMOVO, Emozionalmente"
+  },
+  "gemma_complete": {
+   "value": true,
+   "text": "yes"
+  }
+ },
+ "datasets": [
+  {
+   "key": "meld",
+   "name": "MELD",
+   "language": "English",
+   "setting": "Conversational",
+   "n": 2608,
+   "median": 2.6,
+   "under3": 59,
+   "neutral": 48.2
+  },
+  {
+   "key": "emotiontalk",
+   "name": "EmotionTalk",
+   "language": "Mandarin",
+   "setting": "Conversational",
+   "n": 1929,
+   "median": 3.8,
+   "under3": 40,
+   "neutral": 48.9
+  },
+  {
+   "key": "dailytalk",
+   "name": "DailyTalk",
+   "language": "English",
+   "setting": "Conversational",
+   "n": 1197,
+   "median": 2.9,
+   "under3": 52,
+   "neutral": 77.8
+  },
+  {
+   "key": "multidialog",
+   "name": "MultiDialog",
+   "language": "English",
+   "setting": "Conversational",
+   "n": 7672,
+   "median": 5.6,
+   "under3": 13,
+   "neutral": 68.9
+  },
+  {
+   "key": "crema_d",
+   "name": "CREMA-D",
+   "language": "English",
+   "setting": "Acted",
+   "n": 7442,
+   "median": 2.5,
+   "under3": 83,
+   "neutral": 14.6
+  },
+  {
+   "key": "ravdess",
+   "name": "RAVDESS",
+   "language": "English",
+   "setting": "Acted",
+   "n": 1440,
+   "median": 3.7,
+   "under3": 0,
+   "neutral": 20.0
+  },
+  {
+   "key": "savee",
+   "name": "SAVEE",
+   "language": "English",
+   "setting": "Acted",
+   "n": 480,
+   "median": 3.7,
+   "under3": 22,
+   "neutral": 25.0
+  },
+  {
+   "key": "jl_corpus",
+   "name": "JL-Corpus",
+   "language": "English",
+   "setting": "Acted",
+   "n": 1200,
+   "median": 2.0,
+   "under3": 100,
+   "neutral": 20.0
+  },
+  {
+   "key": "tess",
+   "name": "TESS",
+   "language": "English",
+   "setting": "Acted",
+   "n": 2800,
+   "median": 2.0,
+   "under3": 100,
+   "neutral": 14.3
+  },
+  {
+   "key": "mead",
+   "name": "MEAD",
+   "language": "English",
+   "setting": "Acted",
+   "n": 8000,
+   "median": 4.0,
+   "under3": 21,
+   "neutral": 7.0
+  },
+  {
+   "key": "mess",
+   "name": "MESS",
+   "language": "English",
+   "setting": "Acted",
+   "n": 1800,
+   "median": 2.7,
+   "under3": 81,
+   "neutral": 25.0
+  },
+  {
+   "key": "mcae_spps",
+   "name": "MCAE-SPPS",
+   "language": "Mandarin",
+   "setting": "Acted",
+   "n": 6675,
+   "median": 1.2,
+   "under3": 100,
+   "neutral": 17.9
+  },
+  {
+   "key": "thai_ser",
+   "name": "THAI-SER",
+   "language": "Thai",
+   "setting": "Acted",
+   "n": 11848,
+   "median": 4.5,
+   "under3": 23,
+   "neutral": 25.3
+  },
+  {
+   "key": "nemo",
+   "name": "nEMO",
+   "language": "Polish",
+   "setting": "Acted",
+   "n": 4481,
+   "median": 2.4,
+   "under3": 80,
+   "neutral": 18.1
+  },
+  {
+   "key": "emovo",
+   "name": "EMOVO",
+   "language": "Italian",
+   "setting": "Acted",
+   "n": 588,
+   "median": 2.8,
+   "under3": 57,
+   "neutral": 14.3
+  },
+  {
+   "key": "emozionalmente",
+   "name": "Emozionalmente",
+   "language": "Italian",
+   "setting": "Acted",
+   "n": 6902,
+   "median": 3.2,
+   "under3": 43,
+   "neutral": 14.3
+  }
+ ],
+ "spread": [
+  {
+   "model": "emotion2vec_plus_large",
+   "name": "emotion2vec+ large",
+   "short": "emotion2vec+",
+   "n": 16,
+   "min": 40.8,
+   "min_ds": "MESS",
+   "max": 93.3,
+   "max_ds": "SAVEE",
+   "range": 52.5
+  },
+  {
+   "model": "meralion_ser_v1",
+   "name": "MERaLiON-SER-v1",
+   "short": "MERaLiON",
+   "n": 16,
+   "min": 28.3,
+   "min_ds": "MEAD",
+   "max": 84.7,
+   "max_ds": "CREMA-D",
+   "range": 56.4
+  },
+  {
+   "model": "melati_emotion",
+   "name": "Melati",
+   "short": "Melati",
+   "n": 16,
+   "min": 28.8,
+   "min_ds": "MELD",
+   "max": 99.5,
+   "max_ds": "JL-Corpus",
+   "range": 70.7
+  },
+  {
+   "model": "vox_profile_whisper",
+   "name": "Vox-Profile Whisper",
+   "short": "Vox-Profile Whisper",
+   "n": 16,
+   "min": 19.2,
+   "min_ds": "MEAD",
+   "max": 69.3,
+   "max_ds": "THAI-SER",
+   "range": 50.1
+  },
+  {
+   "model": "vox_profile_wavlm",
+   "name": "Vox-Profile WavLM",
+   "short": "Vox-Profile WavLM",
+   "n": 16,
+   "min": 19.4,
+   "min_ds": "MEAD",
+   "max": 57.4,
+   "max_ds": "THAI-SER",
+   "range": 38.0
+  },
+  {
+   "model": "qwen2_5_omni_7b",
+   "name": "Qwen2.5-Omni 7B",
+   "short": "Qwen2.5-Omni",
+   "n": 16,
+   "min": 16.7,
+   "min_ds": "MEAD",
+   "max": 68.8,
+   "max_ds": "DailyTalk",
+   "range": 52.1
+  },
+  {
+   "model": "qwen2_audio_7b",
+   "name": "Qwen2-Audio 7B Instruct",
+   "short": "Qwen2-Audio",
+   "n": 16,
+   "min": 19.8,
+   "min_ds": "MEAD",
+   "max": 92.6,
+   "max_ds": "TESS",
+   "range": 72.8
+  },
+  {
+   "model": "gemma4_e4b",
+   "name": "Gemma 4 E4B",
+   "short": "Gemma 4",
+   "n": 16,
+   "min": 13.3,
+   "min_ds": "MEAD",
+   "max": 72.1,
+   "max_ds": "DailyTalk",
+   "range": 58.8
+  },
+  {
+   "model": "gpt_realtime",
+   "name": "GPT Realtime",
+   "short": "GPT Realtime",
+   "n": 16,
+   "min": 13.1,
+   "min_ds": "MEAD",
+   "max": 74.5,
+   "max_ds": "DailyTalk",
+   "range": 61.4
+  },
+  {
+   "model": "gemini-3.8-flash",
+   "name": "Gemini 3.8 Flash",
+   "short": "Gemini 3.8 Flash",
+   "n": 16,
+   "min": 18.0,
+   "min_ds": "MEAD",
+   "max": 68.4,
+   "max_ds": "THAI-SER",
+   "range": 50.4
+  }
+ ],
+ "groups": [
+  {
+   "model": "emotion2vec_plus_large",
+   "name": "emotion2vec+ large",
+   "short": "emotion2vec+",
+   "family": "SER",
+   "conv_accuracy": 50.6,
+   "acted_accuracy": 78.3,
+   "eng_accuracy": 73.4,
+   "non_accuracy": 68.0,
+   "setting_gap_accuracy": -27.7,
+   "language_gap_accuracy": 5.4,
+   "language_acted_gap_accuracy": 11.3,
+   "setting_clean_gap_accuracy": -3.9,
+   "conv_uar": 30.9,
+   "acted_uar": 77.3,
+   "eng_uar": 66.6,
+   "non_uar": 64.2,
+   "setting_gap_uar": -46.4,
+   "language_gap_uar": 2.4,
+   "language_acted_gap_uar": 13.2,
+   "setting_clean_gap_uar": -22.3,
+   "conv_macro_f1": 26.2,
+   "acted_macro_f1": 75.8,
+   "eng_macro_f1": 64.0,
+   "non_macro_f1": 62.4,
+   "setting_gap_macro_f1": -49.6,
+   "language_gap_macro_f1": 1.6,
+   "language_acted_gap_macro_f1": 12.8,
+   "setting_clean_gap_macro_f1": -25.1,
+   "clean_conv_n": 3,
+   "clean_acted_n": 4,
+   "exposed": [
+    "MELD",
+    "CREMA-D",
+    "RAVDESS",
+    "SAVEE",
+    "JL-Corpus",
+    "TESS",
+    "MEAD",
+    "EMOVO",
+    "Emozionalmente"
+   ],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "meralion_ser_v1",
+   "name": "MERaLiON-SER-v1",
+   "short": "MERaLiON",
+   "family": "SER",
+   "conv_accuracy": 49.5,
+   "acted_accuracy": 58.1,
+   "eng_accuracy": 57.3,
+   "non_accuracy": 53.8,
+   "setting_gap_accuracy": -8.6,
+   "language_gap_accuracy": 3.5,
+   "language_acted_gap_accuracy": 7.9,
+   "setting_clean_gap_accuracy": -4.4,
+   "conv_uar": 42.1,
+   "acted_uar": 57.7,
+   "eng_uar": 54.8,
+   "non_uar": 52.2,
+   "setting_gap_uar": -15.6,
+   "language_gap_uar": 2.6,
+   "language_acted_gap_uar": 9.9,
+   "setting_clean_gap_uar": -15.0,
+   "conv_macro_f1": 31.9,
+   "acted_macro_f1": 53.8,
+   "eng_macro_f1": 48.8,
+   "non_macro_f1": 47.6,
+   "setting_gap_macro_f1": -21.9,
+   "language_gap_macro_f1": 1.2,
+   "language_acted_gap_macro_f1": 10.5,
+   "setting_clean_gap_macro_f1": -22.9,
+   "clean_conv_n": 3,
+   "clean_acted_n": 4,
+   "exposed": [
+    "MELD",
+    "CREMA-D",
+    "RAVDESS",
+    "SAVEE",
+    "JL-Corpus",
+    "TESS",
+    "MEAD",
+    "EMOVO",
+    "Emozionalmente"
+   ],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "melati_emotion",
+   "name": "Melati",
+   "short": "Melati",
+   "family": "SER",
+   "conv_accuracy": 45.7,
+   "acted_accuracy": 59.0,
+   "eng_accuracy": 53.6,
+   "non_accuracy": 59.2,
+   "setting_gap_accuracy": -13.3,
+   "language_gap_accuracy": -5.6,
+   "language_acted_gap_accuracy": -10.6,
+   "setting_clean_gap_accuracy": -5.4,
+   "conv_uar": 28.1,
+   "acted_uar": 58.9,
+   "eng_uar": 45.8,
+   "non_uar": 60.2,
+   "setting_gap_uar": -30.8,
+   "language_gap_uar": -14.4,
+   "language_acted_gap_uar": -9.9,
+   "setting_clean_gap_uar": -23.0,
+   "conv_macro_f1": 22.7,
+   "acted_macro_f1": 55.7,
+   "eng_macro_f1": 41.8,
+   "non_macro_f1": 56.8,
+   "setting_gap_macro_f1": -33.0,
+   "language_gap_macro_f1": -15.0,
+   "language_acted_gap_macro_f1": -12.1,
+   "setting_clean_gap_macro_f1": -24.5,
+   "clean_conv_n": 4,
+   "clean_acted_n": 9,
+   "exposed": [
+    "JL-Corpus",
+    "nEMO",
+    "Emozionalmente"
+   ],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "vox_profile_whisper",
+   "name": "Vox-Profile Whisper",
+   "short": "Vox-Profile Whisper",
+   "family": "SER",
+   "conv_accuracy": 46.8,
+   "acted_accuracy": 39.4,
+   "eng_accuracy": 39.8,
+   "non_accuracy": 43.8,
+   "setting_gap_accuracy": 7.4,
+   "language_gap_accuracy": -4.0,
+   "language_acted_gap_accuracy": -8.1,
+   "setting_clean_gap_accuracy": 7.4,
+   "conv_uar": 41.4,
+   "acted_uar": 38.9,
+   "eng_uar": 37.0,
+   "non_uar": 43.7,
+   "setting_gap_uar": 2.5,
+   "language_gap_uar": -6.7,
+   "language_acted_gap_uar": -7.4,
+   "setting_clean_gap_uar": 2.5,
+   "conv_macro_f1": 28.9,
+   "acted_macro_f1": 34.1,
+   "eng_macro_f1": 29.3,
+   "non_macro_f1": 38.7,
+   "setting_gap_macro_f1": -5.2,
+   "language_gap_macro_f1": -9.4,
+   "language_acted_gap_macro_f1": -8.9,
+   "setting_clean_gap_macro_f1": -5.2,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "vox_profile_wavlm",
+   "name": "Vox-Profile WavLM",
+   "short": "Vox-Profile WavLM",
+   "family": "SER",
+   "conv_accuracy": 47.6,
+   "acted_accuracy": 36.3,
+   "eng_accuracy": 39.7,
+   "non_accuracy": 38.1,
+   "setting_gap_accuracy": 11.3,
+   "language_gap_accuracy": 1.6,
+   "language_acted_gap_accuracy": -0.3,
+   "setting_clean_gap_accuracy": 11.3,
+   "conv_uar": 39.1,
+   "acted_uar": 35.6,
+   "eng_uar": 37.4,
+   "non_uar": 34.9,
+   "setting_gap_uar": 3.5,
+   "language_gap_uar": 2.5,
+   "language_acted_gap_uar": 0.8,
+   "setting_clean_gap_uar": 3.5,
+   "conv_macro_f1": 27.7,
+   "acted_macro_f1": 31.4,
+   "eng_macro_f1": 30.3,
+   "non_macro_f1": 30.8,
+   "setting_gap_macro_f1": -3.7,
+   "language_gap_macro_f1": -0.5,
+   "language_acted_gap_macro_f1": 1.2,
+   "setting_clean_gap_macro_f1": -3.7,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "qwen2_5_omni_7b",
+   "name": "Qwen2.5-Omni 7B",
+   "short": "Qwen2.5-Omni",
+   "family": "Audio LLM",
+   "conv_accuracy": 57.3,
+   "acted_accuracy": 29.8,
+   "eng_accuracy": 37.8,
+   "non_accuracy": 34.8,
+   "setting_gap_accuracy": 27.5,
+   "language_gap_accuracy": 3.0,
+   "language_acted_gap_accuracy": -1.7,
+   "setting_clean_gap_accuracy": 27.5,
+   "conv_uar": 48.1,
+   "acted_uar": 29.1,
+   "eng_uar": 33.8,
+   "non_uar": 33.8,
+   "setting_gap_uar": 19.0,
+   "language_gap_uar": 0.0,
+   "language_acted_gap_uar": -1.1,
+   "setting_clean_gap_uar": 19.0,
+   "conv_macro_f1": 36.7,
+   "acted_macro_f1": 26.0,
+   "eng_macro_f1": 28.0,
+   "non_macro_f1": 29.7,
+   "setting_gap_macro_f1": 10.7,
+   "language_gap_macro_f1": -1.7,
+   "language_acted_gap_macro_f1": -0.1,
+   "setting_clean_gap_macro_f1": 10.7,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "qwen2_audio_7b",
+   "name": "Qwen2-Audio 7B Instruct",
+   "short": "Qwen2-Audio",
+   "family": "Audio LLM",
+   "conv_accuracy": 30.5,
+   "acted_accuracy": 47.3,
+   "eng_accuracy": 52.7,
+   "non_accuracy": 27.1,
+   "setting_gap_accuracy": -16.8,
+   "language_gap_accuracy": 25.6,
+   "language_acted_gap_accuracy": 33.6,
+   "setting_clean_gap_accuracy": -16.8,
+   "conv_uar": 42.1,
+   "acted_uar": 47.9,
+   "eng_uar": 56.9,
+   "non_uar": 28.9,
+   "setting_gap_uar": -5.8,
+   "language_gap_uar": 28.0,
+   "language_acted_gap_uar": 34.4,
+   "setting_clean_gap_uar": -5.8,
+   "conv_macro_f1": 24.2,
+   "acted_macro_f1": 43.7,
+   "eng_macro_f1": 47.8,
+   "non_macro_f1": 23.9,
+   "setting_gap_macro_f1": -19.5,
+   "language_gap_macro_f1": 23.9,
+   "language_acted_gap_macro_f1": 35.5,
+   "setting_clean_gap_macro_f1": -19.5,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "gemma4_e4b",
+   "name": "Gemma 4 E4B",
+   "short": "Gemma 4",
+   "family": "Audio LLM",
+   "conv_accuracy": 58.0,
+   "acted_accuracy": 21.0,
+   "eng_accuracy": 32.1,
+   "non_accuracy": 27.1,
+   "setting_gap_accuracy": 37.0,
+   "language_gap_accuracy": 5.0,
+   "language_acted_gap_accuracy": -2.0,
+   "setting_clean_gap_accuracy": 37.0,
+   "conv_uar": 33.2,
+   "acted_uar": 20.2,
+   "eng_uar": 24.0,
+   "non_uar": 22.5,
+   "setting_gap_uar": 13.0,
+   "language_gap_uar": 1.5,
+   "language_acted_gap_uar": -1.6,
+   "setting_clean_gap_uar": 13.0,
+   "conv_macro_f1": 28.4,
+   "acted_macro_f1": 13.0,
+   "eng_macro_f1": 16.8,
+   "non_macro_f1": 17.1,
+   "setting_gap_macro_f1": 15.4,
+   "language_gap_macro_f1": -0.3,
+   "language_acted_gap_macro_f1": -2.7,
+   "setting_clean_gap_macro_f1": 15.4,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "gpt_realtime",
+   "name": "GPT Realtime",
+   "short": "GPT Realtime",
+   "family": "API",
+   "conv_accuracy": 59.5,
+   "acted_accuracy": 23.6,
+   "eng_accuracy": 33.4,
+   "non_accuracy": 31.2,
+   "setting_gap_accuracy": 35.9,
+   "language_gap_accuracy": 2.2,
+   "language_acted_gap_accuracy": -4.1,
+   "setting_clean_gap_accuracy": 35.9,
+   "conv_uar": 40.5,
+   "acted_uar": 22.6,
+   "eng_uar": 26.3,
+   "non_uar": 28.5,
+   "setting_gap_uar": 17.9,
+   "language_gap_uar": -2.2,
+   "language_acted_gap_uar": -3.7,
+   "setting_clean_gap_uar": 17.9,
+   "conv_macro_f1": 36.6,
+   "acted_macro_f1": 16.2,
+   "eng_macro_f1": 20.2,
+   "non_macro_f1": 23.0,
+   "setting_gap_macro_f1": 20.4,
+   "language_gap_macro_f1": -2.8,
+   "language_acted_gap_macro_f1": -4.4,
+   "setting_clean_gap_macro_f1": 20.4,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  },
+  {
+   "model": "gemini-3.8-flash",
+   "name": "Gemini 3.8 Flash",
+   "short": "Gemini 3.8 Flash",
+   "family": "API",
+   "conv_accuracy": 51.5,
+   "acted_accuracy": 34.7,
+   "eng_accuracy": 38.2,
+   "non_accuracy": 40.1,
+   "setting_gap_accuracy": 16.8,
+   "language_gap_accuracy": -1.9,
+   "language_acted_gap_accuracy": -5.1,
+   "setting_clean_gap_accuracy": 16.8,
+   "conv_uar": 44.0,
+   "acted_uar": 34.1,
+   "eng_uar": 34.5,
+   "non_uar": 39.9,
+   "setting_gap_uar": 9.9,
+   "language_gap_uar": -5.4,
+   "language_acted_gap_uar": -4.5,
+   "setting_clean_gap_uar": 9.9,
+   "conv_macro_f1": 33.5,
+   "acted_macro_f1": 31.3,
+   "eng_macro_f1": 29.5,
+   "non_macro_f1": 35.9,
+   "setting_gap_macro_f1": 2.2,
+   "language_gap_macro_f1": -6.4,
+   "language_acted_gap_macro_f1": -4.1,
+   "setting_clean_gap_macro_f1": 2.2,
+   "clean_conv_n": 4,
+   "clean_acted_n": 12,
+   "exposed": [],
+   "conv_n": 4,
+   "acted_n": 12
+  }
+ ],
+ "duration": [
+  {
+   "model": "emotion2vec_plus_large",
+   "name": "emotion2vec+ large",
+   "short": "emotion2vec+",
+   "family": "SER",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 0.6,
+    "lo": -7.9,
+    "hi": 9.2,
+    "p": 0.8782312593493752,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 2.5,
+    "lo": 1.3,
+    "hi": 3.6,
+    "p": 0.0004851481920800158,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 1.8,
+    "lo": -0.4,
+    "hi": 4.0,
+    "p": 0.09668902602988504,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 1.8,
+    "lo": 0.5,
+    "hi": 3.1,
+    "p": 0.0054639143999187486,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 1.3,
+    "lo": -1.5,
+    "hi": 4.0,
+    "p": 0.33349689511943176,
+    "clusters": 16
+   },
+   "evidence": "unclear"
+  },
+  {
+   "model": "meralion_ser_v1",
+   "name": "MERaLiON-SER-v1",
+   "short": "MERaLiON",
+   "family": "SER",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": -7.0,
+    "lo": -11.0,
+    "hi": -2.9,
+    "p": 0.0023798431195485655,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": -0.8,
+    "lo": -1.8,
+    "hi": 0.3,
+    "p": 0.13163757727154207,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 0.6,
+    "lo": -1.2,
+    "hi": 2.4,
+    "p": 0.48197950228461484,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 0.6,
+    "lo": -0.9,
+    "hi": 2.1,
+    "p": 0.4238063631033411,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 0.5,
+    "lo": -1.6,
+    "hi": 2.6,
+    "p": 0.6184102948500664,
+    "clusters": 16
+   },
+   "evidence": "unclear"
+  },
+  {
+   "model": "melati_emotion",
+   "name": "Melati",
+   "short": "Melati",
+   "family": "SER",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 2.6,
+    "lo": -2.6,
+    "hi": 7.9,
+    "p": 0.30707603585047494,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 2.8,
+    "lo": 1.3,
+    "hi": 4.3,
+    "p": 0.0010573073960684957,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 2.4,
+    "lo": 0.2,
+    "hi": 4.6,
+    "p": 0.03473542068941929,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 2.4,
+    "lo": 0.9,
+    "hi": 3.9,
+    "p": 0.0017905362041624735,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 2.0,
+    "lo": -0.6,
+    "hi": 4.6,
+    "p": 0.11543270309324812,
+    "clusters": 16
+   },
+   "evidence": "positive"
+  },
+  {
+   "model": "vox_profile_whisper",
+   "name": "Vox-Profile Whisper",
+   "short": "Vox-Profile Whisper",
+   "family": "SER",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 3.2,
+    "lo": -5.1,
+    "hi": 11.6,
+    "p": 0.42256615794450403,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 1.9,
+    "lo": -2.6,
+    "hi": 6.4,
+    "p": 0.3856725954251854,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 1.7,
+    "lo": -0.7,
+    "hi": 4.1,
+    "p": 0.14803695201135977,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 1.7,
+    "lo": 0.6,
+    "hi": 2.9,
+    "p": 0.002861071636174919,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 1.2,
+    "lo": -1.5,
+    "hi": 3.9,
+    "p": 0.35366089861654193,
+    "clusters": 16
+   },
+   "evidence": "unclear"
+  },
+  {
+   "model": "vox_profile_wavlm",
+   "name": "Vox-Profile WavLM",
+   "short": "Vox-Profile WavLM",
+   "family": "SER",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 2.7,
+    "lo": -2.4,
+    "hi": 7.8,
+    "p": 0.2765154319619377,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 2.0,
+    "lo": -0.5,
+    "hi": 4.5,
+    "p": 0.10770290051946285,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 0.9,
+    "lo": -1.1,
+    "hi": 2.9,
+    "p": 0.33588877263964734,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 0.9,
+    "lo": -0.6,
+    "hi": 2.4,
+    "p": 0.22479854589004514,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": -0.2,
+    "lo": -2.3,
+    "hi": 1.9,
+    "p": 0.8313530352446175,
+    "clusters": 16
+   },
+   "evidence": "unclear"
+  },
+  {
+   "model": "qwen2_5_omni_7b",
+   "name": "Qwen2.5-Omni 7B",
+   "short": "Qwen2.5-Omni",
+   "family": "Audio LLM",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 3.5,
+    "lo": -2.0,
+    "hi": 9.0,
+    "p": 0.18996610428358493,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 0.5,
+    "lo": -2.2,
+    "hi": 3.2,
+    "p": 0.7041776504000887,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 0.4,
+    "lo": -1.4,
+    "hi": 2.3,
+    "p": 0.6304750798373322,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 0.4,
+    "lo": -0.7,
+    "hi": 1.5,
+    "p": 0.4393847483104509,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": -0.3,
+    "lo": -2.4,
+    "hi": 1.7,
+    "p": 0.7360175142845182,
+    "clusters": 16
+   },
+   "evidence": "unclear"
+  },
+  {
+   "model": "qwen2_audio_7b",
+   "name": "Qwen2-Audio 7B Instruct",
+   "short": "Qwen2-Audio",
+   "family": "Audio LLM",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": -7.2,
+    "lo": -15.3,
+    "hi": 0.9,
+    "p": 0.07823507510046306,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": -1.7,
+    "lo": -6.1,
+    "hi": 2.7,
+    "p": 0.42338147062286,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 0.3,
+    "lo": -2.0,
+    "hi": 2.6,
+    "p": 0.8048362347278255,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 0.3,
+    "lo": -1.3,
+    "hi": 1.8,
+    "p": 0.7259727373856655,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": -0.3,
+    "lo": -3.5,
+    "hi": 2.8,
+    "p": 0.831032329654608,
+    "clusters": 16
+   },
+   "evidence": "unclear"
+  },
+  {
+   "model": "gemma4_e4b",
+   "name": "Gemma 4 E4B",
+   "short": "Gemma 4",
+   "family": "Audio LLM",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 7.1,
+    "lo": 1.2,
+    "hi": 13.0,
+    "p": 0.02212729693555694,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 2.3,
+    "lo": -1.0,
+    "hi": 5.5,
+    "p": 0.1644878065181965,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 2.3,
+    "lo": 0.4,
+    "hi": 4.2,
+    "p": 0.019324199246157775,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 2.3,
+    "lo": 1.1,
+    "hi": 3.6,
+    "p": 0.00019436158673025888,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 1.6,
+    "lo": -0.6,
+    "hi": 3.8,
+    "p": 0.14326673780555133,
+    "clusters": 16
+   },
+   "evidence": "positive"
+  },
+  {
+   "model": "gpt_realtime",
+   "name": "GPT Realtime",
+   "short": "GPT Realtime",
+   "family": "API",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 8.9,
+    "lo": 2.2,
+    "hi": 15.6,
+    "p": 0.01222330990453009,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 4.1,
+    "lo": -2.3,
+    "hi": 10.5,
+    "p": 0.1897827431565629,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 4.8,
+    "lo": 1.7,
+    "hi": 7.8,
+    "p": 0.004439093086308705,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 4.8,
+    "lo": 3.1,
+    "hi": 6.5,
+    "p": 3.01922039960531e-08,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 3.7,
+    "lo": 0.7,
+    "hi": 6.6,
+    "p": 0.017853079682984628,
+    "clusters": 16
+   },
+   "evidence": "positive"
+  },
+  {
+   "model": "gemini-3.8-flash",
+   "name": "Gemini 3.8 Flash",
+   "short": "Gemini 3.8 Flash",
+   "family": "API",
+   "n_datasets": 16,
+   "pooled": {
+    "slope": 8.5,
+    "lo": 2.0,
+    "hi": 14.9,
+    "p": 0.013913800790664664,
+    "clusters": 16
+   },
+   "unbalanced": {
+    "slope": 4.9,
+    "lo": 2.6,
+    "hi": 7.3,
+    "p": 0.000430159112959931,
+    "clusters": 16
+   },
+   "within": {
+    "slope": 5.1,
+    "lo": 1.9,
+    "hi": 8.3,
+    "p": 0.0036010919269728082,
+    "clusters": 16
+   },
+   "speaker": {
+    "slope": 5.1,
+    "lo": 3.5,
+    "hi": 6.7,
+    "p": 9.56981090797603e-10,
+    "clusters": 1594
+   },
+   "within_1to15": {
+    "slope": 4.4,
+    "lo": 1.1,
+    "hi": 7.7,
+    "p": 0.01154550022744811,
+    "clusters": 16
+   },
+   "evidence": "positive"
+  }
+ ],
+ "heat": {
+  "meld": {
+   "emotion2vec_plus_large": {
+    "slope": 1.6,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": 0.5,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 1.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 0.7,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": 2.3,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 0.9,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": -1.1,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 1.9,
+    "bold": true,
+    "sign": 1
+   },
+   "gpt_realtime": {
+    "slope": 3.5,
+    "bold": true,
+    "sign": 1
+   },
+   "gemini-3.8-flash": {
+    "slope": 1.0,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "emotiontalk": {
+   "emotion2vec_plus_large": {
+    "slope": 1.4,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -2.4,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 2.5,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 0.5,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": 2.1,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -1.0,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": 2.5,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 4.6,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 7.8,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 8.5,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "dailytalk": {
+   "emotion2vec_plus_large": {
+    "slope": 0.7,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -0.4,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 1.9,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": -4.0,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -9.3,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -8.4,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": -10.5,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": -3.4,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": -0.0,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 8.2,
+    "bold": true,
+    "sign": 1
+   }
+  },
+  "multidialog": {
+   "emotion2vec_plus_large": {
+    "slope": -5.9,
+    "bold": true,
+    "sign": -1
+   },
+   "meralion_ser_v1": {
+    "slope": 2.2,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": -6.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": -2.9,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -0.1,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 1.6,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": -3.0,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": -0.8,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 1.4,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": -1.1,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "crema_d": {
+   "emotion2vec_plus_large": {
+    "slope": 1.6,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -2.1,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 18.1,
+    "bold": true,
+    "sign": 1
+   },
+   "vox_profile_whisper": {
+    "slope": 7.6,
+    "bold": true,
+    "sign": 1
+   },
+   "vox_profile_wavlm": {
+    "slope": 4.2,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -6.4,
+    "bold": true,
+    "sign": -1
+   },
+   "qwen2_audio_7b": {
+    "slope": -6.4,
+    "bold": true,
+    "sign": -1
+   },
+   "gemma4_e4b": {
+    "slope": 0.3,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 3.0,
+    "bold": true,
+    "sign": 1
+   },
+   "gemini-3.8-flash": {
+    "slope": 8.6,
+    "bold": true,
+    "sign": 1
+   }
+  },
+  "ravdess": {
+   "emotion2vec_plus_large": {
+    "slope": 3.2,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -6.8,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": -13.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 18.3,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": 35.9,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 100.3,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_audio_7b": {
+    "slope": -2.2,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 17.4,
+    "bold": true,
+    "sign": 1
+   },
+   "gpt_realtime": {
+    "slope": 38.4,
+    "bold": true,
+    "sign": 1
+   },
+   "gemini-3.8-flash": {
+    "slope": 52.3,
+    "bold": true,
+    "sign": 1
+   }
+  },
+  "savee": {
+   "emotion2vec_plus_large": {
+    "slope": 13.7,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": 12.7,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 4.6,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 2.9,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -3.6,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -0.1,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": 11.9,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 1.5,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": -1.9,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": -3.4,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "jl_corpus": {
+   "emotion2vec_plus_large": {
+    "slope": 6.5,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -8.8,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": -3.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": -10.8,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -18.8,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -27.2,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": -19.4,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 5.4,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": -10.2,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": -2.8,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "tess": {
+   "emotion2vec_plus_large": {
+    "slope": -0.4,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": 5.1,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 47.3,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 2.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -11.2,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -23.8,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": -8.1,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 0.2,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": -0.5,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 13.3,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "mead": {
+   "emotion2vec_plus_large": {
+    "slope": 4.1,
+    "bold": true,
+    "sign": 1
+   },
+   "meralion_ser_v1": {
+    "slope": -1.0,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 3.3,
+    "bold": true,
+    "sign": 1
+   },
+   "vox_profile_whisper": {
+    "slope": 2.1,
+    "bold": true,
+    "sign": 1
+   },
+   "vox_profile_wavlm": {
+    "slope": 1.6,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 2.7,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_audio_7b": {
+    "slope": 0.6,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 1.8,
+    "bold": true,
+    "sign": 1
+   },
+   "gpt_realtime": {
+    "slope": 2.3,
+    "bold": true,
+    "sign": 1
+   },
+   "gemini-3.8-flash": {
+    "slope": 1.2,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "mess": {
+   "emotion2vec_plus_large": {
+    "slope": -8.0,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": 29.3,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 48.6,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 7.6,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -0.6,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -0.5,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": 9.2,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": -0.1,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 1.0,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 13.3,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "mcae_spps": {
+   "emotion2vec_plus_large": {
+    "slope": -5.7,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -0.4,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 7.8,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 3.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": 3.9,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 4.2,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": -2.0,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 1.3,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 2.3,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 4.8,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "thai_ser": {
+   "emotion2vec_plus_large": {
+    "slope": 3.4,
+    "bold": true,
+    "sign": 1
+   },
+   "meralion_ser_v1": {
+    "slope": -0.1,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 3.6,
+    "bold": true,
+    "sign": 1
+   },
+   "vox_profile_whisper": {
+    "slope": 6.6,
+    "bold": true,
+    "sign": 1
+   },
+   "vox_profile_wavlm": {
+    "slope": 3.6,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 3.0,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_audio_7b": {
+    "slope": 2.0,
+    "bold": true,
+    "sign": 1
+   },
+   "gemma4_e4b": {
+    "slope": 5.5,
+    "bold": true,
+    "sign": 1
+   },
+   "gpt_realtime": {
+    "slope": 10.9,
+    "bold": true,
+    "sign": 1
+   },
+   "gemini-3.8-flash": {
+    "slope": 7.2,
+    "bold": true,
+    "sign": 1
+   }
+  },
+  "nemo": {
+   "emotion2vec_plus_large": {
+    "slope": 3.3,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": 4.6,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 5.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 2.8,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -0.2,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": -0.0,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": 1.0,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": -0.6,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 0.7,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 2.3,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "emovo": {
+   "emotion2vec_plus_large": {
+    "slope": 9.2,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": 5.0,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": 2.8,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 4.4,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -1.0,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 0.2,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_audio_7b": {
+    "slope": 4.7,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": -0.1,
+    "bold": false,
+    "sign": 0
+   },
+   "gpt_realtime": {
+    "slope": 1.8,
+    "bold": false,
+    "sign": 0
+   },
+   "gemini-3.8-flash": {
+    "slope": 13.4,
+    "bold": false,
+    "sign": 0
+   }
+  },
+  "emozionalmente": {
+   "emotion2vec_plus_large": {
+    "slope": -0.7,
+    "bold": false,
+    "sign": 0
+   },
+   "meralion_ser_v1": {
+    "slope": -0.7,
+    "bold": false,
+    "sign": 0
+   },
+   "melati_emotion": {
+    "slope": -1.1,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_whisper": {
+    "slope": 1.6,
+    "bold": false,
+    "sign": 0
+   },
+   "vox_profile_wavlm": {
+    "slope": -1.7,
+    "bold": false,
+    "sign": 0
+   },
+   "qwen2_5_omni_7b": {
+    "slope": 2.7,
+    "bold": true,
+    "sign": 1
+   },
+   "qwen2_audio_7b": {
+    "slope": 1.9,
+    "bold": false,
+    "sign": 0
+   },
+   "gemma4_e4b": {
+    "slope": 2.4,
+    "bold": true,
+    "sign": 1
+   },
+   "gpt_realtime": {
+    "slope": 3.5,
+    "bold": true,
+    "sign": 1
+   },
+   "gemini-3.8-flash": {
+    "slope": 8.7,
+    "bold": true,
+    "sign": 1
+   }
+  }
+ },
+ "raw": {
+  "meld": {
+   "emotion2vec_plus_large": [
+    34.7,
+    49.5,
+    50.3,
+    43.6,
+    41.8,
+    null
+   ],
+   "meralion_ser_v1": [
+    32.4,
+    31.5,
+    31.3,
+    28.6,
+    27.3,
+    null
+   ],
+   "melati_emotion": [
+    32.4,
+    30.5,
+    27.4,
+    27.6,
+    27.5,
+    null
+   ],
+   "vox_profile_whisper": [
+    33.3,
+    40.3,
+    35.6,
+    30.9,
+    25.3,
+    null
+   ],
+   "vox_profile_wavlm": [
+    34.7,
+    40.3,
+    34.5,
+    33.7,
+    30.0,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    49.3,
+    55.8,
+    52.8,
+    48.6,
+    46.9,
+    null
+   ],
+   "qwen2_audio_7b": [
+    25.3,
+    34.6,
+    35.4,
+    28.6,
+    24.8,
+    null
+   ],
+   "gemma4_e4b": [
+    49.3,
+    53.6,
+    48.6,
+    45.4,
+    41.0,
+    null
+   ],
+   "gpt_realtime": [
+    48.0,
+    52.9,
+    49.1,
+    42.4,
+    39.3,
+    null
+   ],
+   "gemini-3.8-flash": [
+    32.0,
+    40.8,
+    40.7,
+    41.6,
+    40.8,
+    null
+   ]
+  },
+  "emotiontalk": {
+   "emotion2vec_plus_large": [
+    47.1,
+    47.5,
+    52.9,
+    47.5,
+    50.3,
+    55.5
+   ],
+   "meralion_ser_v1": [
+    64.5,
+    55.1,
+    58.0,
+    52.2,
+    54.1,
+    54.6
+   ],
+   "melati_emotion": [
+    17.4,
+    20.6,
+    34.2,
+    31.7,
+    33.1,
+    29.4
+   ],
+   "vox_profile_whisper": [
+    41.3,
+    48.3,
+    42.0,
+    40.3,
+    39.0,
+    39.5
+   ],
+   "vox_profile_wavlm": [
+    50.7,
+    49.1,
+    46.7,
+    43.8,
+    43.6,
+    54.6
+   ],
+   "qwen2_5_omni_7b": [
+    62.3,
+    59.3,
+    50.6,
+    54.2,
+    53.7,
+    47.9
+   ],
+   "qwen2_audio_7b": [
+    13.0,
+    20.1,
+    24.5,
+    27.5,
+    26.1,
+    24.4
+   ],
+   "gemma4_e4b": [
+    70.3,
+    53.0,
+    50.2,
+    48.3,
+    50.0,
+    48.7
+   ],
+   "gpt_realtime": [
+    65.2,
+    57.7,
+    55.6,
+    55.2,
+    58.6,
+    48.7
+   ],
+   "gemini-3.8-flash": [
+    33.3,
+    48.3,
+    51.8,
+    51.7,
+    57.3,
+    58.8
+   ]
+  },
+  "dailytalk": {
+   "emotion2vec_plus_large": [
+    null,
+    52.4,
+    62.4,
+    60.4,
+    60.0,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    62.1,
+    60.8,
+    61.6,
+    55.1,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    61.7,
+    64.7,
+    67.5,
+    69.2,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    67.9,
+    59.2,
+    55.2,
+    52.4,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    55.9,
+    56.2,
+    54.0,
+    51.9,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    75.9,
+    69.0,
+    67.0,
+    61.6,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    50.0,
+    41.8,
+    39.6,
+    33.0,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    79.7,
+    72.5,
+    67.8,
+    68.6,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    83.1,
+    74.5,
+    70.6,
+    69.7,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    57.6,
+    56.2,
+    58.6,
+    57.3,
+    null
+   ]
+  },
+  "multidialog": {
+   "emotion2vec_plus_large": [
+    null,
+    53.0,
+    53.4,
+    51.7,
+    46.9,
+    43.8
+   ],
+   "meralion_ser_v1": [
+    null,
+    59.8,
+    62.9,
+    55.2,
+    50.4,
+    46.4
+   ],
+   "melati_emotion": [
+    null,
+    66.5,
+    64.9,
+    62.7,
+    58.7,
+    50.1
+   ],
+   "vox_profile_whisper": [
+    null,
+    69.5,
+    60.4,
+    55.5,
+    50.5,
+    44.7
+   ],
+   "vox_profile_wavlm": [
+    null,
+    60.5,
+    56.0,
+    57.7,
+    54.6,
+    47.2
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    66.2,
+    66.4,
+    56.3,
+    52.0,
+    46.9
+   ],
+   "qwen2_audio_7b": [
+    null,
+    50.4,
+    44.4,
+    30.0,
+    20.2,
+    16.0
+   ],
+   "gemma4_e4b": [
+    null,
+    66.5,
+    65.5,
+    63.7,
+    60.0,
+    48.7
+   ],
+   "gpt_realtime": [
+    null,
+    73.7,
+    68.0,
+    60.8,
+    58.0,
+    52.5
+   ],
+   "gemini-3.8-flash": [
+    null,
+    56.4,
+    54.2,
+    58.6,
+    57.3,
+    51.1
+   ]
+  },
+  "crema_d": {
+   "emotion2vec_plus_large": [
+    null,
+    87.0,
+    86.4,
+    86.1,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    85.3,
+    84.8,
+    83.9,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    50.2,
+    51.8,
+    50.5,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    32.2,
+    34.8,
+    29.8,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    31.2,
+    31.2,
+    28.3,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    34.4,
+    22.3,
+    13.6,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    83.9,
+    84.0,
+    79.5,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    17.2,
+    16.9,
+    10.0,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    16.9,
+    17.1,
+    10.6,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    33.2,
+    33.2,
+    30.1,
+    null,
+    null
+   ]
+  },
+  "ravdess": {
+   "emotion2vec_plus_large": [
+    null,
+    null,
+    null,
+    92.1,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    null,
+    null,
+    59.3,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    null,
+    null,
+    48.3,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    null,
+    null,
+    50.7,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    null,
+    null,
+    44.7,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    null,
+    null,
+    46.3,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    null,
+    null,
+    82.3,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    null,
+    null,
+    26.1,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    null,
+    null,
+    27.0,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    null,
+    null,
+    46.8,
+    null,
+    null
+   ]
+  },
+  "savee": {
+   "emotion2vec_plus_large": [
+    null,
+    null,
+    89.1,
+    93.9,
+    100.0,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    null,
+    56.5,
+    55.6,
+    68.3,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    null,
+    59.8,
+    62.1,
+    62.2,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    null,
+    35.9,
+    38.9,
+    32.9,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    null,
+    38.0,
+    35.5,
+    22.0,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    null,
+    28.3,
+    27.3,
+    31.7,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    null,
+    67.4,
+    71.3,
+    84.1,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    null,
+    19.6,
+    24.6,
+    22.0,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    null,
+    27.2,
+    29.7,
+    19.5,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    null,
+    32.6,
+    35.8,
+    25.6,
+    null
+   ]
+  },
+  "jl_corpus": {
+   "emotion2vec_plus_large": [
+    null,
+    91.5,
+    93.1,
+    null,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    75.5,
+    76.1,
+    null,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    100.0,
+    99.3,
+    null,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    46.7,
+    44.1,
+    null,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    51.2,
+    46.8,
+    null,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    35.5,
+    28.3,
+    null,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    51.0,
+    47.1,
+    null,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    20.9,
+    24.4,
+    null,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    32.6,
+    28.8,
+    null,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    35.3,
+    39.3,
+    null,
+    null,
+    null
+   ]
+  },
+  "tess": {
+   "emotion2vec_plus_large": [
+    null,
+    82.2,
+    88.1,
+    null,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    45.8,
+    51.9,
+    null,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    33.4,
+    63.5,
+    null,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    32.8,
+    28.0,
+    null,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    44.3,
+    37.0,
+    null,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    36.6,
+    31.4,
+    null,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    95.4,
+    90.5,
+    null,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    11.3,
+    16.9,
+    null,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    11.6,
+    16.5,
+    null,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    17.7,
+    39.3,
+    null,
+    null,
+    null
+   ]
+  },
+  "mead": {
+   "emotion2vec_plus_large": [
+    null,
+    78.8,
+    89.3,
+    90.0,
+    92.5,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    25.4,
+    29.9,
+    27.9,
+    28.8,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    23.5,
+    28.9,
+    31.0,
+    32.5,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    13.7,
+    17.1,
+    19.1,
+    21.5,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    14.0,
+    18.7,
+    18.9,
+    21.5,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    12.3,
+    17.3,
+    16.4,
+    17.7,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    17.9,
+    22.7,
+    19.9,
+    18.3,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    7.8,
+    13.1,
+    13.6,
+    13.8,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    6.7,
+    12.3,
+    13.9,
+    13.4,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    15.4,
+    18.7,
+    18.4,
+    17.2,
+    null
+   ]
+  },
+  "mess": {
+   "emotion2vec_plus_large": [
+    null,
+    44.2,
+    40.7,
+    40.3,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    66.3,
+    76.4,
+    69.3,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    5.3,
+    36.0,
+    68.7,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    17.9,
+    37.5,
+    37.0,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    20.0,
+    36.9,
+    38.5,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    4.2,
+    23.9,
+    35.8,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    20.0,
+    31.6,
+    29.0,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    3.2,
+    23.9,
+    36.1,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    8.4,
+    23.9,
+    35.2,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    9.5,
+    27.4,
+    44.8,
+    null,
+    null
+   ]
+  },
+  "mcae_spps": {
+   "emotion2vec_plus_large": [
+    61.4,
+    60.9,
+    67.6,
+    null,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    63.8,
+    65.0,
+    71.3,
+    null,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    47.3,
+    49.0,
+    53.7,
+    null,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    48.3,
+    46.7,
+    22.0,
+    null,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    38.2,
+    41.0,
+    27.4,
+    null,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    34.7,
+    37.4,
+    38.9,
+    null,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    36.1,
+    32.6,
+    7.1,
+    null,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    19.3,
+    19.3,
+    7.1,
+    null,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    20.9,
+    20.2,
+    8.4,
+    null,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    28.8,
+    34.9,
+    39.2,
+    null,
+    null,
+    null
+   ]
+  },
+  "thai_ser": {
+   "emotion2vec_plus_large": [
+    60.3,
+    62.9,
+    68.4,
+    75.1,
+    70.5,
+    67.3
+   ],
+   "meralion_ser_v1": [
+    47.9,
+    47.1,
+    47.7,
+    55.2,
+    40.6,
+    34.9
+   ],
+   "melati_emotion": [
+    58.5,
+    67.7,
+    72.5,
+    77.2,
+    71.2,
+    71.1
+   ],
+   "vox_profile_whisper": [
+    57.1,
+    63.0,
+    70.6,
+    65.8,
+    73.3,
+    80.7
+   ],
+   "vox_profile_wavlm": [
+    44.0,
+    49.8,
+    56.9,
+    63.7,
+    56.3,
+    49.4
+   ],
+   "qwen2_5_omni_7b": [
+    51.5,
+    60.5,
+    59.1,
+    53.8,
+    55.7,
+    65.8
+   ],
+   "qwen2_audio_7b": [
+    33.1,
+    28.5,
+    27.2,
+    21.4,
+    24.5,
+    35.2
+   ],
+   "gemma4_e4b": [
+    26.9,
+    38.2,
+    45.1,
+    43.4,
+    41.4,
+    55.2
+   ],
+   "gpt_realtime": [
+    29.3,
+    42.7,
+    57.0,
+    52.7,
+    56.9,
+    74.8
+   ],
+   "gemini-3.8-flash": [
+    49.8,
+    64.6,
+    72.3,
+    64.4,
+    70.5,
+    86.1
+   ]
+  },
+  "nemo": {
+   "emotion2vec_plus_large": [
+    null,
+    45.1,
+    54.1,
+    55.0,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    52.1,
+    55.2,
+    58.6,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    62.0,
+    63.6,
+    66.1,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    28.8,
+    34.2,
+    34.5,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    22.7,
+    29.5,
+    33.1,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    18.9,
+    21.9,
+    24.9,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    28.6,
+    25.4,
+    25.0,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    15.0,
+    18.8,
+    19.7,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    16.9,
+    19.7,
+    21.2,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    17.0,
+    22.5,
+    24.5,
+    null,
+    null
+   ]
+  },
+  "emovo": {
+   "emotion2vec_plus_large": [
+    null,
+    85.2,
+    84.0,
+    91.9,
+    null,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    58.3,
+    46.7,
+    56.7,
+    null,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    58.3,
+    51.1,
+    64.3,
+    null,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    41.7,
+    29.8,
+    40.0,
+    null,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    40.7,
+    22.7,
+    33.3,
+    null,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    27.8,
+    16.9,
+    21.9,
+    null,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    35.2,
+    18.7,
+    29.5,
+    null,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    20.4,
+    12.0,
+    15.2,
+    null,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    20.4,
+    15.1,
+    20.5,
+    null,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    28.7,
+    23.6,
+    40.0,
+    null,
+    null
+   ]
+  },
+  "emozionalmente": {
+   "emotion2vec_plus_large": [
+    null,
+    84.2,
+    87.9,
+    86.8,
+    85.3,
+    null
+   ],
+   "meralion_ser_v1": [
+    null,
+    51.0,
+    50.6,
+    46.2,
+    33.9,
+    null
+   ],
+   "melati_emotion": [
+    null,
+    87.0,
+    86.0,
+    84.3,
+    82.7,
+    null
+   ],
+   "vox_profile_whisper": [
+    null,
+    36.4,
+    37.2,
+    37.8,
+    28.3,
+    null
+   ],
+   "vox_profile_wavlm": [
+    null,
+    32.6,
+    30.5,
+    26.6,
+    16.5,
+    null
+   ],
+   "qwen2_5_omni_7b": [
+    null,
+    21.7,
+    19.8,
+    18.2,
+    15.7,
+    null
+   ],
+   "qwen2_audio_7b": [
+    null,
+    32.2,
+    27.5,
+    26.8,
+    31.8,
+    null
+   ],
+   "gemma4_e4b": [
+    null,
+    17.2,
+    18.6,
+    16.4,
+    10.2,
+    null
+   ],
+   "gpt_realtime": [
+    null,
+    17.4,
+    21.0,
+    17.9,
+    13.9,
+    null
+   ],
+   "gemini-3.8-flash": [
+    null,
+    23.9,
+    32.8,
+    36.1,
+    36.0,
+    null
+   ]
+  }
+ },
+ "bins": [
+  "0–1",
+  "1–2",
+  "2–3",
+  "3–5",
+  "5–10",
+  "≥10"
+ ],
+ "correlations": {
+  "emotion2vec+": {
+   "accuracy": {
+    "rho": 0.03,
+    "p": 0.9053195187918449
+   },
+   "uar": {
+    "rho": -0.07,
+    "p": 0.7866792491258566
+   },
+   "macro_f1": {
+    "rho": -0.06,
+    "p": 0.8371372217954723
+   }
+  },
+  "MERaLiON": {
+   "accuracy": {
+    "rho": -0.44,
+    "p": 0.08953003199187991
+   },
+   "uar": {
+    "rho": -0.53,
+    "p": 0.03495200678951804
+   },
+   "macro_f1": {
+    "rho": -0.42,
+    "p": 0.104767513929187
+   }
+  },
+  "Melati": {
+   "accuracy": {
+    "rho": -0.01,
+    "p": 0.9827505044191351
+   },
+   "uar": {
+    "rho": -0.24,
+    "p": 0.36221349614195036
+   },
+   "macro_f1": {
+    "rho": -0.2,
+    "p": 0.46446421122573883
+   }
+  },
+  "Vox-Profile Whisper": {
+   "accuracy": {
+    "rho": 0.37,
+    "p": 0.15765046473782077
+   },
+   "uar": {
+    "rho": 0.09,
+    "p": 0.7370049501736591
+   },
+   "macro_f1": {
+    "rho": 0.04,
+    "p": 0.8967532476935333
+   }
+  },
+  "Vox-Profile WavLM": {
+   "accuracy": {
+    "rho": 0.2,
+    "p": 0.45768790507519996
+   },
+   "uar": {
+    "rho": -0.15,
+    "p": 0.5717446192454617
+   },
+   "macro_f1": {
+    "rho": -0.15,
+    "p": 0.5867933937012054
+   }
+  },
+  "Qwen2.5-Omni": {
+   "accuracy": {
+    "rho": 0.21,
+    "p": 0.42455923362010284
+   },
+   "uar": {
+    "rho": 0.17,
+    "p": 0.5348568245819436
+   },
+   "macro_f1": {
+    "rho": 0.14,
+    "p": 0.6096659407501827
+   }
+  },
+  "Qwen2-Audio": {
+   "accuracy": {
+    "rho": -0.58,
+    "p": 0.018662529417711966
+   },
+   "uar": {
+    "rho": -0.26,
+    "p": 0.3274104118125863
+   },
+   "macro_f1": {
+    "rho": -0.34,
+    "p": 0.19185563142554296
+   }
+  },
+  "Gemma 4": {
+   "accuracy": {
+    "rho": 0.38,
+    "p": 0.15064811528763097
+   },
+   "uar": {
+    "rho": 0.43,
+    "p": 0.09949911193753977
+   },
+   "macro_f1": {
+    "rho": 0.55,
+    "p": 0.028301087242108818
+   }
+  },
+  "GPT Realtime": {
+   "accuracy": {
+    "rho": 0.39,
+    "p": 0.14054417737367633
+   },
+   "uar": {
+    "rho": 0.56,
+    "p": 0.02353701647428084
+   },
+   "macro_f1": {
+    "rho": 0.56,
+    "p": 0.02353701647428084
+   }
+  },
+  "Gemini 3.8 Flash": {
+   "accuracy": {
+    "rho": 0.42,
+    "p": 0.104767513929187
+   },
+   "uar": {
+    "rho": 0.17,
+    "p": 0.5348568245819436
+   },
+   "macro_f1": {
+    "rho": 0.17,
+    "p": 0.5204075144487407
+   }
+  }
+ },
+ "gap_effects": [
+  {
+   "model": "Melati",
+   "reference": "emotion2vec+",
+   "scope": "16 datasets",
+   "slope": 0.6,
+   "lo": -1.2,
+   "hi": 2.3
+  },
+  {
+   "model": "Melati",
+   "reference": "MERaLiON",
+   "scope": "16 datasets",
+   "slope": 1.8,
+   "lo": -1.2,
+   "hi": 4.7
+  },
+  {
+   "model": "Gemma 4",
+   "reference": "emotion2vec+",
+   "scope": "16 datasets",
+   "slope": 0.5,
+   "lo": -1.9,
+   "hi": 2.9
+  },
+  {
+   "model": "Gemma 4",
+   "reference": "MERaLiON",
+   "scope": "16 datasets",
+   "slope": 1.7,
+   "lo": -1.6,
+   "hi": 5.0
+  },
+  {
+   "model": "GPT Realtime",
+   "reference": "emotion2vec+",
+   "scope": "16 datasets",
+   "slope": 3.0,
+   "lo": -0.3,
+   "hi": 6.2
+  },
+  {
+   "model": "GPT Realtime",
+   "reference": "MERaLiON",
+   "scope": "16 datasets",
+   "slope": 4.2,
+   "lo": -0.2,
+   "hi": 8.5
+  },
+  {
+   "model": "Gemini 3.8 Flash",
+   "reference": "emotion2vec+",
+   "scope": "16 datasets",
+   "slope": 3.3,
+   "lo": 0.2,
+   "hi": 6.4
+  },
+  {
+   "model": "Gemini 3.8 Flash",
+   "reference": "MERaLiON",
+   "scope": "16 datasets",
+   "slope": 4.5,
+   "lo": 0.2,
+   "hi": 8.7
+  }
+ ],
+ "caps": {
+  "MERaLiON": {
+   "cap": 30,
+   "beyond": 34
+  },
+  "Melati": {
+   "cap": 30,
+   "beyond": 34
+  },
+  "Vox-Profile Whisper": {
+   "cap": 15,
+   "beyond": 331
+  },
+  "Vox-Profile WavLM": {
+   "cap": 15,
+   "beyond": 331
+  },
+  "Qwen2.5-Omni": {
+   "cap": 300,
+   "beyond": 0
+  },
+  "Qwen2-Audio": {
+   "cap": 30,
+   "beyond": 34
+  },
+  "Gemma 4": {
+   "cap": 30,
+   "beyond": 34
+  }
+ },
+ "conv_neutral": {
+  "meld": {
+   "name": "MELD",
+   "neutral": 48.2,
+   "best": 51.3,
+   "best_model": "Qwen2.5-Omni",
+   "best_uar": 43.5,
+   "best_uar_model": "Qwen2.5-Omni"
+  },
+  "emotiontalk": {
+   "name": "EmotionTalk",
+   "neutral": 48.9,
+   "best": 57.2,
+   "best_model": "GPT Realtime",
+   "best_uar": 56.0,
+   "best_uar_model": "Gemini 3.8 Flash"
+  },
+  "dailytalk": {
+   "name": "DailyTalk",
+   "neutral": 77.8,
+   "best": 74.5,
+   "best_model": "GPT Realtime",
+   "best_uar": 61.8,
+   "best_uar_model": "Vox-Profile WavLM"
+  },
+  "multidialog": {
+   "name": "MultiDialog",
+   "neutral": 68.9,
+   "best": 60.5,
+   "best_model": "Gemma 4",
+   "best_uar": 36.1,
+   "best_uar_model": "Qwen2.5-Omni"
+  }
+ },
+ "order": [
+  "emotion2vec+",
+  "MERaLiON",
+  "Melati",
+  "Vox-Profile Whisper",
+  "Vox-Profile WavLM",
+  "Qwen2.5-Omni",
+  "Qwen2-Audio",
+  "Gemma 4",
+  "GPT Realtime",
+  "Gemini 3.8 Flash"
+ ],
+ "full": [
+  "emotion2vec+",
+  "MERaLiON",
+  "Melati",
+  "Vox-Profile Whisper",
+  "Vox-Profile WavLM",
+  "Qwen2.5-Omni",
+  "Qwen2-Audio",
+  "Gemma 4",
+  "GPT Realtime",
+  "Gemini 3.8 Flash"
+ ],
+ "partial": {},
+ "exposed": {
+  "emotion2vec+": [
+   "MELD",
+   "CREMA-D",
+   "RAVDESS",
+   "SAVEE",
+   "JL-Corpus",
+   "TESS",
+   "MEAD",
+   "EMOVO",
+   "Emozionalmente"
+  ],
+  "MERaLiON": [
+   "MELD",
+   "CREMA-D",
+   "RAVDESS",
+   "SAVEE",
+   "JL-Corpus",
+   "TESS",
+   "MEAD",
+   "EMOVO",
+   "Emozionalmente"
+  ],
+  "Melati": [
+   "JL-Corpus",
+   "nEMO",
+   "Emozionalmente"
+  ]
+ }
+}

@@ -29,6 +29,21 @@ crema_d,gemini-3.8-flash,2,high,3.0,disgusted,91,4,0,0.04395604395604396,neutral
 crema_d,gemini-3.8-flash,2,high,3.0,fearful,91,40,0,0.43956043956043955,angry,19
 crema_d,gemini-3.8-flash,2,high,3.0,happy,91,26,0,0.2857142857142857,neutral,27
 crema_d,gemini-3.8-flash,2,high,3.0,sad,91,41,0,0.45054945054945056,neutral,43
+crema_d,gemma4_e4b,0,low,1.0,angry,91,1,0,0.01098901098901099,neutral,90
+crema_d,gemma4_e4b,0,low,1.0,disgusted,91,0,0,0.0,neutral,90
+crema_d,gemma4_e4b,0,low,1.0,fearful,91,0,0,0.0,neutral,90
+crema_d,gemma4_e4b,0,low,1.0,happy,91,0,0,0.0,neutral,91
+crema_d,gemma4_e4b,0,low,1.0,sad,91,0,0,0.0,neutral,89
+crema_d,gemma4_e4b,1,medium,2.0,angry,91,7,0,0.07692307692307693,neutral,84
+crema_d,gemma4_e4b,1,medium,2.0,disgusted,91,0,0,0.0,neutral,90
+crema_d,gemma4_e4b,1,medium,2.0,fearful,91,0,0,0.0,neutral,90
+crema_d,gemma4_e4b,1,medium,2.0,happy,91,2,0,0.02197802197802198,neutral,87
+crema_d,gemma4_e4b,1,medium,2.0,sad,91,0,0,0.0,neutral,91
+crema_d,gemma4_e4b,2,high,3.0,angry,91,47,0,0.5164835164835165,neutral,44
+crema_d,gemma4_e4b,2,high,3.0,disgusted,91,0,0,0.0,neutral,87
+crema_d,gemma4_e4b,2,high,3.0,fearful,91,0,0,0.0,neutral,61
+crema_d,gemma4_e4b,2,high,3.0,happy,91,1,0,0.01098901098901099,neutral,78
+crema_d,gemma4_e4b,2,high,3.0,sad,91,0,0,0.0,neutral,90
 crema_d,gpt_realtime,0,low,1.0,angry,91,0,0,0.0,neutral,91
 crema_d,gpt_realtime,0,low,1.0,disgusted,91,0,0,0.0,neutral,91
 crema_d,gpt_realtime,0,low,1.0,fearful,91,0,0,0.0,neutral,91
@@ -158,6 +173,18 @@ ravdess,gemini-3.8-flash,1,strong,2.0,fearful,96,74,0,0.7708333333333334,surpris
 ravdess,gemini-3.8-flash,1,strong,2.0,happy,96,59,0,0.6145833333333334,surprised,21
 ravdess,gemini-3.8-flash,1,strong,2.0,sad,96,41,0,0.4270833333333333,fearful,21
 ravdess,gemini-3.8-flash,1,strong,2.0,surprised,96,53,0,0.5520833333333334,happy,26
+ravdess,gemma4_e4b,0,normal,1.0,angry,96,0,0,0.0,neutral,92
+ravdess,gemma4_e4b,0,normal,1.0,disgusted,96,0,0,0.0,neutral,94
+ravdess,gemma4_e4b,0,normal,1.0,fearful,96,0,0,0.0,neutral,89
+ravdess,gemma4_e4b,0,normal,1.0,happy,96,1,0,0.010416666666666666,neutral,91
+ravdess,gemma4_e4b,0,normal,1.0,sad,96,0,0,0.0,neutral,95
+ravdess,gemma4_e4b,0,normal,1.0,surprised,96,26,0,0.2708333333333333,neutral,70
+ravdess,gemma4_e4b,1,strong,2.0,angry,96,1,0,0.010416666666666666,neutral,41
+ravdess,gemma4_e4b,1,strong,2.0,disgusted,96,0,0,0.0,neutral,67
+ravdess,gemma4_e4b,1,strong,2.0,fearful,96,6,0,0.0625,neutral,46
+ravdess,gemma4_e4b,1,strong,2.0,happy,96,1,0,0.010416666666666666,neutral,58
+ravdess,gemma4_e4b,1,strong,2.0,sad,96,0,0,0.0,neutral,84
+ravdess,gemma4_e4b,1,strong,2.0,surprised,96,53,0,0.5520833333333334,neutral,38
 ravdess,gpt_realtime,0,normal,1.0,angry,96,0,0,0.0,neutral,95
 ravdess,gpt_realtime,0,normal,1.0,disgusted,96,0,0,0.0,neutral,96
 ravdess,gpt_realtime,0,normal,1.0,fearful,96,1,0,0.010416666666666666,neutral,93
@@ -278,6 +305,24 @@ mead,gemini-3.8-flash,2,strong,3.0,fearful,409,35,1,0.08557457212713937,neutral,
 mead,gemini-3.8-flash,2,strong,3.0,happy,412,89,1,0.21601941747572814,neutral,231
 mead,gemini-3.8-flash,2,strong,3.0,sad,417,121,0,0.290167865707434,neutral,174
 mead,gemini-3.8-flash,2,strong,3.0,surprised,410,33,1,0.08048780487804878,neutral,190
+mead,gemma4_e4b,0,weak,1.0,angry,413,40,0,0.09685230024213075,neutral,242
+mead,gemma4_e4b,0,weak,1.0,disgusted,417,24,0,0.05755395683453238,neutral,293
+mead,gemma4_e4b,0,weak,1.0,fearful,413,2,0,0.004842615012106538,neutral,288
+mead,gemma4_e4b,0,weak,1.0,happy,416,77,0,0.18509615384615385,neutral,268
+mead,gemma4_e4b,0,weak,1.0,sad,418,70,0,0.1674641148325359,neutral,259
+mead,gemma4_e4b,0,weak,1.0,surprised,415,3,0,0.007228915662650603,neutral,299
+mead,gemma4_e4b,1,medium,2.0,angry,405,41,0,0.10123456790123457,neutral,233
+mead,gemma4_e4b,1,medium,2.0,disgusted,412,30,0,0.07281553398058252,neutral,290
+mead,gemma4_e4b,1,medium,2.0,fearful,411,0,0,0.0,neutral,303
+mead,gemma4_e4b,1,medium,2.0,happy,419,74,0,0.1766109785202864,neutral,288
+mead,gemma4_e4b,1,medium,2.0,sad,414,85,0,0.20531400966183574,neutral,260
+mead,gemma4_e4b,1,medium,2.0,surprised,414,6,0,0.014492753623188406,neutral,310
+mead,gemma4_e4b,2,strong,3.0,angry,405,48,0,0.11851851851851852,neutral,237
+mead,gemma4_e4b,2,strong,3.0,disgusted,419,34,0,0.081145584725537,neutral,284
+mead,gemma4_e4b,2,strong,3.0,fearful,409,5,0,0.012224938875305624,neutral,280
+mead,gemma4_e4b,2,strong,3.0,happy,412,69,0,0.16747572815533981,neutral,274
+mead,gemma4_e4b,2,strong,3.0,sad,417,74,0,0.1774580335731415,neutral,273
+mead,gemma4_e4b,2,strong,3.0,surprised,410,2,0,0.004878048780487805,neutral,300
 mead,gpt_realtime,0,weak,1.0,angry,413,25,3,0.06053268765133172,neutral,305
 mead,gpt_realtime,0,weak,1.0,disgusted,417,5,0,0.011990407673860911,neutral,347
 mead,gpt_realtime,0,weak,1.0,fearful,413,1,0,0.002421307506053269,neutral,328
@@ -416,6 +461,12 @@ thai_ser,gemini-3.8-flash,0,low,1.0,sad,520,221,0,0.425,neutral,198
 thai_ser,gemini-3.8-flash,1,high,2.0,angry,486,164,0,0.3374485596707819,happy,185
 thai_ser,gemini-3.8-flash,1,high,2.0,happy,691,497,0,0.7192474674384949,neutral,92
 thai_ser,gemini-3.8-flash,1,high,2.0,sad,552,256,0,0.463768115942029,neutral,200
+thai_ser,gemma4_e4b,0,low,1.0,angry,523,8,0,0.015296367112810707,neutral,460
+thai_ser,gemma4_e4b,0,low,1.0,happy,658,73,0,0.11094224924012158,neutral,569
+thai_ser,gemma4_e4b,0,low,1.0,sad,520,13,0,0.025,neutral,486
+thai_ser,gemma4_e4b,1,high,2.0,angry,486,8,0,0.01646090534979424,neutral,419
+thai_ser,gemma4_e4b,1,high,2.0,happy,691,90,0,0.13024602026049203,neutral,584
+thai_ser,gemma4_e4b,1,high,2.0,sad,552,12,0,0.021739130434782608,neutral,523
 thai_ser,gpt_realtime,0,low,1.0,angry,523,67,0,0.12810707456978968,neutral,273
 thai_ser,gpt_realtime,0,low,1.0,happy,658,397,0,0.6033434650455927,neutral,246
 thai_ser,gpt_realtime,0,low,1.0,sad,520,51,0,0.09807692307692308,neutral,322
@@ -506,6 +557,30 @@ mcae_spps,gemini-3.8-flash,3,Q4,6.65,fearful,53,14,0,0.2641509433962264,sad,24
 mcae_spps,gemini-3.8-flash,3,Q4,6.65,happy,29,16,0,0.5517241379310345,sad,5
 mcae_spps,gemini-3.8-flash,3,Q4,6.65,sad,694,386,0,0.5561959654178674,neutral,97
 mcae_spps,gemini-3.8-flash,3,Q4,6.65,surprised,38,18,0,0.47368421052631576,happy,8
+mcae_spps,gemma4_e4b,0,Q1,4.85,angry,63,0,0,0.0,neutral,62
+mcae_spps,gemma4_e4b,0,Q1,4.85,disgusted,595,2,0,0.0033613445378151263,neutral,556
+mcae_spps,gemma4_e4b,0,Q1,4.85,fearful,153,0,0,0.0,neutral,141
+mcae_spps,gemma4_e4b,0,Q1,4.85,happy,285,2,0,0.007017543859649123,neutral,277
+mcae_spps,gemma4_e4b,0,Q1,4.85,sad,11,0,0,0.0,neutral,11
+mcae_spps,gemma4_e4b,0,Q1,4.85,surprised,247,4,0,0.016194331983805668,neutral,231
+mcae_spps,gemma4_e4b,1,Q2,5.425,angry,150,1,0,0.006666666666666667,neutral,145
+mcae_spps,gemma4_e4b,1,Q2,5.425,disgusted,135,2,0,0.014814814814814815,neutral,115
+mcae_spps,gemma4_e4b,1,Q2,5.425,fearful,241,0,0,0.0,neutral,213
+mcae_spps,gemma4_e4b,1,Q2,5.425,happy,305,0,0,0.0,neutral,284
+mcae_spps,gemma4_e4b,1,Q2,5.425,sad,88,4,0,0.045454545454545456,neutral,78
+mcae_spps,gemma4_e4b,1,Q2,5.425,surprised,442,13,0,0.029411764705882353,neutral,405
+mcae_spps,gemma4_e4b,2,Q3,6.0,angry,353,2,0,0.0056657223796034,neutral,331
+mcae_spps,gemma4_e4b,2,Q3,6.0,disgusted,6,0,0,0.0,neutral,6
+mcae_spps,gemma4_e4b,2,Q3,6.0,fearful,224,0,0,0.0,neutral,196
+mcae_spps,gemma4_e4b,2,Q3,6.0,happy,166,1,0,0.006024096385542169,neutral,151
+mcae_spps,gemma4_e4b,2,Q3,6.0,sad,394,13,0,0.03299492385786802,neutral,355
+mcae_spps,gemma4_e4b,2,Q3,6.0,surprised,242,8,0,0.03305785123966942,neutral,210
+mcae_spps,gemma4_e4b,3,Q4,6.65,angry,563,12,0,0.021314387211367674,neutral,522
+mcae_spps,gemma4_e4b,3,Q4,6.65,disgusted,2,0,0,0.0,neutral,2
+mcae_spps,gemma4_e4b,3,Q4,6.65,fearful,53,0,0,0.0,neutral,48
+mcae_spps,gemma4_e4b,3,Q4,6.65,happy,29,1,0,0.034482758620689655,neutral,26
+mcae_spps,gemma4_e4b,3,Q4,6.65,sad,694,36,0,0.05187319884726225,neutral,596
+mcae_spps,gemma4_e4b,3,Q4,6.65,surprised,38,2,0,0.05263157894736842,neutral,32
 mcae_spps,gpt_realtime,0,Q1,4.85,angry,63,0,0,0.0,neutral,52
 mcae_spps,gpt_realtime,0,Q1,4.85,disgusted,595,0,0,0.0,neutral,546
 mcae_spps,gpt_realtime,0,Q1,4.85,fearful,153,0,0,0.0,neutral,136
@@ -698,6 +773,18 @@ dailytalk,gemini-3.8-flash,1,ECSS level 2,2.0,surprised,16,10,0,0.625,happy,3
 dailytalk,gemini-3.8-flash,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
 dailytalk,gemini-3.8-flash,2,ECSS level 3,3.0,happy,10,9,0,0.9,angry,1
 dailytalk,gemini-3.8-flash,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
+dailytalk,gemma4_e4b,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
+dailytalk,gemma4_e4b,0,ECSS level 1,1.0,happy,41,24,0,0.5853658536585366,neutral,15
+dailytalk,gemma4_e4b,0,ECSS level 1,1.0,sad,12,2,0,0.16666666666666666,neutral,6
+dailytalk,gemma4_e4b,0,ECSS level 1,1.0,surprised,3,1,0,0.3333333333333333,happy,2
+dailytalk,gemma4_e4b,1,ECSS level 2,2.0,angry,4,0,0,0.0,neutral,3
+dailytalk,gemma4_e4b,1,ECSS level 2,2.0,disgusted,2,1,0,0.5,sad,1
+dailytalk,gemma4_e4b,1,ECSS level 2,2.0,happy,166,119,0,0.7168674698795181,neutral,43
+dailytalk,gemma4_e4b,1,ECSS level 2,2.0,sad,9,3,0,0.3333333333333333,neutral,3
+dailytalk,gemma4_e4b,1,ECSS level 2,2.0,surprised,16,7,0,0.4375,disgusted,3
+dailytalk,gemma4_e4b,2,ECSS level 3,3.0,fearful,1,1,0,1.0,,0
+dailytalk,gemma4_e4b,2,ECSS level 3,3.0,happy,10,8,0,0.8,neutral,1
+dailytalk,gemma4_e4b,2,ECSS level 3,3.0,sad,1,1,0,1.0,,0
 dailytalk,gpt_realtime,0,ECSS level 1,1.0,disgusted,1,0,0,0.0,surprised,1
 dailytalk,gpt_realtime,0,ECSS level 1,1.0,happy,41,17,0,0.4146341463414634,neutral,22
 dailytalk,gpt_realtime,0,ECSS level 1,1.0,sad,12,2,0,0.16666666666666666,neutral,8

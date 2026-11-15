@@ -6,9 +6,12 @@ which question deserves further work. Chinese version: [research_angles_zh.md](r
 [venues.md](venues.md). [experimental_design.md](experimental_design.md) retains the older design; check the new
 scope here before implementing it.
 
-The project adopts 16 datasets: the original 13 have SER baselines; audited DailyTalk, EmotionTalk and MultiDialog have loaders ready and await baselines. There are five dedicated SER models. The three open-weight audio LLMs are
-Gemma 4 E4B, Qwen2.5-Omni 7B and Qwen2-Audio 7B. API models are possible later checks. Use public research data
-permitted for each experiment, without company data.
+The project adopts and evaluates 16 datasets, including the dialogue datasets DailyTalk, EmotionTalk and MultiDialog.
+There are five dedicated SER models. The three open-weight audio LLMs are Gemma 4 E4B, Qwen2.5-Omni 7B and Qwen2-Audio
+7B; two API audio LLMs, GPT Realtime and Gemini 3.8 Flash, are also in the benchmark. As of 2026-11-15 all ten
+models have current-protocol single-utterance results on all 16 datasets: 160 runs on 67,062 clips per model, including
+the validated final Gemma 4 import ([reports/summary.md](../../emotion_recognition/reports/summary.md)). Use public
+research data permitted for each experiment, without company data.
 
 ## 1. What are we trying to find out?
 
@@ -46,7 +49,7 @@ The zero-shot benchmark is the starting point. C/D support reliability; E/G help
 | **A1: Speaker references** | One candidate core question | Pilot design; reference inputs not implemented |
 | **A2: Real dialogue history** | One candidate core question; start with MELD | MELD baselines complete; Omni H0–H3 prepared on 240 EmotionTalk train targets, inference deferred |
 | **B: GEPA and feedback** | Improvement experiment after a clear finding | Keep the question; defer the large grid |
-| **0: 13-corpus benchmark** | Existing foundation | Five SER models complete; audio LLM evaluation in progress |
+| **0: 16-corpus benchmark** | Existing foundation | As of 2026-11-15: all ten models complete on all 16 datasets, including final Gemma 4; 160 compatible single-utterance runs |
 | **C: Training provenance** | Necessary background stratification | Check public sources; performance alone does not establish contamination |
 | **D: Repetition and disagreement** | Reliability, with a possible ambiguity analysis | Start with representative subsets, not ten calls on every clip |
 | **E: Text controls** | Essential for A2, useful for A1 | Design alongside the pilots |
@@ -349,3 +352,5 @@ data access when scheduling.
 
 
 Implementation update, 2026-11-10: 240 EmotionTalk train targets, 34–35 per class; H3 matches the published history speaker ID and duration in another train dialogue. H2 strips ASCII/full-width bracketed acoustic annotations. No new model results exist and no background inference is scheduled. MultiDialog defaults to 7,672 clips after both-gold-actor and whole-dialogue segmentation QC; actor screening is not utterance-level perceptual gold.
+
+Status update, 2026-11-15: all ten models now have current-protocol single-utterance results on all 16 datasets, including the final Gemma 4 E4B import: 160 compatible runs, 67,062 clips per model ([reports/summary.md](../../emotion_recognition/reports/summary.md)). The EmotionTalk context pilot is still prepared only, with no results.

@@ -652,8 +652,8 @@ summary_figure:   # every dataset's confusion matrix in one figure, in each mode
                                 # the others show the acted emotion
 ```
 
-The excerpt shows the general settings. As of 2026-11-13 the file is set for the running Qwen2-Audio evaluation
-(`mode: mac`, `models: [qwen2_audio_7b]`, `plots: false`); matching finished results are reused.
+The excerpt shows the general settings. As of 2026-11-14 the file remains set to Qwen2-Audio
+(`mode: mac`, `models: [qwen2_audio_7b]`, `plots: false`); its 16-dataset evaluation is complete and matching finished results are reused.
 
 <a id="subsets"></a>**Subsets.** To save compute, two large datasets are evaluated on a fixed subset, for every model
 (SER models, local audio LLMs and API models alike; decided 2026-11-06):
@@ -780,11 +780,11 @@ How model outputs become a prediction:
   surprise* and ESD's Mandarin label for Surprise, 惊喜, both mean a pleasant surprise, while emotion2vec+'s class is
   called 吃惊 (surprised).
 
-Results status, as of 2026-11-13: the five SER models, Qwen2.5-Omni 7B, GPT Realtime and Gemini 3.8 Flash have
-results on all 16 datasets. Qwen2-Audio 7B Instruct is running (7 of 16 datasets done). Gemma 4 E4B has a
-current-protocol result on MELD only; its other results used the old prompt and were removed, so it will be run
-again. [reports/summary.md](reports/summary.md) compares every model on every dataset and is regenerated after every
-run, so this README does not copy its numbers. After a run, `python scripts/viewer/make_viewer.py` rebuilds the page.
+Results status, as of 2026-11-15: all ten models—the five SER models, Qwen2.5-Omni 7B, Qwen2-Audio 7B Instruct,
+Gemma 4 E4B, GPT Realtime and Gemini 3.8 Flash—have current-protocol results on all 16 datasets, with 67,062 clips
+each and 160 compatible model–dataset runs. The final Gemma archive has been imported and validated.
+[reports/summary.md](reports/summary.md) compares every model on every dataset and is regenerated from saved
+predictions, so this README does not copy its numbers. `python scripts/viewer/make_viewer.py` rebuilds the page.
 
 emotion2vec+ large on the first eight datasets, kept as an example of a model summary (its
 [summary](reports/emotion2vec_plus_large/summary.md) has all 16 datasets, unweighted accuracy and macro F1):
@@ -1133,9 +1133,9 @@ dataset's emotions counts as wrong; training data "not known").
   other jobs shared the machine): about 0.6–0.9 s per clip for each model after a warm-up of 3–7 s, 10–30 s to load,
   16–19 GB of GPU memory. Longer clips take longer; each prediction JSON in `outputs/<model>/` records the measured
   run time of its dataset.
-- **Status, as of 2026-11-13**: Qwen2.5-Omni 7B has results on all 16 datasets. Qwen2-Audio 7B Instruct is running
-  (7 of 16 datasets done). Gemma 4 E4B has a current-protocol result on MELD only; its other results used the old
-  prompt and were removed, so it will be run again.
+- **Status, as of 2026-11-15**: all three open-weight audio LLMs—Qwen2.5-Omni 7B, Qwen2-Audio 7B Instruct
+  and Gemma 4 E4B—have validated current-protocol results on all 16 datasets. The final Gemma results were imported
+  from the completed archive; no model inference was needed for this report refresh.
 - **MPS workaround**: transformers 5.18 checks for the end of generation with `torch.Event` on MPS, which crashes PyTorch
   2.5.1 (segmentation fault); `audio_llm.py` switches to its plain check on MPS (the same tokens; CUDA unaffected).
 
@@ -1212,8 +1212,8 @@ cache) loads and runs all four.
 EmotionTalk, DailyTalk and MultiDialog have loaders in the ordinary evaluation registry. Default baselines use
 EmotionTalk official test, DailyTalk ECSS validation (there is no official ECSS test), and MultiDialog's complete
 gold-actor dialogues after segmentation QC. Source labels and split limitations are documented in the dataset survey.
-As of 2026-11-13 their ordinary single-utterance baselines are done for the five SER models, GPT Realtime, Gemini
-3.8 Flash and Qwen2.5-Omni 7B; Qwen2-Audio and Gemma 4 are still pending.
+As of 2026-11-15 their ordinary single-utterance baselines are complete for all ten models, including Gemma 4 E4B.
+The complete benchmark has 160 model–dataset runs on the same 67,062-clip cohort per model.
 `config/evaluation_dialogue_baselines.yaml` is a separate three-LLM configuration for these three datasets; select it
 with `python scripts/evaluation/evaluate.py --config config/evaluation_dialogue_baselines.yaml` (matching finished
 results are reused).
@@ -1240,8 +1240,8 @@ and overview matrices retain one decimal. The explanatory provenance footnote is
 
 
 With `datasets: all`, the ordinary evaluator selects all 16 downloaded adopted datasets after excluding ESD.
-This is single-utterance evaluation, separate from H0–H3. As of 2026-11-13 the active configuration is
-`models: [qwen2_audio_7b]`, `datasets: all`, `mode: mac`, `plots: false`, for the running Qwen2-Audio evaluation;
-Gemma 4 E4B still has to be run again. Use `mode: auto`/`cuda` on a CUDA server, and `plots: true` or run `plot_results.py` manually
+This is single-utterance evaluation, separate from H0–H3. As of 2026-11-14 the active configuration remains
+`models: [qwen2_audio_7b]`, `datasets: all`, `mode: mac`, `plots: false`; Qwen2-Audio has completed all 16 datasets and matching results are reused.
+Gemma 4 E4B is also complete on all 16 datasets after the validated final import. Use `mode: auto`/`cuda` for future runs on a CUDA server, and `plots: true` or run `plot_results.py` manually
 to regenerate the 4×4 comparison. Canonical dialogue split/cohort scopes pass finished-run checks on resume, while
 other scopes remain isolated.

@@ -38,12 +38,11 @@
         "vox_profile_wavlm",
         "qwen2_5_omni_7b",
         "qwen2_audio_7b",
+        "gemma4_e4b",
         "gpt_realtime",
         "gemini-3.8-flash"
       ],
-      "missing_models": [
-        "gemma4_e4b"
-      ],
+      "missing_models": [],
       "sample_counts": {
         "emotion2vec_plus_large": 7442,
         "meralion_ser_v1": 7442,
@@ -52,6 +51,7 @@
         "vox_profile_wavlm": 7442,
         "qwen2_5_omni_7b": 7442,
         "qwen2_audio_7b": 7442,
+        "gemma4_e4b": 7442,
         "gpt_realtime": 7442,
         "gemini-3.8-flash": 7442
       },
@@ -63,6 +63,7 @@
         "vox_profile_wavlm": 91,
         "qwen2_5_omni_7b": 91,
         "qwen2_audio_7b": 91,
+        "gemma4_e4b": 91,
         "gpt_realtime": 91,
         "gemini-3.8-flash": 91
       }
@@ -76,12 +77,11 @@
         "vox_profile_wavlm",
         "qwen2_5_omni_7b",
         "qwen2_audio_7b",
+        "gemma4_e4b",
         "gpt_realtime",
         "gemini-3.8-flash"
       ],
-      "missing_models": [
-        "gemma4_e4b"
-      ],
+      "missing_models": [],
       "sample_counts": {
         "emotion2vec_plus_large": 1440,
         "meralion_ser_v1": 1440,
@@ -90,6 +90,7 @@
         "vox_profile_wavlm": 1440,
         "qwen2_5_omni_7b": 1440,
         "qwen2_audio_7b": 1440,
+        "gemma4_e4b": 1440,
         "gpt_realtime": 1440,
         "gemini-3.8-flash": 1440
       },
@@ -101,6 +102,7 @@
         "vox_profile_wavlm": 24,
         "qwen2_5_omni_7b": 24,
         "qwen2_audio_7b": 24,
+        "gemma4_e4b": 24,
         "gpt_realtime": 24,
         "gemini-3.8-flash": 24
       }
@@ -447,6 +449,45 @@
       },
       "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
     },
+    "crema_d/gemma4_e4b": {
+      "sources": [
+        {
+          "path": "outputs/gemma4_e4b/crema_d_predictions.json",
+          "sha256": "d3d13f975a2d0f087c83eb6d10e8a3fc8e356456911f53bd71a7e1733b976960",
+          "bytes": 4260
+        },
+        {
+          "path": "outputs/gemma4_e4b/crema_d_predictions.csv",
+          "sha256": "55ffac338deaa72772b7abf48564176de3ee22a2c33350096f896c7d886b998d",
+          "bytes": 1516188
+        }
+      ],
+      "classes": [
+        "angry",
+        "disgusted",
+        "fearful",
+        "happy",
+        "neutral",
+        "sad"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad"
+        ],
+        "prompt_hash": "8bf25e176a1f",
+        "model_id": "google/gemma-4-E4B-it"
+      },
+      "cohort_sha256": "0a61224d3592d2990dc38a4812c86b3a2ce52682530da4749958516c506a8f9c"
+    },
     "crema_d/gpt_realtime": {
       "sources": [
         {
@@ -744,6 +785,47 @@
         ],
         "prompt_hash": "aab2967fd07a",
         "model_id": "Qwen/Qwen2-Audio-7B-Instruct"
+      },
+      "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
+    },
+    "ravdess/gemma4_e4b": {
+      "sources": [
+        {
+          "path": "outputs/gemma4_e4b/ravdess_predictions.json",
+          "sha256": "33e667703197f332a366ae1215895318b614464b5aebe67a5ac72db837a7c8e5",
+          "bytes": 3928
+        },
+        {
+          "path": "outputs/gemma4_e4b/ravdess_predictions.csv",
+          "sha256": "5e5c8e7554e5e48f59d4faca5359cf2e277515cc082e442216c29d27e88de2a9",
+          "bytes": 303870
+        }
+      ],
+      "classes": [
+        "neutral",
+        "happy",
+        "sad",
+        "angry",
+        "fearful",
+        "disgusted",
+        "surprised"
+      ],
+      "ground_truth": "acted_emotion",
+      "subset": null,
+      "scope": "full_declared_scope",
+      "inference_protocol": {
+        "label_scope": "dataset",
+        "labels": [
+          "angry",
+          "disgusted",
+          "fearful",
+          "happy",
+          "neutral",
+          "sad",
+          "surprised"
+        ],
+        "prompt_hash": "aab2967fd07a",
+        "model_id": "google/gemma-4-E4B-it"
       },
       "cohort_sha256": "cbd798d5e1be47f8915ba940073c30527e97bdbe48f18666735163bb07956f18"
     },
@@ -1060,8 +1142,8 @@
         },
         {
           "path": "outputs/gemma4_e4b/meld_predictions.csv",
-          "sha256": "d14695e0250fa2544534e2af90eee8dbf58d069f18a36b12e4dab2e95f167a5e",
-          "bytes": 491434
+          "sha256": "08e8d21b3b6f791dabc6e444bf8e7c60d452450a13f5c14e72b3d0fb5b39be81",
+          "bytes": 488825
         }
       ],
       "classes": [
@@ -1220,10 +1302,24 @@
     },
     {
       "model": "gemma4_e4b",
+      "dataset": "crema_d",
+      "path": "outputs/gemma4_e4b/crema_d_predictions.json",
+      "status": "selected",
+      "clips": 7442
+    },
+    {
+      "model": "gemma4_e4b",
       "dataset": "meld",
       "path": "outputs/gemma4_e4b/meld_predictions.json",
       "status": "selected",
       "clips": 2608
+    },
+    {
+      "model": "gemma4_e4b",
+      "dataset": "ravdess",
+      "path": "outputs/gemma4_e4b/ravdess_predictions.json",
+      "status": "selected",
+      "clips": 1440
     },
     {
       "model": "gpt_realtime",
@@ -1380,7 +1476,7 @@
     },
     {
       "path": "research_paper/scripts/consensus.py",
-      "sha256": "a58e44fcf950c5aec4706e22be5c08e0d3723bd97a5ff05cf7255c6896b208d0"
+      "sha256": "ed87aeddac36ae72baf408f013198ae634c472b8bb8235d94e5329c62683f9a7"
     },
     {
       "path": "emotion_recognition/scripts/analysis/probe_metadata.py",
@@ -1405,9 +1501,9 @@
   ],
   "results": {
     "csv": "output/bootstrap.csv",
-    "rows": 580,
-    "single_model_runs": 28,
-    "model_pairs": 117,
-    "sha256": "e624abca25a1007da7a45872ee730ae043fa8ff0a6870e7562c8dbd6c7b720f8"
+    "rows": 660,
+    "single_model_runs": 30,
+    "model_pairs": 135,
+    "sha256": "1d6f48517c263ffdf5b6932321f8903004388761e5f0b8a77758819d7e456c69"
   }
 }

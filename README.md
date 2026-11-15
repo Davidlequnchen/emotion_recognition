@@ -11,6 +11,10 @@ The SER work has two separate workstreams:
 - **Model consensus / pseudo-label analysis**: [中文报告](research_paper/analysis_report/consensus_zh.md) · [English report](research_paper/analysis_report/consensus_en.md), with coverage, accepted-label accuracy and vote thresholds across the 16 benchmark datasets.
 - **Internal customer-call adaptation** focuses on practical target-domain accuracy, customer-only data curation and labelling; see the [data preparation discussion draft](emotion_recognition/docs/data_preparation_call_centre_audio.md) and the independent [`label_studio/` subproject](label_studio/README.md). Internal audio, transcripts and derived data stay outside this repository.
 
+Benchmark status, 2026-11-15: all ten models have current-protocol results on all 16 datasets (67,062 clips per
+model), including the final Gemma 4 E4B results. The saved results contain 160 compatible model–dataset runs; see
+the [benchmark summary](emotion_recognition/reports/summary.md) and [research analyses](research_paper/README.md).
+
 For the emotion recognition models, clone the metadata submodule and run its Release setup once:
 
 ```bash

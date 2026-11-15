@@ -3,6 +3,13 @@
 The design of the benchmark behind the paper: which datasets, which models, how they are scored, what runs where
 and how long it takes, and which analyses the results support. Local only (`research_paper/` is git-ignored).
 
+**Benchmark completion update, 2026-11-15:** all ten models now have current-protocol single-utterance results
+on all sixteen adopted datasets, including the validated final Gemma 4 E4B import: **160 compatible runs and
+67,062 clips per model**. The cohort includes the three dialogue datasets added after this design was written.
+See the [current benchmark summary](../../emotion_recognition/reports/summary.md) and
+[analysis reports](../README.md). The design, protocol descriptions and estimates below retain the historical
+2026-11-06 snapshot; they are not a statement that any current baseline remains unfinished.
+
 Sources: `emotion_recognition/docs/datasets_survey_en.md`, `docs/label_mapping.md`, `docs/models_survey_en.md`,
 `docs/audio_llms_survey_en.md`, `scripts/common/eval_datasets.py`, `config/models.yaml`, `config/evaluation.yaml`,
 `config/llm.yaml`, `scripts/llm_eval/prompts.yaml`, `scripts/models/*.py`, `presentation/facts.md`, `README.md`,

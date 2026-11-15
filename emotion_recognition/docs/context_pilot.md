@@ -90,7 +90,7 @@ EmotionTalk 是演员主题即兴对话，发布音频 gold 的标注者可以�
 
 原有 13 个 loader；新增 EmotionTalk、DailyTalk、MultiDialog 也接入统一 `LOADERS`，普通 `evaluate.py` 使用同一模型推理接口。默认范围：EmotionTalk 官方 test（1,929 条）、DailyTalk ECSS validation（1,197 条）、MultiDialog 双演员 gold 名单＋整对话 QC 的 `gold_both`（7,672 条）。DailyTalk 不伪造一个不存在的官方 test；MultiDialog 的 gold 是演员筛选队列，不是每句的听众多数票。
 
-截至 2026-11-13，这三个数据集的普通单句基线已有五个 SER 模型、GPT Realtime、Gemini 3.8 Flash 和 Qwen2.5-Omni 7B 的结果；Qwen2-Audio 和 Gemma 4 尚未完成。结果见 [reports/summary.md](../reports/summary.md)。
+截至 2026-11-15，这三个数据集的普通单句基线已由全部 10 个模型完成，包括最终 Gemma 4 E4B 结果。完整基准为 10 模型 × 16 数据集，共 160 组当前协议评测，每模型 67,062 条音频。结果见 [reports/summary.md](../reports/summary.md)。这次补齐的是单句基线，尚未运行本页的上下文 pilot。
 
 另备 [evaluation_dialogue_baselines.yaml](../config/evaluation_dialogue_baselines.yaml)，只选三个对话数据集和三个开源音频 LLM，API 关闭，不替换主配置：
 
