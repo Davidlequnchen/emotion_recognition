@@ -9,6 +9,12 @@ These extended assets are for the internal research copy, including datasets not
 redistribution. Their clips are not trimmed or loudness-normalized. The older scripts described below retain
 their original six-dataset public selection and processing.
 
+`prepare_lexical_example.py` and `build_lexical_example.mjs` supply the JL-Corpus continuation.
+`insert_lexical_example.py` composes the 85-slide complete deck from private intermediates.
+`consolidate_presentations.py` extracts both matched-sentence pages into one two-slide deck and publishes
+exactly two stable files in `updated/`: `SER_evaluation_extended.pptx` and `Semantic_vs_Vocal_Emotion.pptx`.
+Temporary standalone pages, previews and validated staging packages remain in `.inspection-build/`.
+
 These scripts rebuild everything in `../assets/` that the deck reads: the figures, `stats.json`, the audio
 examples and `manifest.json`. They only read our evaluation outputs and the dataset metadata; they never run a model.
 

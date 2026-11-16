@@ -1,0 +1,206 @@
+{
+  "date": "2026-11-16",
+  "dataset": "JL-Corpus",
+  "sentence": "Work hard or you lose.",
+  "speaker": "male2",
+  "session": "b",
+  "repetition": 1,
+  "cases": [
+    {
+      "clip_id": "male2_angry_12b_1",
+      "audio_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/male2_angry_12b_1.wav",
+      "reference": "angry",
+      "text": "Work hard or you lose.",
+      "duration_s": 1.8,
+      "source_audio_sha256": "d23410cfddc62d95cf8307aed9cd7f913f578244df4c80c391c557fa6ed0db5f",
+      "source_transcript_sha256": "ff9fabf0955176feb074ee114f8d1d07ed55adbc1575710132685ec816a5c18b",
+      "audio_asset": "assets/inspections/lexical/male2_angry_12b_1.mp3",
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "angry",
+          "correct": true
+        },
+        "gpt_realtime": {
+          "label": "angry",
+          "correct": true
+        },
+        "emotion2vec_plus_large": {
+          "label": "angry",
+          "correct": true
+        }
+      }
+    },
+    {
+      "clip_id": "male2_neutral_12b_1",
+      "audio_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/male2_neutral_12b_1.wav",
+      "reference": "neutral",
+      "text": "Work hard or you lose.",
+      "duration_s": 2.2,
+      "source_audio_sha256": "d93997ffb5eaa683daf3e9b2d974a988918464d405987cb4a7cc166866ad2f11",
+      "source_transcript_sha256": "ff9fabf0955176feb074ee114f8d1d07ed55adbc1575710132685ec816a5c18b",
+      "audio_asset": "assets/inspections/lexical/male2_neutral_12b_1.mp3",
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "angry",
+          "correct": false
+        },
+        "gpt_realtime": {
+          "label": "angry",
+          "correct": false
+        },
+        "emotion2vec_plus_large": {
+          "label": "neutral",
+          "correct": true
+        }
+      }
+    },
+    {
+      "clip_id": "male2_happy_12b_1",
+      "audio_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/male2_happy_12b_1.wav",
+      "reference": "happy",
+      "text": "Work hard or you lose.",
+      "duration_s": 1.85,
+      "source_audio_sha256": "8dab203f025cdf4fe559fa38fd78e13e457d192eb56a3ed57db7ace06bce94e9",
+      "source_transcript_sha256": "ff9fabf0955176feb074ee114f8d1d07ed55adbc1575710132685ec816a5c18b",
+      "audio_asset": "assets/inspections/lexical/male2_happy_12b_1.mp3",
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "angry",
+          "correct": false
+        },
+        "gpt_realtime": {
+          "label": "angry",
+          "correct": false
+        },
+        "emotion2vec_plus_large": {
+          "label": "happy",
+          "correct": true
+        }
+      }
+    },
+    {
+      "clip_id": "male2_sad_12b_1",
+      "audio_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/male2_sad_12b_1.wav",
+      "reference": "sad",
+      "text": "Work hard or you lose.",
+      "duration_s": 2.4,
+      "source_audio_sha256": "307177e6e073e1856af5c2b2e6898ba2bfd00fa8402adf46ba60c3e0d01f1778",
+      "source_transcript_sha256": "ff9fabf0955176feb074ee114f8d1d07ed55adbc1575710132685ec816a5c18b",
+      "audio_asset": "assets/inspections/lexical/male2_sad_12b_1.mp3",
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "angry",
+          "correct": false
+        },
+        "gpt_realtime": {
+          "label": "angry",
+          "correct": false
+        },
+        "emotion2vec_plus_large": {
+          "label": "sad",
+          "correct": true
+        }
+      }
+    },
+    {
+      "clip_id": "male2_excited_12b_1",
+      "audio_path": "data/jl_corpus/audio/Raw JL corpus (unchecked and unannotated)/JL(wav+txt)/male2_excited_12b_1.wav",
+      "reference": "excited",
+      "text": "Work hard or you lose.",
+      "duration_s": 1.9,
+      "source_audio_sha256": "7ca1471213cf61d5469a66cf15e63ff839bd82007ef715a5220d24c8f279ed28",
+      "source_transcript_sha256": "ff9fabf0955176feb074ee114f8d1d07ed55adbc1575710132685ec816a5c18b",
+      "audio_asset": "assets/inspections/lexical/male2_excited_12b_1.mp3",
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "angry",
+          "correct": false
+        },
+        "gpt_realtime": {
+          "label": "angry",
+          "correct": false
+        },
+        "emotion2vec_plus_large": {
+          "label": "angry",
+          "correct": false
+        }
+      }
+    }
+  ],
+  "accept": {
+    "excited": [
+      "happy",
+      "surprised"
+    ]
+  },
+  "ground_truth": "Acted emotion encoded in the filename. No per-clip listener labels are published for these recordings.",
+  "selection": "All five evaluated emotions for speaker male2, sentence 12, session b, repetition 1. Selected after inspecting saved model predictions. This is not a representative sample or a causal test.",
+  "sentence_context": {
+    "n": 80,
+    "both_apis_angry": 33,
+    "gemini_labels": {
+      "angry": 45,
+      "neutral": 19,
+      "happy": 5,
+      "sad": 11
+    },
+    "gpt_labels": {
+      "angry": 51,
+      "neutral": 29
+    }
+  },
+  "audio_processing": "Full recording, mono 16 kHz, 64 kbit/s MP3. No trimming or loudness normalization.",
+  "inference_protocols": {
+    "gemini-3.8-flash": {
+      "label_scope": "dataset",
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "prompt_hash": "810c234fb672",
+      "model_id": "gemini-3.8-flash"
+    },
+    "gpt_realtime": {
+      "label_scope": "dataset",
+      "labels": [
+        "angry",
+        "happy",
+        "neutral",
+        "sad",
+        "surprised"
+      ],
+      "prompt_hash": "810c234fb672",
+      "model_id": "gpt-realtime"
+    },
+    "emotion2vec_plus_large": null
+  },
+  "sources": [
+    {
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.csv",
+      "sha256": "d005ca1d22af01de7757864b32bda10832548397f8dbf946df7b6b76076ed45b"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/jl_corpus_predictions.json",
+      "sha256": "e439a5b93614cd7067e71f9941d27c5512bf0a562d27b1a9eb0c75531059e965"
+    },
+    {
+      "path": "outputs/gpt_realtime/jl_corpus_predictions.csv",
+      "sha256": "a2a55805afd6ad23be7b0498cf6af3345386b8b14b2b7b51d21c707c3bd136c4"
+    },
+    {
+      "path": "outputs/gpt_realtime/jl_corpus_predictions.json",
+      "sha256": "3852bb18b820eae26068351d6459f271c29de413a9a094d884c0b66a4b7cf09f"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/jl_corpus_predictions.csv",
+      "sha256": "31e4c0859009fcda86f49f351cf24fbc5992668de6f656b225df34a90b2408a1"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/jl_corpus_predictions.json",
+      "sha256": "1a1164f128f4e2f4b597bab3e0da00742db58b6c57fda827b5c315b17dd70707"
+    }
+  ]
+}
