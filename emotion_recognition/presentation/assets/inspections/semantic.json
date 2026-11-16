@@ -1,0 +1,107 @@
+{
+  "same_sentence": [
+    {
+      "dataset_key": "crema_d",
+      "clip_id": "1002_DFA_ANG_XX",
+      "audio_path": "data/crema_d/AudioWAV/1002_DFA_ANG_XX.wav",
+      "reference": "angry",
+      "listener_votes": {
+        "angry": 6,
+        "neutral": 2
+      },
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "happy"
+        },
+        "gpt_realtime": {
+          "label": "neutral"
+        },
+        "emotion2vec_plus_large": {
+          "label": "angry"
+        }
+      },
+      "audio_asset": "assets/inspections/audio/crema_d__1002_DFA_ANG_XX.mp3",
+      "waveform_asset": "assets/inspections/waveforms/crema_d__1002_DFA_ANG_XX.png",
+      "audio_sha256": "31eda0c90ebd72b7f311ab3b980258c6d094e08be96da3d15fbd6a7e19ff91d8",
+      "duration_s": 2.569
+    },
+    {
+      "dataset_key": "crema_d",
+      "clip_id": "1002_DFA_DIS_XX",
+      "audio_path": "data/crema_d/AudioWAV/1002_DFA_DIS_XX.wav",
+      "reference": "disgusted",
+      "listener_votes": {
+        "angry": 1,
+        "disgusted": 7,
+        "neutral": 1,
+        "sad": 1
+      },
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "happy"
+        },
+        "gpt_realtime": {
+          "label": "neutral"
+        },
+        "emotion2vec_plus_large": {
+          "label": "disgusted"
+        }
+      },
+      "audio_asset": "assets/inspections/audio/crema_d__1002_DFA_DIS_XX.mp3",
+      "waveform_asset": "assets/inspections/waveforms/crema_d__1002_DFA_DIS_XX.png",
+      "audio_sha256": "3a398b799e48b8564ad1733ef2845ef898376d5ce7f86167aa3f4205c590498e",
+      "duration_s": 2.536
+    },
+    {
+      "dataset_key": "crema_d",
+      "clip_id": "1002_DFA_FEA_XX",
+      "audio_path": "data/crema_d/AudioWAV/1002_DFA_FEA_XX.wav",
+      "reference": "fearful",
+      "listener_votes": {
+        "fearful": 8,
+        "neutral": 1
+      },
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "happy"
+        },
+        "gpt_realtime": {
+          "label": "neutral"
+        },
+        "emotion2vec_plus_large": {
+          "label": "fearful"
+        }
+      },
+      "audio_asset": "assets/inspections/audio/crema_d__1002_DFA_FEA_XX.mp3",
+      "waveform_asset": "assets/inspections/waveforms/crema_d__1002_DFA_FEA_XX.png",
+      "audio_sha256": "c4446bd1082e27ee04dcf45432b1cffc8baf5840d851d7f3fd2f3c9d2c04be98",
+      "duration_s": 2.736
+    },
+    {
+      "dataset_key": "crema_d",
+      "clip_id": "1002_DFA_HAP_XX",
+      "audio_path": "data/crema_d/AudioWAV/1002_DFA_HAP_XX.wav",
+      "reference": "happy",
+      "listener_votes": {
+        "fearful": 1,
+        "happy": 7,
+        "neutral": 2
+      },
+      "predictions": {
+        "gemini-3.8-flash": {
+          "label": "happy"
+        },
+        "gpt_realtime": {
+          "label": "neutral"
+        },
+        "emotion2vec_plus_large": {
+          "label": "happy"
+        }
+      },
+      "audio_asset": "assets/inspections/audio/crema_d__1002_DFA_HAP_XX.mp3",
+      "waveform_asset": "assets/inspections/waveforms/crema_d__1002_DFA_HAP_XX.png",
+      "audio_sha256": "f94a5f827691550aa0afaf5415e28e281c2beeb413245326aa650446dd0d7289",
+      "duration_s": 2.202
+    }
+  ]
+}

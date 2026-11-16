@@ -1,5 +1,14 @@
 # Presentation assets: scripts
 
+The 2026-11-16 extension uses `prepare_inspections.py`, `build_semantic.mjs`, `build_inspections.mjs`,
+`embed_inspection_audio.py`, `merge_inspections.py`, `check_inspections.py`, `verify_import_batches.mjs`
+and `finalize_inspections.mjs`. It reads the complete
+10-model × 16-dataset snapshot, verifies identical clip IDs and recomputed accuracy for all 160 runs,
+and writes separate assets under `assets/inspections/`. See the parent README for the build sequence.
+These extended assets are for the internal research copy, including datasets not cleared for public audio
+redistribution. Their clips are not trimmed or loudness-normalized. The older scripts described below retain
+their original six-dataset public selection and processing.
+
 These scripts rebuild everything in `../assets/` that the deck reads: the figures, `stats.json`, the audio
 examples and `manifest.json`. They only read our evaluation outputs and the dataset metadata; they never run a model.
 
