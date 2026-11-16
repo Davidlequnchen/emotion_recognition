@@ -2,7 +2,8 @@
 
 中文 | [English](data_import_en.md)
 
-给每个已切分的客户 clip 建一条任务。音频和转写通过同一 stem 配对，各自保持扁平目录。
+从批次的 `manifest.parquet` 为每个符合条件的客户 clip 建一条任务；转写直接读取 manifest 的 `text` 列，
+不需要单独的转写文件夹。合格片段用固定 seed 打乱后，拆成互不重叠的任务 JSON，每份最多 1,000 条。
 本机服务的 document root 已由负责人配置；下方使用通用路径说明，不涉及安装或启动步骤。
 
 ## 1. 准备一个批次目录
@@ -11,30 +12,66 @@
 
 ```text
 /absolute/path/to/dataset/        # 服务已配置的 document root
-└── batch/                       # Local Files 的 Source path
+└── batch/
     ├── audio/                   # clip_0001.wav、clip_0002.mp3 …
-    ├── transcripts/             # clip_0001.txt、clip_0002.txt …
-    └── tasks.json
+    ├── manifest.parquet         # clip ID、音频文件、文字稿、长音频标记等
+    └── tasks/                   # 生成的任务文件目录；Local Files 的 Source path
+        ├── tasks_001.json       # 最多 1,000 条
+        ├── tasks_002.json       # 另外最多 1,000 条
+        └── …
 ```
 
 Local Files 的 Source path 必须是 document root 内的严格子目录，**不能与 document root 相等**。
-这也是将任务 JSON 放进 `batch/` 的原因。
+上面的 `batch/tasks/` 满足这一要求。
 
-在仓库根目录生成任务：
+在已安装 `pyarrow` 的 Python 环境中运行（项目的 `emotion_recognition_llm` 环境已包含它）。
+独立使用时，先在 Python 3.11 环境中从仓库根目录安装 `python3 -m pip install -r label_studio/requirements.txt`。
+然后在仓库根目录生成任务：
 
 ```bash
 python3 label_studio/prepare_tasks.py \
-  --audio-dir /absolute/path/to/dataset/batch/audio \
-  --transcript-dir /absolute/path/to/dataset/batch/transcripts \
+  --manifest /absolute/path/to/dataset/batch/manifest.parquet \
   --document-root /absolute/path/to/dataset \
-  --output /absolute/path/to/dataset/batch/tasks.json
+  --output-dir /absolute/path/to/dataset/batch/tasks \
+  --batch-size 1000 \
+  --seed 42
 ```
 
-支持 WAV、MP3、FLAC、OGG、M4A，不递归扫描、不复制音频。省略 `--transcript-dir` 时在音频目录找同名 UTF-8
-`.txt`。缺失转写用空字符串并报告数量；音频 stem 必须唯一。音频、转写目录及文件的真实路径都必须位于
-document root 内；指向根目录外的 symlink 被拒绝。已有 output 不会覆盖，重复生成时请换文件名。
+`--output-dir` 替代原来的单文件 `--output`。`--batch-size` 默认 `1000`，`--seed` 默认 `42`，两者均可省略。
+脚本先完成筛选和验证，按 `clip_id` 排序，再用该 seed 打乱一次并连续分块。每个合格片段恰好出现一次，
+各文件之间没有重叠，最后一份可以不足 1,000 条；例如 2,007 条会生成 1,000、1,000、7 条三个文件。
+相同合格片段集合、seed 和 batch size 会得到相同分组，即使 manifest 行顺序改变也不影响分组。
+入选片段集合或 seed 改变后可能重新分组；开始标注后请继续使用首次生成的文件。
 
-输出形态：
+默认读取以下列；其他 metadata 保留在 manifest 中，通过 `clip_id` 与导出结果关联：
+
+| manifest 列 | 用途 | 修改列名的参数 |
+|---|---|---|
+| `clip_id` | 原有稳定 ID，写入 `data.clip_id`；整数 ID 转成字符串，字符串 ID 保留原值 | `--clip-id-column` |
+| `audio_clip_file` | 音频文件名或文件路径，转换为 `data.audio` | `--audio-column` |
+| `text` | 已有文字稿，写入 `data.transcript` | `--text-column` |
+| `is_longer_than_10_seconds` | `true` 排除，`false` 保留 | `--long-clip-column` |
+
+**筛选完全依据 manifest 标记，不读取音频来重新测量时长。** 当前列名表示 10 秒，使用的是 10 秒标记，
+不是此前讨论的 15 秒规则。如果以后 manifest 提供了 15 秒标记列，可用
+`--long-clip-column is_longer_than_15_seconds` 指定该列。布尔值、数值 `1/0` 和字符串
+`true/false`、`1/0` 均可使用；字符串忽略大小写和两端空白。标记缺失或无效时会报错，不会猜测。
+
+`audio_clip_file` 的路径解析规则：
+
+- 仅文件名（如 `clip_0001.wav`）：默认从 manifest 旁的 `audio/` 中查找；可用 `--audio-dir` 指定其他目录。
+- 带目录的相对路径（如 `audio/clip_0001.wav`）：相对 manifest 所在的批次目录解析。
+- 绝对路径：直接使用，但必须位于 document root 内。
+
+支持 WAV、MP3、FLAC、OGG、M4A。脚本只读取 manifest 中保留行引用的音频，不扫描音频目录，也不复制、
+删除或修改音频。未列入 manifest 或被标记排除的文件可以留在 `audio/` 中；被排除的行不检查音频是否存在。
+全部行被排除时不生成任何批次 JSON。空白、null 或 NaN 转写写为空字符串并报告数量；其他非文本转写会报错。
+保留行的 clip ID 和音频真实路径必须各自唯一，缺列、缺失音频或重复记录都会报错。
+manifest、音频目录及引用音频的真实路径必须位于 document root 内；指向根目录外的 symlink 被拒绝。
+全部验证成功后才写输出；若输出目录已有 `tasks_*.json`，脚本会报错，避免覆盖或混入旧分组。
+重复生成时请选择新的输出目录。运行结束会显示 seed、各文件任务数及排除数量。
+
+每份任务 JSON 的形态不变：
 
 ```json
 [
@@ -57,25 +94,30 @@ document root 内；指向根目录外的 symlink 被拒绝。已有 output 不�
 
 项目内进入 **Settings → Cloud Storage → Add Source Storage → Local Files**：
 
-1. Source path / Absolute local path 填 `/absolute/path/to/dataset/batch`，是 document root 的严格子目录。
+1. Source path / Absolute local path 填 `/absolute/path/to/dataset/batch/tasks`，是 document root 的严格子目录。
 2. 点击 **Test Connection**；成功后点 **Next**。
-3. **Import Method** 选 **Tasks**，文件过滤填 `tasks\.json$`。
+3. **Import Method** 选 **Tasks**，先只导入第一份，文件过滤填 `^tasks_001\.json$`。
 4. 点击 **Load Preview**，确认预览读取到任务而不是把 JSON 当成音频文件。
 5. 点击 **Next → Save & Sync**，回到数据页核对任务数，并试播一条。
 
 本次公开演示采用的就是 Tasks 同步导入。下图中的文件名是 `import_tasks.json`，所以过滤条件实际为
-`import_tasks\.json$`；使用上面的通用目录时，请对应使用 `tasks\.json$`。
+`import_tasks\.json$`；使用上面的分批目录时，请对应使用 `^tasks_001\.json$`。
 
 ![Local Files 向导：Tasks、文件过滤和成功加载的预览](screenshots/04-import-settings.jpg)
 
-音频加转写需要 JSON 将它们配对，不能扫描一堆 WAV/TXT 后期待系统自动配对。
+仅同步过滤后的任务 JSON，不要再用 **Files** 模式扫描整个音频目录，否则会绕过 manifest 的筛选。
+更新 JSON 不会自动删除此前已导入的任务。
 
 ## 3. 或通过 Import 上传 JSON
 
-如果负责人已配置好音频的本地文件访问，也可以在项目数据页 **Import → Upload Files** 上传同一个 `tasks.json`。
-上传 JSON 只导入任务字段，不会上传 JSON 中引用的音频。
+如果负责人已配置好音频的本地文件访问，建议在项目数据页用 **Import → Upload Files** 逐批上传：
 
-**同一批次在 Tasks Sync 和 Upload Files 中二选一**，不要两种方式重复导入。
+1. 先只上传 `tasks_001.json`，完成这一批标注。
+2. 在同一个项目里上传 `tasks_002.json`，继续下一批；现有标注结果保留。
+3. 按需要继续，做到几千条后可以停止，其余文件无需导入。
+
+上传 JSON 只导入任务字段，不会上传 JSON 中引用的音频。不要一次同步所有分批文件，否则全部任务都会进入项目。
+**每份 JSON 在 Tasks Sync 和 Upload Files 中二选一，且只导入一次**，不要重复导入。
 
 ## 4. 读取并标准化导出
 

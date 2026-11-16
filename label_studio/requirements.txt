@@ -1,0 +1,2 @@
+# Parquet input for prepare_tasks.py; also included in the main emotion_recognition environment.
+pyarrow==26.0.0

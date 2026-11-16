@@ -60,10 +60,11 @@ so you can go directly to step 4. Storage configuration is explained in [Data pr
 
 For new batches, you can also use **Import → Upload Files** on the project's data page:
 
-1. Upload the `tasks.json` supplied by the person preparing the data, then click **Import**.
-2. Each JSON task represents one clip and includes its audio URL, existing transcript, and stable `clip_id`.
+1. Upload only `tasks_001.json`, generated from `manifest.parquet` by the person preparing the data, then click **Import**. See [Data preparation and import](data_import_en.md) for the generation command.
+2. Each JSON file contains at most 1,000 tasks by default, with no overlap between files. Each task represents one clip and includes its audio URL, existing transcript, and stable `clip_id`.
 3. Before uploading, the project lead must ensure that the current service can access the audio URLs. Uploading JSON does not upload the audio files it references.
-4. **Import each JSON batch once**: do not import it through both Local Files Sync and Upload Files.
+4. When complete, import `tasks_002.json` and subsequent files into the same project; existing results are retained. Stop when sufficient clips are labeled, without importing every file at once.
+5. **Import each JSON file once**: do not import it through both Local Files Sync and Upload Files.
 
 ![The Import dialog's Upload Files control for the prepared task JSON](screenshots/04-upload-json.jpg)
 

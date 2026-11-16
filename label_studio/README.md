@@ -59,10 +59,11 @@
 
 日常导入新批次时，也可以使用项目数据页的 **Import → Upload Files**：
 
-1. 上传数据准备人员提供的 `tasks.json`，再点击 **Import**。
-2. 一条 JSON 任务对应一个 clip，带音频地址、已有转写和稳定的 `clip_id`。
+1. 先只上传数据准备人员从 `manifest.parquet` 生成的 `tasks_001.json`，再点击 **Import**；生成方法见[数据导入说明](data_import.md)。
+2. 每个 JSON 文件默认最多 1,000 条任务，每条任务对应一个 clip，带音频地址、已有转写和稳定的 `clip_id`；各文件互不重叠。
 3. 上传前，负责人应确保这些音频地址已能被当前服务访问。JSON 不会替你上传其引用的音频。
-4. **同一批 JSON 只导入一次**：不要既通过 Local Files Sync 导入，又通过 Upload Files 再导入。
+4. 完成后在同一个项目继续导入 `tasks_002.json` 等，原有结果保留；按需要停止，无需一次导入全部文件。
+5. **每份 JSON 只导入一次**：不要既通过 Local Files Sync 导入，又通过 Upload Files 再导入。
 
 ![Import 的 Upload Files 窗口，选择准备好的任务 JSON](screenshots/04-upload-json.jpg)
 
