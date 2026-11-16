@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Fully offline: no fonts, scripts or styles from anywhere else. The live page talks only to its own local
+     server; the exported copy cannot make any request at all (connect-src 'none'). -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; media-src data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Segment Explorer</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --line: rgba(11, 11, 11, 0.10); --grid: #e1e0d9; --axis: #c3c2b7; --chip: #f0efec; --hover: rgba(11, 11, 11, 0.035);
+  --accent: #2a78d6; --accent-bg: rgba(42, 120, 214, 0.12);
+  --seg-a: rgba(42, 120, 214, 0.10); --seg-b: rgba(235, 104, 52, 0.11);
+  --wave: #74736d; --bar: #c3c2b7;
+  --good: #006300; --good-mark: #0ca30c; --good-bg: rgba(12, 163, 12, 0.14);
+  --warn: #8a5800; --warn-mark: #e09b00; --warn-bg: rgba(250, 178, 25, 0.28);
+  --bad: #b52f2f; --bad-mark: #d03b3b; --bad-bg: rgba(208, 59, 59, 0.15);
+  --violet: #4a3aa7; --violet-bg: rgba(74, 58, 167, 0.13);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --line: rgba(255, 255, 255, 0.10); --grid: #2c2c2a; --axis: #383835; --chip: #2c2c2a; --hover: rgba(255, 255, 255, 0.04);
+    --accent: #3987e5; --accent-bg: rgba(57, 135, 229, 0.20);
+    --seg-a: rgba(57, 135, 229, 0.15); --seg-b: rgba(217, 89, 38, 0.16);
+    --wave: #a9a89f; --bar: #5b5a55;
+    --good: #3cc43c; --good-mark: #0ca30c; --good-bg: rgba(12, 163, 12, 0.24);
+    --warn: #f2b84b; --warn-mark: #fab219; --warn-bg: rgba(250, 178, 25, 0.24);
+    --bad: #f08080; --bad-mark: #e66767; --bad-bg: rgba(208, 59, 59, 0.26);
+    --violet: #9085e9; --violet-bg: rgba(144, 133, 233, 0.22);
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+  --line: rgba(255, 255, 255, 0.10); --grid: #2c2c2a; --axis: #383835; --chip: #2c2c2a; --hover: rgba(255, 255, 255, 0.04);
+  --accent: #3987e5; --accent-bg: rgba(57, 135, 229, 0.20);
+  --seg-a: rgba(57, 135, 229, 0.15); --seg-b: rgba(217, 89, 38, 0.16);
+  --wave: #a9a89f; --bar: #5b5a55;
+  --good: #3cc43c; --good-mark: #0ca30c; --good-bg: rgba(12, 163, 12, 0.24);
+  --warn: #f2b84b; --warn-mark: #fab219; --warn-bg: rgba(250, 178, 25, 0.24);
+  --bad: #f08080; --bad-mark: #e66767; --bad-bg: rgba(208, 59, 59, 0.26);
+  --violet: #9085e9; --violet-bg: rgba(144, 133, 233, 0.22);
+  --shadow: none;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1280px; margin: 0 auto; padding: 28px 16px 56px; }
+h1 { font-size: 24px; line-height: 1.2; margin: 0; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+h3 { font-size: 14px; margin: 16px 0 6px; }
+button { font: inherit; color: inherit; }
+.sub { color: var(--ink-2); margin: 6px 0 20px; max-width: 80ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 16px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.spacer { flex: 1; }
+.muted { color: var(--muted); }
+.hint { color: var(--muted); font-size: 12px; }
+.mono { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 8px 14px; cursor: pointer; white-space: nowrap; }
+.btn:hover:not(:disabled) { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn.small { padding: 5px 10px; font-size: 13px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:focus-visible, .play:focus-visible, .drop:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.notice { border-radius: 10px; padding: 10px 14px; margin: 0 0 16px; font-size: 13.5px; }
+.notice.err { background: var(--bad-bg); color: var(--ink); border-left: 3px solid var(--bad-mark); }
+.notice.warn { background: var(--warn-bg); color: var(--ink); border-left: 3px solid var(--warn-mark); }
+.notice.privacy { background: var(--chip); color: var(--ink-2); border-left: 3px solid var(--muted); }
+
+/* inputs */
+.drops { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media (max-width: 720px) { .drops { grid-template-columns: 1fr; } }
+.drop { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: center; border: 1.5px dashed var(--axis); border-radius: 12px; padding: 16px 18px; cursor: pointer; background: var(--page); transition: border-color .15s, background .15s; }
+.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-bg); }
+.drop.ready { border-style: solid; border-color: var(--good-mark); }
+.drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.drop .step { grid-row: span 3; width: 30px; height: 30px; border-radius: 50%; background: var(--chip); color: var(--ink-2); display: grid; place-items: center; font-weight: 700; }
+.drop.ready .step { background: var(--good-mark); color: #fff; }
+.drop .title { font-weight: 600; }
+.drop .help { color: var(--muted); font-size: 12.5px; }
+.drop .file { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; display: inline-block; vertical-align: -2px; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.status { color: var(--ink-2); font-size: 13px; }
+
+/* summary */
+.decision { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: 15px; margin-bottom: 8px; }
+.files { color: var(--ink-2); font-size: 12.5px; margin-bottom: 14px; display: flex; gap: 6px 14px; flex-wrap: wrap; }
+.files b { font: 600 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
+.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; background: var(--chip); color: var(--ink-2); }
+.badge.good { color: var(--good); background: var(--good-bg); }
+.badge.info { color: var(--accent); background: var(--accent-bg); }
+.badge.warn { color: var(--warn); background: var(--warn-bg); }
+.badge.bad { color: var(--bad); background: var(--bad-bg); }
+.code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; min-width: 0; }
+.tile .label { color: var(--ink-2); font-size: 12px; }
+.tile .value { font-size: 20px; font-weight: 600; margin-top: 1px; overflow-wrap: anywhere; }
+.tile .value.small { font-size: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 4px 0 3px; }
+.tile .note { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.actions { display: flex; gap: 8px 14px; align-items: center; flex-wrap: wrap; margin: -4px 0 16px; }
+.actions .privacy-note { color: var(--ink-2); font-size: 12.5px; max-width: 70ch; }
+
+/* settings */
+details.settings > summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; gap: 10px; align-items: center; }
+details.settings > summary::-webkit-details-marker { display: none; }
+details.settings > summary::before { content: "▸"; color: var(--muted); transition: transform .15s; }
+details.settings[open] > summary::before { transform: rotate(90deg); }
+.settings-body { margin-top: 14px; }
+.fieldsets { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 860px) { .fieldsets { grid-template-columns: 1fr; } }
+fieldset { border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px 12px; margin: 0; min-width: 0; }
+legend { font-size: 12px; font-weight: 600; color: var(--ink-2); padding: 0 6px; }
+.field { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 0 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.field:last-child { border-bottom: 0; }
+.field .name { font-weight: 600; font-size: 13px; }
+.field .name code { font: 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); font-weight: 400; margin-left: 4px; }
+.field .help { grid-column: 1; color: var(--muted); font-size: 12px; }
+.field input { grid-row: 1 / span 2; grid-column: 2; width: 100%; font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--page); color: var(--ink); text-align: right; }
+.field input:read-only { background: transparent; border-color: transparent; }
+.field .was { grid-column: 1 / -1; font-size: 12px; color: var(--warn); display: none; }
+.field.changed .was { display: block; }
+.field.changed input { border-color: var(--warn-mark); box-shadow: inset 0 0 0 1px var(--warn-mark); }
+.field.changed .name::after { content: "changed"; margin-left: 8px; font-size: 11px; font-weight: 600; color: var(--warn); background: var(--warn-bg); border-radius: 999px; padding: 1px 7px; }
+pre.yaml { background: var(--page); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; overflow-x: auto; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 12px 0 0; }
+
+/* tracks */
+.viewer { padding: 14px 16px 12px; }
+.toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.play { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--ink); color: var(--surface); display: grid; place-items: center; cursor: pointer; }
+.play svg { width: 15px; height: 15px; fill: currentColor; }
+.time { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.tracks { position: relative; user-select: none; -webkit-user-select: none; touch-action: pan-y; cursor: crosshair; }
+.track-head { display: flex; gap: 8px; align-items: baseline; font-size: 12px; margin: 8px 0 3px; color: var(--muted); flex-wrap: wrap; }
+.track-head b { color: var(--ink-2); font-weight: 600; }
+.track-head .flag { color: var(--warn); font-weight: 600; }
+canvas { display: block; width: 100%; border-radius: 6px; }
+#cvWave, #cvVad, #cvWords, #cvGaps { background: var(--page); }
+.overlay { position: absolute; inset: 0; pointer-events: none; }
+.playhead { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--bad-mark); }
+.hover-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--ink-2); opacity: .35; }
+.sel { position: absolute; top: 0; bottom: 0; background: var(--accent-bg); border-left: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+.tooltip { position: fixed; z-index: 20; pointer-events: none; max-width: 340px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, .14); padding: 8px 11px; font-size: 12.5px; line-height: 1.45; }
+.tooltip b { font-weight: 600; }
+.tooltip .k { color: var(--muted); }
+.tooltip .tt-row { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 12px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 10px; border-radius: 3px; display: inline-block; border: 1.5px solid transparent; }
+
+/* table */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { width: 100%; min-width: 820px; border-collapse: collapse; }
+th { text-align: left; font-size: 12px; font-weight: 600; color: var(--ink-2); padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--page); }
+th small { display: block; font-weight: 400; color: var(--muted); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--hover); }
+tbody tr.current { background: var(--accent-bg); }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-2); }
+td.text { min-width: 280px; }
+.seg-play { width: 30px; height: 30px; border-radius: 50%; border: 0; background: var(--ink); color: var(--surface); display: grid; place-items: center; cursor: pointer; }
+.seg-play svg { width: 12px; height: 12px; fill: currentColor; }
+.swatch-a, .swatch-b { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
+.swatch-a { background: var(--accent); }
+.swatch-b { background: #eb6834; }
+
+/* explanation */
+.explain dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+.explain dt { font-weight: 600; }
+.explain dd { margin: 0; color: var(--ink-2); }
+.explain ul { margin: 4px 0; padding-left: 20px; color: var(--ink-2); }
+.explain li { margin: 3px 0; }
+.explain p { color: var(--ink-2); margin: 8px 0 0; }
+@media (max-width: 640px) { .explain dl { grid-template-columns: 1fr; } .explain dd { margin-bottom: 6px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Segment Explorer</h1>
+  <p class="sub" id="subtitle">Check the turn segmenter on one audio file and its transcript before running it on many
+    turns. Everything runs on this computer.</p>
+  <div class="notice privacy" id="staticNote" hidden></div>
+
+  <!--LIVE-->
+  <section class="card" id="inputCard">
+    <div class="drops">
+      <label class="drop" id="dropAudio">
+        <input type="file" id="fileAudio" accept=".wav,.mp3,.flac">
+        <span class="step">1</span>
+        <span class="title">Audio file</span>
+        <span class="help">WAV, MP3 or FLAC: click to choose, or drop it here</span>
+        <span class="file" id="nameAudio">No file chosen</span>
+      </label>
+      <label class="drop" id="dropText">
+        <input type="file" id="fileText" accept=".txt,text/plain">
+        <span class="step">2</span>
+        <span class="title">Transcript</span>
+        <span class="help">The turn's .txt transcript (UTF-8): click to choose, or drop it here</span>
+        <span class="file" id="nameText">No file chosen</span>
+      </label>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="btnRun" disabled>Run segmenter</button>
+      <span class="status" id="runStatus">Choose both files, then run. Settings: config/segment_turns.yaml (below).</span>
+    </div>
+  </section>
+  <!--/LIVE-->
+
+  <div class="notice err" id="error" hidden></div>
+
+  <details class="card settings" id="settings" hidden>
+    <summary>Settings (from segment_turns.yaml) <span id="settingsBadge"></span></summary>
+    <div class="settings-body">
+      <div class="fieldsets" id="settingsGrid"></div>
+      <div class="notice warn" id="weightWarn" hidden style="margin:12px 0 0"></div>
+      <div class="row" style="margin-top:12px">
+        <!--LIVE-->
+        <button class="btn" id="btnRerun" disabled>Re-run with these settings</button>
+        <button class="btn" id="btnReset">Reset to YAML values</button>
+        <!--/LIVE-->
+        <button class="btn" id="btnCopyYaml" disabled>Copy as YAML</button>
+        <span class="status" id="settingsStatus"></span>
+      </div>
+      <pre class="yaml" id="yamlSnippet" hidden></pre>
+      <p class="hint" id="settingsHint" style="margin:10px 0 0">Changes apply to this page only and are never written
+        back to config/segment_turns.yaml. "Copy as YAML" gives the changed values of the result shown, to paste into
+        the YAML by hand. Decoding, VAD and alignment are cached per file, so a re-run only redoes the gap scores and
+        the dynamic programme.</p>
+    </div>
+  </details>
+
+  <section id="result" hidden>
+    <div class="decision" id="decision"></div>
+    <div class="files" id="files"></div>
+    <div class="tiles" id="tiles"></div>
+    <!--LIVE-->
+    <div class="actions">
+      <button class="btn" id="btnExport">Export static HTML</button>
+      <span class="privacy-note">The exported HTML contains the audio and the transcript. Share internal call data only
+        through approved internal channels.</span>
+    </div>
+    <!--/LIVE-->
+    <div class="notice warn" id="displayNote" hidden></div>
+
+    <section class="card viewer">
+      <div class="toolbar">
+        <button class="play" id="btnPlay" title="Play / pause (space)" aria-label="Play or pause"></button>
+        <span class="time" id="timeText">0.00 s</span>
+        <span class="spacer"></span>
+        <span class="hint">Click: move the playhead · drag: zoom · double-click or Esc: show all · space: play / pause</span>
+        <button class="btn small" id="btnZoomReset" disabled>Show all</button>
+      </div>
+      <div class="tracks" id="tracks">
+        <canvas id="cvAxis"></canvas>
+        <div class="track-head"><b>Waveform</b><span>shaded bands: segments · dashed lines: cuts</span></div>
+        <canvas id="cvWave"></canvas>
+        <div class="track-head"><b>VAD speech probability</b><span id="vadHead"></span></div>
+        <canvas id="cvVad"></canvas>
+        <div class="track-head"><b>Words</b><span id="wordsHead"></span></div>
+        <canvas id="cvWords"></canvas>
+        <div class="track-head"><b>Gap scores s</b><span id="gapsHead"></span></div>
+        <canvas id="cvGaps"></canvas>
+        <div class="overlay"><div class="sel" id="sel" hidden></div><div class="hover-line" id="hoverLine" hidden></div><div class="playhead" id="playhead"></div></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="card">
+      <h2>Segments</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>Segment</th><th>Start – end</th><th>Duration</th><th>Text</th>
+          <th>Boundary s<small>at start · at end</small></th><th>Speech ratio<small>VAD speech / duration</small></th><th>Words</th></tr></thead>
+        <tbody id="segRows"></tbody>
+      </table></div>
+      <p class="hint" style="margin:8px 0 0">Click a row to zoom to that segment; the play button plays exactly its range.</p>
+    </section>
+
+    <section class="card explain" id="explain"></section>
+  </section>
+</main>
+<div class="tooltip" id="tooltip" hidden></div>
+<audio id="audio" preload="auto"></audio>
+<script id="explorer-data" type="application/json">null</script>
+<script id="explorer-audio" type="text/plain"></script>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const DATA = JSON.parse($("explorer-data").textContent);
+const STATIC = DATA !== null;          // exported copy: the result is embedded, no server
+const audio = $("audio");
+const MID_CONFIDENCE = 0.7;            // display only: words between word_min_confidence and this are amber
+const ICON_PLAY = '<svg viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z"/></svg>';
+const ICON_PAUSE = '<svg viewBox="0 0 16 16"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>';
+const GROUP_CLASS = {final: "good", non_english: "info", alignment_issues: "warn", boundary_issues: "bad"};
+const FIELDS = {
+  segmentation: ["Segmentation", [
+    ["segmentation.keep_whole_max_s", "Keep whole up to (s)", "English turns up to this length are never cut"],
+    ["segmentation.target_s", "Target length (s)", "the length cost ((d - target) / target)² pulls pieces here"],
+    ["segmentation.min_s", "Shortest piece (s)", "hard limit for every piece"],
+    ["segmentation.max_s", "Longest piece (s)", "hard limit; no partition fits: boundary_issues"],
+    ["segmentation.cut_weight_lambda", "Cut price λ", "every cut costs λ × (1 - s)"]]],
+  scoring: ["Boundary score s", [
+    ["scoring.weight_pause", "Weight of p (pause)", "s = w_p p + w_q q + w_v v"],
+    ["scoring.weight_text", "Weight of q (punctuation)", ""],
+    ["scoring.weight_silence", "Weight of v (quietness)", ""],
+    ["scoring.no_punctuation_weight_pause", "p weight, no punctuation", "used when the transcript has no punctuation"],
+    ["scoring.no_punctuation_weight_silence", "v weight, no punctuation", "used when the transcript has no punctuation"]]],
+};
+const TRACKS = [["cvAxis", 22, drawAxis], ["cvWave", 112, drawWave], ["cvVad", 56, drawVad],
+                ["cvWords", 52, drawWords], ["cvGaps", 84, drawGaps]];
+
+let R = null;                          // the result on screen (same JSON as the export holds)
+let view = {a: 0, b: 1};               // visible time range, seconds
+let defaults = null;                   // {values} from the YAML
+let audioFile = null, objectUrl = null, audioId = null;
+let transcript = null, transcriptName = "";
+let lastRequest = null;                // audio id, transcript and name of the result on screen (for the export)
+let segPlay = null;                    // {index, end} while one segment plays
+let drag = null, W = 0;
+
+// ---------- small helpers ----------
+const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const fx = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v)) ? "–" : Number(v).toFixed(d);
+const pct = (v) => (v === null || v === undefined) ? "–" : Math.round(v * 100) + "%";
+const mb = (bytes) => bytes >= 1e6 ? (bytes / 1e6).toFixed(1) + " MB" : Math.max(1, Math.round(bytes / 1e3)) + " kB";
+const segName = (k) => "s" + String(k).padStart(2, "0");
+const X = (t) => (t - view.a) / (view.b - view.a) * W;
+const T = (x) => view.a + x / W * (view.b - view.a);
+function clock(t) {
+  if (!R || R.duration_s < 60) return t.toFixed(2) + " s";
+  const m = Math.floor(t / 60);
+  return m + ":" + (t - m * 60).toFixed(1).padStart(4, "0");
+}
+function showError(message) { const el = $("error"); el.textContent = message; el.hidden = !message; }
+async function readJson(res) {
+  const text = await res.text();
+  try { return JSON.parse(text); } catch (e) { return {error: text || res.statusText}; }
+}
+
+// ---------- start (called at the end of this script, once every function and constant exists) ----------
+function initStatic() {
+  // the audio is embedded as a base64 data URI; a Blob URL plays in every browser, whatever the size
+  const uri = $("explorer-audio").textContent.trim();
+  const comma = uri.indexOf(",");
+  const binary = atob(uri.slice(comma + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  audio.src = URL.createObjectURL(new Blob([bytes], {type: uri.slice(5, uri.indexOf(";"))}));
+  $("subtitle").textContent = "Offline copy exported from Segment Explorer on " + DATA.created +
+    ". It shows one segmenter result; it cannot run, upload or re-run.";
+  const note = $("staticNote");
+  note.textContent = "This file contains the audio and the transcript. Share internal call data only through approved internal channels.";
+  note.hidden = false;
+  defaults = {values: DATA.settings.defaults};
+  buildSettings(DATA.settings.values, true);
+  show(DATA);
+}
+
+async function initLive() {
+  setupDrop("dropAudio", "fileAudio", chooseAudio);
+  setupDrop("dropText", "fileText", chooseText);
+  window.addEventListener("dragover", (e) => e.preventDefault());   // a missed drop must not open the file
+  window.addEventListener("drop", (e) => e.preventDefault());
+  $("btnRun").onclick = () => run();
+  $("btnRerun").onclick = () => run();
+  $("btnReset").onclick = () => { fillSettings(defaults.values); };
+  $("btnExport").onclick = exportHtml;
+  try {
+    const res = await fetch("/api/defaults");
+    defaults = await readJson(res);
+    if (!res.ok) throw new Error(defaults.error);
+    buildSettings(defaults.values, false);
+  } catch (e) {
+    showError("Cannot reach the local Segment Explorer server. Start it with: python preparation_tools/explorer/app.py (" + e.message + ")");
+  }
+}
+
+function setupDrop(zoneId, inputId, handler) {
+  const zone = $(zoneId), input = $(inputId);
+  input.onchange = () => { if (input.files[0]) handler(input.files[0]); input.value = ""; };
+  zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("over"); });
+  zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault(); zone.classList.remove("over");
+    if (e.dataTransfer.files[0]) handler(e.dataTransfer.files[0]);
+  });
+}
+
+function chooseAudio(file) {
+  const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+  if (![".wav", ".mp3", ".flac"].includes(ext)) { showError("Audio must be a .wav, .mp3 or .flac file."); return; }
+  showError("");
+  audioFile = file; audioId = null;
+  if (objectUrl) URL.revokeObjectURL(objectUrl);
+  objectUrl = URL.createObjectURL(file);
+  $("nameAudio").textContent = file.name + " · " + mb(file.size);
+  $("dropAudio").classList.add("ready");
+  updateButtons();
+}
+
+async function chooseText(file) {
+  try {
+    // ignoreBOM keeps a byte-order mark, exactly as the batch script reads the file
+    transcript = new TextDecoder("utf-8", {fatal: true, ignoreBOM: true}).decode(await file.arrayBuffer());
+  } catch (e) {
+    showError("The transcript is not valid UTF-8 text."); return;
+  }
+  showError("");
+  transcriptName = file.name;
+  const words = transcript.trim() ? transcript.trim().split(/\s+/).length : 0;
+  $("nameText").textContent = file.name + " · " + words + " words";
+  $("dropText").classList.add("ready");
+  updateButtons();
+}
+
+let busy = false, busyTimer = null;
+function setBusy(on, message) {
+  busy = on;
+  clearInterval(busyTimer);
+  const status = $("runStatus");
+  if (on) {
+    const t0 = Date.now();
+    const paint = () => { status.innerHTML = '<span class="spinner"></span>' + esc(message) + " " + Math.round((Date.now() - t0) / 1000) + " s"; };
+    paint(); busyTimer = setInterval(paint, 1000);
+  }
+  updateButtons();
+}
+function updateButtons() {
+  if (STATIC) return;
+  const ready = audioFile && transcript !== null && !busy;
+  $("btnRun").disabled = !ready;
+  $("btnRerun").disabled = !ready || !R;
+  $("btnExport").disabled = busy || !R;
+}
+
+// ---------- server calls (live page only) ----------
+async function run() {
+  const values = readSettings();
+  if (!values) return;
+  showError("");
+  try {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (!audioId) {
+        setBusy(true, "Working: uploading, decoding and VAD (the first run also loads the models)…");
+        const up = await fetch("/api/audio", {method: "POST", body: audioFile,
+          headers: {"Content-Type": "application/octet-stream", "X-File-Name": encodeURIComponent(audioFile.name)}});
+        const info = await readJson(up);
+        if (!up.ok) throw new Error(info.error || up.statusText);
+        audioId = info.audio_id;
+      }
+      setBusy(true, R ? "Working: re-running the scores and the dynamic programme…" : "Working: language check, forced alignment and dynamic programme…");
+      const request = {audio_id: audioId, transcript: transcript, transcript_name: transcriptName};
+      const res = await fetch("/api/run", {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({...request, settings: values})});
+      const out = await readJson(res);
+      if (res.status === 404 && out.code === "unknown_audio" && attempt === 0) { audioId = null; continue; }
+      if (!res.ok) throw new Error(out.error || res.statusText);
+      lastRequest = request;
+      show(out);
+      $("runStatus").textContent = "Done in " + out.timings.run_s.toFixed(2) + " s (alignment " + out.timings.alignment +
+        "; decoding " + out.timings.decode_s.toFixed(2) + " s and VAD " + out.timings.vad_s.toFixed(2) + " s at upload, cached).";
+      break;
+    }
+  } catch (e) {
+    showError(e.message);
+    $("runStatus").textContent = "";
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function exportHtml() {
+  if (!R || !lastRequest) return;
+  showError("");
+  try {
+    const res = await fetch("/api/export", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({...lastRequest, settings: R.settings.values})});
+    if (!res.ok) throw new Error((await readJson(res)).error);
+    const match = (res.headers.get("Content-Disposition") || "").match(/filename="([^"]+)"/);
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(await res.blob());
+    link.download = match ? match[1] : "segment_explorer.html";
+    document.body.append(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 20000);
+  } catch (e) {
+    showError("Export failed: " + e.message);
+  }
+}
+
+// ---------- settings panel ----------
+function buildSettings(values, readOnly) {
+  let html = "";
+  for (const [title, fields] of Object.values(FIELDS)) {
+    html += "<fieldset><legend>" + esc(title) + "</legend>";
+    for (const [key, name, help] of fields) {
+      html += '<label class="field" data-key="' + key + '"><span class="name">' + esc(name) + "<code>" + key.split(".")[1] +
+        '</code></span><input type="number" step="any" min="0"' + (readOnly ? " readonly" : "") + '><span class="help">' +
+        esc(help) + '</span><span class="was"></span></label>';
+    }
+    html += "</fieldset>";
+  }
+  $("settingsGrid").innerHTML = html;
+  $("settingsGrid").addEventListener("input", updateSettingsState);
+  $("btnCopyYaml").onclick = async () => {
+    const ok = await copyText(R.settings.yaml_snippet);
+    $("settingsStatus").textContent = ok ? "Copied." : "Copy failed: select the text below.";
+  };
+  if (readOnly) $("settingsHint").textContent = "The values used for this result. Changed values are marked; the YAML lines below can be pasted into config/segment_turns.yaml by hand.";
+  $("settings").hidden = false;
+  fillSettings(values);
+}
+function fillSettings(values) {
+  for (const el of document.querySelectorAll(".field")) el.querySelector("input").value = values[el.dataset.key];
+  updateSettingsState();
+}
+function readSettings() {
+  const values = {};
+  for (const el of document.querySelectorAll(".field")) {
+    const v = Number(el.querySelector("input").value);
+    if (el.querySelector("input").value.trim() === "" || !Number.isFinite(v) || v < 0) {
+      showError("Setting " + el.dataset.key + " must be a number of at least 0."); return null;
+    }
+    values[el.dataset.key] = v;
+  }
+  return values;
+}
+function updateSettingsState() {
+  let changed = 0, pending = false;
+  const now = {};
+  for (const el of document.querySelectorAll(".field")) {
+    const key = el.dataset.key, v = Number(el.querySelector("input").value);
+    now[key] = v;
+    const differs = v !== defaults.values[key];
+    changed += differs;
+    el.classList.toggle("changed", differs);
+    el.querySelector(".was").textContent = "YAML: " + defaults.values[key];
+    if (R && v !== R.settings.values[key]) pending = true;
+  }
+  $("settingsBadge").innerHTML = changed ? '<span class="badge warn">' + changed + " changed from the YAML</span>" : '<span class="badge">YAML values</span>';
+  const sum = now["scoring.weight_pause"] + now["scoring.weight_text"] + now["scoring.weight_silence"];
+  const sumPlain = now["scoring.no_punctuation_weight_pause"] + now["scoring.no_punctuation_weight_silence"];
+  const warn = [];
+  if (Math.abs(sum - 1) > 1e-9) warn.push("w_p + w_q + w_v = " + +sum.toFixed(4));
+  if (Math.abs(sumPlain - 1) > 1e-9) warn.push("no-punctuation weights add up to " + +sumPlain.toFixed(4));
+  $("weightWarn").textContent = warn.length ? warn.join("; ") + ": the YAML weights add up to 1, so s stays between 0 and 1." : "";
+  $("weightWarn").hidden = !warn.length;
+  if (!STATIC) {
+    $("btnRerun").classList.toggle("primary", pending);
+    $("settingsStatus").textContent = pending ? "Not applied yet: click Re-run." : "";
+  }
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* file:// or no permission */ }
+  const area = document.createElement("textarea");
+  area.value = text; document.body.append(area); area.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+  area.remove();
+  return ok;
+}
+
+// ---------- result ----------
+function show(result) {
+  const sameAudio = R && R.files.audio === result.files.audio && R.duration_s === result.duration_s;
+  R = result;
+  if (!STATIC && objectUrl && audio.src !== objectUrl) { audio.pause(); audio.src = objectUrl; }
+  if (!sameAudio) view = {a: 0, b: R.duration_s};
+  segPlay = null;
+  $("result").hidden = false;
+  renderSummary(); renderTable(); renderExplain(); renderLegend();
+  fillSettings(R.settings.values);
+  const snippet = R.settings.yaml_snippet;
+  $("yamlSnippet").textContent = snippet; $("yamlSnippet").hidden = !snippet;
+  $("btnCopyYaml").disabled = !snippet;
+  $("btnCopyYaml").title = snippet ? "" : "All values are the YAML values";
+  updateButtons();
+  layout(); drawAll();
+}
+
+function tile(label, value, note, small) {
+  return '<div class="tile"><div class="label">' + esc(label) + '</div><div class="value' + (small ? " small" : "") + '">' + value +
+    '</div><div class="note">' + note + "</div></div>";
+}
+function renderSummary() {
+  const f = R.files, A = R.alignment, D = R.display_alignment, dp = R.dp, S = R.settings;
+  $("decision").innerHTML = '<span class="badge ' + GROUP_CLASS[R.group] + '">' + esc(R.group) + '</span><span class="code">' +
+    esc(R.status) + "</span><span>" + esc(R.decision) + "</span>";
+  const rate = f.sample_rate % 1000 ? (f.sample_rate / 1000).toFixed(2) : f.sample_rate / 1000;
+  $("files").innerHTML = "<span><b>" + esc(f.audio) + "</b> " + rate + " kHz · " + f.channels + " ch · " + esc(f.subtype) + " · " +
+    mb(f.audio_bytes) + "</span><span><b>" + esc(f.transcript || "transcript") + "</b> " + R.words.length + " aligned words</span>";
+  const lengths = R.segments.map((s) => s.duration_s.toFixed(1)).join(" · ") + " s";
+  let align = "–", alignNote = esc(A.status.replace(/_/g, " "));
+  if (A.mean_confidence !== undefined) {
+    align = fx(A.mean_confidence); alignNote = esc(A.status) + "; weak or unspelled words " + pct(A.unaligned_share);
+  } else if (D) {
+    alignNote = "not run by the pipeline (" + esc(A.status.replace(/_/g, " ")) + "); display-only run: " + fx(D.mean_confidence);
+  } else if (A.reason) {
+    alignNote += ": " + esc(A.reason);
+  }
+  const P = R.scores;
+  const pauseNote = P.typical_pause_s === undefined ? "not computed" :
+    (R.display_only ? "display only; " : "") + (P.punctuated ? "punctuated transcript" : "no punctuation: s = " + P.weights[0] + " p + " + P.weights[2] + " v");
+  let cost = "–", costNote = "dynamic programme not run";
+  if (dp && dp.feasible) { cost = fx(dp.total_cost, 3); costNote = "length " + fx(dp.length_cost, 3) + " + cuts " + fx(dp.cut_cost, 3); }
+  else if (dp) { cost = "none"; costNote = "no partition within " + dp.limits_s.join("–") + " s"; }
+  const cues = R.language_cues;
+  $("tiles").innerHTML = [
+    tile("Group", '<span class="badge ' + GROUP_CLASS[R.group] + '" style="font-size:14px">' + esc(R.group) + "</span>", esc(R.reason || R.status)),
+    tile("Segments", R.segments.length, lengths),
+    tile("Duration", fx(R.duration_s) + " s", "exported span " + R.span_s.map((v) => v.toFixed(2)).join("–") + " s"),
+    tile("Language", esc(R.language), "cue words: English " + cues.en + ", Spanish " + cues.es),
+    tile("Alignment mean confidence", align, alignNote),
+    tile("Typical pause", P.typical_pause_s === undefined ? "–" : fx(P.typical_pause_s) + " s", pauseNote),
+    tile("DP total cost", cost, costNote),
+    tile("Settings version", esc(S.version), S.changed.length ? S.changed.length + " changed from the YAML (" + esc(S.yaml_version) + ")" : "YAML values", true),
+  ].join("");
+  const note = $("displayNote");
+  note.textContent = R.display_note; note.hidden = !R.display_note;
+  const words = R.words.length, weak = R.words.filter((w) => w.weak).length, wild = R.words.filter((w) => w.wildcard).length;
+  $("wordsHead").innerHTML = words ? words + " words, " + weak + " weak or unspelled (" + wild + " unspelled)" +
+    (R.display_only ? ' · <span class="flag">display only</span>' : "") : "no word times";
+  const excluded = R.gaps.filter((g) => !g.candidate).length, chosen = R.gaps.filter((g) => g.chosen).length;
+  $("gapsHead").innerHTML = R.gaps.length ? R.gaps.length + " gaps, " + chosen + " chosen as cuts, " + excluded + " not allowed" +
+    (R.display_only ? ' · <span class="flag">display only, not part of the decision</span>' : "") : "no gaps";
+  $("vadHead").textContent = "one value per " + Math.round(R.vad.frame_s * 1000) + " ms frame · dashed line: speech threshold " + R.vad.threshold;
+}
+
+function renderTable() {
+  const rows = R.segments.map((s, k) => {
+    const sw = '<span class="swatch-' + (k % 2 ? "b" : "a") + '"></span>';
+    return '<tr data-k="' + k + '"><td><button class="seg-play" data-k="' + k + '" title="Play this segment" aria-label="Play segment ' + k + '">' + ICON_PLAY +
+      '</button></td><td class="num">' + sw + segName(s.index) + '</td><td class="num">' + s.start_s.toFixed(2) + " – " + s.end_s.toFixed(2) +
+      ' s</td><td class="num">' + s.duration_s.toFixed(2) + ' s</td><td class="text">' + esc(s.text) + '</td><td class="num">' +
+      fx(s.start_score) + " · " + fx(s.end_score) + '</td><td class="num">' + pct(s.speech_ratio) +
+      (s.low_speech ? ' <span class="badge warn">low speech</span>' : "") + '</td><td class="num">' + s.word_count + "</td></tr>";
+  });
+  const body = $("segRows");
+  body.innerHTML = rows.join("");
+  body.onclick = (e) => {
+    const button = e.target.closest(".seg-play");
+    if (button) { playSegment(Number(button.dataset.k)); return; }
+    const row = e.target.closest("tr");
+    if (row) {
+      const s = R.segments[Number(row.dataset.k)], pad = Math.max(0.2, s.duration_s * 0.05);
+      zoomTo(s.start_s - pad, s.end_s + pad);
+    }
+  };
+}
+
+function renderLegend() {
+  const sw = (fill, stroke, dashed) => '<i class="sw" style="background:' + fill + ";border-color:" + stroke + (dashed ? ";border-style:dashed" : "") + '"></i>';
+  const minc = R.settings.word_min_confidence;
+  $("legend").innerHTML = [
+    "<span>" + sw("var(--seg-a)", "transparent") + sw("var(--seg-b)", "transparent") + "segments</span>",
+    '<span><i class="sw" style="width:2px;height:12px;border-radius:0;background:var(--accent)"></i>cut</span>',
+    '<span><i class="sw" style="width:2px;height:12px;border-radius:0;background:var(--bad-mark)"></i>playhead</span>',
+    "<span>" + sw("var(--good-bg)", "var(--good-mark)") + "word confidence ≥ " + MID_CONFIDENCE + "</span>",
+    "<span>" + sw("var(--warn-bg)", "var(--warn-mark)") + minc + " – " + MID_CONFIDENCE + "</span>",
+    "<span>" + sw("var(--bad-bg)", "var(--bad-mark)") + "! below " + minc + " (weak: no cut next to it)</span>",
+    "<span>" + sw("var(--violet-bg)", "var(--violet)", true) + "* unspelled, wildcard (no cut next to it)</span>",
+    "<span>" + sw("var(--accent)", "var(--accent)") + "chosen cut</span>",
+    "<span>" + sw("var(--bar)", "var(--bar)") + "allowed gap</span>",
+    "<span>" + sw("var(--bad-bg)", "var(--bad-mark)") + "× gap not allowed</span>",
+  ].join("");
+}
+
+function renderExplain() {
+  const v = R.settings.values;
+  const g = (k) => +Number(v[k]).toFixed(4);
+  $("explain").innerHTML = "<h2>How to read the tracks</h2><dl>" +
+    "<dt>Waveform</dt><dd>The whole file. Shaded bands are the segments (s00, s01, …) and dashed lines the cuts. Each cut goes to the middle of the quiet part of the chosen pause (VAD frames within 0.1 of the pause's lowest speech probability, the one nearest the pause centre).</dd>" +
+    "<dt>VAD speech probability</dt><dd>Silero VAD, one value per 32 ms frame: near 1 is speech, near 0 is quiet. The dashed line is the speech threshold (" + R.vad.threshold + ") used for the speech time of each segment and the low-speech flag.</dd>" +
+    "<dt>Words</dt><dd>Every transcript word where forced alignment placed it, coloured by its confidence. Red with ! is below " + R.settings.word_min_confidence + ": no cut may touch it. Violet with * is a token the aligner cannot spell (e.g. [NAME], long numbers), matched by a wildcard: no cut may touch it either.</dd>" +
+    "<dt>Gap scores</dt><dd>One bar per pause between two words; its height is the boundary score s and its width the pause length. Blue: chosen cut. Grey: allowed but not chosen. Red outline with ×: not allowed. Hover a bar for its numbers.</dd></dl>" +
+    "<h3>The boundary score s of a pause</h3><ul>" +
+    "<li><b>p, pause length</b>: the pause compared with this speaker's typical pause, p = gap ÷ (2 × typical pause), at most 1. A pause twice as long as the typical one or longer gives 1. The typical pause is the median of the turn's pauses longer than 0.1 s (0.3 s when there are fewer than 3).</li>" +
+    "<li><b>q, punctuation</b>: from the transcript: 1 after a sentence end (. ? !), 0.5 after a comma, semicolon, colon or dash, 0 otherwise.</li>" +
+    "<li><b>v, quietness</b>: 1 minus the mean VAD speech probability inside the pause: 1 is silent, 0 is speech.</li>" +
+    "<li><b>s</b> = " + g("scoring.weight_pause") + " p + " + g("scoring.weight_text") + " q + " + g("scoring.weight_silence") + " v (when the transcript has no punctuation at all: " +
+    g("scoring.no_punctuation_weight_pause") + " p + " + g("scoring.no_punctuation_weight_silence") + " v). A higher s is a better place to cut.</li></ul>" +
+    "<p>The dynamic programme looks at the whole turn at once. It picks the set of cuts with the lowest total cost: the sum over pieces of ((d − " + g("segmentation.target_s") + ") / " + g("segmentation.target_s") +
+    ")², where d is the piece length, plus " + g("segmentation.cut_weight_lambda") + " × (1 − s) per cut, with every piece between " + g("segmentation.min_s") + " and " + g("segmentation.max_s") +
+    " s. English turns up to " + g("segmentation.keep_whole_max_s") + " s are never cut; Spanish or mixed turns are never cut.</p>";
+}
+
+// ---------- tracks ----------
+function layout() {
+  const dpr = window.devicePixelRatio || 1;
+  for (const [id, h] of TRACKS) {
+    const cv = $(id);
+    W = cv.clientWidth;
+    cv.width = Math.max(1, Math.round(W * dpr)); cv.height = Math.round(h * dpr); cv.style.height = h + "px";
+  }
+}
+function drawAll() {
+  if (!R || !W) return;
+  const dpr = window.devicePixelRatio || 1;
+  for (const [id, h, draw] of TRACKS) {
+    const ctx = $(id).getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, h);
+    ctx.save(); draw(ctx, W, h); ctx.restore();
+  }
+  $("btnZoomReset").disabled = view.a <= 0 && view.b >= R.duration_s;
+  updatePlayhead();
+}
+function emptyText(ctx, w, h, text) {
+  ctx.fillStyle = css("--muted"); ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(text, w / 2, h / 2);
+}
+function line(ctx, x0, y0, x1, y1) { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }
+function roundRect(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+
+function drawAxis(ctx, w, h) {
+  const span = view.b - view.a, wanted = span / Math.max(1, w / 90);
+  const step = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 1200].find((s) => s >= wanted) || 3600;
+  const digits = step < 0.1 ? 2 : step < 1 ? 1 : 0;
+  ctx.strokeStyle = css("--axis"); ctx.fillStyle = css("--muted"); ctx.font = "11px system-ui, sans-serif"; ctx.textBaseline = "top";
+  line(ctx, 0, h - 0.5, w, h - 0.5);
+  for (let k = Math.ceil(view.a / step); k * step <= view.b + 1e-9; k++) {
+    const t = k * step, x = Math.round(X(t)) + 0.5;
+    line(ctx, x, h - 6, x, h);
+    const label = R.duration_s >= 60 ? clock(t) : t.toFixed(digits) + " s";
+    ctx.textAlign = x > w - 30 ? "right" : "left";
+    ctx.fillText(label, x + (x > w - 30 ? -3 : 3), 3);
+  }
+}
+
+function drawWave(ctx, w, h) {
+  ctx.font = "600 11px system-ui, sans-serif"; ctx.textBaseline = "top";
+  R.segments.forEach((s, k) => {                       // segment bands
+    const x0 = X(s.start_s), x1 = X(s.end_s);
+    if (x1 < 0 || x0 > w) return;
+    ctx.fillStyle = css(k % 2 ? "--seg-b" : "--seg-a"); ctx.fillRect(x0, 0, x1 - x0, h);
+    if (x1 - x0 > 34) { ctx.fillStyle = css("--ink-2"); ctx.textAlign = "left"; ctx.fillText(segName(s.index), Math.max(x0, 0) + 5, 5); }
+  });
+  const [a, b] = R.span_s;                             // trimmed edges (only when vad.trim_edges is on)
+  ctx.fillStyle = css("--hover");
+  if (a > 0) ctx.fillRect(0, 0, X(a), h);
+  if (b < R.duration_s) ctx.fillRect(X(b), 0, w - X(b), h);
+  const P = R.peaks, n = P.max.length, mid = h / 2, amp = (h / 2 - 8) / 1000;
+  ctx.fillStyle = css("--wave");
+  for (let px = 0; px < w; px++) {                     // min/max of the bins under each pixel
+    let i0 = Math.floor(T(px) / P.bin_s), i1 = Math.ceil(T(px + 1) / P.bin_s);
+    if (i0 >= n) break;
+    i0 = Math.max(0, i0); i1 = Math.min(n, Math.max(i1, i0 + 1));
+    let lo = 1000, hi = -1000;
+    for (let i = i0; i < i1; i++) { if (P.min[i] < lo) lo = P.min[i]; if (P.max[i] > hi) hi = P.max[i]; }
+    const y0 = mid - hi * amp, y1 = mid - lo * amp;
+    ctx.fillRect(px, y0, 1, Math.max(1, y1 - y0));
+  }
+  ctx.strokeStyle = css("--accent"); ctx.lineWidth = 1.5; ctx.setLineDash([5, 3]);
+  R.segments.slice(1).forEach((s) => { const x = Math.round(X(s.start_s)) + 0.5; if (x >= 0 && x <= w) line(ctx, x, 0, x, h); });
+}
+
+function drawVad(ctx, w, h) {
+  const V = R.vad, n = V.probs.length, top = 5, bottom = h - 4;
+  const y = (p) => bottom - p * (bottom - top);
+  const points = [];
+  for (let px = 0; px <= w; px++) {                    // highest probability under each pixel
+    let i0 = Math.floor(T(px) / V.frame_s), i1 = Math.ceil(T(px + 1) / V.frame_s);
+    if (i0 >= n) break;
+    i0 = Math.max(0, i0); i1 = Math.min(n, Math.max(i1, i0 + 1));
+    let m = 0;
+    for (let i = i0; i < i1; i++) if (V.probs[i] > m) m = V.probs[i];
+    points.push([px, y(m)]);
+  }
+  if (!points.length) return;
+  ctx.beginPath(); ctx.moveTo(0, bottom);
+  for (const [px, py] of points) ctx.lineTo(px, py);
+  ctx.lineTo(points[points.length - 1][0], bottom); ctx.closePath();
+  ctx.fillStyle = css("--accent-bg"); ctx.fill();
+  ctx.beginPath();
+  points.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)));
+  ctx.strokeStyle = css("--accent"); ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.setLineDash([4, 3]); ctx.strokeStyle = css("--ink-2"); ctx.lineWidth = 1;
+  const yt = Math.round(y(V.threshold)) + 0.5;
+  line(ctx, 0, yt, w, yt);
+  ctx.setLineDash([]); ctx.fillStyle = css("--muted"); ctx.font = "10px system-ui, sans-serif";
+  ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillText("threshold " + V.threshold, w - 4, yt - 2);
+  ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText("1", 3, top - 3);
+  ctx.textBaseline = "bottom"; ctx.fillText("0", 3, bottom + 3);
+}
+
+function wordStyle(word) {
+  if (word.wildcard) return ["--violet-bg", "--violet", true, "* "];
+  if (word.weak) return ["--bad-bg", "--bad-mark", false, "! "];
+  if (word.confidence < MID_CONFIDENCE) return ["--warn-bg", "--warn-mark", false, ""];
+  return ["--good-bg", "--good-mark", false, ""];
+}
+const WORD_ROW = {top: 4, h: 20, gap: 4};
+function drawWords(ctx, w, h) {
+  if (!R.words.length) { emptyText(ctx, w, h, R.display_note ? "No word times: see the note above" : "No word times"); return; }
+  const colors = {};
+  const color = (name) => colors[name] || (colors[name] = css(name));
+  ctx.font = "11px system-ui, sans-serif"; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+  R.words.forEach((word, i) => {
+    if (word.start === null) return;
+    const x0 = X(word.start), x1 = X(word.end);
+    if (x1 < -2 || x0 > w + 2) return;
+    const y = WORD_ROW.top + (i % 2) * (WORD_ROW.h + WORD_ROW.gap), bw = Math.max(2, x1 - x0);
+    const [fill, stroke, dashed, mark] = wordStyle(word);
+    roundRect(ctx, x0, y, bw, WORD_ROW.h, 4);
+    ctx.fillStyle = color(fill); ctx.fill();
+    ctx.strokeStyle = color(stroke); ctx.lineWidth = word.weak ? 1.6 : 1; ctx.setLineDash(dashed ? [3, 2] : []); ctx.stroke();
+    const label = mark + word.text;
+    if (ctx.measureText(label).width + 6 <= bw) {
+      ctx.fillStyle = color(word.weak && !word.wildcard ? "--bad" : "--ink");
+      ctx.fillText(label, x0 + 3, y + WORD_ROW.h / 2 + 0.5);
+    }
+  });
+  ctx.setLineDash([]);
+}
+
+function gapBox(g) {
+  let x0 = X(g.start), x1 = X(g.end);
+  if (x1 - x0 < 3) { const c = (x0 + x1) / 2; x0 = c - 1.5; x1 = c + 1.5; }
+  return [x0, x1];
+}
+function drawGaps(ctx, w, h) {
+  if (!R.gaps.length) { emptyText(ctx, w, h, "No gaps to score"); return; }
+  const top = 14, bottom = h - 14, smax = Math.max(1, ...R.gaps.map((g) => g.s));
+  const y = (s) => bottom - s / smax * (bottom - top);
+  ctx.strokeStyle = css("--grid"); ctx.lineWidth = 1; ctx.fillStyle = css("--muted"); ctx.font = "10px system-ui, sans-serif";
+  ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+  for (const s of [0.5, 1]) { const yy = Math.round(y(s)) + 0.5; line(ctx, 0, yy, w, yy); ctx.fillText("s " + s, 3, yy - 1); }
+  ctx.strokeStyle = css("--axis"); line(ctx, 0, bottom + 0.5, w, bottom + 0.5);
+  const accent = css("--accent"), bar = css("--bar"), badMark = css("--bad-mark"), badBg = css("--bad-bg"), bad = css("--bad");
+  for (const g of R.gaps) {
+    const [x0, x1] = gapBox(g);
+    if (x1 < 0 || x0 > w) continue;
+    const yy = y(g.s), bw = x1 - x0;
+    roundRect(ctx, x0, yy, bw, Math.max(1, bottom - yy), Math.min(2, bw / 2));
+    if (g.chosen) {
+      ctx.fillStyle = accent; ctx.fill();
+      ctx.beginPath(); const c = (x0 + x1) / 2; ctx.moveTo(c - 5, yy - 9); ctx.lineTo(c + 5, yy - 9); ctx.lineTo(c, yy - 3); ctx.closePath(); ctx.fill();
+    } else if (!g.candidate) {
+      ctx.fillStyle = badBg; ctx.fill(); ctx.strokeStyle = badMark; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = bad; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.font = "600 10px system-ui, sans-serif";
+      ctx.fillText("×", (x0 + x1) / 2, bottom + 1);
+    } else {
+      ctx.fillStyle = bar; ctx.fill();
+    }
+  }
+}
+
+// ---------- hover, tooltip, zoom, seek ----------
+const tracksEl = $("tracks"), tip = $("tooltip");
+function row(k, v) { return '<div class="tt-row"><span class="k">' + k + "</span><span>" + v + "</span></div>"; }
+function hitTest(target, x, yIn) {
+  if (target.id === "cvGaps") {
+    let best = null, dist = 6;
+    for (const g of R.gaps) {
+      const [x0, x1] = gapBox(g), d = x < x0 ? x0 - x : x > x1 ? x - x1 : 0;
+      if (d < dist) { dist = d; best = g; }
+    }
+    if (!best) return "";
+    const after = R.words[best.after_word], next = R.words[best.after_word + 1];
+    const state = best.chosen ? "<b>chosen cut</b>" : best.candidate ? "allowed, not chosen" : '<span style="color:var(--bad)">not allowed</span>: ' + esc(best.excluded || "");
+    return "<b>Gap after “" + esc(after ? after.text : "") + "”</b> → “" + esc(next ? next.text : "") + "”<br>" +
+      row("pause", best.start.toFixed(3) + " – " + best.end.toFixed(3) + " s (" + best.length.toFixed(3) + " s)") +
+      row("p, pause vs typical " + fx(R.scores.typical_pause_s) + " s", fx(best.p)) + row("q, punctuation", fx(best.q, 1)) +
+      row("v, quietness", fx(best.v)) + row("<b>s, boundary score</b>", "<b>" + fx(best.s, 3) + "</b>") +
+      row("cut would be at", best.cut_time.toFixed(3) + " s") + state + (R.display_only ? "<br><i>display only</i>" : "");
+  }
+  if (target.id === "cvWords") {
+    const r = Math.floor((yIn - WORD_ROW.top) / (WORD_ROW.h + WORD_ROW.gap));
+    const word = R.words.find((wd, i) => i % 2 === r && wd.start !== null && x >= X(wd.start) - 2 && x <= Math.max(X(wd.end), X(wd.start) + 2) + 2);
+    if (!word) return "";
+    const flag = word.wildcard ? "unspelled: matched by a wildcard; no cut next to it" : word.weak ? "weak: below " + R.settings.word_min_confidence + "; no cut next to it" : "";
+    return "<b>“" + esc(word.text) + "”</b> (word " + word.i + ")<br>" + row("time", word.start.toFixed(3) + " – " + word.end.toFixed(3) + " s") +
+      row("confidence", fx(word.confidence, 3)) + (word.q ? row("punctuation q after it", word.q) : "") +
+      (flag ? '<span style="color:var(--bad)">' + flag + "</span>" : "");
+  }
+  const t = T(x);
+  if (target.id === "cvWave") {
+    const s = R.segments.find((sg) => t >= sg.start_s && t <= sg.end_s);
+    if (!s) return clock(t);
+    return "<b>" + segName(s.index) + "</b> · " + clock(t) + "<br>" + row("range", s.start_s.toFixed(2) + " – " + s.end_s.toFixed(2) + " s") +
+      row("duration", s.duration_s.toFixed(2) + " s") + row("speech ratio", pct(s.speech_ratio) + (s.low_speech ? " (low)" : "")) + row("words", s.word_count);
+  }
+  if (target.id === "cvVad") {
+    const i = Math.min(R.vad.probs.length - 1, Math.max(0, Math.floor(t / R.vad.frame_s)));
+    return clock(t) + "<br>" + row("speech probability", fx(R.vad.probs[i]));
+  }
+  return clock(t);
+}
+function placeTip(html, e) {
+  if (!html) { tip.hidden = true; return; }
+  tip.innerHTML = html; tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  let left = e.clientX + 14, top = e.clientY + 14;
+  if (left + r.width > window.innerWidth - 8) left = e.clientX - r.width - 14;
+  if (top + r.height > window.innerHeight - 8) top = e.clientY - r.height - 14;
+  tip.style.left = Math.max(8, left) + "px"; tip.style.top = Math.max(8, top) + "px";
+}
+function localX(e) { return Math.min(W, Math.max(0, e.clientX - tracksEl.getBoundingClientRect().left)); }
+tracksEl.addEventListener("pointerdown", (e) => {
+  if (!R || e.button !== 0) return;
+  drag = {x0: localX(e), active: false};
+  tracksEl.setPointerCapture(e.pointerId);
+});
+tracksEl.addEventListener("pointermove", (e) => {
+  if (!R) return;
+  const x = localX(e), hover = $("hoverLine");
+  hover.hidden = false; hover.style.left = x + "px";
+  if (drag) {
+    if (Math.abs(x - drag.x0) > 4) drag.active = true;
+    if (drag.active) {
+      const sel = $("sel"); sel.hidden = false;
+      sel.style.left = Math.min(x, drag.x0) + "px"; sel.style.width = Math.abs(x - drag.x0) + "px";
+      tip.hidden = true; return;
+    }
+  }
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const canvas = target && target.tagName === "CANVAS" ? target : null;
+  placeTip(canvas ? hitTest(canvas, x, e.clientY - canvas.getBoundingClientRect().top) : "", e);
+});
+tracksEl.addEventListener("pointerup", (e) => {
+  if (!drag) return;
+  const x = localX(e), d = drag;
+  drag = null; $("sel").hidden = true;
+  if (d.active) zoomTo(T(Math.min(x, d.x0)), T(Math.max(x, d.x0)));
+  else seek(T(x));
+});
+tracksEl.addEventListener("pointerleave", () => { $("hoverLine").hidden = true; tip.hidden = true; });
+tracksEl.addEventListener("dblclick", () => zoomTo(0, R.duration_s));
+$("btnZoomReset").onclick = () => zoomTo(0, R.duration_s);
+
+function zoomTo(a, b) {
+  const minSpan = Math.min(0.1, R.duration_s);
+  if (b - a < minSpan) { const c = (a + b) / 2; a = c - minSpan / 2; b = c + minSpan / 2; }
+  const span = Math.min(b - a, R.duration_s);
+  a = Math.max(0, Math.min(a, R.duration_s - span));
+  view = {a: a, b: a + span};
+  drawAll();
+}
+function seek(t) {
+  segPlay = null;
+  audio.currentTime = Math.max(0, Math.min(t, R.duration_s));
+  updatePlayhead();
+}
+
+// ---------- playback ----------
+function updatePlayhead() {
+  if (!R) return;
+  const t = audio.currentTime || 0, x = X(t), head = $("playhead");
+  head.hidden = x < 0 || x > W;
+  head.style.left = x + "px";
+  $("timeText").textContent = clock(t) + " / " + clock(R.duration_s);
+  $("btnPlay").innerHTML = audio.paused ? ICON_PLAY : ICON_PAUSE;
+  const current = R.segments.findIndex((s) => t >= s.start_s && t < s.end_s);
+  for (const tr of $("segRows").children) {
+    const k = Number(tr.dataset.k);
+    tr.classList.toggle("current", k === current && (!audio.paused || t > 0));
+    const button = tr.querySelector(".seg-play");
+    const playing = !audio.paused && segPlay && segPlay.index === k;
+    if (button.dataset.playing !== String(playing)) { button.innerHTML = playing ? ICON_PAUSE : ICON_PLAY; button.dataset.playing = String(playing); }
+  }
+}
+function tick() {
+  if (segPlay && audio.currentTime >= segPlay.end) {      // stop exactly at the segment end (within one frame)
+    audio.pause(); audio.currentTime = segPlay.end; segPlay = null;
+  }
+  const t = audio.currentTime, span = view.b - view.a;
+  if (!audio.paused && span < R.duration_s && (t > view.b || t < view.a)) {   // follow the playhead when zoomed
+    const a = Math.max(0, Math.min(t - span * 0.05, R.duration_s - span));
+    view = {a: a, b: a + span}; drawAll();
+  }
+  updatePlayhead();
+  if (!audio.paused) requestAnimationFrame(tick);
+}
+function playFailed(e) {               // AbortError: a pause or seek came first, which is fine
+  if (e.name !== "AbortError") showError("Cannot play the audio in this browser: " + e.message);
+}
+function togglePlay() {
+  if (!R) return;
+  if (audio.paused) {
+    segPlay = null;
+    if (audio.currentTime >= R.duration_s - 0.01) audio.currentTime = 0;
+    audio.play().catch(playFailed);
+  } else {
+    audio.pause();
+  }
+}
+function playSegment(k) {
+  const s = R.segments[k];
+  if (!audio.paused && segPlay && segPlay.index === k) { audio.pause(); segPlay = null; return; }
+  segPlay = {index: k, end: s.end_s};
+  audio.currentTime = s.start_s;
+  audio.play().catch(playFailed);
+}
+audio.addEventListener("play", () => requestAnimationFrame(tick));
+audio.addEventListener("pause", updatePlayhead);
+audio.addEventListener("seeked", updatePlayhead);
+audio.addEventListener("ended", () => { segPlay = null; updatePlayhead(); });
+$("btnPlay").onclick = togglePlay;
+$("btnPlay").innerHTML = ICON_PLAY;
+document.addEventListener("keydown", (e) => {
+  if (!R || ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
+  if (e.code === "Space") { e.preventDefault(); togglePlay(); }
+  if (e.key === "Escape") zoomTo(0, R.duration_s);
+});
+new ResizeObserver(() => { if (R) { layout(); drawAll(); } }).observe(tracksEl);
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
+
+if (STATIC) initStatic(); else initLive();
+</script>
+</body>
+</html>

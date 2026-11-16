@@ -1,7 +1,8 @@
 # Data Preparation for Internal Call-Centre Audio
 
-Status: discussion draft, 2026-11-13. This document records the proposed curation and labelling workflow; it is not an
-implemented pipeline. Method agreed on 2026-11-13: word timestamps from forced alignment of the existing transcripts
+Status: discussion draft, 2026-11-13. This document records the curation and labelling workflow. The segmentation
+part (§2–§4) is implemented in [`preparation_tools/`](../../preparation_tools/README.md) and tested on public and
+synthetic audio only, not yet on real calls. Method agreed on 2026-11-13: word timestamps from forced alignment of the existing transcripts
 (torchaudio), and cut points chosen for each whole turn by dynamic programming (§2–§4). All numeric settings are
 starting values for a pilot, not established model requirements.
 Call audio, transcripts, identifiers and derived internal data remain in the company environment, outside this repository.
@@ -21,9 +22,10 @@ What we already have (confirmed 2026-11-13):
 | Input | Detail |
 |---|---|
 | Recordings | Raw MP3 calls, **mono** (customer and agent on one channel), **English** |
-| Diarization | Done upstream; one audio clip per customer turn, with its duration. Agent (CCP) turns are removed |
+| Diarization | Done upstream with VibeVoice, which gives every turn's start and end timestamps and its transcript. Each customer turn is cut from the call with those timestamps; agent (CCP) turns are removed |
 | Short turns | Turns shorter than 2 s are already filtered out |
-| Transcripts | One existing transcript **per turn**, already cut to the turn. **No word timestamps** |
+| Transcripts | One existing transcript **per turn** (from VibeVoice), already cut to the turn. **No word timestamps** |
+| Call time | The VibeVoice turn timestamps give each turn's start in the call (`turn_start_in_call_s` in `turns.csv`), so every segment maps back to its time in the call |
 
 Do not repeat diarization or ASR. The task here is to split long customer turns into shorter pieces while keeping
 the audio, the existing text and the original call timeline consistent. The workflow stays customer-only, including
@@ -95,8 +97,9 @@ Notes:
    text, write numbers and symbols as words ("$50" → "FIFTY DOLLARS", "24/7" → "TWENTY FOUR SEVEN"), and drop
    punctuation. Keep a word-by-word mapping back to the original text, so the output text keeps its original
    spelling and punctuation.
-3. **Handle words that cannot be spelled.** Redaction placeholders (for example `[NAME]`, `***`) and unknown symbols
-   get no letters. Option A: leave them out of alignment; they inherit the gap between their neighbours and are never
+3. **Handle words that cannot be spelled.** Redaction placeholders (for example `[NAME]`, `***`), annotations in
+   brackets or parentheses (including multi-word ones such as `(inaudible speech)`), numbers with several possible
+   readings (`-50`, `1/2`, `10-15`, `555-1234`) and unknown symbols get no letters. Option A: leave them out of alignment; they inherit the gap between their neighbours and are never
    used as cut points. Option B (as WhisperX does): map them to a wildcard token that matches any speech.
 4. **Align.** Compute the model's frame scores (emissions) for the turn, run `forced_align` on the letter sequence,
    merge consecutive frames into letter spans, and group letters into words. Each word gets a start time, an end time
@@ -108,7 +111,7 @@ Notes:
 
 - **Whole-turn check.** If the mean word confidence of a turn is low, or a large share of words could not be
   aligned, the transcript and audio probably disagree (ASR errors, agent speech, noise). Do not split the turn: keep
-  it whole and flag `alignment_review`. Never invent timings.
+  it whole in the `alignment_issues` group (§4.7). Never invent timings.
 - **Local check.** A gap next to a low-confidence word is not used as a cut point, because that word's edges are
   uncertain. This also keeps cuts away from regions where agent speech confused the aligner.
 - **Output check.** After cutting, every original word appears in exactly one segment, in order, and no cut falls
@@ -135,7 +138,9 @@ a sound that may carry the emotion, so such a gap gets a lower boundary score (�
 
 VAD can also mark low-volume speech, crying, laughter and sighs as non-speech. **Non-speech is never deleted.** Pauses
 and non-verbal sounds inside a segment stay in the audio: hesitation, sighing and laughing are part of the emotion.
-Only long silence at the very start and end of a turn may be trimmed, keeping about 0.2 s of margin.
+Edge trimming is off by default, because VAD can miss quiet speech, crying or sighs at the start or end of a turn.
+If it is turned on after checking real calls, it removes only long silence at the very start and end of an aligned
+long turn, keeps about 0.2 s of margin, never cuts into an aligned word, and never applies to turns exported whole.
 
 ## 4. Choosing the cut points: whole-turn dynamic programming
 
@@ -157,19 +162,23 @@ All durations are elapsed time in the continuous turn audio, including internal 
 
 | Rule | Starting value | Reason |
 |---|---|---|
-| Turns that are never cut | ≤ 10 s | A 10 s piece is one or two sentences; a listener can give it one label |
+| English turns that are never cut | ≤ 10 s | A 10 s piece is one or two sentences; a listener can give it one label |
 | Target segment length | 7 s (good range 4–10 s) | Close to sentence length, where SER models and listeners work best |
-| Hard minimum | 3 s | No tiny fragments; at most one piece per 3 s of audio |
-| Hard maximum | 12 s | Keeps one label meaningful and stays well under model limits |
+| Hard window | 2–15 s | No segment may fall outside it. 2 s is the upstream minimum turn length; 15 s is Vox-Profile Whisper's fixed window |
 
-Model limits behind these numbers: Vox-Profile Whisper was trained on 3–15 s clips and its card calls predictions
-under 3 s unreliable; Whisper-encoder models (MERaLiON-SER-v1, Melati) cut audio after 30 s and Vox-Profile Whisper
-after 15 s; emotion2vec+ cannot run on the Mac GPU above 20.48 s; Qwen2-Audio and Gemma 4 truncate after 30 s. In the
-13 acted/TV datasets of our public benchmark, 31,249 of 56,264 clips are shorter than 3 s, so these models mostly
-know sentence-length input.
+Model limits behind these numbers: Vox-Profile Whisper was trained on 3–15 s clips, cuts audio after 15 s, and its
+card calls predictions under 3 s unreliable; Whisper-encoder models (MERaLiON-SER-v1, Melati) cut audio after 30 s;
+emotion2vec+ cannot run on the Mac GPU above 20.48 s; Qwen2-Audio and Gemma 4 truncate after 30 s. A 15 s maximum
+stays inside all of these. In the 13 acted/TV datasets of our public benchmark, 31,249 of 56,264 clips are shorter
+than 3 s, so these models mostly know sentence-length input.
 
-A turn of 10–12 s goes through the same algorithm, but "no cut" is one of its options, so it is only cut when a good
-pause makes that worthwhile.
+The window is a hard limit only; the length cost (§4.4) is what keeps pieces near 7 s. A 2 s or 12 s piece already
+costs 0.51 and a 15 s piece 1.31, so the dynamic programme uses the edges of the window only when nothing better
+exists. The wider window therefore costs little quality and replaces the earlier two-pass rule (3–12 s, then 2–15 s
+if nothing fitted) with a single pass. On the synthetic DailyTalk calls, both windows give exactly the same cuts.
+
+A turn of 10–15 s goes through the same algorithm, but "no cut" is one of its options, so it is only cut when a
+pause makes that worthwhile. With only poor pauses (`s` about 0.2) it stays whole up to about 13 s.
 
 ### 4.3 How good is each candidate cut? (boundary score, 0 to 1)
 
@@ -192,8 +201,7 @@ s = 0.5 × p  +  0.3 × q  +  0.2 × v
 - **v, real silence.** `v = 1 − (mean Silero speech probability inside the gap)`. A quiet gap scores near 1; a gap
   holding a sigh, laugh or agent backchannel scores low.
 
-The weights 0.5 / 0.3 / 0.2 are starting values for the pilot. The cut itself is placed at the quietest 32 ms frame
-inside the chosen gap (lowest VAD probability), so neither neighbouring word loses its first or last sound.
+The weights 0.5 / 0.3 / 0.2 are starting values for the pilot. The cut itself is placed in the middle of the quiet part of the chosen gap: among the 32 ms frames whose VAD probability is within 0.1 of the lowest one in the gap, the one nearest the gap centre. This splits the pause evenly between the two segments and keeps the cut away from word onsets, so neither neighbouring word loses its first or last sound.
 
 ### 4.4 The cost of one way of cutting
 
@@ -203,23 +211,24 @@ two parts:
 ```text
 cost = Σ over segments  L(duration)   +   λ × Σ over cuts  (1 − s)
 
-L(d) = ((d − 7 s) / 7 s)²   if 3 s ≤ d ≤ 12 s
+L(d) = ((d − 7 s) / 7 s)²   if 2 s ≤ d ≤ 15 s
 L(d) = ∞                    otherwise (not allowed)
 ```
 
 - **Length cost `L`.** Zero at the 7 s target and growing the further a segment is from it: about 0.003 at 7.4 s,
-  0.12 at 4.6 s, 0.24 at 10.4 s, 0.33 at 3 s, 0.51 at 12 s. Outside 3–12 s the partition is not allowed at all.
+  0.12 at 4.6 s, 0.24 at 10.4 s, 0.33 at 3 s, 0.51 at 2 s and at 12 s, 1.31 at 15 s. Outside 2–15 s the partition
+  is not allowed at all.
 - **Cut cost `λ × (1 − s)`.** Every cut has a price. A perfect pause (`s = 1`) is free; a poor one (`s = 0.2`) costs
   0.8. `λ` (start: 1.0) sets how much boundary quality matters compared with even lengths.
 
-**Why this cannot over-fragment a slow speaker.** Three things work together: (1) the hard 3 s minimum allows at most
-one piece per 3 s; (2) the length cost prefers pieces of about 7 s, so a 40 s turn naturally wants 5–6 pieces, not 20;
+**Why this cannot over-fragment a slow speaker.** Three things work together: (1) the hard 2 s minimum allows at most
+one piece per 2 s, and a 2 s piece already costs 0.51; (2) the length cost prefers pieces of about 7 s, so a 40 s turn naturally wants 5–6 pieces, not 20;
 (3) each extra cut costs `λ × (1 − s)`, so a cut is made only when it improves the lengths by more than it costs.
 Many pauses do not mean many cuts; they only mean more choice of *where* the 5–6 cuts go.
 
-**Why it still cuts a fast speaker.** If a turn is longer than 12 s, every allowed partition needs at least one cut,
+**Why it still cuts a fast speaker.** If a turn is longer than 15 s, every allowed partition needs at least one cut,
 so the algorithm must cut somewhere and picks the best available gap, even a short one. Because poor cuts are
-expensive, it makes as few cuts as the 12 s limit allows.
+expensive, it makes few cuts; the length cost still keeps the pieces near 7 s.
 
 ### 4.5 How dynamic programming finds the cheapest partition
 
@@ -236,13 +245,13 @@ a cut at `t_j`.
 
 This is exact: it gives the same answer as comparing every possible partition, because the best partition up to `t_j`
 always extends the best partition up to some earlier `t_i`. It is also fast: a 40 s turn has roughly 100 words, so
-about 100 × 100 / 2 = 5,000 comparisons, which takes milliseconds. Only `i` within 12 s of `j` need checking. The
+about 100 × 100 / 2 = 5,000 comparisons, which takes milliseconds. Only `i` within 15 s of `j` need checking. The
 result is deterministic: the same audio and transcript always give the same cuts.
 
 Reference sketch (for explanation; the implementation will add input checks and logging):
 
 ```python
-def length_cost(d, target=7.0, lo=3.0, hi=12.0):
+def length_cost(d, target=7.0, lo=2.0, hi=15.0):
     if d < lo or d > hi:
         return float("inf")                      # not allowed
     return ((d - target) / target) ** 2
@@ -258,7 +267,7 @@ def best_cuts(times, scores, lam=1.0):
             if cost < best[j]:
                 best[j], prev[j] = cost, i
     if best[-1] == float("inf"):
-        return None                               # no allowed partition: see §4.7
+        return None                               # no allowed partition: boundary_issues (§4.7)
     cuts, j = [], prev[n - 1]
     while j:                                      # walk back to the start (index 0)
         cuts.append(times[j])
@@ -291,20 +300,32 @@ Two of the many allowed partitions, compared:
 The dynamic programme returns A: **5 segments of 6.6–10.4 s**, all at sentence ends or long quiet pauses. The extra
 cut in B evens out the last piece a little, but a 0.62 boundary costs more than it saves. The 21.8 s gap is long and
 ends a sentence, but it holds a sigh, so the cut goes 1.2 s later at the quiet 23.0 s gap and the sigh stays intact.
+The 2–15 s window does not change this result: A and B keep their totals, and no partition with a 2–3 s or 12–15 s
+piece is cheaper (the unit tests check this against all 116,674 allowed partitions).
 
 For comparison, on the same turn: Silero's own segments with a 300 ms silence rule give about 25 pieces of mostly
 1–2 s. A greedy rule ("cut at the first pause after 7 s") takes whichever ordinary 0.4–0.6 s pause comes first after
 each 7 s mark, so most of its cuts land mid-thought, and it never weighs an early cut against a better one a second
 later; its last piece is whatever is left over.
 
-### 4.7 Fast speakers, failures and fallbacks
+### 4.7 Fast speakers, failures and the four output groups
+
+There is no fallback pass. Every turn ends in exactly one of four groups, checked in this order:
+
+1. Transcript detected as Spanish or mixed, any length → **`non_english`**, exported whole.
+2. English turn ≤ 10 s → **`final`**, exported whole.
+3. Longer English turn whose alignment failed or failed the check (§2.4), or with an empty transcript →
+   **`alignment_issues`**, exported whole.
+4. Longer English turn with no partition inside 2–15 s → **`boundary_issues`**, exported whole.
+5. Otherwise → **`final`**, cut by the dynamic programme (or whole, when "no cut" is cheapest).
 
 | Case | What happens |
 |---|---|
-| Fast speaker, 20 s, almost no pauses | The turn needs one cut (20 > 12 s). Splitting into 2 × 10 s costs about 0.37 in length plus one cut; 3 × 6.7 s has a smaller length cost but needs two poor cuts (~0.8 each), so the result is **2 segments**, cut at the best gap between 8 and 12 s (a sentence end if there is one). |
-| Turn of 10–12 s with no good pause | "No cut" wins; the turn stays whole. |
-| No allowed partition (for example a 14 s stretch without any usable word gap) | Second pass with relaxed limits 2–15 s and `boundary_review`; if that also fails, keep the turn whole and flag `boundary_review`. |
-| Alignment failed (§2.4) | Do not split; keep the turn whole and flag `alignment_review`. Audio could be cut at VAD silences alone, but the text could not follow it reliably. |
+| Fast speaker, 20 s, almost no pauses | The turn needs one cut (20 > 15 s). Splitting into 2 × 10 s costs about 0.37 in length plus one cut; 3 × 6.7 s has a smaller length cost but needs two poor cuts (~0.8 each), so the result is **2 segments**, cut at the best gap near the middle (a sentence end there wins over a poor pause). |
+| Turn of 10–15 s with no good pause | "No cut" wins up to about 13 s; the turn stays whole in `final`. A longer one gets one cut. |
+| No allowed partition (for example a 20 s stretch without any usable word gap) | Keep the turn whole in `boundary_issues`, reason "no partition within 2–15 s". |
+| Alignment failed (§2.4) | Do not split; keep the turn whole in `alignment_issues`, with the failed check as the reason (for example "mean confidence 0.41 < 0.5"). Audio could be cut at VAD silences alone, but the text could not follow it reliably. |
+| Spanish or mixed transcript | Checked first, whatever the length; kept whole in `non_english`, because the English model must not align Spanish text. |
 | Very slow speech with long silences | Flag `low_speech_ratio` (VAD speech time / duration) for review; never join speech islands or delete silence to make a piece fit. |
 
 ### 4.8 Settings to tune in the pilot
@@ -313,13 +334,16 @@ later; its last piece is whatever is left over.
 |---|---|---|---|
 | `keep_whole_max` | 10 s | Fewer turns are cut | More turns are cut |
 | Target length | 7 s | Longer segments, fewer of them | Shorter segments; consider 5 s if listeners often hear two emotions in one segment |
-| Minimum / maximum | 3 s / 12 s | — | — (hard limits; change only with evidence) |
+| Hard window | 2–15 s | — | — (hard limits from upstream and model limits; change only with evidence) |
 | `λ` | 1.0 | Cuts follow the best pauses even at uneven lengths | Lengths more even, pause quality matters less |
 | Weights of p / q / v | 0.5 / 0.3 / 0.2 | — | Use 0.7 / 0 / 0.3 without punctuation |
 | Typical-pause rule | median of gaps > 0.1 s; 0.3 s if fewer than 3 | — | — |
 
 Each segment keeps its turn ID, its index in the turn, its start and end in the turn and in the call, the scores of
-its two boundaries, and its review flags (§6), so the settings can be changed later and every label stays traceable.
+its two boundaries, its group and the reason for it (§6), so the settings can be changed later and every label stays
+traceable.
+
+Implementation (2026-11-13): [`preparation_tools/`](../../preparation_tools/README.md) implements §2–§4 and the §6 delivery layout offline; its `config/segment_turns.yaml` holds the settings above.
 
 ### 4.9 Rules that apply to every segment
 
@@ -357,32 +381,63 @@ interface; this document defines the upstream segmentation and delivery contract
 
 Use Label Studio for **emotion classification of prepared audio**, with the matching existing transcript as task
 data. This is not a speech-transcription task: listeners should not be asked to transcribe every clip again.
-Prepare a flat batch interface inside the company environment:
+The segmenter delivers four groups with the same layout, one folder per call inside each group, inside the company
+environment:
 
 ```text
 batch/
-  clips/                 one uniquely named audio file per target segment
-  transcripts/           same-stem UTF-8 text files for those segments
-  manifest.csv           one row per target segment, with identity, paths and timing
+  final/                    clean results: the only group for labelling, benchmarking and fine-tuning
+    manifest.csv            one row per target segment, with identity, paths, timing and context links
+    <call_id>/
+      <segment_id>.wav      <call_id>_t<turn order>_s<segment index>: name order = time order in the call
+      <segment_id>.txt      the original transcript text of that segment
+  non_english/              same layout
+  alignment_issues/         same layout
+  boundary_issues/          same layout
+  review/<turn_id>.json     audit of every turn: word times, gap scores, chosen cuts, group and reason
+  call_timeline.csv         every exported item of every group, by call and order, with the links
+  failures.csv              turns that raised an error
 ```
 
-An import adapter can map each manifest row to one Label Studio classification task, exposing the audio and text
-through a company-approved local or internal serving method. The exact Label Studio task schema, configuration,
-storage setup and export mapping belong to the separate subproject and are not specified by this discussion draft.
-Keep the interface independent of the annotation tool. The existing offline [`labeling_tool/`](../../labeling_tool/README.md)
-remains an option; it expects an `audio/` folder and same-stem `.txt` files alongside the audio, so it requires a
-small packaging adaptation from the flat batch above.
+| Group | Content (§4.7) | Purpose |
+|---|---|---|
+| `final` | English turns ≤ 10 s exported whole, and longer English turns cut by the dynamic programme | Human labelling, benchmarking and fine-tuning |
+| `non_english` | Spanish or mixed turns, any length, exported whole | Kept, not labelled |
+| `alignment_issues` | Long English turns whose alignment failed or whose transcript is empty, exported whole | Kept, not labelled; also a sample for checking alignment on real calls |
+| `boundary_issues` | Long English turns with no partition inside 2–15 s, exported whole | Kept, not labelled; shows where the window is too tight |
 
-Recommended manifest fields:
+Only `final` is used for labelling, benchmarking and fine-tuning. The other three groups are kept because unlabelled
+audio — long, non-English or hard to align — can still serve later self-supervised continued pre-training (e.g. of
+an emotion2vec-style encoder, or of a Whisper encoder using the transcripts); no such step is implemented.
+
+**Context links.** Conversational datasets such as DailyTalk and MELD keep each utterance's place in its dialogue,
+so a model can be given the preceding turns as context. The delivery does the same for calls. Turns are grouped by
+call (`turns.csv`, else one input folder per call) and ordered by turn index, else by start time. Every exported item
+of every group gets `order_in_call`, its previous and next item (`prev_segment_id`, `prev_group`,
+`next_segment_id`, `next_group`) and the call-time gaps to them (`gap_to_prev_s`, `gap_to_next_s`). Links cross
+groups: a labelled segment in `final` can have a Spanish turn from `non_english` as its neighbour. A gap between two
+customer turns usually holds the agent's turn, which is not in the data. `call_timeline.csv` lists all items of all
+groups in call order and is the single file for in-context experiments. As in §5, context does not inherit the
+target label.
+
+An import adapter can map each row of `final/manifest.csv` to one Label Studio classification task, exposing the
+audio and text through a company-approved local or internal serving method. The exact Label Studio task schema,
+configuration, storage setup and export mapping belong to the separate subproject and are not specified by this
+discussion draft. Keep the interface independent of the annotation tool. The existing offline
+[`labeling_tool/`](../../labeling_tool/README.md) remains an option; it expects an `audio/` folder and same-stem
+`.txt` files alongside the audio, so it requires a small packaging step from the per-call folders above.
+
+Manifest fields (every group has the same columns):
 
 | Group | Fields / purpose |
 |---|---|
-| Identity | `segment_id`, pseudonymized `call_id`, `customer_id`, `turn_id`, `turn_index`, `segment_index` |
-| Files and text | `audio_path`, `transcript_path`, original transcript reference/version, alignment-text mapping reference |
+| Identity | `segment_id`, `group`, `reason`, pseudonymized `call_id`, `customer_id`, `turn_id`, `turn_index`, `turn_order`, `segment_index` |
+| Files and text | `audio_path`, `transcript_path`, `review_path` (word times and the alignment-text mapping), source transcript and its SHA-256 |
 | Time | `turn_start_in_call_s`, `segment_start_in_turn_s`, `segment_end_in_turn_s`, `segment_start_in_call_s`, `segment_end_in_call_s`, `duration_s` |
-| Coverage and quality | `speech_duration_s`, `speech_ratio`, alignment coverage/status, `quality_flags`, `boundary_review` |
-| Provenance | source-audio reference, sample rate, source/processing versions, segmentation settings/version, boundary revision |
-| Annotation linkage | split, Label Studio task ID when available, label-set version, optional context references and target/event intervals |
+| Context | `order_in_call`, `prev_segment_id`, `prev_group`, `next_segment_id`, `next_group`, `gap_to_prev_s`, `gap_to_next_s` |
+| Coverage and quality | `speech_duration_s`, `speech_ratio`, `low_speech_ratio`, alignment status and confidence, boundary scores |
+| Provenance | source-audio reference and SHA-256, sample rate, segmentation settings/version |
+| Annotation linkage (added later) | split, Label Studio task ID when available, label-set version, target/event intervals |
 
 Validate the clock origin of any reused timestamps. For a contiguous turn extraction, call time is turn start plus
 the within-turn offset; if upstream extraction removed internal intervals, recover a piecewise source-time mapping

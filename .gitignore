@@ -78,3 +78,11 @@ emotion_recognition/presentation/render/
 # Presentation: candidate clips that the deck does not use (regenerate with scripts/make_candidates.py)
 emotion_recognition/presentation/assets/audio_candidates/
 emotion_recognition/presentation/scripts/__pycache__/
+
+# preparation_tools: offline wheels, the alignment checkpoint and the local working folder (internal audio,
+# transcripts and outputs) stay local; manifests, scripts and docs are tracked.
+preparation_tools/dependencies/**/*.whl
+preparation_tools/dependencies/**/*.download
+preparation_tools/model_weights/checkpoints/
+preparation_tools/model_weights/**/*.download
+preparation_tools/local/

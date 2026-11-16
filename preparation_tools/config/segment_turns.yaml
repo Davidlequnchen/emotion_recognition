@@ -1,0 +1,70 @@
+# Settings for segment_turns.py. Paths are relative to preparation_tools/.
+# Method and reasons: emotion_recognition/docs/data_preparation_call_centre_audio.md (§2-§4, §6).
+# All numbers are starting values for the pilot. Changing any setting below "settings_version" changes the
+# version hash written to every manifest row.
+
+paths:
+  input_dir: local/input/turns       # customer-turn audio (.wav/.mp3/.flac) + same-stem UTF-8 .txt transcripts;
+                                     # flat, or one subfolder per call (call_id = folder name)
+  turns_csv: local/input/turns.csv   # optional: turn_id, call_id, turn_index, turn_start_in_call_s[, customer_id]
+  output_dir: local/output/batch     # must be new or empty: the four group folders, review/, call_timeline.csv
+  weights_dir: model_weights         # manifest.json + checkpoints/ (filled by download.py)
+  groups:                            # output folder per group, same layout: <call_id>/<segment_id>.wav + .txt
+    final: final                     # English: <= 10 s whole, longer turns cut; the only group for labelling
+    non_english: non_english         # Spanish or mixed turns of any length, whole
+    alignment_issues: alignment_issues  # long English turns: alignment failed or empty transcript, whole
+    boundary_issues: boundary_issues    # long English turns: no partition within min_s-max_s, whole
+
+audio_extensions: [.wav, .mp3, .flac]
+device: cpu                          # cpu | cuda | mps (alignment model only; Silero VAD always runs on the CPU)
+cpu_threads: 0                       # 0 = PyTorch default
+settings_version: seg-v2             # rename when you change the method; a hash of the settings is appended
+
+language:
+  default: en                        # used when a transcript has fewer than min_cue_words cue words
+  alignment_models:                  # language -> key in model_weights/manifest.json
+    en: wav2vec2_asr_base_960h       # turns in any other language (es, mixed) go whole to non_english
+  spanish_share_min: 0.8             # Spanish cue share at or above this -> es
+  english_share_max: 0.2             # at or below this -> en; in between -> mixed
+  min_cue_words: 2
+
+vad:
+  speech_threshold: 0.5              # a 32 ms frame counts as speech at this probability (speech time, edges)
+  trim_edges: false                  # off by default: VAD can miss quiet speech, crying or sighs at the edges.
+                                     # true: edge silence does not count towards keep_whole_max_s, and aligned
+                                     # long turns lose long edge silence (never inside, never into a word);
+                                     # whole-turn exports are never trimmed. Turn on only after checking on calls.
+  trim_min_silence_s: 1.0            # only when the edge silence is longer than this
+  trim_margin_s: 0.2                 # silence kept before the first / after the last speech
+  low_speech_ratio: 0.4              # flag a segment whose speech time / duration is below this
+
+alignment:
+  emission_chunk_s: 60               # longer audio is run through wav2vec 2.0 in chunks (memory)
+  emission_context_s: 2              # extra audio on both sides of a chunk
+  # Provisional thresholds from synthetic DailyTalk turns (2026-11-13). Mean word confidence per turn: correct
+  # transcript 0.90-0.95, same audio as 8 kHz mu-law 0.88-0.94, 30% of words replaced 0.63-0.74, wrong transcript
+  # 0.27-0.36; share of weak words (< 0.3): <= 0.02, <= 0.02, 0.18-0.28, 0.51-0.63. Re-set them on real calls.
+  word_min_confidence: 0.3           # no cut next to a word below this (or next to an unspelled word)
+  turn_min_mean_confidence: 0.5      # long turn goes whole to alignment_issues below this mean ...
+  turn_max_unaligned_share: 0.4      # ... or when more than this share of words is weak or unspelled
+
+segmentation:
+  keep_whole_max_s: 10               # English turns up to this length are never cut
+  target_s: 7                        # length cost ((d - 7) / 7)^2 pulls every segment towards 7 s
+  # Hard window: a partition with any segment outside min_s-max_s is not allowed; if none fits, the turn goes
+  # whole to boundary_issues. 2 s = the upstream minimum turn length. 15 s = Vox-Profile Whisper's fixed window,
+  # below emotion2vec+'s 20.48 s Mac-GPU limit and the 30 s windows of the Whisper-encoder models, Qwen2-Audio and
+  # Gemma 4. The length cost still keeps segments near 7 s, so the wide window costs little and needs no second pass.
+  min_s: 2
+  max_s: 15
+  cut_weight_lambda: 1.0             # price of a cut: lambda x (1 - s)
+
+scoring:                             # s = 0.5 p + 0.3 q + 0.2 v
+  weight_pause: 0.5
+  weight_text: 0.3
+  weight_silence: 0.2
+  no_punctuation_weight_pause: 0.7   # when the transcript has no punctuation: s = 0.7 p + 0.3 v
+  no_punctuation_weight_silence: 0.3
+  typical_pause_min_gap_s: 0.1       # typical pause = median of gaps longer than this ...
+  typical_pause_min_count: 3         # ... if there are at least this many,
+  typical_pause_fallback_s: 0.3      # otherwise this

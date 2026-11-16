@@ -1,0 +1,92 @@
+{
+ "d418_long_en": {
+  "whole": {
+   "file": "assets/audio/d418_long_en_whole.mp3",
+   "duration_s": 32.239,
+   "source": "d418_long_en.wav"
+  },
+  "segments": [
+   {
+    "file": "assets/audio/dailytalk_d418_t000_s00.mp3",
+    "segment_id": "dailytalk_d418_t000_s00",
+    "start_s": 0.0,
+    "end_s": 5.552,
+    "duration_s": 5.552,
+    "text": "Yeah. Umm it is the very latest in digital video cameras."
+   },
+   {
+    "file": "assets/audio/dailytalk_d418_t000_s01.mp3",
+    "segment_id": "dailytalk_d418_t000_s01",
+    "start_s": 5.552,
+    "end_s": 13.36,
+    "duration_s": 7.808,
+    "text": "Getting cheaper is not the only reason for their popularity. They come with a lot of inviting functions."
+   },
+   {
+    "file": "assets/audio/dailytalk_d418_t000_s02.mp3",
+    "segment_id": "dailytalk_d418_t000_s02",
+    "start_s": 13.36,
+    "end_s": 23.6,
+    "duration_s": 10.24,
+    "text": "They offer clearer and sharper images. Many of them also have up to twenty times optical zoom lenses, a photo mode and fast-action mode."
+   },
+   {
+    "file": "assets/audio/dailytalk_d418_t000_s03.mp3",
+    "segment_id": "dailytalk_d418_t000_s03",
+    "start_s": 23.6,
+    "end_s": 32.239,
+    "duration_s": 8.639,
+    "text": "Right! Anyway, the basic difference between a digital camcorder and its traditional counterpart is that it speaks digital."
+   }
+  ]
+ },
+ "d1562_long_en": {
+  "whole": {
+   "file": "assets/audio/d1562_long_en_whole.mp3",
+   "duration_s": 38.789,
+   "source": "d1562_long_en.wav"
+  },
+  "segments": [
+   {
+    "file": "assets/audio/dailytalk_d1562_t000_s00.mp3",
+    "segment_id": "dailytalk_d1562_t000_s00",
+    "start_s": 0.0,
+    "end_s": 7.696,
+    "duration_s": 7.696,
+    "text": "It’s a program about islam. It’s very interesting. They are muslims on a pilgrimage to mecca."
+   },
+   {
+    "file": "assets/audio/dailytalk_d1562_t000_s01.mp3",
+    "segment_id": "dailytalk_d1562_t000_s01",
+    "start_s": 7.696,
+    "end_s": 16.24,
+    "duration_s": 8.544,
+    "text": "Muslims call this pilgrimage “ haj ”. Muslims believe that every man who is able should go on a haj at least once in his life."
+   },
+   {
+    "file": "assets/audio/dailytalk_d1562_t000_s02.mp3",
+    "segment_id": "dailytalk_d1562_t000_s02",
+    "start_s": 16.24,
+    "end_s": 21.36,
+    "duration_s": 5.12,
+    "text": "Mecca is the spiritual centre of the muslim faith. That’s right."
+   },
+   {
+    "file": "assets/audio/dailytalk_d1562_t000_s03.mp3",
+    "segment_id": "dailytalk_d1562_t000_s03",
+    "start_s": 21.36,
+    "end_s": 28.656,
+    "duration_s": 7.296,
+    "text": "Unfortunately, so many people go on the haj each year that there are often stamped and people get killed."
+   },
+   {
+    "file": "assets/audio/dailytalk_d1562_t000_s04.mp3",
+    "segment_id": "dailytalk_d1562_t000_s04",
+    "start_s": 28.656,
+    "end_s": 38.789,
+    "duration_s": 10.133,
+    "text": "That’s right. That’s when accidents often happen. The Saudi government tries to limit the number of pilgrims, to reduce the chances of accidents."
+   }
+  ]
+ }
+}

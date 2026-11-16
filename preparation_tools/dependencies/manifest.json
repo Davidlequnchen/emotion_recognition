@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "downloaded_on": "2026-11-13",
+  "python": "CPython 3.11",
+  "platforms": {
+    "cp311-linux_x86_64": "Linux x86_64, glibc >= 2.28 (offline company server)",
+    "cp311-macosx_arm64": "macOS 11+ on Apple Silicon (development Mac)"
+  },
+  "prerequisites": {
+    "torch": "2.7.1",
+    "torchaudio": "2.7.1",
+    "numpy": "any",
+    "typing-extensions": "any",
+    "note": "Not duplicated here. Linux: emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64/install.py (ships numpy 2.4.6 and typing_extensions 4.16.0). Mac: emotion_recognition/requirements-llm-mac.txt."
+  },
+  "not_included": "onnxruntime and torchcodec (optional silero-vad extras): the segmenter uses Silero's JIT model and soundfile.",
+  "files": [
+    {
+      "package": "packaging",
+      "version": "26.3",
+      "platform": "any",
+      "filename": "packaging-26.3-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "size_bytes": 129956,
+      "licence": "Apache-2.0 OR BSD-2-Clause",
+      "requires": []
+    },
+    {
+      "package": "pycparser",
+      "version": "3.12",
+      "platform": "any",
+      "filename": "pycparser-3.12-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/b6/ae/315bbeee126a769cbde43cf4908acb4b40408d8bf8bbf334dd7368d8dadf/pycparser-3.12-py3-none-any.whl",
+      "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e",
+      "size_bytes": 62600,
+      "licence": "BSD-3-Clause",
+      "requires": []
+    },
+    {
+      "package": "cffi",
+      "version": "2.1.1",
+      "platform": "cp311-linux_x86_64",
+      "filename": "cffi-2.1.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/f7/a4/4399daaf8f7dfee9d7c3327fdb0426ee041cc63edc358b93911ceb2bfc7a/cffi-2.1.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "34e261f78cb6ceaaa36f42f2613f4380d94d9c759a9c73c769ee6e0247364632",
+      "size_bytes": 217807,
+      "licence": "MIT-0 (as declared in the wheel METADATA)",
+      "requires": [
+        "pycparser"
+      ]
+    },
+    {
+      "package": "cffi",
+      "version": "2.1.1",
+      "platform": "cp311-macosx_arm64",
+      "filename": "cffi-2.1.1-cp311-cp311-macosx_11_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/cd/95/31b535a9f0220ae9f357de4a08d57ce89cb417653c2fd9f075f50822a388/cffi-2.1.1-cp311-cp311-macosx_11_0_arm64.whl",
+      "sha256": "398aff33cee2767e3e781d2554c54bd0dff386bb437581e0d8011fde1a942ec1",
+      "size_bytes": 184168,
+      "licence": "MIT-0 (as declared in the wheel METADATA)",
+      "requires": [
+        "pycparser"
+      ]
+    },
+    {
+      "package": "soundfile",
+      "version": "0.14.0",
+      "platform": "cp311-linux_x86_64",
+      "filename": "soundfile-0.14.0-py2.py3-none-manylinux_2_28_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/7b/a2/70fd4432b924684c372df8b0a45708c36c057ef3596c9eb53e0a806b980b/soundfile-0.14.0-py2.py3-none-manylinux_2_28_x86_64.whl",
+      "sha256": "1e38bac1853412871318e82a1ba69a8be677619b56025bbfcccdb41b6cafe82d",
+      "size_bytes": 1315963,
+      "licence": "BSD-3-Clause; bundled libsndfile LGPL-2.1, libmpg123 LGPL-2.1, libmp3lame LGPL-2.0+, libFLAC/libogg/libvorbis/libopus BSD-3-Clause",
+      "requires": [
+        "cffi",
+        "numpy",
+        "typing-extensions"
+      ]
+    },
+    {
+      "package": "soundfile",
+      "version": "0.14.0",
+      "platform": "cp311-macosx_arm64",
+      "filename": "soundfile-0.14.0-py2.py3-none-macosx_11_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/63/7a/dfdd6f8c748988427119f75eb860a3cedd858d1aea1fe28f39ad8559ef22/soundfile-0.14.0-py2.py3-none-macosx_11_0_arm64.whl",
+      "sha256": "d828d35a059626da52f1415b5faee610aeab393319cb3fc4a9aef47b619fc14c",
+      "size_bytes": 1103726,
+      "licence": "BSD-3-Clause; bundled libsndfile LGPL-2.1, libmpg123 LGPL-2.1, libmp3lame LGPL-2.0+, libFLAC/libogg/libvorbis/libopus BSD-3-Clause",
+      "requires": [
+        "cffi",
+        "numpy",
+        "typing-extensions"
+      ]
+    },
+    {
+      "package": "PyYAML",
+      "version": "6.0.3",
+      "platform": "cp311-linux_x86_64",
+      "filename": "pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "url": "https://files.pythonhosted.org/packages/71/60/917329f640924b18ff085ab889a11c763e0b573da888e8404ff486657602/pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+      "sha256": "b8bb0864c5a28024fac8a632c443c87c5aa6f215c0b126c449ae1a150412f31d",
+      "size_bytes": 806638,
+      "licence": "MIT",
+      "requires": []
+    },
+    {
+      "package": "PyYAML",
+      "version": "6.0.3",
+      "platform": "cp311-macosx_arm64",
+      "filename": "pyyaml-6.0.3-cp311-cp311-macosx_11_0_arm64.whl",
+      "url": "https://files.pythonhosted.org/packages/16/19/13de8e4377ed53079ee996e1ab0a9c33ec2faf808a4647b7b4c0d46dd239/pyyaml-6.0.3-cp311-cp311-macosx_11_0_arm64.whl",
+      "sha256": "652cb6edd41e718550aad172851962662ff2681490a8a711af6a4d288dd96824",
+      "size_bytes": 175577,
+      "licence": "MIT",
+      "requires": []
+    },
+    {
+      "package": "silero-vad",
+      "version": "6.2.3",
+      "platform": "any",
+      "filename": "silero_vad-6.2.3-py3-none-any.whl",
+      "url": "https://files.pythonhosted.org/packages/84/ef/9099037ed6f180ea33220178df4107112c0ce2bf5fb4d6f6ab19db2844ed/silero_vad-6.2.3-py3-none-any.whl",
+      "sha256": "7b7f5436cfcb02fae583a05b512ea96467fd449fe54cb49a5e4f06c51a1e43b8",
+      "size_bytes": 11317527,
+      "licence": "MIT",
+      "requires": [
+        "packaging",
+        "torch"
+      ]
+    }
+  ]
+}

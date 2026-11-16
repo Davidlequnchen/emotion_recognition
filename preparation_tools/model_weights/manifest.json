@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "downloaded_on": "2026-11-13",
+  "note": "Checkpoints live under checkpoints/ (git-ignored). The segmenter points torch.hub at this folder, verifies the SHA-256 and never downloads at run time. download.pytorch.org publishes no checksum for this file; the SHA-256 below was computed from the official file on 2026-11-13.",
+  "models": {
+    "wav2vec2_asr_base_960h": {
+      "type": "torchaudio_bundle",
+      "bundle": "WAV2VEC2_ASR_BASE_960H",
+      "language": "en",
+      "torchaudio_version": "2.7.1",
+      "filename": "wav2vec2_fairseq_base_ls960_asr_ls960.pth",
+      "path": "checkpoints/wav2vec2_fairseq_base_ls960_asr_ls960.pth",
+      "url": "https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_base_ls960_asr_ls960.pth",
+      "sha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "size_bytes": 377664473,
+      "sample_rate": 16000,
+      "labels": ["-", "|", "E", "T", "A", "O", "N", "I", "H", "S", "R", "D", "L", "U", "M", "W", "C", "F", "G", "Y", "P", "B", "V", "K", "'", "X", "J", "Q", "Z"],
+      "licence": "MIT (originally published by the wav2vec 2.0 authors in fairseq under MIT; redistributed by torchaudio under the same licence)",
+      "source": "torchaudio 2.7.1 torchaudio/pipelines/_wav2vec2/impl.py (WAV2VEC2_ASR_BASE_960H._path); weights from fairseq commit ce6c9eeae163ac04b79539c78e74f292f29eaa18"
+    }
+  }
+}

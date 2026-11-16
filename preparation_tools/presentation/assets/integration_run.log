@@ -1,0 +1,102 @@
+# Console output of tests/integration_dailytalk.py, 2026-11-13, v3 (four groups, 2-15 s window, cut in the middle of the quiet part), run by the implementing agent.
+# Copied from a session scratch file; absolute paths replaced by <repo>.
+Step 0: free memory 28% (need 25%)
+Step 1: building synthetic calls from <repo>/emotion_recognition/data/dailytalk
+  dailytalk_d418 turn 0: d418_long_en.wav, 4 utterances, 32.2 s, 3 joins (3 long)
+  dailytalk_d418 turn 1: d418_es.wav, 2 utterances, 23.9 s, 1 joins (0 long)
+  dailytalk_d418 turn 2: d418_short_en.wav, 1 utterances, 8.4 s, 0 joins (0 long)
+  dailytalk_d788 turn 0: d788_long_en.wav, 5 utterances, 32.0 s, 4 joins (2 long)
+  dailytalk_d788 turn 1: d788_es.wav, 1 utterances, 6.1 s, 0 joins (0 long)
+  dailytalk_d788 turn 2: d788_short_en.wav, 1 utterances, 6.9 s, 0 joins (0 long)
+  dailytalk_d2148 turn 0: d2148_long_en.wav, 4 utterances, 33.4 s, 3 joins (3 long)
+  dailytalk_d2148 turn 1: d2148_es.wav, 2 utterances, 13.4 s, 1 joins (1 long)
+  dailytalk_d2148 turn 2: d2148_short_en.wav, 1 utterances, 7.6 s, 0 joins (0 long)
+  dailytalk_d1562 turn 0: d1562_long_en.wav, 5 utterances, 38.8 s, 4 joins (2 long)
+  dailytalk_d1562 turn 1: d1562_es.wav, 1 utterances, 6.0 s, 0 joins (0 long)
+  dailytalk_d1562 turn 2: d1562_short_en.wav, 1 utterances, 9.2 s, 0 joins (0 long)
+  dailytalk_d2107 turn 0: d2107_long_en.mp3, 4 utterances, 32.2 s, 3 joins (1 long)
+  dailytalk_d2107 turn 1: d2107_es.wav, 3 utterances, 14.5 s, 2 joins (0 long)
+  dailytalk_d2107 turn 2: d2107_short_en.wav, 1 utterances, 6.3 s, 0 joins (0 long)
+Step 2: running the pipeline
+Settings version: seg-v2+31a9d93d
+Step 1: 15 turns in <repo>/preparation_tools/local/integration/input/turns -> 5 calls; call id from turns.csv 15, from the subfolder 0, own call 0
+Step 2: Silero VAD loaded (JIT, CPU); torch threads 4
+        alignment model for en: wav2vec2_asr_base_960h (94.4M parameters, cpu, loaded offline in 1.0 s)
+Step 3: segmenting turns, call by call
+  call dailytalk_d1562: 3 turns, ordered by turn_index
+    d1562_long_en: 38.8 s, en, final/cut -> 5 segment(s) [7.7, 8.5, 5.1, 7.3, 10.1] in 3.2 s
+    d1562_es: 6.0 s, es, non_english/whole_language -> 1 segment(s) [6.0] in 0.3 s; language: es
+    d1562_short_en: 9.2 s, en, final/whole_short -> 1 segment(s) [9.2] in 0.2 s
+  call dailytalk_d2107: 3 turns, ordered by turn_index
+    d2107_long_en: 32.2 s, en, final/cut -> 3 segment(s) [8.4, 11.9, 11.9] in 4.4 s
+    d2107_es: 14.5 s, es, non_english/whole_language -> 1 segment(s) [14.5] in 0.6 s; language: es
+    d2107_short_en: 6.3 s, en, final/whole_short -> 1 segment(s) [6.3] in 0.1 s
+  call dailytalk_d2148: 3 turns, ordered by turn_index
+    d2148_long_en: 33.4 s, en, final/cut -> 4 segment(s) [8.3, 6.4, 8.9, 9.8] in 4.3 s
+    d2148_es: 13.4 s, es, non_english/whole_language -> 1 segment(s) [13.4] in 0.4 s; language: es
+    d2148_short_en: 7.6 s, en, final/whole_short -> 1 segment(s) [7.6] in 0.2 s
+  call dailytalk_d418: 3 turns, ordered by turn_index
+    d418_long_en: 32.2 s, en, final/cut -> 4 segment(s) [5.6, 7.8, 10.2, 8.6] in 3.8 s
+    d418_es: 23.9 s, es, non_english/whole_language -> 1 segment(s) [23.9] in 0.5 s; language: es
+    d418_short_en: 8.4 s, en, final/whole_short -> 1 segment(s) [8.4] in 0.3 s
+  call dailytalk_d788: 3 turns, ordered by turn_index
+    d788_long_en: 32.0 s, en, final/cut -> 5 segment(s) [4.9, 6.4, 6.0, 6.6, 8.1] in 4.8 s
+    d788_es: 6.1 s, es, non_english/whole_language -> 1 segment(s) [6.1] in 0.3 s; language: es
+    d788_short_en: 6.9 s, en, final/whole_short -> 1 segment(s) [6.9] in 0.3 s
+Run summary
+  turns read: 15 in 5 calls, failed: 0
+  final: 10 turns, 26 files (cut 5, whole_short 5)
+  non_english: 5 turns, 5 files (whole_language 5)
+  alignment_issues: 0 turns, 0 files
+  boundary_issues: 0 turns, 0 files
+  final segment length: min 4.91 s, median 7.98 s, max 11.95 s; 0-2 s: 0, 2-3 s: 0, 3-5 s: 1, 5-7 s: 8, 7-10 s: 13, 10-15 s: 4, 15- s: 0
+  low_speech_ratio: 0 files (0 in final)
+  output: <repo>/preparation_tools/local/integration/output
+Step 3: checking outputs
+Checks per turn
+  d1562_es: non_english/whole_language, 1 segments [6.0]
+  d1562_long_en: final/cut, 5 segments [7.696, 8.544, 5.12, 7.296, 10.133]
+      7.70s pause inside an utterance (q=1.0), gap 0.50s, s=0.92, -42 dB
+      16.24s pause inside an utterance (q=1.0), gap 0.66s, s=0.94, -37 dB
+      21.36s pause inside an utterance (q=1.0), gap 0.36s, s=0.85, -60 dB
+      28.66s join, gap 1.46s, s=0.98, -41 dB
+  d1562_short_en: final/whole_short, 1 segments [9.25]
+  d2107_es: non_english/whole_language, 1 segments [14.465]
+  d2107_long_en: final/cut, 3 segments [8.368, 11.904, 11.945]
+      8.37s join, gap 0.92s, s=0.97, -42 dB
+      20.27s join, gap 2.46s, s=0.97, -42 dB
+  d2107_short_en: final/whole_short, 1 segments [6.263]
+  d2148_es: non_english/whole_language, 1 segments [13.432]
+  d2148_long_en: final/cut, 4 segments [8.272, 6.432, 8.864, 9.828]
+      8.27s join, gap 2.48s, s=0.98, -40 dB
+      14.70s pause inside an utterance (q=1.0), gap 0.62s, s=0.93, -37 dB
+      23.57s join, gap 1.64s, s=0.97, -40 dB
+  d2148_short_en: final/whole_short, 1 segments [7.562]
+  d418_es: non_english/whole_language, 1 segments [23.907]
+  d418_long_en: final/cut, 4 segments [5.552, 7.808, 10.24, 8.639]
+      5.55s join, gap 1.66s, s=0.98, -41 dB
+      13.36s join, gap 1.56s, s=0.97, -41 dB
+      23.60s join, gap 1.38s, s=0.97, -41 dB
+  d418_short_en: final/whole_short, 1 segments [8.417]
+  d788_es: non_english/whole_language, 1 segments [6.052]
+  d788_long_en: final/cut, 5 segments [4.912, 6.368, 6.016, 6.56, 8.149]
+      4.91s join, gap 1.44s, s=0.97, -40 dB
+      11.28s pause inside an utterance (q=1.0), gap 0.48s, s=0.90, -43 dB
+      17.30s join, gap 1.78s, s=0.97, -40 dB
+      23.86s pause inside an utterance (q=1.0), gap 0.50s, s=0.94, -51 dB
+  d788_short_en: final/whole_short, 1 segments [6.906]
+Cuts in long English turns: 16; in the word gap at an utterance join: 10 (inside the inserted pause itself: 10); others at natural pauses inside an utterance. Distance to the inserted pause: median 0.00 s, max 4.94 s. Level at the cut (20 ms vs speech RMS): median -41 dB, max -37 dB. Long inserted pauses with a cut within 0.5 s: 9 of 11.
+Groups
+  final: 10 turns, 26 files
+  non_english: 5 turns, 5 files
+  alignment_issues: 0 turns, 0 files
+  boundary_issues: 0 turns, 0 files
+  final segments of cut turns: 21, 4.91-11.95 s, median 8.15 s, mean 8.03 s; inside the window: 21 of 21
+Alignment: 5 turns, mean confidence per turn 0.87-0.97; word confidence p1 0.26, p5 0.55, p10 0.76, median 0.98
+Context links per call
+  dailytalk_d1562: 7 items: final x5 -> non_english -> final; 2 links cross groups; OK
+  dailytalk_d2107: 5 items: final x3 -> non_english -> final; 2 links cross groups; OK
+  dailytalk_d2148: 6 items: final x4 -> non_english -> final; 2 links cross groups; OK
+  dailytalk_d418: 6 items: final x4 -> non_english -> final; 2 links cross groups; OK
+  dailytalk_d788: 7 items: final x5 -> non_english -> final; 2 links cross groups; OK
+Links: 5 of 5 calls correct (31 items in call_timeline.csv, 31 in the group manifests)

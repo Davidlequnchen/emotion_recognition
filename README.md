@@ -51,6 +51,7 @@ Neither model nor dataset setup uses Git LFS.
 |---|---|
 | [`emotion_recognition/`](emotion_recognition/README.md) | **Speech emotion recognition** (the main project): five SER models (emotion2vec+ large, MERaLiON-SER-v1, Melati and two Vox-Profile models) and three local audio LLMs (Qwen2-Audio, Qwen2.5-Omni and Gemma 4), run in the `emotion_recognition_llm` PyTorch environment on an Apple Silicon Mac (MPS) or an NVIDIA server (CUDA 11.8), plus two API audio LLMs (GPT Realtime and Gemini 3.8 Flash), with one evaluation script, a cross-model table in [`reports/summary.md`](emotion_recognition/reports/summary.md) and a results page in the browser. |
 | [`antideepfake/`](antideepfake/README.md) | **Deepfake detection** (a side project): XLS-R-1B-AntiDeepfake from NII Yamagishi Lab tells real speech from synthetic or converted speech; the model is defined in plain PyTorch and its checkpoint comes from Zenodo. |
+| [`preparation_tools/`](preparation_tools/README.md) | **Turn segmenter** for internal call-centre audio: splits long customer turns into pieces of about 7 s (2–15 s) using forced alignment of the existing transcripts (torchaudio wav2vec 2.0), Silero VAD and whole-turn dynamic programming; installs offline from pinned wheels. |
 
 The public results page of the emotion recognition project, https://davidlequnchen.github.io/emotion_recognition/,
 is built into `emotion_recognition/site/` and published by `.github/workflows/pages.yml`.
