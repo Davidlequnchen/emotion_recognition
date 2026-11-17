@@ -10,6 +10,7 @@ The SER work has two separate workstreams:
 - **Academic research** in [`research_paper/`](research_paper/README.md) uses public datasets only; internal company calls are outside the paper's scope.
 - **Model consensus / pseudo-label analysis**: [中文报告](research_paper/analysis_report/consensus_zh.md) · [English report](research_paper/analysis_report/consensus_en.md), with coverage, accepted-label accuracy and vote thresholds across the 16 benchmark datasets.
 - **Internal customer-call adaptation** focuses on practical target-domain accuracy, customer-only data curation and labelling; see the [data preparation discussion draft](emotion_recognition/docs/data_preparation_call_centre_audio.md) and the independent [`label_studio/` subproject](label_studio/README.md). Internal audio, transcripts and derived data stay outside this repository.
+- **Emotion2Vec+ large adaptation**: [`emotion2vec_adaptation/`](emotion2vec_adaptation/README.md) provides YAML-controlled frozen-head training and independent unlabeled masked-EMA encoder adaptation, reusing the existing local model. Curated data and training outputs stay local and ignored by Git.
 
 Benchmark status, 2026-11-15: all ten models have current-protocol results on all 16 datasets (67,062 clips per
 model), including the final Gemma 4 E4B results. The saved results contain 160 compatible model–dataset runs; see
