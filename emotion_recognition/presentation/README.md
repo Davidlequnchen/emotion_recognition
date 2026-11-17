@@ -1,73 +1,64 @@
 # SER benchmark presentation
 
-`updated/` contains exactly two deliverables:
+There are exactly two presentation deliverables:
 
-- [`SER_evaluation_extended.pptx`](updated/SER_evaluation_extended.pptx): the complete **85-slide** presentation. It includes all **10 models × 16 datasets**, the original research/adaptation material, two playable ten-model inspections per dataset, and both same-sentence case studies.
-- [`Semantic_vs_Vocal_Emotion.pptx`](updated/Semantic_vs_Vocal_Emotion.pptx): one **two-slide** presentation combining the CREMA-D and JL-Corpus examples, with all **nine** recordings embedded.
+- [`SER_evaluation.pptx`](SER_evaluation.pptx): the canonical **93-slide** presentation, covering **10 models × 16 datasets**. It contains the original research and adaptation material, a full dataset introduction with four playable clips per dataset, the two same-sentence case studies, sixteen later listening inspections, and five ten-model error analyses.
+- [`updated/Semantic_vs_Vocal_Emotion.pptx`](updated/Semantic_vs_Vocal_Emotion.pptx): the same **two sentence-example slides**, with all **nine recordings** embedded, extracted from the canonical deck.
 
-The complete deck places the two sentence examples on slides **39–40** and the sixteen dataset inspections on slides **41–56**. Both files use stable filenames; intermediate or version-numbered copies stay outside `updated/`.
+There is no separate extended version. Intermediate packages, previews and validation receipts remain in the ignored `.inspection-build/` directory.
 
-## Examples and interpretation
+## Content and interpretation
 
-The CREMA-D example uses four selected emotional takes of “Don't forget a jacket.” from actor 1002. Gemini predicts happy on all four and GPT Realtime predicts neutral. Voice-only listener votes are shown separately. Gemini changes its prediction on the same actor's neutral and sad takes, as disclosed on the slide.
+Dataset overviews preserve language, clip and speaker counts, shared-text design, annotation sources and dialogue versus standalone status. The label mapping covers all sixteen benchmark datasets. Each dataset introduction shows four recordings and predictions from all ten models. Published corpus totals and the actual benchmark cohorts are distinguished in slide notes.
 
-The JL-Corpus example uses “Work hard or you lose.” Speaker `male2`, session b, repetition 1 provides all five evaluated emotions: angry, neutral, happy, sad and excited. Both APIs predict angry on all five. Across all 80 evaluated recordings of this sentence, both APIs predict angry together in 33 cases. These are acted labels without per-clip listener votes. The pattern is consistent with lexical bias but does not establish its cause.
+The model survey retains release, parameter count and emotion training data, and reports output classes. Three native editable schematics explain the executed audio-to-text routes for Qwen2.5-Omni, Qwen2-Audio Instruct and Gemma 4 E4B. Model-card references and retained checkpoint evidence are recorded in `assets/model_refresh/facts.json` and speaker notes.
 
-The 32 dataset inspections deliberately show contrasts rather than estimate performance. Example A maximizes the SER-minus-LLM correct-count gap. Example B maximizes the reverse gap with a different reference emotion and speaker. Reference labels and listener votes remain separate. JL-Corpus's excited label accepts happy or surprised.
+Accuracy, UAR and Macro-F1 each have one complete **16-dataset × 10-model** table. Coloured headers distinguish dedicated SER, open audio LLMs and API audio LLMs. Green and red mark the highest and lowest score within each dataset, including ties. These highlights compare models within a row rather than claim statistical significance.
 
-The quantitative results cover 67,062 clips per model and 160 current-protocol model–dataset runs. They use the completed cohort for every model, including Gemma 4 E4B, rather than the historical 200-clip API samples. Accuracy, UAR, macro-F1 and training-provenance caveats remain in the complete deck. The adaptation section is a proposal, not new training or internal-call results.
+The CREMA-D example uses four emotional takes of “Don't forget a jacket.” by actor 1002. Gemini predicts happy on all four and GPT Realtime predicts neutral. Voice-only listener votes remain separate from acted labels. Gemini changes its prediction on the same actor's neutral and sad takes, as disclosed on the slide.
 
-## Audio and provenance
+The JL-Corpus example uses “Work hard or you lose.” Speaker `male2`, session b, repetition 1 provides angry, neutral, happy, sad and excited recordings. Both APIs predict angry on all five. Across all 80 evaluated recordings of this sentence, both APIs predict angry together in 33 cases. These are acted labels without per-clip listener votes. The pattern is consistent with lexical bias but does not establish its cause.
 
-Click a blue play button in PowerPoint slide-show mode to play or pause the embedded audio. This is an internal research inspection copy, and each corpus retains its source terms, including redistribution restrictions. New audio copies are full-length mono 16 kHz MP3s at 64 kbit/s, without trimming or loudness normalization.
+The 32 later listening inspections show contrasts rather than estimate performance. Example A maximizes the SER-minus-LLM correct-count gap. Example B maximizes the reverse gap using a different reference emotion and speaker. JL-Corpus excited accepts happy or surprised. The five error-analysis slides retain their original two recordings and add the five audio LLM predictions. Confidence values are shown only where the dedicated SER models supply meaningful class scores.
 
-- `assets/manifest.json` retains the earlier public listening examples and their provenance.
-- `assets/inspections/manifest.json` records the 32 selected inspections, source audio hashes, 320 CSV/JSON source hashes and selection rules.
-- `assets/inspections/semantic.json` records the first matched-sentence example.
-- `assets/inspections/lexical/manifest.json` records the second example, source hashes, protocol and full-sentence context counts.
+Quantitative results cover **67,062 clips per model** and all **160 current-protocol model–dataset runs**, including completed Gemma 4 E4B cohorts. The adaptation section remains a proposal. Sources and former footnotes are in speaker notes; every slide reserves at least the bottom 10% as blank space.
 
-See [benchmark results](../reports/summary.md) and [research analyses](../../research_paper/README.md) for the full quantitative record.
+## Assets
 
-## Rebuild the two deliverables
+- `assets/manifest.json`: earlier public listening examples and provenance.
+- `assets/dataset_refresh/data.json`: 64 introduction clips, 640 prediction cells, metadata and 337 source hashes.
+- `assets/error_refresh/data.json`: the ten retained error-analysis clips and 100 current prediction cells.
+- `assets/model_refresh/facts.json`: open-model architecture, release and training-data evidence.
+- `assets/result_refresh/data.json`: the full three-metric tables and source hashes.
+- `assets/inspections/manifest.json`: 32 later inspections, source audio hashes, prediction-source hashes and selection rules.
+- `assets/inspections/semantic.json` and `assets/inspections/lexical/manifest.json`: matched-sentence examples and full-sentence context counts.
 
-Run from this directory using the bundled presentation runtime. Set `RUNTIME_NODE_MODULES`, `RUNTIME_PYTHON` and `PRESENTATIONS_SKILL_DIR` when the bundled paths differ. JavaScript requires `@oai/artifact-tool`; Python requires numpy, Pillow, openpyxl and lxml. `ffmpeg` and `ffprobe` must be on `PATH`.
+The research deck includes internal listening material. Added audio is full-length mono 16 kHz MP3 at 64 kbit/s, without trimming or loudness normalization. Retained legacy examples preserve their existing media bytes.
 
-All drafts, previews, temporary one-slide packages and validation receipts stay in `.inspection-build/`. The original `SER_evaluation.pptx` and its existing source modules supply the base template. No additional deck is published from that intermediate base.
+## Rebuild the current deck
+
+Run from this directory using the bundled runtime discovered by `load_workspace_dependencies`. Set `RUNTIME_NODE_MODULES` when the bundled package location differs from the script default. No model inference runs during the presentation build. Saved metadata and audio assets allow layout-only rebuilds; `prepare_dataset_refresh.py` and `prepare_error_refresh.py` refresh those inputs from local corpora and current predictions when needed.
 
 ```bash
-python scripts/prepare_inspections.py --semantic-only
-node scripts/build_semantic.mjs
-python scripts/embed_inspection_audio.py .inspection-build/semantic-base.pptx .inspection-build/semantic-audio.json .inspection-build/semantic-candidate.pptx
-python scripts/prepare_inspections.py
-node scripts/build_inspections.mjs
-python scripts/embed_inspection_audio.py .inspection-build/inspections-base.pptx .inspection-build/inspections-audio.json .inspection-build/inspections-audio.pptx
-python scripts/merge_inspections.py
-python scripts/check_inspections.py
-node scripts/verify_import_batches.mjs
-python scripts/prepare_lexical_example.py
-node scripts/build_lexical_example.mjs
-python scripts/embed_inspection_audio.py .inspection-build/lexical-base.pptx .inspection-build/lexical-audio.json .inspection-build/lexical-candidate.pptx
-python scripts/insert_lexical_example.py
+node scripts/build_dataset_refresh.mjs
+node scripts/build_model_refresh.mjs
+node scripts/build_error_refresh.mjs
+node scripts/build_result_refresh.mjs
+python scripts/embed_inspection_audio.py .inspection-build/dataset-refresh.pptx .inspection-build/dataset-refresh-audio.json .inspection-build/dataset-refresh-audio.pptx
+python scripts/embed_inspection_audio.py .inspection-build/error-refresh.pptx .inspection-build/error-refresh-audio.json .inspection-build/error-refresh-audio.pptx
+python scripts/refresh_main_deck.py --source SER_evaluation.pptx
+python scripts/check_main_refresh.py
+node scripts/verify_main_imports.mjs
+python scripts/render_main_refresh.py
 python scripts/consolidate_presentations.py
-node scripts/finalize_inspections.mjs .inspection-build/SER_evaluation_complete-candidate.pptx .inspection-build/consolidated/SER_evaluation_extended.pptx 85 '[39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56]'
-node scripts/finalize_inspections.mjs .inspection-build/Semantic_vs_Vocal_Emotion-candidate.pptx .inspection-build/consolidated/Semantic_vs_Vocal_Emotion.pptx 2 '[1,2]'
+```
+
+Finalize the main candidate and two-slide excerpt with `scripts/finalize_inspections.mjs`, passing the exact slide count and the native-table slide list from `.inspection-build/refresh/content-validation.json`. Its staging destination is `.inspection-build/refresh/validated-20261117/`, with filenames matching the two deliverables. For the excerpt pass count `2` and table slides `[1,2]`. Use a fresh private staging directory because the finalizer does not overwrite a validated file. The finalizer validates every table owner in bounded passes over the identical candidate. After inspecting all contact sheets and changed pages, run `python scripts/render_main_refresh.py --record-review` to record the completed visual review and verify the blank bottom margin. Then publish with:
+
+```bash
 python scripts/consolidate_presentations.py --publish
 ```
 
-Use a fresh private `consolidated/` staging directory when rebuilding because the finalizer does not overwrite an existing validated staging file. Publication then updates the two stable filenames and removes the obsolete standalone/version-numbered copies.
+Checks verify source hashes, every saved prediction and metric cell, unique shape/relationship IDs, audio timing targets, the 10% bottom margin, retained chart data and embedded workbooks, and native editable tables. The complete deck exceeds the Artifact Tool construction budget, so all slides are imported in bounded exact-content batches. The two-slide excerpt passes a complete import. Mandarin and Thai text use Arial Unicode MS script fallbacks while preserving the original Latin fonts.
 
-The checks verify all saved prediction cells, audio triggers and source hashes, preserve prior media/chart/workbook bytes, and validate package structure, fonts and native tables/charts. The source and full deck exceed the native importer's XML budget, so the intermediate 84-slide set is checked in seven exact-content 12-slide packages and the inserted page is validated separately. The two-slide example deck passes a complete native import. Mandarin and Thai transcripts retain Arial Unicode MS as the script fallback, while original Latin fonts are preserved.
-
-## Source files
-
-| File | Role |
-|---|---|
-| `build.js`, `lib.js`, `clips.js`, `content.js`, `s_*.js` | Existing base-deck content, theme and layout modules |
-| `scripts/prepare_inspections.py`, `scripts/build_inspections.mjs` | Complete ten-model listening inspections |
-| `scripts/build_semantic.mjs` | CREMA-D same-sentence page |
-| `scripts/prepare_lexical_example.py`, `scripts/build_lexical_example.mjs` | JL-Corpus same-sentence page |
-| `scripts/embed_inspection_audio.py` | Embedded audio and click-to-toggle triggers |
-| `scripts/merge_inspections.py`, `scripts/insert_lexical_example.py` | Preserve source parts while composing the complete deck |
-| `scripts/consolidate_presentations.py` | Extract the two-slide example deck and publish only the two canonical files |
-| `scripts/check_inspections.py`, `scripts/verify_import_batches.mjs`, `scripts/finalize_inspections.mjs` | Prediction, package, native object and import validation |
-| `facts.md` | Architecture sources and historical resource-estimate notes |
+The older `build.js`, `lib.js`, `clips.js`, `content.js` and `s_*.js` retain the historical base-deck source. Historical inspection/semantic builders remain available for source reconstruction; the refresh workflow above updates the canonical deck in place without publishing additional versions.

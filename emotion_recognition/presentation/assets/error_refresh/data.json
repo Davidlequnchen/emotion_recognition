@@ -1,0 +1,1202 @@
+{
+  "model_order": [
+    "emotion2vec_plus_large",
+    "meralion_ser_v1",
+    "melati_emotion",
+    "vox_profile_whisper",
+    "vox_profile_wavlm",
+    "qwen2_5_omni_7b",
+    "qwen2_audio_7b",
+    "gemma4_e4b",
+    "gpt_realtime",
+    "gemini-3.8-flash"
+  ],
+  "model_names": {
+    "emotion2vec_plus_large": "emotion2vec+ large",
+    "meralion_ser_v1": "MERaLiON-SER-v1",
+    "melati_emotion": "Melati",
+    "vox_profile_whisper": "Vox-Profile Whisper",
+    "vox_profile_wavlm": "Vox-Profile WavLM",
+    "qwen2_5_omni_7b": "Qwen2.5-Omni 7B",
+    "qwen2_audio_7b": "Qwen2-Audio 7B Instruct",
+    "gemma4_e4b": "Gemma 4 E4B",
+    "gpt_realtime": "GPT Realtime",
+    "gemini-3.8-flash": "Gemini 3.8 Flash"
+  },
+  "slides": [
+    {
+      "kind": "error-analysis",
+      "key": "agreement",
+      "title": "Error Analysis: Agreement with Listeners",
+      "cases": [
+        {
+          "id": "1068_IEO_HAP_HI",
+          "dataset_key": "crema_d",
+          "dataset": "CREMA-D",
+          "speaker": "1068 (male, 34)",
+          "text": "It's eleven o'clock.",
+          "reference": "happy",
+          "audio_path": "data/crema_d/AudioWAV/1068_IEO_HAP_HI.wav",
+          "audio_asset": "assets/audio/crema_d__1068_IEO_HAP_HI.mp3",
+          "duration_s": 2.37,
+          "audio_sha256": "9a114e2dd5512d643a2a0727de2a59bb5e3d383f8bf0e2840ed6dc72c20ab01f",
+          "listener_votes": {
+            "angry": 9,
+            "disgusted": 1
+          },
+          "listener_majority": "angry",
+          "listener_info": "Listeners (voice only, n=10): angry 9 · disgusted 1 → majority angry",
+          "subgroup": "i_models_side_with_listeners",
+          "insight_heading": "Listeners vs actor",
+          "insight": "Five models agree with listener anger; only Vox-Whisper matches acted happy. The scored error depends on whether the reference is intended or perceived emotion.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.6679
+            },
+            "meralion_ser_v1": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.8174
+            },
+            "melati_emotion": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.9568
+            },
+            "vox_profile_whisper": {
+              "label": "happy",
+              "correct": true,
+              "ser_score": 0.2391
+            },
+            "vox_profile_wavlm": {
+              "label": "fearful",
+              "correct": false,
+              "ser_score": 0.1411
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        },
+        {
+          "id": "1066_ITS_ANG_XX",
+          "dataset_key": "crema_d",
+          "dataset": "CREMA-D",
+          "speaker": "1066 (male, 25)",
+          "text": "I think I've seen this before.",
+          "reference": "angry",
+          "audio_path": "data/crema_d/AudioWAV/1066_ITS_ANG_XX.wav",
+          "audio_asset": "assets/audio/crema_d__1066_ITS_ANG_XX.mp3",
+          "duration_s": 2.54,
+          "audio_sha256": "075afd8bd4849c7d15fdbc1032d2b763346ba34b533b416aac4c68ebe2994766",
+          "listener_votes": {
+            "disgusted": 8,
+            "neutral": 2
+          },
+          "listener_majority": "disgusted",
+          "listener_info": "Listeners (voice only, n=10): disgusted 8 · neutral 2 → majority disgusted",
+          "subgroup": "i_models_side_with_listeners",
+          "insight_heading": "Listener agreement",
+          "insight": "Eight of ten listeners hear disgust. Three models select disgusted and six select neutral; none matches the acted angry label. Listener agreement changes the interpretation of these errors.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "disgusted",
+              "correct": false,
+              "ser_score": 1.0
+            },
+            "meralion_ser_v1": {
+              "label": "disgusted",
+              "correct": false,
+              "ser_score": 0.9159
+            },
+            "melati_emotion": {
+              "label": "happy",
+              "correct": false,
+              "ser_score": 0.3395
+            },
+            "vox_profile_whisper": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.2484
+            },
+            "vox_profile_wavlm": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.2799
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "disgusted",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "error-analysis",
+      "key": "domain-1",
+      "title": "Error Analysis: Domain Shift (1/2)",
+      "cases": [
+        {
+          "id": "AM2V15_SCR",
+          "dataset_key": "mess",
+          "dataset": "MESS",
+          "speaker": "M2 (male)",
+          "text": "",
+          "reference": "angry",
+          "audio_path": "data/mess/audio/AM2V15_SCR.wav",
+          "audio_asset": "assets/audio/mess__AM2V15_SCR.mp3",
+          "duration_s": 2.75,
+          "audio_sha256": "323ed040ec00b8bf14cf1c4e2e303d5be8c301e942fa38f2b70cc34dc6f2a7dd",
+          "listener_votes": {},
+          "listener_majority": "",
+          "listener_info": "No per-clip listener ratings for this dataset",
+          "subgroup": "ii_confident_on_unseen_data",
+          "insight_heading": "A shared failure",
+          "insight": "Nine models predict neutral despite the acted angry label. Qwen2-Audio alone predicts angry. A high dedicated-SER score does not establish correctness on this corpus.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 1.0
+            },
+            "meralion_ser_v1": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.8816
+            },
+            "melati_emotion": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.9564
+            },
+            "vox_profile_whisper": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.4001
+            },
+            "vox_profile_wavlm": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.4313
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "angry",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        },
+        {
+          "id": "57175",
+          "dataset_key": "mcae_spps",
+          "dataset": "MCAE-SPPS",
+          "speaker": "5 (female)",
+          "text": "他听了一个讲座 (He attended a lecture.)",
+          "reference": "surprised",
+          "audio_path": "data/mcae_spps/audio/surprise/57175.wav",
+          "audio_asset": "assets/audio/mcae_spps__57175.mp3",
+          "duration_s": 1.13,
+          "audio_sha256": "cc666f6835864b768dcefb859225d1ec11e301b0998a667230414983f061d1cf",
+          "listener_votes": {
+            "surprised": 38,
+            "happy": 1,
+            "angry": 1
+          },
+          "listener_majority": "surprised",
+          "listener_info": "Listeners (n=40): surprised 38 · happy 1 · angry 1 (recognition rate 95.0%)",
+          "subgroup": "ii_confident_on_unseen_data",
+          "insight_heading": "Surprise vs anger",
+          "insight": "Thirty-eight of forty listeners hear surprise, but only Vox-Whisper predicts surprised. Five models predict angry. This is shared category confusion with strong listener agreement.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.8761
+            },
+            "meralion_ser_v1": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.8238
+            },
+            "melati_emotion": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.9801
+            },
+            "vox_profile_whisper": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": 0.5779
+            },
+            "vox_profile_wavlm": {
+              "label": "fearful",
+              "correct": false,
+              "ser_score": 0.2439
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "error-analysis",
+      "key": "domain-2",
+      "title": "Error Analysis: Domain Shift (2/2)",
+      "cases": [
+        {
+          "id": "YAF_read_neutral",
+          "dataset_key": "tess",
+          "dataset": "TESS",
+          "speaker": "YAF (female, 26)",
+          "text": "\"Say the word read.\"",
+          "reference": "neutral",
+          "audio_path": "data/tess/YAF_read_neutral.wav",
+          "audio_asset": "assets/audio/tess__YAF_read_neutral.mp3",
+          "duration_s": 2.12,
+          "audio_sha256": "b693b33650db781d5ed57cd8c55ccac1632d5a2ee8c89a6a459d9aa82617e385",
+          "listener_votes": {},
+          "listener_majority": "",
+          "listener_info": "No per-clip listener ratings for this dataset",
+          "subgroup": "ii_confident_on_unseen_data",
+          "insight_heading": "Two outliers",
+          "insight": "Eight models match the neutral reference. MERaLiON and Gemini predict sad. Agreement elsewhere in the panel helps localize the disagreement to those two systems.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": 1.0
+            },
+            "meralion_ser_v1": {
+              "label": "sad",
+              "correct": false,
+              "ser_score": 0.9079
+            },
+            "melati_emotion": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": 0.6854
+            },
+            "vox_profile_whisper": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": 0.4637
+            },
+            "vox_profile_wavlm": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": 0.4319
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "sad",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        },
+        {
+          "id": "03-01-08-02-02-01-17",
+          "dataset_key": "ravdess",
+          "dataset": "RAVDESS",
+          "speaker": "Actor 17 (male)",
+          "text": "Dogs are sitting by the door.",
+          "reference": "surprised",
+          "audio_path": "data/ravdess/audio/Actor_17/03-01-08-02-02-01-17.wav",
+          "audio_asset": "assets/audio/ravdess__03-01-08-02-02-01-17.mp3",
+          "duration_s": 2.36,
+          "audio_sha256": "5a28c3ec1e0ea1f2abbf53dc6a687d9eac0badd57a9e3757203935c14b5f2a69",
+          "listener_votes": {},
+          "listener_majority": "",
+          "listener_info": "No per-clip listener ratings for this dataset",
+          "subgroup": "ii_confident_on_unseen_data",
+          "insight_heading": "Model-specific errors",
+          "insight": "All five audio LLMs and three dedicated SER systems predict surprised. MERaLiON predicts fearful and Melati angry, so this failure is model-specific rather than universal.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": 1.0
+            },
+            "meralion_ser_v1": {
+              "label": "fearful",
+              "correct": false,
+              "ser_score": 0.9066
+            },
+            "melati_emotion": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.6479
+            },
+            "vox_profile_whisper": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": 0.4657
+            },
+            "vox_profile_wavlm": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": 0.2366
+            },
+            "qwen2_5_omni_7b": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "surprised",
+              "correct": true,
+              "ser_score": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "error-analysis",
+      "key": "disagreement",
+      "title": "Error Analysis: Model Disagreement",
+      "cases": [
+        {
+          "id": "SF3T02_SCR",
+          "dataset_key": "mess",
+          "dataset": "MESS",
+          "speaker": "F3 (female)",
+          "text": "",
+          "reference": "sad",
+          "audio_path": "data/mess/audio/SF3T02_SCR.wav",
+          "audio_asset": "assets/audio/mess__SF3T02_SCR.mp3",
+          "duration_s": 2.47,
+          "audio_sha256": "9d8e2ac140f952b974440b0ca30912ec3d7508e1bab4c3e130cdba94eaf6e266",
+          "listener_votes": {},
+          "listener_majority": "",
+          "listener_info": "No per-clip listener ratings for this dataset",
+          "subgroup": "iii_models_disagree",
+          "insight_heading": "Family disagreement",
+          "insight": "All five audio LLMs and emotion2vec+ predict neutral. Four other dedicated SER systems predict sad. Model-family agreement can still disagree sharply with the acted label.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 1.0
+            },
+            "meralion_ser_v1": {
+              "label": "sad",
+              "correct": true,
+              "ser_score": 0.9025
+            },
+            "melati_emotion": {
+              "label": "sad",
+              "correct": true,
+              "ser_score": 0.506
+            },
+            "vox_profile_whisper": {
+              "label": "sad",
+              "correct": true,
+              "ser_score": 0.5095
+            },
+            "vox_profile_wavlm": {
+              "label": "sad",
+              "correct": true,
+              "ser_score": 0.2525
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        },
+        {
+          "id": "62191",
+          "dataset_key": "mcae_spps",
+          "dataset": "MCAE-SPPS",
+          "speaker": "6 (female)",
+          "text": "他们有个计划 (They have a plan.)",
+          "reference": "happy",
+          "audio_path": "data/mcae_spps/audio/happiness/62191.wav",
+          "audio_asset": "assets/audio/mcae_spps__62191.mp3",
+          "duration_s": 1.28,
+          "audio_sha256": "37312a2ef8b2ecc8a2b5f1767b96ee1ff7ac6ea4132f1ab7ab3440479fc937a0",
+          "listener_votes": {
+            "happy": 22,
+            "neutral": 17,
+            "surprised": 1
+          },
+          "listener_majority": "happy",
+          "listener_info": "Listeners (n=40): happy 22 · neutral 17 · surprised 1 (recognition rate 55.0%)",
+          "subgroup": "iii_models_disagree",
+          "insight_heading": "A perceptual split",
+          "insight": "Listeners split mainly between happy and neutral. MERaLiON and Melati choose happy; six models choose neutral. Model disagreement mirrors some, but not all, of the human ambiguity.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.8239
+            },
+            "meralion_ser_v1": {
+              "label": "happy",
+              "correct": true,
+              "ser_score": 0.8673
+            },
+            "melati_emotion": {
+              "label": "happy",
+              "correct": true,
+              "ser_score": 0.9951
+            },
+            "vox_profile_whisper": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.3287
+            },
+            "vox_profile_wavlm": {
+              "label": "surprised",
+              "correct": false,
+              "ser_score": 0.2953
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "error-analysis",
+      "key": "ambiguous",
+      "title": "Error Analysis: Ambiguous Ground Truth",
+      "cases": [
+        {
+          "id": "1006_IEO_ANG_MD",
+          "dataset_key": "crema_d",
+          "dataset": "CREMA-D",
+          "speaker": "1006 (female, 58)",
+          "text": "It's eleven o'clock.",
+          "reference": "angry",
+          "audio_path": "data/crema_d/AudioWAV/1006_IEO_ANG_MD.wav",
+          "audio_asset": "assets/audio/crema_d__1006_IEO_ANG_MD.mp3",
+          "duration_s": 1.8,
+          "audio_sha256": "cfb93e53774f6d605b9d6d30e927234153c5f626e0c61239c173b3a0cd60e452",
+          "listener_votes": {
+            "angry": 3,
+            "happy": 3,
+            "neutral": 3
+          },
+          "listener_majority": "angry or happy or neutral",
+          "listener_info": "Listeners (voice only, n=9): angry 3 · happy 3 · neutral 3 → majority angry or happy or neutral",
+          "subgroup": "iv_questionable_ground_truth",
+          "insight_heading": "A three-way tie",
+          "insight": "Listeners split equally across angry, happy and neutral. The ten predictions span those same categories, so scoring against angry alone conceals the three-way perceptual tie.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "happy",
+              "correct": false,
+              "ser_score": 0.9193
+            },
+            "meralion_ser_v1": {
+              "label": "happy",
+              "correct": false,
+              "ser_score": 0.8612
+            },
+            "melati_emotion": {
+              "label": "happy",
+              "correct": false,
+              "ser_score": 0.6604
+            },
+            "vox_profile_whisper": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.2818
+            },
+            "vox_profile_wavlm": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.3656
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "angry",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        },
+        {
+          "id": "1030_WSI_FEA_XX",
+          "dataset_key": "crema_d",
+          "dataset": "CREMA-D",
+          "speaker": "1030 (female, 42)",
+          "text": "We'll stop in a couple of minutes.",
+          "reference": "fearful",
+          "audio_path": "data/crema_d/AudioWAV/1030_WSI_FEA_XX.wav",
+          "audio_asset": "assets/audio/crema_d__1030_WSI_FEA_XX.mp3",
+          "duration_s": 2.94,
+          "audio_sha256": "d82c56b58833c549e1e77e9b55b4e00c295f6f654e5be3ac1f03d45841f64f6e",
+          "listener_votes": {
+            "neutral": 3,
+            "angry": 2,
+            "disgusted": 2,
+            "sad": 2,
+            "happy": 1
+          },
+          "listener_majority": "neutral",
+          "listener_info": "Listeners (voice only, n=10): neutral 3 · angry 2 · disgusted 2 · sad 2 · happy 1 → majority neutral",
+          "subgroup": "iv_questionable_ground_truth",
+          "insight_heading": "No listener chose fear",
+          "insight": "No listener chooses the acted fearful label. MERaLiON and Qwen2-Audio match the actor, while the other predictions use categories heard by at least one listener.",
+          "predictions": {
+            "emotion2vec_plus_large": {
+              "label": "disgusted",
+              "correct": false,
+              "ser_score": 0.7732
+            },
+            "meralion_ser_v1": {
+              "label": "fearful",
+              "correct": true,
+              "ser_score": 0.8792
+            },
+            "melati_emotion": {
+              "label": "angry",
+              "correct": false,
+              "ser_score": 0.8005
+            },
+            "vox_profile_whisper": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.3294
+            },
+            "vox_profile_wavlm": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": 0.2946
+            },
+            "qwen2_5_omni_7b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "qwen2_audio_7b": {
+              "label": "fearful",
+              "correct": true,
+              "ser_score": null
+            },
+            "gemma4_e4b": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gpt_realtime": {
+              "label": "neutral",
+              "correct": false,
+              "ser_score": null
+            },
+            "gemini-3.8-flash": {
+              "label": "sad",
+              "correct": false,
+              "ser_score": null
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "source_artifacts": [
+    {
+      "path": "presentation/assets/manifest.json",
+      "sha256": "67bd852998eb698f2b6d4f200f412c3a14dee1d0de993ff024e79f873e7d936b"
+    },
+    {
+      "path": "research_paper/output/cross_dataset_analysis.json",
+      "sha256": "5fad03037ff98aacfba0571df147bce5789229602ae4b23e235beddd030da1dd",
+      "root": "repository"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.json",
+      "sha256": "4bb54d0437d2a1feb8da6f8f54514ef0379b85e424cce15e0814103f716fd162"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/crema_d_predictions.csv",
+      "sha256": "f7f3dbfbabc9707d18f86cec7bceb51ba5dfcb9ac540112f6bce63391b135fb3"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.json",
+      "sha256": "42d192ccb5f43b98dcb8b664a118b3e08b0f8df8c49bdf78a8c104e777f9b25d"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/crema_d_predictions.csv",
+      "sha256": "384e24cf74d93423d88f91bf344e56d10d0b04d7fd948ea3f6c3dff4bbc6fa28"
+    },
+    {
+      "path": "outputs/melati_emotion/crema_d_predictions.json",
+      "sha256": "41656adde3a0a670e13bb24bfce1fad1b93517c27cfd6de9109be17339ac13d1"
+    },
+    {
+      "path": "outputs/melati_emotion/crema_d_predictions.csv",
+      "sha256": "8580f8d4d3f9ee59f427970b9c92666b31e5244c8db1e95bca80ad5aa87a5143"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.json",
+      "sha256": "7a27e5e652786605b952134496f05768a2431acca117c7b8b67a0cfb85fc271e"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/crema_d_predictions.csv",
+      "sha256": "939ee429750583f647a0e4e945097f7c1e2e17646345908f80a42c1b57167456"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/crema_d_predictions.json",
+      "sha256": "c446613681eac943a42086b859effb5cc08b55333cc4f12b7cd54bbcc8eefd38"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/crema_d_predictions.csv",
+      "sha256": "cb42026c0653127751c01512ad5426cdcb7a758849b2a98dd32544ad6aa27e98"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.json",
+      "sha256": "3fed5e7dde48b562601dbb0093c1b2e051dddb20e15f25190ea7e53f2647ed58"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/crema_d_predictions.csv",
+      "sha256": "9b885b7fe52d61bd7240c42921dc82b8e05e3aa3be85e0cabbc34bf874e6292c"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/crema_d_predictions.json",
+      "sha256": "0352f7d70484c35f60fb9d6567465101e4ef23902f880b0b31a0f7d1063a65dd"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/crema_d_predictions.csv",
+      "sha256": "4a8b9eb4ff4157321b3da66c933ec23a88efbd1e8036713d04a3755769c61795"
+    },
+    {
+      "path": "outputs/gemma4_e4b/crema_d_predictions.json",
+      "sha256": "d3d13f975a2d0f087c83eb6d10e8a3fc8e356456911f53bd71a7e1733b976960"
+    },
+    {
+      "path": "outputs/gemma4_e4b/crema_d_predictions.csv",
+      "sha256": "55ffac338deaa72772b7abf48564176de3ee22a2c33350096f896c7d886b998d"
+    },
+    {
+      "path": "outputs/gpt_realtime/crema_d_predictions.json",
+      "sha256": "58308a83ea2a49afb43ee1480ea50ffbdacaddb3d32b3b9898a7024fb942edd4"
+    },
+    {
+      "path": "outputs/gpt_realtime/crema_d_predictions.csv",
+      "sha256": "e4ce68b8f41d5c59d356b6f510aedec701eabcbc16074629a6b6d34ed8b5c4bc"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.json",
+      "sha256": "5d054851c9e6d87c3f08eab0c8a4d8d020dffe1a8e095115894692f083953671"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/crema_d_predictions.csv",
+      "sha256": "7876beea268cb541aa6f1b32a59722bfdce4114648080bb44b490aa7d03926d6"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.json",
+      "sha256": "88a168ef0ca115cc92fca7b32088a9cae18ae47f436f833da2e5577149fbdb57"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mcae_spps_predictions.csv",
+      "sha256": "871f1582330cfbe5eb978dc5f58dabc843940dc07302300b1c6242f8ddd4e2dc"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.json",
+      "sha256": "cfc31ccfdda6ea43c2701d0903561f663624e2dbb0652b628f127ea96f26b225"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mcae_spps_predictions.csv",
+      "sha256": "ed98f6d4648c6d9de744e3ebb88769aaeb9ad6a41e58959890c6ac2ebda3fb8e"
+    },
+    {
+      "path": "outputs/melati_emotion/mcae_spps_predictions.json",
+      "sha256": "4bbeca55c6850c8b71cbd84fd53e5df22c2eb3b08459e80e0e2323c57e50ff7c"
+    },
+    {
+      "path": "outputs/melati_emotion/mcae_spps_predictions.csv",
+      "sha256": "8d6dff666db8cc730ffdf25bf3fc5c595c850f2a766ba3e602dd53f00b164b07"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mcae_spps_predictions.json",
+      "sha256": "1419ac48a43cb86c2d69ed5386f4f9cbfbded0f1bf317551dd6c2be395977972"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mcae_spps_predictions.csv",
+      "sha256": "4c46939faf9a688d87f2352fba8f6aeea3404f15a635f05282ab1b80354d9048"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.json",
+      "sha256": "caf7e0e119ebf72ae366fe013fd8ee52b79ee20f360cb92ca65d44317889cf0d"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mcae_spps_predictions.csv",
+      "sha256": "ad14bef1e2056ccc3fe9c0593102fdb730310322a846e5b0ef3d638366ad89b9"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.json",
+      "sha256": "cc11e5b6250e2cf142acd9a153c4d50abcb0889057181b6a344063a742a4b80f"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mcae_spps_predictions.csv",
+      "sha256": "8be45bf6ad0b17068c0e686157c9e482c1ea5c9da4a6386ff99b4ab24098cecc"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.json",
+      "sha256": "07d6ae2b07fe00c6c6f7b1eb6cfec49fe973fe35a40e1d36f21fc00c69e1dd48"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mcae_spps_predictions.csv",
+      "sha256": "401779472ed88fb1df70764083cf7af1ac0824b63e00ca24aba96a964464645f"
+    },
+    {
+      "path": "outputs/gemma4_e4b/mcae_spps_predictions.json",
+      "sha256": "6c7a0baf8d86c59848f8d633c151946105813b796fb7f6c8f8dbe7bef9127c7e"
+    },
+    {
+      "path": "outputs/gemma4_e4b/mcae_spps_predictions.csv",
+      "sha256": "56637c0e8da2848f85c5a87568121f3c996437f668b8cf86a12ca0446369ff1d"
+    },
+    {
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.json",
+      "sha256": "26c7bbe14466027c1d26e7a1f74d5a8081a405d4f053733fd1e6eb98cdb14317"
+    },
+    {
+      "path": "outputs/gpt_realtime/mcae_spps_predictions.csv",
+      "sha256": "e6c0f361bb0d07adae76e7529fa66d55f4bb0327e78e2d68d3f76e9cf4e4b3aa"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.json",
+      "sha256": "3833017667569df50b842a94600717138bb043c862629d08989a19217fce3e41"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mcae_spps_predictions.csv",
+      "sha256": "0c4259a52336449fd53720db0b89334e9a6842aa25d808e42bf9815f08e06e6f"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mess_predictions.json",
+      "sha256": "627f5940fc32611f4e307213caaa4c6c224580dde83f6fc867f23ed834c84433"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/mess_predictions.csv",
+      "sha256": "3db43959e3fa763420607e0b63823fba0e8aa3e3b449298507314c7d9bcd37a2"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mess_predictions.json",
+      "sha256": "23303c844cf4922b76646c4ab453b4c8419d3daa819abb98f79562bea31c30df"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/mess_predictions.csv",
+      "sha256": "7e4b05d3e5bfe4740c04b94ea07a674b0bc665f927ae316601fe76ca6a8180b8"
+    },
+    {
+      "path": "outputs/melati_emotion/mess_predictions.json",
+      "sha256": "0ba139d61f27426a64632f2035ab72018c7c3c8d1cc1221518044a849913fb50"
+    },
+    {
+      "path": "outputs/melati_emotion/mess_predictions.csv",
+      "sha256": "e1708841e0fecbfb2ebcf1e68ff83d2616a2f9d8c34384896f9cd055bcf5cb04"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mess_predictions.json",
+      "sha256": "7b7ddb2388676c7c14bd3bceb37e2db78b48df2cce1e836f52d231cbcefe4936"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/mess_predictions.csv",
+      "sha256": "b94c0bac52daef5113ff0aaeb890613bcf5e1c93d57c0e0a06d3a52620a8d91d"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mess_predictions.json",
+      "sha256": "77253e7a4ea3006d4f1b23c4f0dafa9682ecbed864f8a66f0a18de7a16941ed6"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/mess_predictions.csv",
+      "sha256": "e55f60556d57a9171a74bce71c95552e6567ddd511eac768f1d600b1678833de"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.json",
+      "sha256": "bb1705fe8416555d8cfb9df7c7639b7f14d05a28deda499f9e768849883c8b41"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/mess_predictions.csv",
+      "sha256": "76355fd2a34c81bf7290d0b7321794b740048fb7e6d8cbcc47ba70b417359cba"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mess_predictions.json",
+      "sha256": "a408b05b1b4f5cb9e0a7ef32957d6579bdda45eaed7027f6d50f0f4f061d8cc6"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/mess_predictions.csv",
+      "sha256": "f580986439ea9bcf1efd295e50373be9f280145f6da6965036ae9feb265eb15d"
+    },
+    {
+      "path": "outputs/gemma4_e4b/mess_predictions.json",
+      "sha256": "78df3e79d0403a57862c079dbc83b99f25ddfe5343fea10b66e97d90640279d6"
+    },
+    {
+      "path": "outputs/gemma4_e4b/mess_predictions.csv",
+      "sha256": "c52c63ca8dad4ba4f7948cce967f05fd582dea885bee66c0351d6a111f182add"
+    },
+    {
+      "path": "outputs/gpt_realtime/mess_predictions.json",
+      "sha256": "1a4973f024ecc88191efe2e8b96ddf7c142e05c894a0a4a8b0f55de9a41a5bb7"
+    },
+    {
+      "path": "outputs/gpt_realtime/mess_predictions.csv",
+      "sha256": "b63cfd9e8c476b668ed0035a8124b755e36b1c9e3dc8b869501e615b1324c588"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mess_predictions.json",
+      "sha256": "9599b667e3277dc017ca5314264935a287d73e6a2992df27ae203ad817286e90"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/mess_predictions.csv",
+      "sha256": "1b305a0194b27b82ee1047e0fad3f0600b8c5bd4585ad4731ba6d3f2d97b8da3"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/ravdess_predictions.json",
+      "sha256": "977ddef8e181a8949e81861fb99a5e034f6adca8c27bb0d9db8ce872473f23e9"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/ravdess_predictions.csv",
+      "sha256": "6f3ea3f0683f8dd9d5e6af49dcab22da46936ad10ad4b1734d6ee97520aeb8e9"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.json",
+      "sha256": "5520446d884ff25f8600109cdafcf0b817758dad4d1159b10124c9a5402c0bf3"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/ravdess_predictions.csv",
+      "sha256": "f7940e006f29e64db79cdfc39d804513a75b215cc70ca32cd5b79f62b46a556b"
+    },
+    {
+      "path": "outputs/melati_emotion/ravdess_predictions.json",
+      "sha256": "1981cad44a8438da743b4e9658b849556c410b2029b2054829f84e496de82e81"
+    },
+    {
+      "path": "outputs/melati_emotion/ravdess_predictions.csv",
+      "sha256": "82a2b8d0736babf5f12bce3035c811a37d6795c8c59d0c5658b3791fbfaf8679"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.json",
+      "sha256": "63697d4ab3d748546abc10bbb0415a6bcd87de02fe553cccef8b43c1e1219aa3"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/ravdess_predictions.csv",
+      "sha256": "b3042a1b66a913dbad1785d68f00f622ffdac96214d12ccd5f72656dbd637cfb"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.json",
+      "sha256": "3a4e4f21ee8f3ac193056922166ca08154afa0cb8f5c57eb6846670d1db4a37e"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/ravdess_predictions.csv",
+      "sha256": "ddf53c53a7e44e7e77e5cf7cc147fb3fb9afb68bc933756caea10db9fab78c90"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.json",
+      "sha256": "609a69143365c82a860e9c3c8c2cc1c0e706985f9604eb1fa9836652e633b2a1"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/ravdess_predictions.csv",
+      "sha256": "64943a8d42991b655bab5fc26fc2dfeabcb42b193a45e88b36c6cf0c81d0ce3c"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.json",
+      "sha256": "187d6019abcc96aa1fcd877919e26e21ee91eb7e93b3f6711831aa6fbac3173d"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/ravdess_predictions.csv",
+      "sha256": "416329492ffed5184edc3bb026f061232c131b16066cb1d9d45ddaeee87b706b"
+    },
+    {
+      "path": "outputs/gemma4_e4b/ravdess_predictions.json",
+      "sha256": "33e667703197f332a366ae1215895318b614464b5aebe67a5ac72db837a7c8e5"
+    },
+    {
+      "path": "outputs/gemma4_e4b/ravdess_predictions.csv",
+      "sha256": "5e5c8e7554e5e48f59d4faca5359cf2e277515cc082e442216c29d27e88de2a9"
+    },
+    {
+      "path": "outputs/gpt_realtime/ravdess_predictions.json",
+      "sha256": "1bc36c34c718922aba5f4b37ae5ce49b9f4b7298f458dda932e24a833cba9eee"
+    },
+    {
+      "path": "outputs/gpt_realtime/ravdess_predictions.csv",
+      "sha256": "f76443a27122883777b8656925806c10517e3724ef6223dcf1d9d24acc1221f8"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.json",
+      "sha256": "f2f583cf67e9faed35c2cdf3eba67cb6f3f92027464bc76ae1514992aba5a8d2"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/ravdess_predictions.csv",
+      "sha256": "771315a1c1c70a06b6f0be3a43b80365c0544e3c568fc3c2c8955ddec7804b33"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.json",
+      "sha256": "eecdc2e527bc2945aa89e11d00d881177fb307e0c9021807a2d680a04232e0ab"
+    },
+    {
+      "path": "outputs/emotion2vec_plus_large/tess_predictions.csv",
+      "sha256": "9baa65ab7d70be9fa0ab225906d180b2c8c66f98279d813192c2fdd259b9b671"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/tess_predictions.json",
+      "sha256": "7338f9b4240003ffc65c418376a823eb143a1b57e763fc0ea167c2689a5ee5cb"
+    },
+    {
+      "path": "outputs/meralion_ser_v1/tess_predictions.csv",
+      "sha256": "e2ebd396015fa30a0405c80c89685f8f2f09ce2bd2c415d184861ac2d22c2ce9"
+    },
+    {
+      "path": "outputs/melati_emotion/tess_predictions.json",
+      "sha256": "3faae61e479a08b520462e763d4b1d5b1655d7cd79f653fc0949f5b1a38eaa4f"
+    },
+    {
+      "path": "outputs/melati_emotion/tess_predictions.csv",
+      "sha256": "5d341b9223ecee1a513d79be6577fedd471177d38fd8c9bdd63497416e926fe9"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/tess_predictions.json",
+      "sha256": "a7afa5cd34e00c349d1dd14bbfd665a5f926a7db00882679fad9bfd3573102b4"
+    },
+    {
+      "path": "outputs/vox_profile_whisper/tess_predictions.csv",
+      "sha256": "b8cb143f48b16916289239299c65e0b5f0ab7db168c482f55d036bbe7795df1f"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/tess_predictions.json",
+      "sha256": "4f2b8b10f937f6651956b092808df8184771e6042855acb663f0d4949bf289d6"
+    },
+    {
+      "path": "outputs/vox_profile_wavlm/tess_predictions.csv",
+      "sha256": "c029f53179f70d333a2bb65a64affe592be9db269c7fbf9d657db35fb9fd206b"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/tess_predictions.json",
+      "sha256": "d0f4eba565fb4f3b8b33c3fa1140f3911d60758c6d6eda801cafe859bfc33d9b"
+    },
+    {
+      "path": "outputs/qwen2_5_omni_7b/tess_predictions.csv",
+      "sha256": "a39bc8beb613090eb0e51d2d8d9092206b625eb020d60a06dc11477450ac3dd6"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/tess_predictions.json",
+      "sha256": "81fd1fd129165f0e562bd7aeb06fef95ee0638be92e5e1f36e4da3e18cf0d049"
+    },
+    {
+      "path": "outputs/qwen2_audio_7b/tess_predictions.csv",
+      "sha256": "11cef8f212d7e32df5b1e4cb6bcdcf018deafb3b499b4a86205897b0582c32d1"
+    },
+    {
+      "path": "outputs/gemma4_e4b/tess_predictions.json",
+      "sha256": "575b22193c1970b4b74f9ef00797c0951faab0ad11f999d6651e02bb2a0b4b71"
+    },
+    {
+      "path": "outputs/gemma4_e4b/tess_predictions.csv",
+      "sha256": "119f5a0b82c9b73dc1696d7aa9cbcb8250e810c606d2908b8dab5c09717a1aec"
+    },
+    {
+      "path": "outputs/gpt_realtime/tess_predictions.json",
+      "sha256": "59ae3316e87d02a45933bd4949530c51eb5266926b4ba821a810b14b13677a3f"
+    },
+    {
+      "path": "outputs/gpt_realtime/tess_predictions.csv",
+      "sha256": "4346b6fc67addabde32359fba62ad9b4b15e3c579fe4a4dbd3125ac51f92efbb"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/tess_predictions.json",
+      "sha256": "f70686e859886a86aaeaff843b39d0ce61dda96653cf90e1e460006f1ddca525"
+    },
+    {
+      "path": "outputs/gemini-3.8-flash/tess_predictions.csv",
+      "sha256": "05e42a3b85c01e684e3d88befd98e06669918ecef25de87ee8d7256e87aba066"
+    }
+  ],
+  "prediction_cells": 100,
+  "audio_processing": "Existing presentation MP3s are retained byte-for-byte, including their earlier trimming and loudness processing. Predictions were generated from the original audio paths in saved runs.",
+  "interpretation": "This is the retained illustrative selection, not a representative sample. Green matches the acted reference, blue matches the listener majority/tie, and red matches neither. Dedicated-SER scores are shown only for the five dedicated models and are not calibrated cross-model probabilities. LLM export one-hot fields are not confidence scores.",
+  "provenance_note": "Corpus/teacher/development involvement follows docs/training_provenance.md. These examples do not establish exact clip leakage, prove a cause of domain shift, or certify unseen corpora."
+}

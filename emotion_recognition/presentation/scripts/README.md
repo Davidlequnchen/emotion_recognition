@@ -1,5 +1,12 @@
 # Presentation assets: scripts
 
+The current 2026-11-17 refresh uses `build_dataset_refresh.mjs`, `build_model_refresh.mjs`,
+`build_error_refresh.mjs`, `build_result_refresh.mjs`, `refresh_main_deck.py`,
+`check_main_refresh.py` and `verify_main_imports.mjs`. The canonical output is
+`../SER_evaluation.pptx` (93 slides), with only the two-page sentence excerpt under `updated/`.
+See the parent README for the current build. The descriptions below document the older asset
+generation and inspection pipeline; they do not define additional presentation deliverables.
+
 The 2026-11-16 extension uses `prepare_inspections.py`, `build_semantic.mjs`, `build_inspections.mjs`,
 `embed_inspection_audio.py`, `merge_inspections.py`, `check_inspections.py`, `verify_import_batches.mjs`
 and `finalize_inspections.mjs`. It reads the complete
@@ -12,7 +19,7 @@ their original six-dataset public selection and processing.
 `prepare_lexical_example.py` and `build_lexical_example.mjs` supply the JL-Corpus continuation.
 `insert_lexical_example.py` composes the 85-slide complete deck from private intermediates.
 `consolidate_presentations.py` extracts both matched-sentence pages into one two-slide deck and publishes
-exactly two stable files in `updated/`: `SER_evaluation_extended.pptx` and `Semantic_vs_Vocal_Emotion.pptx`.
+the canonical `SER_evaluation.pptx` and `updated/Semantic_vs_Vocal_Emotion.pptx` only.
 Temporary standalone pages, previews and validated staging packages remain in `.inspection-build/`.
 
 These scripts rebuild everything in `../assets/` that the deck reads: the figures, `stats.json`, the audio

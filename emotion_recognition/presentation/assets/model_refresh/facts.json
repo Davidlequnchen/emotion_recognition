@@ -1,0 +1,1083 @@
+{
+  "generated": "2026-11-17",
+  "scope": "Architecture facts from locally stored released checkpoint configurations and weight headers, without loading tensors or running inference.",
+  "models": {
+    "qwen2_5_omni_7b": {
+      "config": {
+        "architectures": [
+          "Qwen2_5OmniModel"
+        ],
+        "enable_audio_output": true,
+        "enable_talker": true,
+        "model_type": "qwen2_5_omni",
+        "talker_config": {
+          "_attn_implementation_autoset": true,
+          "_name_or_path": "Qwen2.5-Omni-7B/talker",
+          "architectures": [
+            "Qwen2OmniTalkerForConditionalGeneration"
+          ],
+          "attention_dropout": 0.0,
+          "audio_end_token_id": 151648,
+          "audio_start_token_id": 151647,
+          "audio_token_index": 151646,
+          "embedding_size": 3584,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "hidden_size": 896,
+          "image_token_index": 151655,
+          "init_std": 0.02,
+          "initializer_range": 0.02,
+          "intermediate_size": 18944,
+          "max_position_embeddings": 32768,
+          "max_window_layers": 28,
+          "model_type": "qwen2_5_omni_talker",
+          "num_attention_heads": 12,
+          "num_hidden_layers": 24,
+          "num_key_value_heads": 4,
+          "position_id_per_seconds": 25,
+          "rms_norm_eps": 1e-06,
+          "rope_scaling": {
+            "mrope_section": [
+              16,
+              24,
+              24
+            ],
+            "rope_type": "default",
+            "type": "default"
+          },
+          "rope_theta": 1000000.0,
+          "seconds_per_chunk": 2,
+          "sliding_window": 32768,
+          "spatial_merge_size": 2,
+          "torch_dtype": "bfloat16",
+          "tts_codec_end_token_id": 8294,
+          "tts_codec_mask_token_id": 8296,
+          "tts_codec_pad_token_id": 8292,
+          "tts_codec_start_token_id": 8293,
+          "tts_text_end_token_id": 151861,
+          "tts_text_pad_token_id": 151859,
+          "tts_text_start_token_id": 151860,
+          "use_cache": true,
+          "use_sliding_window": false,
+          "video_token_index": 151656,
+          "vision_end_token_id": 151653,
+          "vision_start_token_id": 151652,
+          "vocab_size": 8448
+        },
+        "thinker_config": {
+          "_attn_implementation_autoset": true,
+          "_name_or_path": "Qwen2.5-Omni-7B/thinker",
+          "architectures": [
+            "Qwen2OmniNaViTThinkerForConditionalGeneration"
+          ],
+          "audio_config": {
+            "_attn_implementation_autoset": true,
+            "_name_or_path": "",
+            "activation_dropout": 0.0,
+            "activation_function": "gelu",
+            "add_cross_attention": false,
+            "architectures": null,
+            "attention_dropout": 0.0,
+            "bad_words_ids": null,
+            "begin_suppress_tokens": null,
+            "bos_token_id": null,
+            "chunk_size_feed_forward": 0,
+            "cross_attention_hidden_size": null,
+            "d_model": 1280,
+            "decoder_start_token_id": null,
+            "diversity_penalty": 0.0,
+            "do_sample": false,
+            "dropout": 0.0,
+            "early_stopping": false,
+            "encoder_attention_heads": 20,
+            "encoder_ffn_dim": 5120,
+            "encoder_layerdrop": 0.0,
+            "encoder_layers": 32,
+            "encoder_no_repeat_ngram_size": 0,
+            "eos_token_id": null,
+            "exponential_decay_length_penalty": null,
+            "finetuning_task": null,
+            "forced_bos_token_id": null,
+            "forced_eos_token_id": null,
+            "id2label": {
+              "0": "LABEL_0",
+              "1": "LABEL_1"
+            },
+            "init_std": 0.02,
+            "is_decoder": false,
+            "is_encoder_decoder": false,
+            "label2id": {
+              "LABEL_0": 0,
+              "LABEL_1": 1
+            },
+            "length_penalty": 1.0,
+            "max_length": 20,
+            "max_source_positions": 1500,
+            "min_length": 0,
+            "model_type": "qwen2_5_omni_audio_encoder",
+            "n_window": 100,
+            "no_repeat_ngram_size": 0,
+            "num_beam_groups": 1,
+            "num_beams": 1,
+            "num_hidden_layers": 32,
+            "num_mel_bins": 128,
+            "num_return_sequences": 1,
+            "output_attentions": false,
+            "output_dim": 3584,
+            "output_hidden_states": false,
+            "output_scores": false,
+            "pad_token_id": null,
+            "prefix": null,
+            "problem_type": null,
+            "pruned_heads": {},
+            "remove_invalid_values": false,
+            "repetition_penalty": 1.0,
+            "return_dict": true,
+            "return_dict_in_generate": false,
+            "scale_embedding": false,
+            "sep_token_id": null,
+            "suppress_tokens": null,
+            "task_specific_params": null,
+            "temperature": 1.0,
+            "tf_legacy_loss": false,
+            "tie_encoder_decoder": false,
+            "tie_word_embeddings": true,
+            "tokenizer_class": null,
+            "top_k": 50,
+            "top_p": 1.0,
+            "torch_dtype": null,
+            "torchscript": false,
+            "typical_p": 1.0,
+            "use_bfloat16": false
+          },
+          "text_config": {
+            "model_type": "qwen2_5_omni_text",
+            "hidden_act": "silu",
+            "hidden_size": 3584,
+            "init_std": 0.02,
+            "intermediate_size": 18944,
+            "vocab_size": 152064,
+            "num_attention_heads": 28,
+            "num_hidden_layers": 28,
+            "num_key_value_heads": 4,
+            "max_position_embeddings": 32768,
+            "max_window_layers": 28,
+            "rms_norm_eps": 1e-06,
+            "rope_scaling": {
+              "mrope_section": [
+                16,
+                24,
+                24
+              ],
+              "rope_type": "default",
+              "type": "default"
+            },
+            "use_cache": true,
+            "rope_theta": 1000000.0,
+            "use_sliding_window": false,
+            "sliding_window": 32768,
+            "attention_dropout": 0.0,
+            "tie_word_embeddings": false
+          },
+          "audio_end_token_id": 151648,
+          "audio_start_token_id": 151647,
+          "audio_token_index": 151646,
+          "bos_token_id": 151644,
+          "eos_token_id": 151645,
+          "ignore_index": -100,
+          "image_token_index": 151655,
+          "init_std": 0.02,
+          "model_type": "qwen2_5_omni_thinker",
+          "pad_token_id": 151643,
+          "position_id_per_seconds": 25,
+          "seconds_per_chunk": 2,
+          "torch_dtype": "bfloat16",
+          "user_token_id": 872,
+          "video_token_index": 151656,
+          "vision_config": {
+            "_attn_implementation_autoset": true,
+            "_name_or_path": "",
+            "add_cross_attention": false,
+            "architectures": null,
+            "bad_words_ids": null,
+            "begin_suppress_tokens": null,
+            "bos_token_id": null,
+            "chunk_size_feed_forward": 0,
+            "cross_attention_hidden_size": null,
+            "decoder_start_token_id": null,
+            "depth": 32,
+            "diversity_penalty": 0.0,
+            "do_sample": false,
+            "early_stopping": false,
+            "embed_dim": 1280,
+            "encoder_no_repeat_ngram_size": 0,
+            "eos_token_id": null,
+            "exponential_decay_length_penalty": null,
+            "finetuning_task": null,
+            "forced_bos_token_id": null,
+            "forced_eos_token_id": null,
+            "fullatt_block_indexes": [
+              7,
+              15,
+              23,
+              31
+            ],
+            "hidden_act": "silu",
+            "hidden_size": 1280,
+            "id2label": {
+              "0": "LABEL_0",
+              "1": "LABEL_1"
+            },
+            "in_channels": 3,
+            "in_chans": 3,
+            "init_std": 0.02,
+            "intermediate_size": 3420,
+            "is_decoder": false,
+            "is_encoder_decoder": false,
+            "label2id": {
+              "LABEL_0": 0,
+              "LABEL_1": 1
+            },
+            "length_penalty": 1.0,
+            "max_length": 20,
+            "min_length": 0,
+            "model_type": "qwen2_5_omni_vision_encoder",
+            "no_repeat_ngram_size": 0,
+            "num_beam_groups": 1,
+            "num_beams": 1,
+            "num_heads": 16,
+            "num_return_sequences": 1,
+            "out_hidden_size": 3584,
+            "output_attentions": false,
+            "output_hidden_states": false,
+            "output_scores": false,
+            "pad_token_id": null,
+            "patch_size": 14,
+            "prefix": null,
+            "problem_type": null,
+            "pruned_heads": {},
+            "remove_invalid_values": false,
+            "repetition_penalty": 1.0,
+            "return_dict": true,
+            "return_dict_in_generate": false,
+            "sep_token_id": null,
+            "spatial_merge_size": 2,
+            "spatial_patch_size": 14,
+            "suppress_tokens": null,
+            "task_specific_params": null,
+            "temperature": 1.0,
+            "temporal_patch_size": 2,
+            "tf_legacy_loss": false,
+            "tie_encoder_decoder": false,
+            "tie_word_embeddings": true,
+            "tokenizer_class": null,
+            "tokens_per_second": 25,
+            "top_k": 50,
+            "top_p": 1.0,
+            "torch_dtype": null,
+            "torchscript": false,
+            "typical_p": 1.0,
+            "use_bfloat16": false,
+            "window_size": 112
+          },
+          "vision_end_token_id": 151653,
+          "vision_start_token_id": 151652,
+          "vision_token_id": 151654
+        },
+        "token2wav_config": {
+          "_attn_implementation_autoset": true,
+          "bigvgan_config": {
+            "_attn_implementation_autoset": true,
+            "_name_or_path": "",
+            "add_cross_attention": false,
+            "architectures": null,
+            "bad_words_ids": null,
+            "begin_suppress_tokens": null,
+            "bos_token_id": null,
+            "chunk_size_feed_forward": 0,
+            "cross_attention_hidden_size": null,
+            "decoder_start_token_id": null,
+            "diversity_penalty": 0.0,
+            "do_sample": false,
+            "early_stopping": false,
+            "encoder_no_repeat_ngram_size": 0,
+            "eos_token_id": null,
+            "exponential_decay_length_penalty": null,
+            "finetuning_task": null,
+            "forced_bos_token_id": null,
+            "forced_eos_token_id": null,
+            "id2label": {
+              "0": "LABEL_0",
+              "1": "LABEL_1"
+            },
+            "is_decoder": false,
+            "is_encoder_decoder": false,
+            "label2id": {
+              "LABEL_0": 0,
+              "LABEL_1": 1
+            },
+            "length_penalty": 1.0,
+            "max_length": 20,
+            "mel_dim": 80,
+            "min_length": 0,
+            "model_type": "qwen2_5_omni_bigvgan",
+            "no_repeat_ngram_size": 0,
+            "num_beam_groups": 1,
+            "num_beams": 1,
+            "num_return_sequences": 1,
+            "output_attentions": false,
+            "output_hidden_states": false,
+            "output_scores": false,
+            "pad_token_id": null,
+            "prefix": null,
+            "problem_type": null,
+            "pruned_heads": {},
+            "remove_invalid_values": false,
+            "repetition_penalty": 1.0,
+            "resblock_dilation_sizes": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "resblock_kernel_sizes": [
+              3,
+              7,
+              11
+            ],
+            "return_dict": true,
+            "return_dict_in_generate": false,
+            "sep_token_id": null,
+            "suppress_tokens": null,
+            "task_specific_params": null,
+            "temperature": 1.0,
+            "tf_legacy_loss": false,
+            "tie_encoder_decoder": false,
+            "tie_word_embeddings": true,
+            "tokenizer_class": null,
+            "top_k": 50,
+            "top_p": 1.0,
+            "torch_dtype": null,
+            "torchscript": false,
+            "typical_p": 1.0,
+            "upsample_initial_channel": 1536,
+            "upsample_kernel_sizes": [
+              11,
+              7,
+              4,
+              4,
+              4,
+              4
+            ],
+            "upsample_rates": [
+              5,
+              3,
+              2,
+              2,
+              2,
+              2
+            ],
+            "use_bfloat16": false,
+            "use_bias_at_final": false
+          },
+          "dit_config": {
+            "_attn_implementation_autoset": true,
+            "_name_or_path": "",
+            "add_cross_attention": false,
+            "architectures": null,
+            "bad_words_ids": null,
+            "begin_suppress_tokens": null,
+            "bos_token_id": null,
+            "chunk_size_feed_forward": 0,
+            "cross_attention_hidden_size": null,
+            "decoder_start_token_id": null,
+            "depth": 22,
+            "dim": 1024,
+            "diversity_penalty": 0.0,
+            "do_sample": false,
+            "dropout": 0.1,
+            "early_stopping": false,
+            "emb_dim": 512,
+            "enc_attention_channels": 64,
+            "enc_channels": [
+              256,
+              256,
+              256,
+              256,
+              768
+            ],
+            "enc_dilations": [
+              1,
+              2,
+              3,
+              4,
+              1
+            ],
+            "enc_dim": 128,
+            "enc_emb_dim": 192,
+            "enc_global_context": true,
+            "enc_kernel_sizes": [
+              5,
+              3,
+              3,
+              3,
+              1
+            ],
+            "enc_lin_neurons": 192,
+            "enc_res2net_scale": 2,
+            "enc_se_channels": 64,
+            "encoder_no_repeat_ngram_size": 0,
+            "eos_token_id": null,
+            "exponential_decay_length_penalty": null,
+            "ff_mult": 2,
+            "finetuning_task": null,
+            "forced_bos_token_id": null,
+            "forced_eos_token_id": null,
+            "head_dim": 64,
+            "heads": 16,
+            "id2label": {
+              "0": "LABEL_0",
+              "1": "LABEL_1"
+            },
+            "is_decoder": false,
+            "is_encoder_decoder": false,
+            "label2id": {
+              "LABEL_0": 0,
+              "LABEL_1": 1
+            },
+            "length_penalty": 1.0,
+            "max_length": 20,
+            "mel_dim": 80,
+            "min_length": 0,
+            "model_type": "qwen2_5_omni_dit",
+            "no_repeat_ngram_size": 0,
+            "num_beam_groups": 1,
+            "num_beams": 1,
+            "num_embeds": 8193,
+            "num_return_sequences": 1,
+            "output_attentions": false,
+            "output_hidden_states": false,
+            "output_scores": false,
+            "pad_token_id": null,
+            "prefix": null,
+            "problem_type": null,
+            "pruned_heads": {},
+            "remove_invalid_values": false,
+            "repeats": 2,
+            "repetition_penalty": 1.0,
+            "return_dict": true,
+            "return_dict_in_generate": false,
+            "sep_token_id": null,
+            "suppress_tokens": null,
+            "task_specific_params": null,
+            "temperature": 1.0,
+            "tf_legacy_loss": false,
+            "tie_encoder_decoder": false,
+            "tie_word_embeddings": true,
+            "tokenizer_class": null,
+            "top_k": 50,
+            "top_p": 1.0,
+            "torch_dtype": "float32",
+            "torchscript": false,
+            "typical_p": 1.0,
+            "use_bfloat16": false
+          },
+          "model_type": "qwen2_5_omni_token2wav"
+        },
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.50.0.dev0"
+      },
+      "parameter_elements_in_checkpoint": 8931813888,
+      "selected_tensor_shapes": {
+        "thinker.audio_tower.layers.0.self_attn.k_proj.weight": [
+          1280,
+          1280
+        ],
+        "thinker.audio_tower.layers.0.self_attn.q_proj.weight": [
+          1280,
+          1280
+        ],
+        "thinker.audio_tower.proj.bias": [
+          3584
+        ],
+        "thinker.audio_tower.proj.weight": [
+          3584,
+          1280
+        ],
+        "thinker.model.embed_tokens.weight": [
+          152064,
+          3584
+        ],
+        "thinker.model.layers.0.self_attn.k_proj.weight": [
+          512,
+          3584
+        ],
+        "thinker.model.layers.0.self_attn.q_proj.weight": [
+          3584,
+          3584
+        ]
+      },
+      "safetensors_header_audit": [
+        {
+          "path": "models/qwen2_5_omni_7b/model-00001-of-00005.safetensors",
+          "header_bytes": 124168,
+          "header_sha256": "f57afc44d83a7d13fd9036585a827fb78aa6260c3ea36d127f7a6e843b0854e7"
+        },
+        {
+          "path": "models/qwen2_5_omni_7b/model-00002-of-00005.safetensors",
+          "header_bytes": 15960,
+          "header_sha256": "f77bbed3d798ba0579c78f34ca467e6c6dde62b7031c244ebf7ea1addec2fa86"
+        },
+        {
+          "path": "models/qwen2_5_omni_7b/model-00003-of-00005.safetensors",
+          "header_bytes": 16064,
+          "header_sha256": "dd10f7c40af43b7cac667c36c293f0c0f34f4b986e9aa013e6a4d271e0592ee8"
+        },
+        {
+          "path": "models/qwen2_5_omni_7b/model-00004-of-00005.safetensors",
+          "header_bytes": 32408,
+          "header_sha256": "910124a9576979f6b6cb62d8cfc124716ff5d51ebef39541a57c12b54188f2ed"
+        },
+        {
+          "path": "models/qwen2_5_omni_7b/model-00005-of-00005.safetensors",
+          "header_bytes": 119080,
+          "header_sha256": "bb9bb8bfc34e10aded415be9d439a36a5f841a37f7eeddafa7907cad7ee4df1b"
+        }
+      ],
+      "sources": [
+        {
+          "path": "models/qwen2_5_omni_7b/config.json",
+          "sha256": "f85f5a078951471e32d6ce5dd169acf619e3480c83daf195e5016ef3eb89b1a9"
+        },
+        {
+          "path": "scripts/models/qwen2_5_omni.py",
+          "sha256": "2b15b4aba29e2a181d8f598815cf357935e8aa64a8ae6bedccf828db939979ef"
+        }
+      ]
+    },
+    "qwen2_audio_7b": {
+      "config": {
+        "architectures": [
+          "Qwen2AudioForConditionalGeneration"
+        ],
+        "audio_config": {
+          "model_type": "qwen2_audio_encoder",
+          "num_mel_bins": 128,
+          "encoder_layers": 32,
+          "encoder_attention_heads": 20,
+          "encoder_ffn_dim": 5120,
+          "d_model": 1280,
+          "activation_function": "gelu",
+          "scale_embedding": false,
+          "max_source_positions": 1500
+        },
+        "audio_token_index": 151646,
+        "ignore_index": -100,
+        "model_type": "qwen2_audio",
+        "text_config": {
+          "bos_token_id": 151643,
+          "eos_token_id": 151645,
+          "intermediate_size": 11008,
+          "max_position_embeddings": 8192,
+          "model_type": "qwen2",
+          "rope_theta": 10000,
+          "rms_norm_eps": 1e-05,
+          "sliding_window": 32768,
+          "torch_dtype": "bfloat16",
+          "use_mrope": false,
+          "vocab_size": 156032
+        },
+        "transformers_version": "4.38.1",
+        "vocab_size": 156032
+      },
+      "parameter_elements_in_checkpoint": 8397094912,
+      "selected_tensor_shapes": {
+        "audio_tower.layers.0.self_attn.k_proj.weight": [
+          1280,
+          1280
+        ],
+        "audio_tower.layers.0.self_attn.q_proj.weight": [
+          1280,
+          1280
+        ],
+        "language_model.model.embed_tokens.weight": [
+          156032,
+          4096
+        ],
+        "language_model.model.layers.0.self_attn.k_proj.weight": [
+          4096,
+          4096
+        ],
+        "language_model.model.layers.0.self_attn.q_proj.weight": [
+          4096,
+          4096
+        ],
+        "multi_modal_projector.linear.bias": [
+          4096
+        ],
+        "multi_modal_projector.linear.weight": [
+          4096,
+          1280
+        ]
+      },
+      "safetensors_header_audit": [
+        {
+          "path": "models/qwen2_audio_7b/model-00001-of-00005.safetensors",
+          "header_bytes": 62248,
+          "header_sha256": "bcf8e3ac9dd10bda6ed8f2a8c623f930eab3e71e81bb61287b0dba93b6c0e569"
+        },
+        {
+          "path": "models/qwen2_audio_7b/model-00002-of-00005.safetensors",
+          "header_bytes": 14744,
+          "header_sha256": "5d25225ec7477efefbb404145d6e2251c6b63200bf9182a121a114c3905fafc4"
+        },
+        {
+          "path": "models/qwen2_audio_7b/model-00003-of-00005.safetensors",
+          "header_bytes": 15352,
+          "header_sha256": "b1f678dde31fca5a8c5b550cf3338079785e359dadfcc6f45079e935668f30d9"
+        },
+        {
+          "path": "models/qwen2_audio_7b/model-00004-of-00005.safetensors",
+          "header_bytes": 14024,
+          "header_sha256": "49c6082454b10b1c4251e7d2d7a93146927b1f732d2bf7d8f9ec5e7e8a40e8ae"
+        },
+        {
+          "path": "models/qwen2_audio_7b/model-00005-of-00005.safetensors",
+          "header_bytes": 136,
+          "header_sha256": "44cc193ca4380522726c39e213beb208168b24f6e6b0205bb82651d64ccba8ee"
+        }
+      ],
+      "sources": [
+        {
+          "path": "models/qwen2_audio_7b/config.json",
+          "sha256": "ab122e112e2450f10cec59216185bd519ccd7529c79d4c1c00255d43b97a037d"
+        },
+        {
+          "path": "scripts/models/qwen2_audio.py",
+          "sha256": "22ea3852bfbba76520b5d65172a72d11095dd8309936534d178ec767760139af"
+        }
+      ],
+      "resolved_text_architecture": {
+        "num_hidden_layers": 32,
+        "hidden_size": 4096,
+        "intermediate_size": 11008,
+        "q_projection_shape": [
+          4096,
+          4096
+        ],
+        "k_projection_shape": [
+          4096,
+          4096
+        ],
+        "projector_shape": [
+          4096,
+          1280
+        ]
+      }
+    },
+    "gemma4_e4b": {
+      "config": {
+        "architectures": [
+          "Gemma4ForConditionalGeneration"
+        ],
+        "audio_config": {
+          "_name_or_path": "",
+          "architectures": null,
+          "attention_chunk_size": 12,
+          "attention_context_left": 13,
+          "attention_context_right": 0,
+          "attention_invalid_logits_value": -1000000000.0,
+          "attention_logit_cap": 50.0,
+          "chunk_size_feed_forward": 0,
+          "conv_kernel_size": 5,
+          "dtype": "bfloat16",
+          "gradient_clipping": 10000000000.0,
+          "hidden_act": "silu",
+          "hidden_size": 1024,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "initializer_range": 0.02,
+          "is_encoder_decoder": false,
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "model_type": "gemma4_audio",
+          "num_attention_heads": 8,
+          "num_hidden_layers": 12,
+          "output_attentions": false,
+          "output_hidden_states": false,
+          "output_proj_dims": 1536,
+          "problem_type": null,
+          "residual_weight": 0.5,
+          "return_dict": true,
+          "rms_norm_eps": 1e-06,
+          "subsampling_conv_channels": [
+            128,
+            32
+          ],
+          "use_clipped_linears": true
+        },
+        "audio_token_id": 258881,
+        "boa_token_id": 256000,
+        "boi_token_id": 255999,
+        "dtype": "bfloat16",
+        "eoa_token_id": 258883,
+        "eoa_token_index": 258883,
+        "eoi_token_id": 258882,
+        "eos_token_id": [
+          1,
+          106
+        ],
+        "image_token_id": 258880,
+        "initializer_range": 0.02,
+        "model_type": "gemma4",
+        "text_config": {
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "attention_k_eq_v": false,
+          "bos_token_id": 2,
+          "dtype": "bfloat16",
+          "enable_moe_block": false,
+          "eos_token_id": 1,
+          "expert_intermediate_size": null,
+          "final_logit_softcapping": 30.0,
+          "global_head_dim": 512,
+          "head_dim": 256,
+          "hidden_activation": "gelu_pytorch_tanh",
+          "hidden_size": 2560,
+          "hidden_size_per_layer_input": 256,
+          "initializer_range": 0.02,
+          "intermediate_size": 10240,
+          "layer_types": [
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "sliding_attention",
+            "full_attention"
+          ],
+          "max_position_embeddings": 131072,
+          "model_type": "gemma4_text",
+          "num_attention_heads": 8,
+          "num_experts": null,
+          "num_global_key_value_heads": null,
+          "num_hidden_layers": 42,
+          "num_key_value_heads": 2,
+          "num_kv_shared_layers": 18,
+          "pad_token_id": 0,
+          "rms_norm_eps": 1e-06,
+          "rope_parameters": {
+            "full_attention": {
+              "partial_rotary_factor": 0.25,
+              "rope_theta": 1000000.0,
+              "rope_type": "proportional"
+            },
+            "sliding_attention": {
+              "rope_theta": 10000.0,
+              "rope_type": "default"
+            }
+          },
+          "sliding_window": 512,
+          "tie_word_embeddings": true,
+          "top_k_experts": null,
+          "use_bidirectional_attention": null,
+          "use_cache": true,
+          "use_double_wide_mlp": false,
+          "vocab_size": 262144,
+          "vocab_size_per_layer_input": 262144
+        },
+        "tie_word_embeddings": true,
+        "transformers_version": "5.5.0.dev0",
+        "video_token_id": 258884,
+        "vision_config": {
+          "_name_or_path": "",
+          "architectures": null,
+          "attention_bias": false,
+          "attention_dropout": 0.0,
+          "chunk_size_feed_forward": 0,
+          "default_output_length": 280,
+          "dtype": "bfloat16",
+          "global_head_dim": 64,
+          "head_dim": 64,
+          "hidden_activation": "gelu_pytorch_tanh",
+          "hidden_size": 768,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "initializer_range": 0.02,
+          "intermediate_size": 3072,
+          "is_encoder_decoder": false,
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "max_position_embeddings": 131072,
+          "model_type": "gemma4_vision",
+          "num_attention_heads": 12,
+          "num_hidden_layers": 16,
+          "num_key_value_heads": 12,
+          "output_attentions": false,
+          "output_hidden_states": false,
+          "patch_size": 16,
+          "pooling_kernel_size": 3,
+          "position_embedding_size": 10240,
+          "problem_type": null,
+          "return_dict": true,
+          "rms_norm_eps": 1e-06,
+          "rope_parameters": {
+            "rope_theta": 100.0,
+            "rope_type": "default"
+          },
+          "standardize": false,
+          "use_clipped_linears": true
+        },
+        "vision_soft_tokens_per_image": 280
+      },
+      "parameter_elements_in_checkpoint": 7996157418,
+      "selected_tensor_shapes": {
+        "model.embed_audio.embedding_projection.weight": [
+          2560,
+          1536
+        ],
+        "model.language_model.embed_tokens.weight": [
+          262144,
+          2560
+        ],
+        "model.language_model.layers.0.self_attn.k_proj.weight": [
+          512,
+          2560
+        ],
+        "model.language_model.layers.0.self_attn.q_proj.weight": [
+          2048,
+          2560
+        ]
+      },
+      "safetensors_header_audit": [
+        {
+          "path": "models/gemma4_e4b/model.safetensors",
+          "header_bytes": 281040,
+          "header_sha256": "3d3bfac0fbdf7bd65981df4033efb7690240a8fe6f92eb2f3e3846b289a6f994"
+        }
+      ],
+      "sources": [
+        {
+          "path": "models/gemma4_e4b/config.json",
+          "sha256": "33b10c02df3c2e8536cf323d29d53262aaa2f4d11dbe19bc729373fbe90295d4"
+        },
+        {
+          "path": "scripts/models/gemma4_audio.py",
+          "sha256": "fef73393ad8264043998a34f179466e22bbf9dfa8fcbc1d5442a912b4a41e03f"
+        }
+      ]
+    }
+  },
+  "official_sources": {
+    "qwen2_5_omni_7b": [
+      "https://arxiv.org/html/2503.20215v1",
+      "https://huggingface.co/Qwen/Qwen2.5-Omni-7B"
+    ],
+    "qwen2_audio_7b": [
+      "https://arxiv.org/html/2407.10759v1",
+      "https://huggingface.co/Qwen/Qwen2-Audio-7B-Instruct"
+    ],
+    "gemma4_e4b": [
+      "https://huggingface.co/google/gemma-4-E4B-it",
+      "https://ai.google.dev/gemma/docs/core/model_card_4"
+    ]
+  },
+  "survey_columns": [
+    "Model",
+    "Release",
+    "Parameters",
+    "Emotion training data",
+    "Output & classes"
+  ],
+  "survey_rows": [
+    {
+      "key": "emotion2vec_plus_large",
+      "model": "emotion2vec+ large",
+      "release": "2024-05",
+      "parameters": "162.1M",
+      "emotion_training_data": "EmoBox seed / teacher lineage;\n42,526 h industrial pseudo-labels",
+      "output": "9 class scores\n7 canonical classes retained",
+      "training_detail": "The large checkpoint uses filtered pseudo-labelled industrial data (42,526 hours). EmoBox is explicitly named for the seed model; teacher/seed lineage is disclosed separately from direct raw-corpus training of the large checkpoint. This does not establish exact training-clip membership. Native nine outputs are angry, disgusted, fearful, happy, neutral, other, sad, surprised and unknown. The benchmark retains seven canonical emotion scores; other and unknown are omitted.",
+      "sources": [
+        "https://github.com/ddlBoJack/emotion2vec",
+        "https://huggingface.co/emotion2vec/emotion2vec_plus_large",
+        "models/emotion2vec_plus_large/README.md"
+      ]
+    },
+    {
+      "key": "meralion_ser_v1",
+      "model": "MERaLiON-SER-v1",
+      "release": "2025-10",
+      "parameters": "313.4M",
+      "emotion_training_data": "CREMA-D, ESD, MELD, M3ED;\nSG-ECMT and SGTV",
+      "output": "7 class scores + VAD",
+      "training_detail": "The report lists CREMA-D, ESD, MELD, M3ED and Singaporean SG-ECMT/SGTV training speech. VAD means valence, arousal and dominance; this benchmark scores categorical outputs only. October release is supported by October 2025 public repository history; the technical report appeared in November.",
+      "sources": [
+        "https://arxiv.org/html/2511.04914v1#S4.SS1",
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/commits/main"
+      ]
+    },
+    {
+      "key": "melati_emotion",
+      "model": "Melati",
+      "release": "2026",
+      "parameters": "637.3M",
+      "emotion_training_data": "EMNS, Emozionalmente, JL-Corpus, MESD;\nOreau, RESD, SUBESCO, EmoV-DB, Expresso",
+      "output": "7 class scores",
+      "training_detail": "This is the released public Whisper-large-v3 head trained on nine public corpora: EMNS (1,063), Emozionalmente (6,902), JL-Corpus (1,440), MESD (862), Oreau (502), RESD (1,396), SUBESCO (7,000), EmoV-DB (5,172), Expresso (4,558). The separate internal multi-head release uses additional corpora and is not substituted here. The author used nEMO/NonverbalTTS to choose tagging thresholds; the benchmark uses raw class argmax, without these thresholds. The official card cites 2026 without a release month; the local survey records October, but the slide avoids unverified month-level precision.",
+      "sources": [
+        "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3",
+        "models/melati_emotion/README.md",
+        "docs/models_survey_en.md"
+      ]
+    },
+    {
+      "key": "vox_profile_whisper",
+      "model": "Vox-Profile Whisper",
+      "release": "2025-05",
+      "parameters": "639.9M",
+      "emotion_training_data": "MSP-Podcast v1.12",
+      "output": "9 class scores\nIncludes contempt and other",
+      "training_detail": "Native classes are anger, contempt, disgust, fear, happiness, neutral, sadness, surprise and other. The categorical SER head was trained on MSP-Podcast v1.12; unrelated Vox-Profile task datasets are not asserted to be this head training set. May 2025 is the public report/release period recorded in the local survey.",
+      "sources": [
+        "https://arxiv.org/abs/2505.14648",
+        "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion",
+        "docs/models_survey_en.md"
+      ]
+    },
+    {
+      "key": "vox_profile_wavlm",
+      "model": "Vox-Profile WavLM",
+      "release": "2025-05",
+      "parameters": "316.2M",
+      "emotion_training_data": "MSP-Podcast v1.12",
+      "output": "9 class scores\nIncludes contempt and other",
+      "training_detail": "The native categorical head has the same nine classes as the Whisper variant. Training on MSP-Podcast v1.12 is separate from the WavLM backbone pretraining.",
+      "sources": [
+        "https://arxiv.org/abs/2505.14648",
+        "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion",
+        "docs/models_survey_en.md"
+      ]
+    },
+    {
+      "key": "qwen2_5_omni_7b",
+      "model": "Qwen2.5-Omni 7B",
+      "release": "2025-03",
+      "parameters": "8.93B",
+      "emotion_training_data": "SER corpus list not fully disclosed",
+      "output": "Text label; no fixed SER head\n4–7 dataset prompt candidates",
+      "training_detail": "The architecture is an audio encoder and Qwen2.5 Thinker decoder. The complete SER-specific training-corpus inventory is not publicly disclosed; this is not a claim of no emotion training or unseen benchmark datasets. The official release announcement is dated March 27, 2025.",
+      "sources": [
+        "https://qwenlm.github.io/blog/qwen2.5-omni/",
+        "https://arxiv.org/html/2503.20215v1"
+      ]
+    },
+    {
+      "key": "qwen2_audio_7b",
+      "model": "Qwen2-Audio 7B Instruct",
+      "release": "2024-08",
+      "parameters": "8.40B",
+      "emotion_training_data": "SER corpus list not fully disclosed",
+      "output": "Text label; no fixed SER head\n4–7 dataset prompt candidates",
+      "training_detail": "The architecture is a Whisper-style audio encoder and a 32-layer 4,096-width Qwen decoder. The complete SER-specific corpus inventory is not publicly disclosed. The technical report first appeared in July, but the official model release announcement is August 9, 2024, so Release uses August.",
+      "sources": [
+        "https://qwenlm.github.io/blog/qwen2-audio/",
+        "https://arxiv.org/html/2407.10759v1"
+      ]
+    },
+    {
+      "key": "gemma4_e4b",
+      "model": "Gemma 4 E4B",
+      "release": "2026-04",
+      "parameters": "8.00B stored\n4.5B eff.",
+      "emotion_training_data": "SER corpus list not fully disclosed",
+      "output": "Text label; no fixed SER head\n4–7 dataset prompt candidates",
+      "training_detail": "A dense 42-layer decoder with audio encoder and PLE. The complete SER-specific corpus inventory is not publicly disclosed. Official release announcement: April 2, 2026. Effective parameters follow the official model card; stored parameters are measured from local checkpoint headers.",
+      "sources": [
+        "https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/",
+        "https://ai.google.dev/gemma/docs/core/model_card_4"
+      ]
+    },
+    {
+      "key": "gpt_realtime",
+      "model": "GPT Realtime",
+      "release": "2025-08",
+      "parameters": "Undisclosed",
+      "emotion_training_data": "SER corpus list not disclosed",
+      "output": "Text label; no fixed SER head\n4–7 dataset prompt candidates",
+      "training_detail": "The official gpt-realtime launch was August 28, 2025. Internal architecture and complete SER-specific training corpus list are not published. The current benchmark requests text-only classification output from the API.",
+      "sources": [
+        "https://openai.com/index/introducing-gpt-realtime/",
+        "config/models.yaml"
+      ]
+    },
+    {
+      "key": "gemini_flash",
+      "model": "Gemini 3.8 Flash",
+      "release": "2026\n(ID only)",
+      "parameters": "Undisclosed",
+      "emotion_training_data": "SER corpus list not disclosed",
+      "output": "Text label; no fixed SER head\n4–7 dataset prompt candidates",
+      "training_detail": "The retained benchmark configuration records this model ID in 2026. An official release date for that exact ID has not been independently verified, so the visible 2026 ID-only notation is explicitly not a claimed release date. Internal architecture and SER-specific corpus list are not disclosed.",
+      "sources": [
+        "config/models.yaml",
+        "reports/summary.json"
+      ]
+    }
+  ],
+  "survey_protocol_notes": "Five dedicated SER systems, three open audio LLMs and two API systems. All ten completed sixteen dataset cohorts. Dedicated SER scores are restricted to dataset candidates when selecting a prediction. Generative systems have no fixed SER classification head and generate text from 4–7 dataset-specific candidates. JL-Corpus excited accepts happy or surprised; it is not an extra native output class. Full speech-backbone pretraining sources are not identical to the SER-task training datasets shown in this column. A missing complete corpus inventory does not prove a dataset was unseen."
+}
