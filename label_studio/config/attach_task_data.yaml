@@ -1,0 +1,11 @@
+# =====================================================================
+# Settings of label_studio/attach_task_data.py: after the audio files were uploaded directly into a Label Studio
+# project (Import → Upload Files), add transcript and clip_id from the local tasks_NNN.json to each uploaded task.
+# Run it from the repository root: python3 label_studio/attach_task_data.py
+# The server and key come from environment variables, never from this file (this repository is public):
+#   LABEL_STUDIO_URL and LABEL_STUDIO_API_KEY; see label_studio/data_import_en.md.
+# =====================================================================
+project_id: 1  # the number in the project's address: https://<your-label-studio-host>/projects/<id>/data
+tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json  # the batch whose audio files were uploaded
+write: false   # false = dry run (read and match only); true = write transcript and clip_id into the tasks
+limit: 3       # at most this many tasks are written per run; start with 3, check them, then null = all

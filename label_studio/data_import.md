@@ -119,7 +119,95 @@ manifest、音频目录及引用音频的真实路径必须位于 document root 
 上传 JSON 只导入任务字段，不会上传 JSON 中引用的音频。不要一次同步所有分批文件，否则全部任务都会进入项目。
 **每份 JSON 在 Tasks Sync 和 Upload Files 中二选一，且只导入一次**，不要重复导入。
 
-## 4. 读取并标准化导出
+## 4. 服务器版 Label Studio：直接上传音频（不用 Local Files / GCS）
+
+**适用情况**：只能使用公司服务器上的 Label Studio Enterprise（LSE），不能用 Local Files，GCS 也来不及配置。
+这时负责人通过 **Import → Upload Files** 直接上传音频。`tasks_NNN.json` **不导入**：它只是"要上传哪些音频"的清单，
+也是 `transcript` 和 `clip_id` 的来源。
+
+**为什么要切换模板**：with-transcript 模板有 `$audio`、`$transcript` 两个数据键，直接上传音频会被拒绝：
+
+> Your label config has more than one data key and direct file upload supports only one data key.
+> To import data with multiple data keys, use a JSON or CSV file.
+
+所以先用只有 `$audio` 的 audio-only 模板上传，再用脚本补上转写和 `clip_id`，最后切换到 with-transcript。
+
+| 步骤 | 操作 | 检查 |
+|---|---|---|
+| 1 | 本机运行 `link_upload_audio.py`，把一份 `tasks_NNN.json` 的音频硬链接到 `part_01/`、`part_02/` … | 各 part 的文件数 |
+| 2 | 在 LSE 建项目，模板用 [config_audio_only.xml](config_audio_only.xml) | 预览只有音频和选项 |
+| 3 | 打开 **Import**，每次选中一个 part 文件夹里的全部文件拖进去 | 任务数等于已上传的文件数 |
+| 4 | 运行 `attach_task_data.py`，先试运行（`write: false`） | 没有报错；`To update` 等于文件数 |
+| 5 | 改为 `write: true`（`limit: 3`），只写 3 条 | Data Manager 出现 `transcript`、`clip_id` 列，这 3 条有值 |
+| 6 | 改为 `limit: null`，写入全部 | 提示 `All tasks of this file are done` |
+| 7 | **Settings → Labeling Interface → Code** 换成 [config_with_transcript.xml](config_with_transcript.xml) | 打开一条任务：能播放，文字对应 |
+| 8 | 这时才让标注员开始 | |
+
+两个脚本都在仓库根目录、用已安装 [requirements.txt](requirements.txt) 的 Python 运行（`emotion_recognition_llm` 环境已包含），
+不用命令行参数，设置写在 `label_studio/config/` 的 YAML 中。
+
+### 4.1 建立上传文件夹（硬链接）
+
+`label_studio/config/link_upload_audio.yaml`：
+
+```yaml
+tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
+document_root: /absolute/path/to/dataset
+upload_dir: /absolute/path/to/dataset/batch/audio/upload_001  # 新的或空的文件夹
+files_per_folder: 100
+```
+
+```bash
+python3 label_studio/link_upload_audio.py
+```
+
+- 上传文件夹里是**硬链接**：不占额外磁盘空间。Finder 显示的文件夹大小可能仍是完整大小，但磁盘用量不变，
+  对整个批次文件夹运行 `du -sh` 只算一次。原音频不移动、不修改，manifest 和任务 JSON 的路径照常有效。
+- 上传后可以删除上传文件夹，原文件不受影响。**不要编辑上传文件夹里的文件**，那样原文件也会一起改变。
+- 硬链接要求与音频在同一磁盘。exFAT 和部分网络盘不支持；脚本会报错并清理已建的链接，不会改为复制。
+- 每个 part 最多 `files_per_folder` 个文件。开源版每次上传默认最多 100 个文件（`DATA_UPLOAD_MAX_NUMBER_FILES`），
+  LSE 以管理员设置为准；上传被拒时调小这个值。
+- Label Studio 会把空格改成 `_`、删掉 `#` 等符号，并在文件名前加 8 位随机前缀；脚本会自动对应。
+  因此文件名必须唯一（忽略大小写和被删的符号），且不超过 70 个字符，否则服务器会截短文件名。
+
+### 4.2 补上转写和 clip_id
+
+`label_studio/config/attach_task_data.yaml`：
+
+```yaml
+project_id: 1      # 项目网址中的数字：https://<your-label-studio-host>/projects/<id>/data
+tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
+write: false       # false = 试运行，只读取和匹配；true = 写入
+limit: 3           # 每次最多写入几条；检查无误后改为 null = 全部
+```
+
+服务器地址和 token 只放在环境变量中，不写进 YAML（仓库是公开的）：
+
+```bash
+export LABEL_STUDIO_URL="https://<your-label-studio-host>"
+read -rs LABEL_STUDIO_API_KEY && export LABEL_STUDIO_API_KEY   # 粘贴 token 后回车：不显示，也不进 shell 历史
+python3 label_studio/attach_task_data.py
+```
+
+- token 位置：右上角头像 → **Account & Settings** → **Legacy Token**。也可用 Personal Access Token，脚本会自动换取短期 access token。
+- token 等同密码：不要写进文件或发给别人。泄露后立即在同一页面重置。
+- 返回 401 时先检查 token；若管理员关闭了 Legacy Token，改用 Personal Access Token。
+- 公司网络使用自有证书时，先设置 `export REQUESTS_CA_BUNDLE=/absolute/path/to/company-ca.pem`。
+- 脚本只打印数量、文件名和 `clip_id`，不打印转写或 token。
+- 找不到对应文件、同一文件上传了两次等问题，都会在写入前停止并列出任务。重复上传时，在 Data Manager
+  删掉多余的任务后重跑。已完成的任务会跳过，可以放心重跑。
+
+### 4.3 同一项目的后续批次
+
+只在两批之间、没有人标注时进行：
+
+1. 模板换回 `config_audio_only.xml`。两份模板的选项相同，已有标注保留。
+2. 对 `tasks_002.json` 运行 `link_upload_audio.py`（新的 `upload_dir`，例如 `upload_002`），上传各 part。
+3. 把 `attach_task_data.yaml` 的 `tasks_file` 改为 `tasks_002.json`，按上表第 4–6 步运行。
+   前面批次的任务显示为 `other batches (ignored)`，不会被修改。
+4. 换回 `config_with_transcript.xml`，再让标注员继续。
+
+## 5. 读取并标准化导出
 
 先在 Label Studio **Export → JSON** 下载并保留完整原生文件。以 `data.clip_id` 关联 manifest。
 原生 `result` 中 `from_name="decision"`、`type="choices"` 的 `value.choices` 保存唯一决策，

@@ -1,2 +1,5 @@
 # Parquet input for prepare_tasks.py; also included in the main emotion_recognition environment.
 pyarrow==26.0.0
+# YAML settings for link_upload_audio.py and attach_task_data.py; HTTP API calls for attach_task_data.py.
+PyYAML==6.0.3
+requests==2.34.2

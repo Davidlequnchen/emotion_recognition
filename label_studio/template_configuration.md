@@ -157,6 +157,7 @@ Unknown 不等于 Neutral，也不代表音频不可用。Bad clip 是独立弃�
 
 `$transcript` 读取同一任务的 `data.transcript`。Text 只读显示已有内容，不要求重新转写或重新 ASR。
 同一批标注员使用一致的 audio-only 或 with-transcript 协议；允许文字辅助时先听声音、再参考文字。
+这个模板有两个数据键，因此直接上传音频会报 "more than one data key"；做法见[直接上传音频](data_import.md#4-服务器版-label-studio直接上传音频不用-local-files--gcs)。
 
 ## 5. 配置如何对应任务 JSON
 
@@ -205,7 +206,7 @@ Label Studio 下载的原生 JSON 中，决策结果是：
 | `bad_clip` | `bad_clip` | JSON `null` |
 
 原生 JSON 和标准化 JSON 分别保存，不能把原生文件误当成已经转换的业务数据。
-命令与输出示例见 [标准化导出说明](data_import.md#4-读取并标准化导出)。
+命令与输出示例见 [标准化导出说明](data_import.md#5-读取并标准化导出)。
 
 ## 7. 保存前自查
 

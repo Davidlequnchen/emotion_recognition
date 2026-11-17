@@ -163,6 +163,8 @@ section after the player:
 `$transcript` reads the same task's `data.transcript`. Text displays the existing content as read-only; it does not
 require transcription or another ASR run. Use the same audio-only or with-transcript protocol for all annotators in
 a batch. When transcript assistance is allowed, listen first and then consult the text.
+This template has two data keys, so uploading audio files directly fails with "more than one data key"; see
+[Upload audio directly](data_import_en.md#4-server-label-studio-upload-audio-directly-no-local-files--gcs).
 
 ## 5. Match the configuration to task JSON
 
@@ -212,7 +214,7 @@ Here, `bad_clip` is a rejection decision, not an emotion label. After running [n
 | `bad_clip` | `bad_clip` | JSON `null` |
 
 Keep native and normalized JSON separately. Do not treat the native file as already-converted business data.
-Commands and output examples are in the [export normalization guide](data_import_en.md#4-read-and-normalize-exports).
+Commands and output examples are in the [export normalization guide](data_import_en.md#5-read-and-normalize-exports).
 
 ## 7. Check before saving
 

@@ -58,6 +58,9 @@ Freeze the configuration when production labeling begins, and do not casually ch
 **Completed by the project lead.** The demo's 6 public clips have already been imported through **Local Files → Tasks → Save & Sync**,
 so you can go directly to step 4. Storage configuration is explained in [Data preparation and import](data_import_en.md).
 
+**If only a company-hosted Label Studio is available (no Local Files / GCS)**, upload the audio files directly and add
+transcript and `clip_id` with a script instead: see [Upload audio directly](data_import_en.md#4-server-label-studio-upload-audio-directly-no-local-files--gcs). No task JSON is imported then.
+
 For new batches, you can also use **Import → Upload Files** on the project's data page:
 
 1. Upload only `tasks_001.json`, generated from `manifest.parquet` by the person preparing the data, then click **Import**. See [Data preparation and import](data_import_en.md) for the generation command.
@@ -141,7 +144,7 @@ The default export includes annotated tasks; unsubmitted tasks are not included 
 Workflow demonstration results are only for checking the process and must not be used as training or evaluation labels.
 The native JSON stores the selection as `decision`: either one of the 8 emotion values or the `bad_clip` rejection decision.
 After the project lead runs the normalization script, Bad clip becomes `status="bad_clip"` and `emotion=null`, rather than an emotion label.
-For the conversion command and fields, see [Data import and export](data_import_en.md#4-read-and-normalize-exports).
+For the conversion command and fields, see [Data import and export](data_import_en.md#5-read-and-normalize-exports).
 
 Keep the complete original JSON, including `data.clip_id` and each annotation's `completed_by`, `lead_time`, `result`, and `was_cancelled`.
 Keep different annotators' votes for the same clip separately. Examine agreement and disagreements before deciding on training labels;

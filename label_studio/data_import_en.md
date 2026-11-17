@@ -128,7 +128,106 @@ Uploading JSON imports task fields, not the referenced audio. Do not sync all ba
 all their tasks to the project. **Choose either Tasks Sync or Upload Files for each JSON, and import each file only
 once.** Do not duplicate imports.
 
-## 4. Read and normalize exports
+## 4. Server Label Studio: upload audio directly (no Local Files / GCS)
+
+**When to use this**: only a company-hosted Label Studio Enterprise (LSE) is allowed, Local Files is not available,
+and GCS cannot be set up in time. The project lead then uploads the audio files through **Import → Upload Files**.
+`tasks_NNN.json` is **not imported**: it is the list of audio files to upload and the source of `transcript` and
+`clip_id`.
+
+**Why the template must be switched**: the with-transcript template has two data keys, `$audio` and `$transcript`,
+and Label Studio refuses direct audio uploads for it:
+
+> Your label config has more than one data key and direct file upload supports only one data key.
+> To import data with multiple data keys, use a JSON or CSV file.
+
+So upload with the audio-only template (only `$audio`), add transcript and `clip_id` with a script, then switch to
+with-transcript.
+
+| Step | Action | Check |
+|---|---|---|
+| 1 | Locally, run `link_upload_audio.py` to hard-link the audio of one `tasks_NNN.json` into `part_01/`, `part_02/`, … | Files per part |
+| 2 | Create the LSE project with [config_audio_only.xml](config_audio_only.xml) | Preview shows only the audio and choices |
+| 3 | Open **Import**; each time, select all files of one part folder and drag them in | Task count equals files uploaded |
+| 4 | Run `attach_task_data.py` as a dry run (`write: false`) | No errors; `To update` equals the file count |
+| 5 | Set `write: true` (`limit: 3`) to write 3 tasks | The Data Manager shows `transcript` and `clip_id` columns filled for those 3 |
+| 6 | Set `limit: null` to write all | It prints `All tasks of this file are done` |
+| 7 | In **Settings → Labeling Interface → Code**, switch to [config_with_transcript.xml](config_with_transcript.xml) | Open a task: the audio plays and the text matches |
+| 8 | Only now let the annotators start | |
+
+Run both scripts from the repository root with a Python that has [requirements.txt](requirements.txt) installed
+(the `emotion_recognition_llm` environment already has it). They take no command-line arguments; their settings are
+YAML files in `label_studio/config/`.
+
+### 4.1 Build the upload folders (hard links)
+
+`label_studio/config/link_upload_audio.yaml`:
+
+```yaml
+tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
+document_root: /absolute/path/to/dataset
+upload_dir: /absolute/path/to/dataset/batch/audio/upload_001  # a new or empty folder
+files_per_folder: 100
+```
+
+```bash
+python3 label_studio/link_upload_audio.py
+```
+
+- The upload folder holds **hard links**, which use no extra disk space. Finder may still show the folder's full
+  size, but disk usage does not grow, and `du -sh` on the whole batch folder counts each file once. The originals
+  are not moved or changed, so the manifest and task JSON paths stay valid.
+- After uploading, you may delete the upload folder; the originals are unaffected. **Do not edit files inside the
+  upload folder**: edits would change the originals too.
+- Hard links need the same disk as the audio. exFAT and some network shares do not support them; the script then
+  stops, removes the links it created, and never falls back to copying.
+- Each part holds at most `files_per_folder` files. Open-source Label Studio accepts 100 files per upload by default
+  (`DATA_UPLOAD_MAX_NUMBER_FILES`); on LSE the admin's setting applies. Lower the value if an upload is refused.
+- Label Studio replaces spaces with `_`, drops characters such as `#`, and adds an 8-character random prefix; the
+  script handles this. File names must therefore be unique (ignoring case and dropped characters) and at most 70
+  characters long, or the server shortens them.
+
+### 4.2 Add transcript and clip_id
+
+`label_studio/config/attach_task_data.yaml`:
+
+```yaml
+project_id: 1      # the number in the project address: https://<your-label-studio-host>/projects/<id>/data
+tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
+write: false       # false = dry run (read and match only); true = write
+limit: 3           # most tasks written per run; once checked, set null = all
+```
+
+The server address and token live only in environment variables, never in YAML (the repository is public):
+
+```bash
+export LABEL_STUDIO_URL="https://<your-label-studio-host>"
+read -rs LABEL_STUDIO_API_KEY && export LABEL_STUDIO_API_KEY   # paste the token, press Enter: hidden, not in history
+python3 label_studio/attach_task_data.py
+```
+
+- Where the token is: avatar (top right) → **Account & Settings** → **Legacy Token**. A Personal Access Token also
+  works; the script exchanges it for a short-lived access token.
+- Treat the token like a password: never put it in a file or send it to anyone. If it leaks, reset it on the same page.
+- On HTTP 401, check the token; if the admin disabled legacy tokens, use a Personal Access Token.
+- If the company network uses its own certificate authority, first set
+  `export REQUESTS_CA_BUNDLE=/absolute/path/to/company-ca.pem`.
+- The script prints counts, file names, and `clip_id` values only, never transcripts or the token.
+- Problems such as an uploaded file with no match or a file uploaded twice stop the run before anything is written,
+  and the tasks are listed. For a double upload, delete the extra task in the Data Manager and run again. Finished
+  tasks are skipped, so re-running is safe.
+
+### 4.3 Later batches in the same project
+
+Only between batches, while nobody is labeling:
+
+1. Switch the template back to `config_audio_only.xml`. Both templates have the same choices, so existing annotations stay.
+2. Run `link_upload_audio.py` for `tasks_002.json` (with a new `upload_dir`, e.g. `upload_002`) and upload its parts.
+3. Set `tasks_file` in `attach_task_data.yaml` to `tasks_002.json` and follow steps 4–6 of the table. Tasks of
+   earlier batches appear as `other batches (ignored)` and are left unchanged.
+4. Switch back to `config_with_transcript.xml`, then let the annotators continue.
+
+## 5. Read and normalize exports
 
 First download and retain the complete native file using Label Studio **Export → JSON**. Join it to the manifest
 using `data.clip_id`. In the native `result`, the entry with `from_name="decision"` and `type="choices"` stores the

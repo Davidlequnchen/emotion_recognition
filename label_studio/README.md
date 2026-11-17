@@ -57,6 +57,9 @@
 **由项目负责人完成。** 本次演示的 6 条公开 clip 已通过 **Local Files → Tasks → Save & Sync** 导入，
 可以直接进入步骤 4。存储方式的具体配置见 [数据导入说明](data_import.md)。
 
+**只能用公司服务器版 Label Studio（不能用 Local Files / GCS）时**，改为直接上传音频文件、再用脚本补上转写和 `clip_id`，
+见[直接上传音频](data_import.md#4-服务器版-label-studio直接上传音频不用-local-files--gcs)；这时不导入任务 JSON。
+
 日常导入新批次时，也可以使用项目数据页的 **Import → Upload Files**：
 
 1. 先只上传数据准备人员从 `manifest.parquet` 生成的 `tasks_001.json`，再点击 **Import**；生成方法见[数据导入说明](data_import.md)。
@@ -134,7 +137,7 @@
 默认导出已标注任务，未提交的任务不会默认包含在内。操作演示结果只用于验证流程，不作为训练或评测标签。
 原生 JSON 把选择保存为 `decision`：它可能是 8 个情绪值之一，也可能是 `bad_clip` 弃用决策。
 负责人使用标准化脚本后，Bad clip 对应 `status="bad_clip"`、`emotion=null`，不会成为情绪标签。
-具体转换命令和字段见 [数据导入与导出接口](data_import.md#4-读取并标准化导出)。
+具体转换命令和字段见 [数据导入与导出接口](data_import.md#5-读取并标准化导出)。
 
 保留完整原始 JSON，包括 `data.clip_id`、每条 annotation 的 `completed_by`、`lead_time`、`result` 和
 `was_cancelled`。同一 clip 的多人标注先分别保存，分析一致性和分歧后再决定训练标签，不要直接覆盖为一个标签。
