@@ -89,6 +89,7 @@ class Editor:
             slide=E.fromstring(self.parts[dst])
             key=meta.get('key') or meta.get('dataset') or str(i+1)
             marker='ser-refresh:'+meta['kind']+':'+key
+            if meta.get('already_compact'):marker+=':whitespace90'
             slide.find('p:cSld',NS).set('name',marker)
             self.parts[dst]=xml_bytes(slide)
             rid=prefix+'slide'+str(i+1)
@@ -220,6 +221,7 @@ def main():
     model=editor.import_deck(BUILD/'model-refresh.pptx','modelRefresh_',read_order(BUILD/'model-refresh-order.json'))
     errors=editor.import_deck(BUILD/'error-refresh-audio.pptx','errorRefresh_',read_order(BUILD/'error-refresh-order.json'))
     results=editor.import_deck(BUILD/'result-refresh.pptx','resultRefresh_',read_order(BUILD/'result-refresh-order.json'))
+    listener=editor.import_deck(BUILD/'listener-plot-refresh.pptx','listenerPlot_',read_order(BUILD/'listener-plot-refresh-order.json'))
     original=editor.entries
     start=next(i for i,e in enumerate(original) if 'Sixteen Public Benchmark Datasets' in editor.heading(e) or ('ser-refresh:' in editor.slide(e).find('p:cSld',NS).get('name','') and 'overview' in editor.slide(e).find('p:cSld',NS).get('name','')))
     end=next(i for i,e in enumerate(original) if 'Inter-Rater Agreement: Actor vs Listeners' in editor.heading(e))
@@ -234,6 +236,9 @@ def main():
     err_by_title={m['title']:e for e,m in errors}
     for i,e in enumerate(original):
         if editor.heading(e) in err_by_title:original[i]=err_by_title[editor.heading(e)]
+    listener_entry,listener_meta=listener[0]
+    listener_position=next(i for i,e in enumerate(original) if 'Actor vs Listener Labels (CREMA-D)' in editor.heading(e))
+    original[listener_position]=listener_entry
     # One complete table per metric replaces the former split family / dataset pages.
     result_by_key={m['key']:e for e,m in results}
     consolidated=[];used=set()

@@ -12,7 +12,7 @@ from refresh_main_deck import DECK,BUILD,REFRESH
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--record-review',action='store_true',help='After inspecting all contact sheets and changed pages, record that completed review')
-    parser.add_argument('--detailed-slides',default='6,8,20,28,36,41,91')
+    parser.add_argument('--detailed-slides',default='6,27,46')
     args=parser.parse_args()
     candidate=REFRESH/'main-candidate.pptx'
     digest=hashlib.sha256(candidate.read_bytes()).hexdigest()

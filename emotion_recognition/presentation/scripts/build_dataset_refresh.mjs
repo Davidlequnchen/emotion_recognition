@@ -56,25 +56,23 @@ function speakersShort(ds){
  if(ds.speakers_evaluated!==undefined)return `${ds.speakers_evaluated} speakers`;
  const m=value.match(/\d+/);return m?`${m[0]} speakers`:value;
 }
-function parallelSummary(ds){return ds.key==='mead'?'~30 per emotion\n+ 40 neutral; partial':ds.parallel_text;}
+function parallelSummary(ds){return ds.key==='mead'?'~30/emo + 40 neutral, partial':ds.parallel_text;}
 
-// Two readable eight-corpus overviews retain both clip and speaker counts.
-for(let half=0;half<2;half++){
- const s=base(`Sixteen Public Benchmark Datasets (${half+1}/2)`,'overview');
- text(s,'cohort','Current cohorts for all ten models, with recording and label sources',57.6,132,1164,34,20);
- const current=order.slice(half*8,half*8+8).map(k=>byKey.get(k));
+// One complete overview, with separate clip and speaker columns for compact rows.
+{
+ const s=base('Sixteen Public Benchmark Datasets','overview');
+ text(s,'cohort','16 datasets and 67,062 recordings per model, with recording design and label sources',57.6,120,1164,30,20);
+ const current=order.map(k=>byKey.get(k));
  if(current.some(x=>!x))throw new Error('Overview ordering references an absent dataset');
- const values=[['Dataset','Language','Recording\nsource','Clips /\nspeakers','Parallel text','Reference labels / raters'],...current.map(ds=>[
+ const values=[['Dataset','Language','Recording','Clips','Speakers','Parallel text','Reference labels / raters'],...current.map(ds=>[
   ds.name.replace(/ \(.*?\)$/,''),languageShort(ds.language),ds.type==='dialogue'?'dialogue':'standalone',
-  `${Number(ds.clips).toLocaleString('en-US')}\n${speakersShort(ds)}`,parallelSummary(ds),ds.label_summary
+  Number(ds.clips).toLocaleString('en-US'),speakersShort(ds).replace(/ speakers$/,''),parallelSummary(ds),ds.label_summary
  ])];
- const t=table(s,values,57.6,180,1164,[190,105,120,140,190,419],[48,...Array(8).fill(48)],18.2);
- for(let r=1;r<9;r++){
-  t.getCell(r,1).text.style={fontSize:17.3,typeface:'Calibri',color:C.ink,verticalAlignment:'middle'};
-  t.getCell(r,2).text.style={fontSize:16.6,typeface:'Calibri',color:C.ink,verticalAlignment:'middle'};
-  t.getCell(r,3).text.style={fontSize:17.6,typeface:'Calibri',color:C.ink,verticalAlignment:'middle'};
-  t.getCell(r,4).text.style={fontSize:17.3,typeface:'Calibri',color:C.ink,verticalAlignment:'middle'};
-  t.getCell(r,5).text.style={fontSize:17.3,typeface:'Calibri',color:C.ink,verticalAlignment:'middle'};
+ const t=table(s,values,57.6,158,1164,[165,100,100,78,112,250,359],[42,...Array(16).fill(27)],17.3);
+ t.cells.block({row:0,column:0,rowCount:17,columnCount:7}).assign({margins:{left:7,right:5,top:2,bottom:2}});
+ for(let r=1;r<17;r++){
+  for(const c of [1,2,5,6])t.getCell(r,c).text.style={fontSize:16.6,typeface:'Calibri',color:C.ink,verticalAlignment:'middle'};
+  for(const c of [3,4])t.getCell(r,c).text.style={fontSize:17.3,typeface:'Calibri',color:C.ink,verticalAlignment:'middle',alignment:'center'};
  }
  s.speakerNotes.text=`All sixteen adopted datasets cover 67,062 recordings per model under the completed ten-model benchmark. This overview uses evaluated clip/speaker scope. A source-corpus speaker count may therefore be larger. In MELD the count is published role/speaker labels, including grouped roles, rather than an asserted count of distinct people. Parallel text means a controlled shared sentence design across emotions, not merely the existence of transcripts. Dialogue denotes recording source; inference still uses one utterance without history.\n${current.map(notes).join('\n\n')}`;
 }
@@ -194,7 +192,7 @@ for(const ds of datasets){
  s.speakerNotes.text=`${notes(ds)}\nSelection: ${ds.matching_caption}. The four recordings are illustrative examples, not a representative estimate of performance. Every prediction uses the same saved clip for each model. Green matches the corpus reference and red differs; listener votes are not silently substituted for the intended/reference label. Displayed invalid means the stored string “other answer”. The first five rows are dedicated SER and the final five are audio LLMs.\n${exact}\nAudio files: ${ds.cases.map(c=>c.audio_asset).join(', ')}. Published examples retain their source terms. Audio provenance and prediction-source hashes: assets/dataset_refresh/data.json.`;
 }
 
-if(p.slides.items.length!==19)throw new Error('Expected two overviews, one label map and sixteen listening pages');
+if(p.slides.items.length!==18)throw new Error('Expected one overview, one label map and sixteen listening pages');
 await fs.mkdir(path.join(BUILD,'dataset-refresh-previews'),{recursive:true});
 await (await PresentationFile.exportPptx(p)).save(path.join(BUILD,'dataset-refresh.pptx'));
 await fs.writeFile(path.join(BUILD,'dataset-refresh-audio.json'),JSON.stringify(audio,null,2));
@@ -203,4 +201,4 @@ for(const [i,s] of p.slides.items.entries()){
  const png=await s.export({format:'png',scale:1});
  await fs.writeFile(path.join(BUILD,'dataset-refresh-previews',`slide-${String(i+1).padStart(2,'0')}.png`),new Uint8Array(await png.arrayBuffer()));
 }
-console.log('Authored nineteen dataset refresh pages with sixty-four listening examples');
+console.log('Authored eighteen dataset refresh pages with sixty-four listening examples');

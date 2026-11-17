@@ -3,7 +3,7 @@
 The current 2026-11-17 refresh uses `build_dataset_refresh.mjs`, `build_model_refresh.mjs`,
 `build_error_refresh.mjs`, `build_result_refresh.mjs`, `refresh_main_deck.py`,
 `check_main_refresh.py` and `verify_main_imports.mjs`. The canonical output is
-`../SER_evaluation.pptx` (93 slides), with only the two-page sentence excerpt under `updated/`.
+`../SER_evaluation.pptx` (92 slides), with only the two-page sentence excerpt under `updated/`.
 See the parent README for the current build. The descriptions below document the older asset
 generation and inspection pipeline; they do not define additional presentation deliverables.
 

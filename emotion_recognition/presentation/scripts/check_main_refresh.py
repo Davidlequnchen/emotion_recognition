@@ -1,8 +1,10 @@
 """Check source fidelity, requested coverage, audio targets and bottom whitespace."""
 import copy
+import io
 import hashlib
 import json
 import posixpath
+from decimal import Decimal
 from pathlib import Path
 from zipfile import ZipFile,ZIP_DEFLATED
 from lxml import etree as E
@@ -25,7 +27,7 @@ def main():
     root=E.fromstring(package['ppt/presentation.xml'])
     rels=E.fromstring(package['ppt/_rels/presentation.xml.rels'])
     lookup={r.get('Id'):resolve('ppt/presentation.xml',r.get('Target')) for r in rels}
-    entries=list(root.find('p:sldIdLst',NS));assert len(entries)==93
+    entries=list(root.find('p:sldIdLst',NS));assert len(entries)==92
     paths=[lookup[e.get(f'{{{R}}}id')] for e in entries]
     slides=[E.fromstring(package[p]) for p in paths]
     headings=[title(s) for s in slides]
@@ -92,7 +94,18 @@ def main():
                     assert expected in texts or (expected=='other answer' and 'invalid' in texts),(headings[number-1],case['id'],m,texts)
                     verified_cells+=1
             assert len(slide.findall('.//a:audioFile',NS))==2
-    assert len(overview_slides)==2,overview_slides
+    assert len(overview_slides)==1,overview_slides
+    overview=slides[overview_slides[0]-1].find('.//a:tbl',NS)
+    overview_rows=overview.findall('a:tr',NS)
+    assert len(overview_rows)==17,'The overview must include all sixteen datasets'
+    assert all(len(r.findall('a:tc',NS))==7 for r in overview_rows),'Missing overview fields'
+    for row,key in zip(overview_rows[1:],dataset['overview_order']):
+        cells=[labels(c) for c in row.findall('a:tc',NS)];record=ds_by_key[key]
+        assert cells[0]==record['name'].split(' (')[0],(key,cells[0])
+        assert cells[2]==('dialogue' if record['type']=='dialogue' else 'standalone')
+        assert cells[3]==format(record['clips'],','),(key,cells[3])
+        assert cells[6]==record['label_summary'],(key,cells[6])
+        assert all(cells),(key,'Missing overview metadata')
     assert len(dataset_slides)==16,dataset_slides
     # Label-map title is checked independently of the authors' marker spelling.
     map_index=next(i for i,t in enumerate(headings) if 'Label Mapping' in t and ('16' in t or 'Sixteen' in t))
@@ -103,6 +116,37 @@ def main():
     survey_index=next(i for i,t in enumerate(headings) if t==model[0]['title'])
     assert len(slides[survey_index].find('.//a:tbl',NS).findall('a:tr',NS))==11
     assert all(x['title'] in headings for x in model[1:])
+    listener_data=json.loads((DECK/'assets/listener_plot_refresh/data.json').read_text())
+    listener_matches=[i for i,s in enumerate(slides) if s.find('p:cSld',NS).get('name','').startswith('ser-refresh:listener-plot:')]
+    assert len(listener_matches)==1,listener_matches
+    listener_index=listener_matches[0]
+    chart_ref=slides[listener_index].find('.//{'+C+'}chart')
+    relationships=E.fromstring(package[relfile(paths[listener_index])])
+    target=next(r.get('Target') for r in relationships if r.get('Id')==chart_ref.get('{'+R+'}id'))
+    chart_path=resolve(paths[listener_index],target)
+    chart=E.fromstring(package[chart_path])
+    chart_relationships=E.fromstring(package[relfile(chart_path)])
+    workbook_target=next(r.get('Target') for r in chart_relationships if r.get('Type').endswith('/package'))
+    with ZipFile(io.BytesIO(package[resolve(chart_path,workbook_target)])) as workbook:
+        sheet=E.fromstring(workbook.read('xl/worksheets/sheet1.xml'))
+    sn={'s':'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+    sheet_values={c.get('r'):c.find('s:v',sn).text for c in sheet.findall('.//s:c',sn) if c.find('s:v',sn) is not None}
+    cn={'c':C};series=chart.findall('.//c:ser',cn);assert len(series)==3
+    for s,key,column in zip(series,['actor','listener','other'],['B','C','D']):
+        cached=s.findall('.//c:val//c:pt/c:v',cn)
+        values=[float(v.text) for v in cached]
+        assert len(values)==10
+        for r,v in enumerate(cached,2):
+            assert Decimal(v.text)==Decimal(sheet_values[column+str(r)]),(column,r,'Chart cache differs from worksheet')
+        for value,record in zip(values,listener_data['models']):
+            assert abs(value-record['percentages'][key])<1e-8,(key,record['name'],value)
+        categories=[v.text for v in s.findall('.//c:cat//c:pt/c:v',cn)]
+        assert categories==[m['axis_label'] for m in listener_data['models']]
+    assert listener_data['disputed_cohort_count']==3699
+    for record in listener_data['models']:assert sum(record['counts'].values())==3699
+    for record in listener_data['sources']:
+        assert sha(DECK.parent.parent/record['path'])==record['sha256'],record['path']
+        verified_hashes+=1
     survey_headers=[labels(c) for c in slides[survey_index].find('.//a:tbl/a:tr',NS).findall('a:tc',NS)]
     assert any('Release' in h for h in survey_headers),survey_headers
     assert any('Emotion training' in h for h in survey_headers),survey_headers
@@ -171,6 +215,7 @@ def main():
             'dataset_examples':len(dataset_slides),'label_map_rows':16,'model_inventory_rows':10,'open_llm_architecture_slides':3,
             'error_analysis_slides':len(error_slides),'prediction_cells_verified':verified_cells,'source_hashes_verified':verified_hashes,
             'single_slide_result_tables':result_tables,'metric_cells_verified':verified_metrics,
+            'actor_listener_plot_slide':listener_index+1,'actor_listener_segments_verified':30,
             'maximum_object_bottom_px':max_bottom,'minimum_bottom_whitespace_px':720-max_bottom,
             'native_table_slides':tables,'chart_data_and_embedded_workbooks_preserved':True}
     (REFRESH/'content-validation.json').write_text(json.dumps(report,indent=2)+'\n')

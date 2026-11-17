@@ -15,5 +15,5 @@ for(const batch of batches){
  checks.push({path:batch.path,slides:batch.slides,passed:true});
  console.log(path.basename(batch.path)+': '+batch.slides+' slides imported');
 }
-const count=checks.reduce((s,x)=>s+x.slides,0);if(count!==93)throw new Error('Expected 93 slides');
+const count=checks.reduce((s,x)=>s+x.slides,0);if(count!==92)throw new Error('Expected 92 slides');
 await fs.writeFile(path.join(dir,'import-validation.json'),JSON.stringify({passed:true,slides:count,candidateSha256:createHash('sha256').update(await fs.readFile(path.join(dir,'main-candidate.pptx'))).digest('hex'),checks},null,2));

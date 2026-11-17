@@ -11,7 +11,7 @@ from lxml import etree as E
 from merge_inspections import DECK,BUILD,NS,P,A,R,CT,parts,relfile,resolve,xml_bytes
 
 REFRESH=BUILD/'refresh'
-VALIDATED=REFRESH/'validated-20261117'
+VALIDATED=REFRESH/'validated-20261117-compact'
 MAIN='SER_evaluation.pptx'
 EXAMPLES='Semantic_vs_Vocal_Emotion.pptx'
 
@@ -27,14 +27,14 @@ def slide_inventory(package):
 
 
 def publish():
-    expected={MAIN:(93,122),EXAMPLES:(2,9)}
+    expected={MAIN:(92,122),EXAMPLES:(2,9)}
     for name,(count,audio_count) in expected.items():
         _,_,entries,_,audio=slide_inventory(parts(VALIDATED/name))
         assert (len(entries),audio)==(count,audio_count)
         receipt=json.loads((BUILD/(VALIDATED.name+'__'+name+'.validation.json')).read_text())
         assert receipt['finalSha256']==hashlib.sha256((VALIDATED/name).read_bytes()).hexdigest()
     proof=json.loads((REFRESH/'content-validation.json').read_text())
-    assert proof['passed'] and proof['slide_count']==93
+    assert proof['passed'] and proof['slide_count']==92
     assert proof['candidate_sha256']==hashlib.sha256((VALIDATED/MAIN).read_bytes()).hexdigest()
     for name in ['import-validation.json','visual-validation.json']:
         check=json.loads((REFRESH/name).read_text())
@@ -52,7 +52,9 @@ def publish():
     assert covered==proof['native_table_slides']
     shutil.copyfile(VALIDATED/MAIN,DECK/MAIN)
     updated=DECK/'updated';updated.mkdir(exist_ok=True)
-    shutil.copyfile(VALIDATED/EXAMPLES,updated/EXAMPLES)
+    # Keep an unchanged excerpt byte-stable when only ZIP timestamps differ.
+    if not (updated/EXAMPLES).exists() or parts(VALIDATED/EXAMPLES)!=parts(updated/EXAMPLES):
+        shutil.copyfile(VALIDATED/EXAMPLES,updated/EXAMPLES)
     for name in ['SER_evaluation_extended.pptx','SER_evaluation_extended_v2.pptx','Emotionally_Loaded_Sentence.pptx']:
         (updated/name).unlink(missing_ok=True)
     assert {p.name for p in updated.glob('*.pptx')}=={EXAMPLES}
@@ -62,7 +64,7 @@ def publish():
 def prepare(source_path):
     source=parts(source_path)
     root,rels,entries,paths,audio=slide_inventory(source)
-    assert len(entries)==93 and audio==122
+    assert len(entries)==92 and audio==122
     selected=[]
     for i,path in enumerate(paths):
         ts=[t.text or '' for t in E.fromstring(source[path]).findall('.//a:t',NS)]
@@ -107,5 +109,7 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--source',type=Path,default=REFRESH/'main-candidate.pptx')
     parser.add_argument('--publish',action='store_true')
+    parser.add_argument('--staging',type=Path,default=VALIDATED,help='Private validated output directory')
     a=parser.parse_args()
+    VALIDATED=a.staging.resolve()
     publish() if a.publish else prepare(a.source)

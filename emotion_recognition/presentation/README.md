@@ -2,14 +2,14 @@
 
 There are exactly two presentation deliverables:
 
-- [`SER_evaluation.pptx`](SER_evaluation.pptx): the canonical **93-slide** presentation, covering **10 models × 16 datasets**. It contains the original research and adaptation material, a full dataset introduction with four playable clips per dataset, the two same-sentence case studies, sixteen later listening inspections, and five ten-model error analyses.
+- [`SER_evaluation.pptx`](SER_evaluation.pptx): the canonical **92-slide** presentation, covering **10 models × 16 datasets**. It contains the original research and adaptation material, a full dataset introduction with four playable clips per dataset, the two same-sentence case studies, sixteen later listening inspections, and five ten-model error analyses.
 - [`updated/Semantic_vs_Vocal_Emotion.pptx`](updated/Semantic_vs_Vocal_Emotion.pptx): the same **two sentence-example slides**, with all **nine recordings** embedded, extracted from the canonical deck.
 
 There is no separate extended version. Intermediate packages, previews and validation receipts remain in the ignored `.inspection-build/` directory.
 
 ## Content and interpretation
 
-Dataset overviews preserve language, clip and speaker counts, shared-text design, annotation sources and dialogue versus standalone status. The label mapping covers all sixteen benchmark datasets. Each dataset introduction shows four recordings and predictions from all ten models. Published corpus totals and the actual benchmark cohorts are distinguished in slide notes.
+The single dataset overview preserves language, clip and speaker counts, shared-text design, annotation sources and dialogue versus standalone status. The label mapping covers all sixteen benchmark datasets. Each dataset introduction shows four recordings and predictions from all ten models. The actor-versus-listener stacked chart also includes all ten models on the same 3,699 disputed CREMA-D clips, retaining its original colours and axes. Published corpus totals and the actual benchmark cohorts are distinguished in slide notes.
 
 The model survey retains release, parameter count and emotion training data, and reports output classes. Three native editable schematics explain the executed audio-to-text routes for Qwen2.5-Omni, Qwen2-Audio Instruct and Gemma 4 E4B. Model-card references and retained checkpoint evidence are recorded in `assets/model_refresh/facts.json` and speaker notes.
 
@@ -37,13 +37,14 @@ The research deck includes internal listening material. Added audio is full-leng
 
 ## Rebuild the current deck
 
-Run from this directory using the bundled runtime discovered by `load_workspace_dependencies`. Set `RUNTIME_NODE_MODULES` when the bundled package location differs from the script default. No model inference runs during the presentation build. Saved metadata and audio assets allow layout-only rebuilds; `prepare_dataset_refresh.py` and `prepare_error_refresh.py` refresh those inputs from local corpora and current predictions when needed.
+Run from this directory using the bundled runtime discovered by `load_workspace_dependencies`. Set `RUNTIME_NODE_MODULES` when the bundled package location differs from the script default. No model inference runs during the presentation build. Saved metadata and audio assets allow layout-only rebuilds; `prepare_dataset_refresh.py` and `prepare_error_refresh.py` refresh those inputs from local corpora and current predictions when needed. Rebuilding the actor-versus-listener chart also reads the local CREMA-D listener votes and all ten saved prediction CSVs.
 
 ```bash
 node scripts/build_dataset_refresh.mjs
 node scripts/build_model_refresh.mjs
 node scripts/build_error_refresh.mjs
 node scripts/build_result_refresh.mjs
+node scripts/build_listener_plot_refresh.mjs
 python scripts/embed_inspection_audio.py .inspection-build/dataset-refresh.pptx .inspection-build/dataset-refresh-audio.json .inspection-build/dataset-refresh-audio.pptx
 python scripts/embed_inspection_audio.py .inspection-build/error-refresh.pptx .inspection-build/error-refresh-audio.json .inspection-build/error-refresh-audio.pptx
 python scripts/refresh_main_deck.py --source SER_evaluation.pptx
@@ -53,7 +54,7 @@ python scripts/render_main_refresh.py
 python scripts/consolidate_presentations.py
 ```
 
-Finalize the main candidate and two-slide excerpt with `scripts/finalize_inspections.mjs`, passing the exact slide count and the native-table slide list from `.inspection-build/refresh/content-validation.json`. Its staging destination is `.inspection-build/refresh/validated-20261117/`, with filenames matching the two deliverables. For the excerpt pass count `2` and table slides `[1,2]`. Use a fresh private staging directory because the finalizer does not overwrite a validated file. The finalizer validates every table owner in bounded passes over the identical candidate. After inspecting all contact sheets and changed pages, run `python scripts/render_main_refresh.py --record-review` to record the completed visual review and verify the blank bottom margin. Then publish with:
+Finalize the main candidate and two-slide excerpt with `scripts/finalize_inspections.mjs`, passing the exact slide count and the native-table slide list from `.inspection-build/refresh/content-validation.json`. Its staging destination is `.inspection-build/refresh/validated-20261117-compact/`, with filenames matching the two deliverables. For the excerpt pass count `2` and table slides `[1,2]`. Use a fresh private staging directory because the finalizer does not overwrite a validated file. The finalizer validates every table owner in bounded passes over the identical candidate. After inspecting all contact sheets and changed pages, run `python scripts/render_main_refresh.py --record-review` to record the completed visual review and verify the blank bottom margin. Then publish with:
 
 ```bash
 python scripts/consolidate_presentations.py --publish
