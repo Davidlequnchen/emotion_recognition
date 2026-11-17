@@ -1,5 +1,9 @@
 # Audio LLM Survey: What to Add Next
 
+**Execution constraint (2026-11-16):** EmotionThinker inference on this Mac is stopped at the user's request. Future inference is NVIDIA-only; the earlier Mac smoke check demonstrates loading, not suitability for continued local benchmarking.
+
+**2026-11-16 emotion-reasoning update:** prioritize EmotionThinker and BLSP-Emo. OSUM-EChat is smaller but needs a custom environment; BLSP is an older Llama-2 approach; SECap weights exist but licence and Chinese-caption classification readout remain unresolved; no official VowelPrompt code/task weights were found. See the [size/access/licence table](models_survey_en.md) and [paper/local-result audit (Chinese)](../../research_paper/analysis_report/emotion_reasoning_zh.md). Official EmotionThinker **8.932B / 17.864 GB BF16** is downloaded and runs on M4 Max 48 GB. This round uses pilots; full 16-dataset evaluation is reserved for NVIDIA. Corpus exposure and released EmotionCoT test-annotation membership are recorded separately from unknown checkpoint training membership. VowelPrompt's approximately 70% is transcript/context-assisted in-domain fine-tuned weighted F1; GRPO does not consistently improve its in-domain scores and these are not our single-utterance audio accuracy.
+
 English version of [audio_llms_survey.md](audio_llms_survey.md) (Chinese); the two have the same content. The survey of dedicated SER models is in [models_survey_en.md](models_survey_en.md), the dataset survey in [datasets_survey_en.md](datasets_survey_en.md).
 
 **Updated 2026-11-06 for plan B**: 13 datasets (SAVEE added; ESD out of scope), with THAI-SER limited to the clips with agreement ≥ 0.71 and MEAD to a stratified 8,000 clips, for every model; API models now run every clip of every dataset (no 200-clip sample). The audio volume, costs and run times below are for this plan-B set: 56,264 clips, 52.2 h, all measured.

@@ -1,5 +1,9 @@
 # 音频大模型调研：下一步加哪些（Audio LLM Survey）
 
+**执行约束（2026-11-16）**：EmotionThinker 本机推理已按用户要求停止，后续只在 NVIDIA 上运行。先前 Mac 运行记录只用于证明可载入，不作为继续本机评测的建议。
+
+**2026-11-16 情绪推理模型补充**：优先评测 EmotionThinker 和 BLSP-Emo；OSUM-EChat 是较小但需要自定义环境的候选；BLSP 属旧 Llama-2 方案；SECap 权重可下载但许可及中文 caption→分类读出仍待核实；VowelPrompt 未找到官方代码/task 权重，不能作为直接下载的音频模型。[模型大小、链接与许可表](models_survey.md)；[论文和六组本地结果核查](../../research_paper/analysis_report/emotion_reasoning_zh.md)。EmotionThinker 官方 **8.932B / BF16 17.864 GB** 已下载、M4 Max 48 GB 已成功推理；本轮只做 pilot，全量 16 集留给 NVIDIA。MELD/IEMOCAP/MEAD 的任务训练暴露与公开 EmotionCoT 测试标注成员边界已单独记录。VowelPrompt 约 70% 是带转写/上下文的域内微调 Weighted F1；同表中 GRPO 并未一致提高域内分数，不能直接与本项目单句音频 Accuracy 比较。
+
 英文版：[audio_llms_survey_en.md](audio_llms_survey_en.md)（内容相同）。专用 SER 模型的调研见 [models_survey.md](models_survey.md)，数据集调研见 [datasets_survey.md](datasets_survey.md)。
 
 **2026-11-06 按方案 B 更新**：13 个数据集（新加 SAVEE；ESD 不在范围内），THAI-SER 只用一致率 ≥ 0.71 的片段，MEAD 分层取 8,000 条，所有模型都一样；API 模型现在跑每个数据集的全部片段（不再抽 200 条）。下面的音频量、费用和运行时间都按方案 B 算：56,264 条、52.2 小时，全部实测。

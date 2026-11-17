@@ -1,5 +1,20 @@
 # 情绪识别开源模型调研（Emotion Recognition Open-Source Model Survey）
 
+**执行约束（2026-11-16）**：EmotionThinker 本机推理已按用户要求停止；后续仅在 NVIDIA 上运行，工具默认 CUDA 并禁止其 MPS/CPU 推理。下文“Mac 已成功推理”只描述先前的运行验证，不表示适合继续在本机评测。
+
+**2026-11-16 补充：EmotionThinker、VowelPrompt、BLSP / BLSP-Emo、OSUM-EChat、SECap。** [完整论文与评测差异核查](../../research_paper/analysis_report/emotion_reasoning_zh.md)；[论文及官方来源快照](../../research_paper/papers/2026-11-16_emotion_reasoning/README.md)。本轮只做小规模对照，16 集全量留给 NVIDIA；原有 160 组结果保持原样。
+
+| 新增/复核模型 | 大小与下载 | 许可与实际接入条件 |
+|---|---|---|
+| **EmotionThinker**（ICLR 2026 Oral） | [HF](https://huggingface.co/ddwang2000/EmotionThinker)；Qwen2.5-Omni Thinker，**8.932B，BF16 17.864 GB**；已下载并在 M4 Max 48 GB 成功推理 | HF Apache-2.0；官方 transformers 4.52.3，本地 5.18.0 用 Thinker-only 已运行。MELD/IEMOCAP 是任务源语料，论文也列 MEAD；不要标为未见数据。公开 EmotionCoT 含 MELD test 标注，但实际训练 5K/30K 子集未知，不能仅凭公开池断言泄漏 |
+| **BLSP**（ICLR 2024） | [代码](https://github.com/cwang621/blsp)、[ModelScope checkpoint](https://www.modelscope.cn/models/damo/blsp_lslm_7b/)；Llama-2-7B＋Whisper-small encoder；官方两分片 **13.748 GB**，总参数未逐 tensor 计数 | 项目 Apache-2.0，另遵循 Llama-2 和 Whisper 条款；学术研究可按条款使用。自定义类、旧 transformers 4.31/Python 3.8 环境，需适配 |
+| **BLSP-Emo**（EMNLP 2024；不是独立的“Emo”模型） | [代码](https://github.com/cwang621/blsp-emo)、[HF](https://huggingface.co/cwang621/blsp-emo)；Qwen-7B-Chat＋Whisper-large-v2 encoder＋自定义模块；`.bin` 两分片 **16.967 GB**，不把文件体积当精确参数量 | 项目/HF Apache-2.0，保留原 Qwen/Whisper 条款；明确用 IEMOCAP 训练。可下载评测，优先级高，但不是标准 AutoModel 即插即用 |
+| **OSUM-EChat**（2025） | [官方代码](https://github.com/ASLP-lab/OSUM/tree/main/OSUM-EChat)、[HF](https://huggingface.co/ASLP-lab/OSUM-EChat)；Qwen2.5-3B-Instruct＋Whisper-medium 风格 encoder；单个 natural-language/tag checkpoint **6.989 GB**；TTS 包另 **3.761 GB** | HF Apache-2.0，保留组件上游条款；自定义 Wenet/任务 token，官方建议 Linux，需独立依赖环境。做 SER 不必默认加载两套 checkpoint 和 TTS；记录使用的 think 版本 |
+| **SECap**（AAAI 2024） | [代码](https://github.com/thuhcsi/SECap)、[HF](https://huggingface.co/yaoxunxu/SECaps)；Chinese-LLaMA-7B＋Chinese-HuBERT-large＋Bridge-Net；checkpoint **15.855 GB**，依赖归档 **14.564 GB** | 可下载，但仓库未见 LICENSE，HF 未声明许可，**尚未确认可自由使用**。主要生成中文情绪描述；须另定分类标签读出方法，不能直接使用英文七类短答案 parser |
+| **VowelPrompt**（ICLR 2026，Meta/ASU 等） | [论文](https://arxiv.org/abs/2602.06270)；方案用 LLaMA-3-8B、Scout 17B-active/16 experts，ASVP 用 Qwen2-7B；**未发现官方代码或 task checkpoint** | 是转写＋前文＋文字化元音特征到文本 LLM 的方案，不是可直接下载的音频 LLaMA 模型。论文公开代表性 prompt；如重写实现须注明 reproduction。Scout 激活 17B 不等于仅需存放 17B 参数 |
+
+下载和对照入口：`scripts/common/download_emotionthinker.py`、`scripts/evaluation/emotion_reasoning_benchmark.py`。后者独立输出，支持直接标签/按数据集候选 reasoning/官方九选项三种协议，保留 Accuracy、UAR、macro-F1、weighted-F1 及 invalid。EmotionThinker 表 2 的 Accuracy/“unweighted accuracy”定义仍需作者澄清；VowelPrompt 的约 70% 是域内微调 Weighted F1，不能当作本项目零样本 Accuracy。
+
 2026-11-10 训练来源复核：图表仅用一种斜线表示 Part of the training process；直接和上游间接使用均计入。来源和具体阶段保留在[八模型×十六语料审核](training_provenance.md)，不在图中细分等级。
 
 训练使用采用宽口径：直接或间接、上游预训练或 seed/教师伪标签链均计为“用过／见过”；均计为已见，图中纹理相同，具体方式只在来源记录中说明。

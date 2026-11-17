@@ -1,5 +1,21 @@
 # Emotion Recognition Public Dataset Survey
 
+## 2026-11-16: EmotionThinker / VowelPrompt corpus update
+
+This does not change the adopted **16 datasets / 67,062 clips**. IEMOCAP was not downloaded or adopted. See the [audit (Chinese)](../../research_paper/analysis_report/emotion_reasoning_zh.md) and [papers](../../research_paper/papers/2026-11-16_emotion_reasoning/README.md). Existing IEMOCAP/CaFE/EmoDB/Expresso/EARS entries below remain; this table adds paper-specific roles and boundaries.
+
+| Dataset | Size/access | Paper role and current status |
+|---|---|---|
+| **IEMOCAP** | Original 10,039 turns, 10 speakers/5 sessions, about 12 h; common four-class subset 5,531, but multiple protocols exist. [Official release](https://sail.usc.edu/iemocap/iemocap_release.htm) requires academic-email application/licence | EmotionThinker training source/test; VowelPrompt describes five classes/5,531 and official splits without session/ID manifests; a figure includes frustration. Do not silently substitute a four-class protocol. Not downloaded/adopted; original paper saved |
+| **MELD / RAVDESS / SAVEE** | Adopted 2,608 test / 1,440 / 480; calm→neutral on RAVDESS | EmotionThinker reports MELD test and zero-shot RAVDESS/SAVEE with incomplete metric/mapping details; MELD is also a task-source corpus. VowelPrompt supplies transcript/optional context. Preserve adopted scopes; keep paper results metric-specific |
+| **EmotionCoT**, called 35K in paper | [Pinned HF](https://huggingface.co/datasets/ddwang2000/EmotionCoT/tree/944244eb3a740bf283d32c0e4f09467a4fbdaf78): actual **43,643 annotations / 75.278 MB / 23 raw labels**, no audio. Card MIT; underlying audio terms independent | Audited sources: MSP-Podcast 11,407; IEMOCAP 9,749; Expresso 7,473; MELD 13,623; EARS 1,391. Includes 2,598 MELD test annotations, **2,596** matching adopted local test IDs. Released pool is not the actual 5K/30K training manifest: this alone does not establish checkpoint leakage. Downloaded locally for audit, not a new test set |
+| **CaFE** | 12 speakers, 936 clips, seven classes; 48 kHz zip **0.187 GB**; [Zenodo](https://zenodo.org/records/1478765), CC BY-NC-SA 4.0 | VowelPrompt French zero-shot WF1 51.42; still a candidate, no local result |
+| **Original EmoDB** | 10 speakers, 535 clips, seven classes including boredom; [official](http://emodb.bilderbar.info/), [audb](https://audeering.github.io/datasets/datasets/emodb.html) | VowelPrompt German zero-shot WF1 69.85. Distinguish 2.0's additional ambiguous samples; boredom has no natural one-to-one mapping to our seven classes. Not adopted |
+| **ASVP-ESD**, distinct from excluded ESD | [Official Zenodo v2](https://zenodo.org/records/7132783), zip **1.690 GB**, CC BY 4.0; page describes 12,625 files plus 1,204 baby samples, 12 emotions plus breath, >11 h, mixed languages/speech/non-speech | VowelPrompt instead lists **13,964 / 18 h / 131 speakers / 12 classes**. File/ID audit is needed; reported Qwen2-7B SFT/SFT+GRPO WF1 70.54/71.36. New candidate, audio not downloaded/adopted; extra labels cannot be forced into seven classes |
+| **Expresso / EARS / MSP-Podcast / MEAD** | Original audio licences apply; MSP-Podcast needs official access | Paper lists IEMOCAP/MELD/Expresso/MEAD/EARS as EmotionCoT sources; released annotations contain MSP-Podcast and no MEAD. Keep release-pool membership separate from reported training sources. MEAD is already adopted and requires corpus-exposure disclosure |
+
+Counts, SHA and matched test IDs: [release audit JSON](../../research_paper/output/emotion_reasoning_audit/emotioncot_release_audit.json). An annotation release without audio/training manifests neither replaces original dataset permissions nor certifies independent model testing.
+
 English translation of [datasets_survey.md](datasets_survey.md) (Chinese); the two have the same content.
 
 Survey date: 2026-10-23. Goal: survey public emotional speech datasets that can be used to evaluate emotion recognition

@@ -1,5 +1,21 @@
 # 情绪识别公开数据集调研（Emotion Recognition Public Dataset Survey）
 
+## 2026-11-16：EmotionThinker / VowelPrompt 语料补充
+
+本节不改变当前已采用的 **16 集 / 67,062 条**，未自动下载 IEMOCAP 或把候选加入评测。[专项报告](../../research_paper/analysis_report/emotion_reasoning_zh.md)；[论文资料](../../research_paper/papers/2026-11-16_emotion_reasoning/README.md)。IEMOCAP、CaFE、EmoDB、Expresso、EARS 已在下文调研，这里补充论文用途与复现边界。
+
+| 数据集 | 规模、获取与许可 | 论文角色 / 本项目状态 |
+|---|---|---|
+| **IEMOCAP** | 原始 10,039 轮、10 人/5 sessions、约 12 h；常用四类子集 5,531 条，但不是唯一协议。[官方 release](https://sail.usc.edu/iemocap/iemocap_release.htm) 需学术邮箱申请、许可确认 | EmotionThinker 的训练源及测试；VowelPrompt 写五类/5,531 条和 official splits，却缺 session/ID 清单，图示还含 frustration。不能替作者指定共同四类口径。**未下载、未采用**，原论文已保存 |
+| **MELD / RAVDESS / SAVEE** | 已有 2,608 test / 1,440 / 480 条；RAVDESS calm→neutral，统一七类 | EmotionThinker 报 MELD test、RAVDESS/SAVEE zero-shot，但评分/映射不完整；MELD 也是训练源。VowelPrompt MELD 有转写和可选前文。保留当前范围，论文值按指标单独记录 |
+| **EmotionCoT**（论文称 35K） | [HF 固定版本](https://huggingface.co/datasets/ddwang2000/EmotionCoT/tree/944244eb3a740bf283d32c0e4f09467a4fbdaf78)：实际 **43,643 条/75.278 MB/23 种 raw labels**；只有标注，无音频；卡片 MIT，原音频许可独立 | 审核计数：MSP-Podcast 11,407、IEMOCAP 9,749、Expresso 7,473、MELD 13,623、EARS 1,391；含 MELD test 标注 2,598 条，**2,596 条**匹配本地可用测试 ID。公开池不等于实际 5K/30K 训练 manifest，**不能仅据此证明 checkpoint 泄漏**。只下载标注做审核，不作为新测试集 |
+| **CaFE** | 12 人、936 条、7 类；48 kHz zip **0.187 GB**；[Zenodo](https://zenodo.org/records/1478765)，CC BY-NC-SA 4.0 | VowelPrompt 法语 zero-shot WF1 51.42；原候选未采用，不能当成本地实测 |
+| **EmoDB 原版** | 10 人、535 条、7 类，含 boredom；[官方](http://emodb.bilderbar.info/)、[audb 说明](https://audeering.github.io/datasets/datasets/emodb.html) | VowelPrompt 德语 zero-shot WF1 69.85；与含新增模糊样本的 2.0 版区分。boredom 无自然七类一对一映射；未采用 |
+| **ASVP-ESD**（不同于已排除的 ESD） | [官方 Zenodo v2](https://zenodo.org/records/7132783)，zip **1.690 GB**，CC BY 4.0；官网称 12,625 条另加 1,204 婴儿样本、12 情绪另有 breath、>11 h，混合语言/语音与非语音 | VowelPrompt 表 2 写 **13,964 条/18 h/131 人/12 类**，与官网不同，需核对实际文件/ID；Qwen2-7B SFT WF1 70.54，SFT+GRPO 71.36。新候选，未下载音频/未采用，额外类不能强塞进七类 |
+| **Expresso / EARS / MSP-Podcast / MEAD** | 各遵循原音频许可；Expresso/EARS 见下文，MSP-Podcast 需官方申请 | 论文的 EmotionCoT 来源列 IEMOCAP/MELD/Expresso/MEAD/EARS；公开标注池实际有 MSP-Podcast 而未见 MEAD。释放池与论文训练来源分开记录。MEAD 已在 16 集中，须披露论文报告的语料级暴露 |
+
+完整计数、SHA 与测试 ID 交集见 [审核 JSON](../../research_paper/output/emotion_reasoning_audit/emotioncot_release_audit.json)。无音频/无训练 manifest 的标注发布，不能替代原数据集许可，也不足以认证模型测试独立性。
+
 英文版：[datasets_survey_en.md](datasets_survey_en.md)（内容相同）。
 
 调研日期：2026-10-23。目标：调研能用于评估情绪识别模型（emotion2vec+）和音频大模型（audio LLM）的公开情感语音数据集。
