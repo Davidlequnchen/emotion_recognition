@@ -2,131 +2,171 @@
 
 [中文](data_import.md) | English · [User guide](README_en.md)
 
-Create one task for each eligible customer clip from the batch's `manifest.parquet`. Transcripts come directly
-from its `text` column; no separate transcript directory is needed. Eligible clips are shuffled with a fixed seed
-and split into non-overlapping JSON files containing at most 1,000 tasks each.
-The project owner has already configured the local service's document root. The generic
-paths below explain the data interface, without installation or startup steps.
+[prepare_tasks.py](prepare_tasks.py) picks one round of 1,000 customer clips from several batches, copies their audio
+and writes the Label Studio tasks file. Transcripts come directly from the manifest's `text` column. The selection rules
+(strata, quotas, shortfalls) are explained in [section 3 of the user guide](README_en.md#3-how-clips-are-selected-for-labelling).
+This page covers the input, settings and output, and three ways to import; it does not cover installing or starting
+Label Studio.
 
-## 1. Prepare a batch directory
+## 1. Generate one round of tasks
 
-Place each batch in a **strict subdirectory** of the document root, for example:
+### 1.1 Input
 
 ```text
-/absolute/path/to/dataset/        # Configured service document root
-└── batch/
-    ├── audio/                   # clip_0001.wav, clip_0002.mp3 …
-    ├── manifest.parquet         # Clip IDs, audio files, transcripts, long-clip flags, etc.
-    └── tasks/                   # Generated task files; Local Files Source path
-        ├── tasks_001.json       # At most 1,000 tasks
-        ├── tasks_002.json       # Up to 1,000 different tasks
-        └── …
+/absolute/path/to/curated_dataset/              # curated_root
+├── batch_01/
+│   ├── audio/                                  # flat audio folder, e.g. <UUID>.wav
+│   └── manifest_with_predictions.parquet       # original manifest + three prediction columns
+├── batch_02/
+└── …                                           # about 40 random batches
 ```
 
-The Local Files Source path must be a strict subdirectory of the document root; **it cannot equal the document root**.
-The `batch/tasks/` directory above satisfies this requirement.
+Each `manifest_with_predictions.parquet` needs these columns; rename them under `columns` in the YAML:
 
-Run in a Python environment with `pyarrow` installed (already included in the project's `emotion_recognition_llm`
-environment). For standalone use, install `python3 -m pip install -r label_studio/requirements.txt` from the repository
-root in a Python 3.11 environment first. Then generate tasks from the repository root:
+| Default column | Content | Key under `columns` |
+|---|---|---|
+| `clip_id` | Stable ID, written to `data.clip_id`; unique across all batches | `clip_id` |
+| `audio_clip_file` | Audio file name or path | `audio` |
+| `text` | Existing transcript, written to `data.transcript`; blank or null becomes `""` | `text` |
+| `is_longer_than_10_seconds` | `true` excludes the clip, `false` keeps it | `long_clip` |
+| `external_call_id` | Call ID, for "at most 3 clips per call" | `call_id` |
+| `pred_e2v`, `pred_gpt`, `pred_gemini` | Predictions of emotion2vec, GPT Realtime and Gemini | `predictions` |
+
+**Prediction label format**: one label per cell; case and surrounding spaces are ignored.
+
+- Valid votes: `angry`, `disgusted`, `fearful`, `happy`, `sad`, `surprised`, `neutral`.
+- No vote: empty (null, NaN, empty string), `invalid`, `other`, `unknown`, `none`.
+- Any other value is an error that lists up to 10 unexpected values per column, to catch merge mistakes.
+
+All other manifest columns are kept as they are in the output `manifest.parquet`.
+
+### 1.2 Settings and run
+
+The settings are in [config/prepare_tasks.yaml](config/prepare_tasks.yaml); there are no command-line arguments:
+
+```yaml
+curated_root: /absolute/path/to/curated_dataset
+batches: [batch_01, batch_02, batch_03]          # batch folders that take part
+manifest_name: manifest_with_predictions.parquet
+output_root: /absolute/path/to/selected_data_for_human_labeling
+columns:
+  clip_id: clip_id
+  audio: audio_clip_file
+  text: text
+  long_clip: is_longer_than_10_seconds
+  call_id: external_call_id
+  predictions: [pred_e2v, pred_gpt, pred_gemini]
+quotas:                  # clips per round = the sum = 1,000
+  random: 150
+  emotion: 560
+  conflict: 140
+  neutral: 150
+max_clips_per_call: 3
+files_per_folder: 100    # files per part folder = files per upload
+seed: 42
+```
+
+Run from the repository root with a Python that has [requirements.txt](requirements.txt) installed (the
+`emotion_recognition_llm` environment already has it):
 
 ```bash
-python3 label_studio/prepare_tasks.py \
-  --manifest /absolute/path/to/dataset/batch/manifest.parquet \
-  --document-root /absolute/path/to/dataset \
-  --output-dir /absolute/path/to/dataset/batch/tasks \
-  --batch-size 1000 \
-  --seed 42
+python3 label_studio/prepare_tasks.py
 ```
 
-`--output-dir` replaces the old single-file `--output` argument. `--batch-size` defaults to `1000` and `--seed` to
-`42`, so both are optional. After filtering and validation, the script sorts by `clip_id`, shuffles once with that
-seed, and slices the shuffled list into batches. Every eligible clip appears exactly once, with no overlap between
-files. The final file may contain fewer tasks: 2,007 clips produce files of 1,000, 1,000, and 7 tasks.
-The same eligible clip set, seed, and batch size produce the same assignments, even if manifest rows are reordered.
-Changing the eligible clip set or seed may change assignments; once labeling starts, keep using the original files.
+Each run makes the next round (`tasks_001`, `tasks_002`, …) and leaves out every clip already in an earlier round's
+`tasks_NNN/tasks_NNN.json`. The random seed is `seed` plus the round number, so the same data and settings always give
+the same round.
 
-The default columns are below. Other metadata stays in the manifest and can be joined to exports using `clip_id`.
+### 1.3 Checks
 
-| Manifest column | Use | Override column name |
-|---|---|---|
-| `clip_id` | Existing stable ID, written to `data.clip_id`; integer IDs become strings, string IDs are preserved | `--clip-id-column` |
-| `audio_clip_file` | Audio filename or filesystem path, converted to `data.audio` | `--audio-column` |
-| `text` | Existing transcript, written to `data.transcript` | `--text-column` |
-| `is_longer_than_10_seconds` | `true` excludes the row; `false` keeps it | `--long-clip-column` |
+The script finishes every check before it copies anything. Any failed check stops the run, and nothing is created.
 
-**Filtering uses only the manifest flag; the script does not measure audio duration.** The current column denotes
-10 seconds, so this uses the 10-second flag, rather than the previously discussed 15-second rule. If the manifest
-later provides a 15-second flag, select it with `--long-clip-column is_longer_than_15_seconds`. Flags can be booleans,
-numeric `1/0`, or strings `true/false` and `1/0`; strings ignore case and surrounding whitespace. Missing or invalid
-flags cause an error rather than being guessed.
+- `output_root` must not be inside `curated_root`, nor the reverse.
+- Long-clip flags can be booleans, numeric `1/0`, or strings `true/false` and `1/0` (case and surrounding spaces are
+  ignored); missing or invalid flags are errors. Filtering uses only this flag; audio duration is not measured.
+- `clip_id` must be unique across all listed batches; eligible clips need a non-empty call ID.
+- Audio paths: a bare file name is looked up in `<batch>/audio/`; a relative path with folders is relative to the batch
+  folder; an absolute path must lie inside `curated_root`. Symlinks that point outside `curated_root` are rejected.
+  WAV, MP3, FLAC, OGG and M4A are supported.
+- File names must be unique across the eligible clips (ignoring case and the characters Label Studio drops) and at most
+  70 characters long: server Label Studio matches tasks by file name and shortens longer names.
+- Every selected audio file must exist; otherwise the missing files are listed.
 
-Audio paths in `audio_clip_file` resolve as follows:
+While running, the script shows per batch the rows, long clips, clips used in earlier rounds and eligible clips; the
+votes per model (including no votes); the clips per stratum; the target and drawn count per layer; where shortfalls
+went; and finally the next steps.
 
-- A bare filename, such as `clip_0001.wav`, is looked up in `audio/` beside the manifest. Override this directory with `--audio-dir`.
-- A relative path containing directories, such as `audio/clip_0001.wav`, is relative to the manifest's batch directory.
-- An absolute filesystem path is used directly, but must stay within the document root.
+### 1.4 Output
 
-WAV, MP3, FLAC, OGG, and M4A are supported. The script reads only audio references in retained manifest rows;
-it does not scan the audio directory or copy, delete, or modify audio. Unlisted or excluded files may remain in
-`audio/`. Excluded rows do not require their audio files to exist. If every row is excluded, no batch JSON is written.
-Blank, null, or NaN transcripts become empty strings and are counted; other non-text transcripts cause an error.
-Retained clip IDs and resolved audio paths must each be unique. Missing columns, missing audio, and duplicate
-records cause errors. The manifest, audio directory, and referenced audio must resolve within the document root;
-symlinks pointing outside it are rejected. Output is written only after validation. If the output directory already
-contains `tasks_*.json`, the script fails to prevent overwriting or mixing assignments from different runs. Use a new
-output directory when regenerating batches. The summary reports the seed, task counts per file, and excluded rows.
+```text
+/absolute/path/to/selected_data_for_human_labeling/   # output_root
+├── tasks_001/                        # round 1
+│   ├── audio/part_01/ … part_10/     # audio copies, 100 per folder, in task order; originals unchanged
+│   ├── tasks_001.json                # the tasks file
+│   ├── manifest.parquet              # selected rows: all original columns + source and position
+│   └── summary.json                  # record of the round
+└── tasks_002/                        # the next run makes round 2
+```
 
-The task structure within each JSON file is unchanged:
+- `manifest.parquet` adds `source_batch`, `layer` (random, emotion, conflict, neutral, fill), `target_class`,
+  `stratum` (e.g. `agree3:angry`), `task_index`, `part` and `copied_audio` after the original columns.
+- `summary.json` records the settings, round number, seed, clips per stratum, targets and drawn counts, where
+  shortfalls went, the number of blank transcripts, and when it was created.
+- Files are written into `tasks_NNN.partial/`, which is renamed to `tasks_NNN/` only at the end and removed on any
+  error. Existing rounds are never overwritten.
+
+The tasks JSON:
 
 ```json
 [
   {
     "data": {
-      "audio": "/data/local-files/?d=batch/audio/clip_0001.wav",
+      "audio": "/data/local-files/?d=tasks_001/audio/part_01/<clip>.wav",
       "transcript": "Existing transcript for this clip.",
-      "clip_id": "clip_0001"
+      "clip_id": "<clip_id>"
     }
   }
 ]
 ```
 
-The script URL-encodes special characters. The path after `?d=` is relative to the **document root**, not the Source
-path, so it must retain `batch/` in this example. Do not use `file://` or a bare absolute local path.
-Keep original call/turn/segment timestamps in the data preparation manifest and join them to annotation exports
-using the stable `clip_id`. Company audio, transcripts, task JSON, and exports remain in authorized company
-directories and are not written into this repository.
+Only these three fields: predictions, strata and votes never enter the tasks JSON, so annotators cannot see them.
+The script URL-encodes special characters. The path after `?d=` is relative to `output_root`, so a local Label Studio
+uses `output_root` as its document root. Do not use `file://` or a bare absolute local path. Company audio,
+transcripts, task JSON and exports stay in authorized company directories and are not written into this repository.
 
 ## 2. Import with Local Files / Tasks
 
-Within the project, open **Settings → Cloud Storage → Add Source Storage → Local Files**:
+Set the local Label Studio's Local Files **document root** to `output_root`. Within the project, open
+**Settings → Cloud Storage → Add Source Storage → Local Files**:
 
-1. Set Source path / Absolute local path to `/absolute/path/to/dataset/batch/tasks`, a strict subdirectory of the document root.
+1. Set Source path / Absolute local path to `/absolute/path/to/selected_data_for_human_labeling/tasks_001`.
+   It must be a strict subdirectory of the document root; **it cannot equal the document root**.
 2. Click **Test Connection**, then **Next** after it succeeds.
-3. Set **Import Method** to **Tasks** and the filename filter to `^tasks_001\.json$` to import only the first batch.
+3. Set **Import Method** to **Tasks** and the filename filter to `^tasks_001\.json$`.
 4. Click **Load Preview** and confirm that the preview reads tasks rather than treating the JSON as an audio file.
 5. Click **Next → Save & Sync**, return to the data page, check the task count, and play one clip.
 
+For the next round, add another Source Storage with Source path `…/tasks_002` and filter `^tasks_002\.json$`.
+
 The public demo uses this Tasks synchronization method. In the screenshot, the filename is `import_tasks.json`, so
-the actual filter is `import_tasks\.json$`. Use `^tasks_001\.json$` for the batch directory example above.
+the actual filter is `import_tasks\.json$`. Use `^tasks_001\.json$` for the round folder above.
 
 ![Local Files wizard: Tasks, filename filter, and a successfully loaded preview](screenshots/04-import-settings.jpg)
 
-Sync only the filtered task JSON. Do not also scan the audio directory using **Files** mode, which would bypass
-the manifest filtering. Updating JSON does not automatically remove tasks that were imported previously.
+Sync only the filtered task JSON. Do not also scan the audio folders using **Files** mode, which would bypass the
+selection. Updating JSON does not automatically remove tasks that were imported previously.
 
 ## 3. Or upload JSON through Import
 
 If the project owner has already configured local file access for the audio, the recommended incremental workflow
 is **Import → Upload Files** on the project data page:
 
-1. Upload only `tasks_001.json` and complete its labeling.
-2. Upload `tasks_002.json` to the same project to continue; existing annotations are retained.
-3. Continue as needed, stopping after a few thousand clips if sufficient. Remaining files do not need to be imported.
+1. Upload only `tasks_001/tasks_001.json` and complete its labeling.
+2. Upload `tasks_002/tasks_002.json` to the same project to continue; existing annotations are retained.
+3. Continue as needed, stopping after a few thousand clips if sufficient.
 
-Uploading JSON imports task fields, not the referenced audio. Do not sync all batch files at once, which would add
-all their tasks to the project. **Choose either Tasks Sync or Upload Files for each JSON, and import each file only
-once.** Do not duplicate imports.
+Uploading JSON imports task fields, not the referenced audio. **Choose either Tasks Sync or Upload Files for each
+JSON, and import each file only once.** Do not duplicate imports.
 
 ## 4. Server Label Studio: upload audio directly (no Local Files / GCS)
 
@@ -146,7 +186,7 @@ with-transcript.
 
 | Step | Action | Check |
 |---|---|---|
-| 1 | Locally, run `link_upload_audio.py` to hard-link the audio of one `tasks_NNN.json` into `part_01/`, `part_02/`, … | Files per part |
+| 1 | Locally, run `prepare_tasks.py` ([section 1](#1-generate-one-round-of-tasks)); the audio is already split into `tasks_NNN/audio/part_01/`, `part_02/`, … | Files per part |
 | 2 | Create the LSE project with [config_audio_only.xml](config_audio_only.xml) | Preview shows only the audio and choices |
 | 3 | Open **Import**; each time, select all files of one part folder and drag them in | Task count equals files uploaded |
 | 4 | Run `attach_task_data.py` as a dry run (`write: false`) | No errors; `To update` equals the file count |
@@ -159,41 +199,20 @@ Run both scripts from the repository root with a Python that has [requirements.t
 (the `emotion_recognition_llm` environment already has it). They take no command-line arguments; their settings are
 YAML files in `label_studio/config/`.
 
-### 4.1 Build the upload folders (hard links)
-
-`label_studio/config/link_upload_audio.yaml`:
-
-```yaml
-tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
-document_root: /absolute/path/to/dataset
-upload_dir: /absolute/path/to/dataset/batch/audio/upload_001  # a new or empty folder
-files_per_folder: 100
-```
-
-```bash
-python3 label_studio/link_upload_audio.py
-```
-
-- The upload folder holds **hard links**, which use no extra disk space. Finder may still show the folder's full
-  size, but disk usage does not grow, and `du -sh` on the whole batch folder counts each file once. The originals
-  are not moved or changed, so the manifest and task JSON paths stay valid.
-- After uploading, you may delete the upload folder; the originals are unaffected. **Do not edit files inside the
-  upload folder**: edits would change the originals too.
-- Hard links need the same disk as the audio. exFAT and some network shares do not support them; the script then
-  stops, removes the links it created, and never falls back to copying.
 - Each part holds at most `files_per_folder` files. Open-source Label Studio accepts 100 files per upload by default
-  (`DATA_UPLOAD_MAX_NUMBER_FILES`); on LSE the admin's setting applies. Lower the value if an upload is refused.
-- Label Studio replaces spaces with `_`, drops characters such as `#`, and adds an 8-character random prefix; the
-  script handles this. File names must therefore be unique (ignoring case and dropped characters) and at most 70
-  characters long, or the server shortens them.
+  (`DATA_UPLOAD_MAX_NUMBER_FILES`); on LSE the admin's setting applies. If an upload is refused, lower the value,
+  delete that round's folder and run again: with unchanged settings, the same clips are selected in smaller parts.
+- Label Studio replaces spaces with `_`, drops characters such as `#`, and adds an 8-character random prefix;
+  `attach_task_data.py` handles this. `prepare_tasks.py` has already checked that file names are unique and at most
+  70 characters long.
 
-### 4.2 Add transcript and clip_id
+### 4.1 Add transcript and clip_id
 
 `label_studio/config/attach_task_data.yaml`:
 
 ```yaml
 project_id: 1      # the number in the project address: https://<your-label-studio-host>/projects/<id>/data
-tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
+tasks_file: /absolute/path/to/selected_data_for_human_labeling/tasks_001/tasks_001.json
 write: false       # false = dry run (read and match only); true = write
 limit: 3           # most tasks written per run; once checked, set null = all
 ```
@@ -217,14 +236,14 @@ python3 label_studio/attach_task_data.py
   and the tasks are listed. For a double upload, delete the extra task in the Data Manager and run again. Finished
   tasks are skipped, so re-running is safe.
 
-### 4.3 Later batches in the same project
+### 4.2 Later rounds in the same project
 
-Only between batches, while nobody is labeling:
+Only between rounds, while nobody is labeling:
 
 1. Switch the template back to `config_audio_only.xml`. Both templates have the same choices, so existing annotations stay.
-2. Run `link_upload_audio.py` for `tasks_002.json` (with a new `upload_dir`, e.g. `upload_002`) and upload its parts.
-3. Set `tasks_file` in `attach_task_data.yaml` to `tasks_002.json` and follow steps 4–6 of the table. Tasks of
-   earlier batches appear as `other batches (ignored)` and are left unchanged.
+2. Run `prepare_tasks.py` again to make the next round, `tasks_002/`, and upload its part folders.
+3. Set `tasks_file` in `attach_task_data.yaml` to `…/tasks_002/tasks_002.json` and follow steps 4–6 of the table.
+   Tasks of earlier rounds appear as `other batches (ignored)` and are left unchanged.
 4. Switch back to `config_with_transcript.xml`, then let the annotators continue.
 
 ## 5. Read and normalize exports

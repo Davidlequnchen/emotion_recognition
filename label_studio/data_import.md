@@ -2,121 +2,160 @@
 
 中文 | [English](data_import_en.md)
 
-从批次的 `manifest.parquet` 为每个符合条件的客户 clip 建一条任务；转写直接读取 manifest 的 `text` 列，
-不需要单独的转写文件夹。合格片段用固定 seed 打乱后，拆成互不重叠的任务 JSON，每份最多 1,000 条。
-本机服务的 document root 已由负责人配置；下方使用通用路径说明，不涉及安装或启动步骤。
+[prepare_tasks.py](prepare_tasks.py) 从多个批次中挑出一轮 1,000 个客户 clip，复制音频，并生成 Label Studio 任务文件；
+转写直接读取 manifest 的 `text` 列。挑选规则（分层、配额、补齐）见[操作手册第 3 节](README.md#3-如何挑选待标注片段)。
+本文说明输入、设置和输出，以及三种导入方式；不涉及 Label Studio 的安装或启动。
 
-## 1. 准备一个批次目录
+## 1. 生成一轮任务
 
-将批次放在 document root 的**严格子目录**中，例如：
+### 1.1 输入
 
 ```text
-/absolute/path/to/dataset/        # 服务已配置的 document root
-└── batch/
-    ├── audio/                   # clip_0001.wav、clip_0002.mp3 …
-    ├── manifest.parquet         # clip ID、音频文件、文字稿、长音频标记等
-    └── tasks/                   # 生成的任务文件目录；Local Files 的 Source path
-        ├── tasks_001.json       # 最多 1,000 条
-        ├── tasks_002.json       # 另外最多 1,000 条
-        └── …
+/absolute/path/to/curated_dataset/              # curated_root
+├── batch_01/
+│   ├── audio/                                  # 音频，平铺，例如 <UUID>.wav
+│   └── manifest_with_predictions.parquet       # 原 manifest + 三个预测列
+├── batch_02/
+└── …                                           # 约 40 个随机批次
 ```
 
-Local Files 的 Source path 必须是 document root 内的严格子目录，**不能与 document root 相等**。
-上面的 `batch/tasks/` 满足这一要求。
+每个 `manifest_with_predictions.parquet` 需要以下列，列名可在 YAML 的 `columns` 中修改：
 
-在已安装 `pyarrow` 的 Python 环境中运行（项目的 `emotion_recognition_llm` 环境已包含它）。
-独立使用时，先在 Python 3.11 环境中从仓库根目录安装 `python3 -m pip install -r label_studio/requirements.txt`。
-然后在仓库根目录生成任务：
+| 默认列名 | 内容 | `columns` 中的键 |
+|---|---|---|
+| `clip_id` | 稳定 ID，写入 `data.clip_id`；在所有批次中唯一 | `clip_id` |
+| `audio_clip_file` | 音频文件名或路径 | `audio` |
+| `text` | 已有转写，写入 `data.transcript`；空白或空值写为 `""` | `text` |
+| `is_longer_than_10_seconds` | `true` 排除，`false` 保留 | `long_clip` |
+| `external_call_id` | 通话 ID，用于"每通电话最多 3 段" | `call_id` |
+| `pred_e2v`、`pred_gpt`、`pred_gemini` | emotion2vec、GPT Realtime、Gemini 的预测 | `predictions` |
+
+**预测标签格式**：每格一个标签，不区分大小写，忽略两端空白。
+
+- 有效票：`angry`、`disgusted`、`fearful`、`happy`、`sad`、`surprised`、`neutral`。
+- 不算票：空值（null、NaN、空字符串）、`invalid`、`other`、`unknown`、`none`。
+- 其他任何值都会报错，并按列列出最多 10 个意外值，便于发现合并错误。
+
+manifest 的其他列原样保留到输出的 `manifest.parquet`。
+
+### 1.2 设置并运行
+
+设置写在 [config/prepare_tasks.yaml](config/prepare_tasks.yaml)，不用命令行参数：
+
+```yaml
+curated_root: /absolute/path/to/curated_dataset
+batches: [batch_01, batch_02, batch_03]          # 参与挑选的批次文件夹
+manifest_name: manifest_with_predictions.parquet
+output_root: /absolute/path/to/selected_data_for_human_labeling
+columns:
+  clip_id: clip_id
+  audio: audio_clip_file
+  text: text
+  long_clip: is_longer_than_10_seconds
+  call_id: external_call_id
+  predictions: [pred_e2v, pred_gpt, pred_gemini]
+quotas:                  # 每轮片段数 = 四项之和 = 1,000
+  random: 150
+  emotion: 560
+  conflict: 140
+  neutral: 150
+max_clips_per_call: 3
+files_per_folder: 100    # 每个 part 文件夹的文件数 = 每次上传的文件数
+seed: 42
+```
+
+在仓库根目录、用已安装 [requirements.txt](requirements.txt) 的 Python 运行（`emotion_recognition_llm` 环境已包含）：
 
 ```bash
-python3 label_studio/prepare_tasks.py \
-  --manifest /absolute/path/to/dataset/batch/manifest.parquet \
-  --document-root /absolute/path/to/dataset \
-  --output-dir /absolute/path/to/dataset/batch/tasks \
-  --batch-size 1000 \
-  --seed 42
+python3 label_studio/prepare_tasks.py
 ```
 
-`--output-dir` 替代原来的单文件 `--output`。`--batch-size` 默认 `1000`，`--seed` 默认 `42`，两者均可省略。
-脚本先完成筛选和验证，按 `clip_id` 排序，再用该 seed 打乱一次并连续分块。每个合格片段恰好出现一次，
-各文件之间没有重叠，最后一份可以不足 1,000 条；例如 2,007 条会生成 1,000、1,000、7 条三个文件。
-相同合格片段集合、seed 和 batch size 会得到相同分组，即使 manifest 行顺序改变也不影响分组。
-入选片段集合或 seed 改变后可能重新分组；开始标注后请继续使用首次生成的文件。
+每次运行生成下一轮（`tasks_001`、`tasks_002` …），并排除前面各轮 `tasks_NNN/tasks_NNN.json` 中已有的片段。
+随机数种子是 `seed` 加轮号，所以同样的数据和设置总是得到同一轮结果。
 
-默认读取以下列；其他 metadata 保留在 manifest 中，通过 `clip_id` 与导出结果关联：
+### 1.3 检查规则
 
-| manifest 列 | 用途 | 修改列名的参数 |
-|---|---|---|
-| `clip_id` | 原有稳定 ID，写入 `data.clip_id`；整数 ID 转成字符串，字符串 ID 保留原值 | `--clip-id-column` |
-| `audio_clip_file` | 音频文件名或文件路径，转换为 `data.audio` | `--audio-column` |
-| `text` | 已有文字稿，写入 `data.transcript` | `--text-column` |
-| `is_longer_than_10_seconds` | `true` 排除，`false` 保留 | `--long-clip-column` |
+脚本先做完全部检查，才复制文件；任何一项不通过都会报错，并且不创建任何文件。
 
-**筛选完全依据 manifest 标记，不读取音频来重新测量时长。** 当前列名表示 10 秒，使用的是 10 秒标记，
-不是此前讨论的 15 秒规则。如果以后 manifest 提供了 15 秒标记列，可用
-`--long-clip-column is_longer_than_15_seconds` 指定该列。布尔值、数值 `1/0` 和字符串
-`true/false`、`1/0` 均可使用；字符串忽略大小写和两端空白。标记缺失或无效时会报错，不会猜测。
+- `output_root` 不能在 `curated_root` 里面，反过来也不行。
+- 长片段标记可以是布尔值、数值 `1/0`，或字符串 `true/false`、`1/0`（忽略大小写和两端空白）；缺失或无效会报错。
+  筛选只看这个标记，不读取音频测量时长。
+- `clip_id` 在所有列出的批次中必须唯一；合格片段的通话 ID 不能为空。
+- 音频路径：只有文件名时在 `<批次>/audio/` 中查找；带目录的相对路径相对批次文件夹；绝对路径必须在 `curated_root` 内。
+  指向 `curated_root` 外的 symlink 会被拒绝。支持 WAV、MP3、FLAC、OGG、M4A。
+- 文件名在所有合格片段中必须唯一（忽略大小写和 Label Studio 会删掉的字符），且不超过 70 个字符：
+  服务器版 Label Studio 按文件名配对任务，过长的文件名会被截短。
+- 入选的音频必须都存在，否则列出缺失的文件。
 
-`audio_clip_file` 的路径解析规则：
+运行时依次显示：各批次的行数、长片段、前面各轮已用和合格数；每个模型的票数分布（含不算票）；各分层的片段数；
+各层的目标与实际数量；缺口去向；最后是下一步操作。
 
-- 仅文件名（如 `clip_0001.wav`）：默认从 manifest 旁的 `audio/` 中查找；可用 `--audio-dir` 指定其他目录。
-- 带目录的相对路径（如 `audio/clip_0001.wav`）：相对 manifest 所在的批次目录解析。
-- 绝对路径：直接使用，但必须位于 document root 内。
+### 1.4 输出
 
-支持 WAV、MP3、FLAC、OGG、M4A。脚本只读取 manifest 中保留行引用的音频，不扫描音频目录，也不复制、
-删除或修改音频。未列入 manifest 或被标记排除的文件可以留在 `audio/` 中；被排除的行不检查音频是否存在。
-全部行被排除时不生成任何批次 JSON。空白、null 或 NaN 转写写为空字符串并报告数量；其他非文本转写会报错。
-保留行的 clip ID 和音频真实路径必须各自唯一，缺列、缺失音频或重复记录都会报错。
-manifest、音频目录及引用音频的真实路径必须位于 document root 内；指向根目录外的 symlink 被拒绝。
-全部验证成功后才写输出；若输出目录已有 `tasks_*.json`，脚本会报错，避免覆盖或混入旧分组。
-重复生成时请选择新的输出目录。运行结束会显示 seed、各文件任务数及排除数量。
+```text
+/absolute/path/to/selected_data_for_human_labeling/   # output_root
+├── tasks_001/                        # 第 1 轮
+│   ├── audio/part_01/ … part_10/     # 音频副本，每个文件夹 100 个，按任务顺序；原文件不变
+│   ├── tasks_001.json                # 任务文件
+│   ├── manifest.parquet              # 入选行：原 manifest 全部列 + 来源和位置
+│   └── summary.json                  # 本轮记录
+└── tasks_002/                        # 下一次运行生成第 2 轮
+```
 
-每份任务 JSON 的形态不变：
+- `manifest.parquet` 在原有列之后加上 `source_batch`、`layer`（random、emotion、conflict、neutral、fill）、
+  `target_class`、`stratum`（如 `agree3:angry`）、`task_index`、`part` 和 `copied_audio`。
+- `summary.json` 记录设置快照、轮号、seed、各分层片段数、目标与实际数量、缺口去向、空转写数和生成时间。
+- 先写入 `tasks_NNN.partial/`，全部完成后才改名为 `tasks_NNN/`；中途出错会删掉 `.partial`。已有的轮次不会被覆盖。
+
+任务 JSON 的形态：
 
 ```json
 [
   {
     "data": {
-      "audio": "/data/local-files/?d=batch/audio/clip_0001.wav",
+      "audio": "/data/local-files/?d=tasks_001/audio/part_01/<clip>.wav",
       "transcript": "已有的 clip 转写",
-      "clip_id": "clip_0001"
+      "clip_id": "<clip_id>"
     }
   }
 ]
 ```
 
-脚本对 URL 中的特殊字符编码。`?d=` 后是相对 **document root** 的路径，不是相对 Source path；
-因此这里必须保留 `batch/`。不要使用 `file://` 或裸本机绝对路径。
-原始 call/turn/segment 时间戳保留在数据准备 manifest 中，通过稳定的 `clip_id` 与标注导出关联。
-公司音频、转写、任务 JSON 和导出均保留在公司授权目录，不写入本仓库。
+只有这三个字段：预测、分层和票数不进任务 JSON，标注员看不到。脚本对 URL 中的特殊字符编码。
+`?d=` 后是相对 `output_root` 的路径，所以本机 Label Studio 的 document root 设为 `output_root`。
+不要使用 `file://` 或裸本机绝对路径。公司音频、转写、任务 JSON 和导出均保留在公司授权目录，不写入本仓库。
 
 ## 2. 用 Local Files / Tasks 同步导入
 
-项目内进入 **Settings → Cloud Storage → Add Source Storage → Local Files**：
+本机 Label Studio 的 Local Files **document root** 设为 `output_root`。项目内进入
+**Settings → Cloud Storage → Add Source Storage → Local Files**：
 
-1. Source path / Absolute local path 填 `/absolute/path/to/dataset/batch/tasks`，是 document root 的严格子目录。
+1. Source path / Absolute local path 填 `/absolute/path/to/selected_data_for_human_labeling/tasks_001`。
+   它必须是 document root 的严格子目录，**不能与 document root 相等**。
 2. 点击 **Test Connection**；成功后点 **Next**。
-3. **Import Method** 选 **Tasks**，先只导入第一份，文件过滤填 `^tasks_001\.json$`。
+3. **Import Method** 选 **Tasks**，文件过滤填 `^tasks_001\.json$`。
 4. 点击 **Load Preview**，确认预览读取到任务而不是把 JSON 当成音频文件。
 5. 点击 **Next → Save & Sync**，回到数据页核对任务数，并试播一条。
 
+下一轮另加一个 Source Storage：Source path 为 `…/tasks_002`，过滤条件为 `^tasks_002\.json$`。
+
 本次公开演示采用的就是 Tasks 同步导入。下图中的文件名是 `import_tasks.json`，所以过滤条件实际为
-`import_tasks\.json$`；使用上面的分批目录时，请对应使用 `^tasks_001\.json$`。
+`import_tasks\.json$`；使用上面的轮次目录时，请对应使用 `^tasks_001\.json$`。
 
 ![Local Files 向导：Tasks、文件过滤和成功加载的预览](screenshots/04-import-settings.jpg)
 
-仅同步过滤后的任务 JSON，不要再用 **Files** 模式扫描整个音频目录，否则会绕过 manifest 的筛选。
+仅同步过滤后的任务 JSON，不要再用 **Files** 模式扫描音频目录，否则会绕过挑选结果。
 更新 JSON 不会自动删除此前已导入的任务。
 
 ## 3. 或通过 Import 上传 JSON
 
-如果负责人已配置好音频的本地文件访问，建议在项目数据页用 **Import → Upload Files** 逐批上传：
+如果负责人已配置好音频的本地文件访问，建议在项目数据页用 **Import → Upload Files** 逐轮上传：
 
-1. 先只上传 `tasks_001.json`，完成这一批标注。
-2. 在同一个项目里上传 `tasks_002.json`，继续下一批；现有标注结果保留。
-3. 按需要继续，做到几千条后可以停止，其余文件无需导入。
+1. 先只上传 `tasks_001/tasks_001.json`，完成这一轮标注。
+2. 在同一个项目里上传 `tasks_002/tasks_002.json`，继续下一轮；现有标注结果保留。
+3. 按需要继续，做到几千条后可以停止。
 
-上传 JSON 只导入任务字段，不会上传 JSON 中引用的音频。不要一次同步所有分批文件，否则全部任务都会进入项目。
+上传 JSON 只导入任务字段，不会上传 JSON 中引用的音频。
 **每份 JSON 在 Tasks Sync 和 Upload Files 中二选一，且只导入一次**，不要重复导入。
 
 ## 4. 服务器版 Label Studio：直接上传音频（不用 Local Files / GCS）
@@ -134,7 +173,7 @@ manifest、音频目录及引用音频的真实路径必须位于 document root 
 
 | 步骤 | 操作 | 检查 |
 |---|---|---|
-| 1 | 本机运行 `link_upload_audio.py`，把一份 `tasks_NNN.json` 的音频硬链接到 `part_01/`、`part_02/` … | 各 part 的文件数 |
+| 1 | 本机运行 `prepare_tasks.py`（[第 1 节](#1-生成一轮任务)），音频已分到 `tasks_NNN/audio/part_01/`、`part_02/` … | 各 part 的文件数 |
 | 2 | 在 LSE 建项目，模板用 [config_audio_only.xml](config_audio_only.xml) | 预览只有音频和选项 |
 | 3 | 打开 **Import**，每次选中一个 part 文件夹里的全部文件拖进去 | 任务数等于已上传的文件数 |
 | 4 | 运行 `attach_task_data.py`，先试运行（`write: false`） | 没有报错；`To update` 等于文件数 |
@@ -146,37 +185,18 @@ manifest、音频目录及引用音频的真实路径必须位于 document root 
 两个脚本都在仓库根目录、用已安装 [requirements.txt](requirements.txt) 的 Python 运行（`emotion_recognition_llm` 环境已包含），
 不用命令行参数，设置写在 `label_studio/config/` 的 YAML 中。
 
-### 4.1 建立上传文件夹（硬链接）
-
-`label_studio/config/link_upload_audio.yaml`：
-
-```yaml
-tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
-document_root: /absolute/path/to/dataset
-upload_dir: /absolute/path/to/dataset/batch/audio/upload_001  # 新的或空的文件夹
-files_per_folder: 100
-```
-
-```bash
-python3 label_studio/link_upload_audio.py
-```
-
-- 上传文件夹里是**硬链接**：不占额外磁盘空间。Finder 显示的文件夹大小可能仍是完整大小，但磁盘用量不变，
-  对整个批次文件夹运行 `du -sh` 只算一次。原音频不移动、不修改，manifest 和任务 JSON 的路径照常有效。
-- 上传后可以删除上传文件夹，原文件不受影响。**不要编辑上传文件夹里的文件**，那样原文件也会一起改变。
-- 硬链接要求与音频在同一磁盘。exFAT 和部分网络盘不支持；脚本会报错并清理已建的链接，不会改为复制。
 - 每个 part 最多 `files_per_folder` 个文件。开源版每次上传默认最多 100 个文件（`DATA_UPLOAD_MAX_NUMBER_FILES`），
-  LSE 以管理员设置为准；上传被拒时调小这个值。
-- Label Studio 会把空格改成 `_`、删掉 `#` 等符号，并在文件名前加 8 位随机前缀；脚本会自动对应。
-  因此文件名必须唯一（忽略大小写和被删的符号），且不超过 70 个字符，否则服务器会截短文件名。
+  LSE 以管理员设置为准。上传被拒时调小这个值，删掉这一轮的文件夹后重跑：设置不变时会选出同样的片段，只是 part 更小。
+- Label Studio 会把空格改成 `_`、删掉 `#` 等符号，并在文件名前加 8 位随机前缀；`attach_task_data.py` 会自动对应。
+  `prepare_tasks.py` 已检查文件名唯一且不超过 70 个字符。
 
-### 4.2 补上转写和 clip_id
+### 4.1 补上转写和 clip_id
 
 `label_studio/config/attach_task_data.yaml`：
 
 ```yaml
 project_id: 1      # 项目网址中的数字：https://<your-label-studio-host>/projects/<id>/data
-tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json
+tasks_file: /absolute/path/to/selected_data_for_human_labeling/tasks_001/tasks_001.json
 write: false       # false = 试运行，只读取和匹配；true = 写入
 limit: 3           # 每次最多写入几条；检查无误后改为 null = 全部
 ```
@@ -197,14 +217,14 @@ python3 label_studio/attach_task_data.py
 - 找不到对应文件、同一文件上传了两次等问题，都会在写入前停止并列出任务。重复上传时，在 Data Manager
   删掉多余的任务后重跑。已完成的任务会跳过，可以放心重跑。
 
-### 4.3 同一项目的后续批次
+### 4.2 同一项目的后续轮次
 
-只在两批之间、没有人标注时进行：
+只在两轮之间、没有人标注时进行：
 
 1. 模板换回 `config_audio_only.xml`。两份模板的选项相同，已有标注保留。
-2. 对 `tasks_002.json` 运行 `link_upload_audio.py`（新的 `upload_dir`，例如 `upload_002`），上传各 part。
-3. 把 `attach_task_data.yaml` 的 `tasks_file` 改为 `tasks_002.json`，按上表第 4–6 步运行。
-   前面批次的任务显示为 `other batches (ignored)`，不会被修改。
+2. 再运行一次 `prepare_tasks.py`，生成下一轮 `tasks_002/`，上传它的各 part 文件夹。
+3. 把 `attach_task_data.yaml` 的 `tasks_file` 改为 `…/tasks_002/tasks_002.json`，按上表第 4–6 步运行。
+   前面轮次的任务显示为 `other batches (ignored)`，不会被修改。
 4. 换回 `config_with_transcript.xml`，再让标注员继续。
 
 ## 5. 读取并标准化导出

@@ -6,6 +6,6 @@
 #   LABEL_STUDIO_URL and LABEL_STUDIO_API_KEY; see label_studio/data_import_en.md.
 # =====================================================================
 project_id: 1  # the number in the project's address: https://<your-label-studio-host>/projects/<id>/data
-tasks_file: /absolute/path/to/dataset/batch/tasks/tasks_001.json  # the batch whose audio files were uploaded
+tasks_file: /absolute/path/to/selected_data_for_human_labeling/tasks_001/tasks_001.json  # the uploaded round
 write: false   # false = dry run (read and match only); true = write transcript and clip_id into the tasks
 limit: 3       # at most this many tasks are written per run; start with 3, check them, then null = all

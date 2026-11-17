@@ -1,0 +1,28 @@
+# =====================================================================
+# Settings of label_studio/prepare_tasks.py: select one round of clips for human emotion labelling from the curated
+# batches (stratified by three model predictions), copy their audio into part folders and write tasks_NNN/.
+# Run it from the repository root: python3 label_studio/prepare_tasks.py
+# Each run makes the next round (tasks_001, tasks_002, …) and never reuses clips of earlier rounds.
+# Use absolute paths; keep company data out of Git. See label_studio/data_import_en.md, section 1.
+# =====================================================================
+curated_root: /absolute/path/to/curated_dataset  # the folder that holds the batch folders
+batches: [batch_01, batch_02, batch_03]          # batch folders under curated_root that take part
+manifest_name: manifest_with_predictions.parquet # in each batch folder, next to its flat audio/ folder
+output_root: /absolute/path/to/selected_data_for_human_labeling  # rounds go here; not inside curated_root (nor
+                                                                 # the reverse); the Local Files document root
+columns:                                 # manifest column names
+  clip_id: clip_id                       # stable ID, unique across all batches
+  audio: audio_clip_file                 # file name in <batch>/audio/, or a path from the batch folder
+  text: text                             # existing transcript; blank or null becomes ""
+  long_clip: is_longer_than_10_seconds   # true = longer than 10 s = not used
+  call_id: external_call_id              # the call a clip comes from (for max_clips_per_call)
+  predictions: [pred_e2v, pred_gpt, pred_gemini]  # emotion2vec, GPT Realtime, Gemini
+quotas:                    # clips per round; one round = their sum (1000)
+  random: 150              # uniform draw from all eligible clips
+  emotion: 560             # 6 emotions × about 93, each split over 3/3 agree, 2/3 agree and a single vote
+  conflict: 140            # 2 or more different emotions predicted
+  neutral: 150             # all valid votes neutral
+max_clips_per_call: 3      # at most this many clips of one call in a round
+files_per_folder: 100      # audio files per part folder = per upload; open-source Label Studio accepts 100 files
+                           # per upload by default (DATA_UPLOAD_MAX_NUMBER_FILES); a server admin may set another
+seed: 42                   # together with the round number, makes each round reproducible

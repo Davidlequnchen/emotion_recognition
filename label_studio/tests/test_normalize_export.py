@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import importlib.util
+import json
 from pathlib import Path
 import re
 import unittest
@@ -93,6 +94,16 @@ class LabelingTemplateTests(unittest.TestCase):
                 copied = re.search(r"```xml\n(.*?)\n```", text, flags=re.S)
                 self.assertIsNotNone(copied)
                 self.assertEqual(copied.group(1).strip(), expected)
+
+    def test_three_listener_settings_in_both_guides_match_the_file(self):
+        expected = json.loads((PROJECT / "project_settings.json").read_text(encoding="utf-8"))
+        self.assertEqual(expected["maximum_annotations"], 3)
+        for filename in ("README.md", "README_en.md"):
+            with self.subTest(filename=filename):
+                text = (PROJECT / filename).read_text(encoding="utf-8")
+                block = re.search(r"```json\n(.*?)\n```", text, flags=re.S)
+                self.assertIsNotNone(block)
+                self.assertEqual(json.loads(block.group(1)), expected)
 
 
 if __name__ == "__main__":

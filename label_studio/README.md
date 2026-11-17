@@ -2,15 +2,15 @@
 
 中文 | [English](README_en.md)
 
-本子项目使用 Label Studio，对**已完成切分的客户音频 clip**做情绪分类：每个 clip 由 **5 个不同账号各标一次**，
+本子项目使用 Label Studio，对**已完成切分的客户音频 clip**做情绪分类：每个 clip 由 **3 个不同账号各标一次**，
 不需要重新转写，也不需要画说话人或事件时间区间。
 
 操作导航：
 
-- **项目负责人**：[1. 建立项目](#1-建立项目) → [2. 配置模板](#2-配置模板) → [3. 导入任务](#3-导入任务)
-- **标注员日常操作**：[4. 日常标注](#4-日常标注)
-- **项目负责人收集结果**：[5. 导出结果](#5-导出结果)
-- **五人标注与自动补齐**：[6. 设置每段五位听众](#6-设置每段五位听众)
+- **项目负责人**：[1. 建立项目](#1-建立项目) → [2. 配置模板](#2-配置模板) → [3. 挑选片段](#3-如何挑选待标注片段) → [4. 导入任务](#4-导入任务)
+- **标注员日常操作**：[5. 日常标注](#5-日常标注)
+- **项目负责人收集结果**：[6. 导出结果](#6-导出结果)
+- **三人标注与自动补齐**：[7. 设置每段三位听众](#7-设置每段三位听众)
 - 详细配置：[完整可复制 XML 与字段解释](template_configuration.md) · [数据准备与导入接口](data_import.md)
 
 本机演示项目为 [SER Emotion Labeler](http://localhost:8082/projects/3/data)，首页为 <http://localhost:8082>。
@@ -58,20 +58,94 @@
 **已有正式标注项目不要原地改变标签含义。** 保留旧项目配置快照和完整导出，为新协议建立独立、注明配置版本的
 新批次或新项目。历史 `unknown` 可能混合“不确定”和“其他”两种判断；标准化脚本会原样保留，不能自动改成 `other`。
 
-## 3. 导入任务
+## 3. 如何挑选待标注片段
+
+**由数据准备人员完成。** [prepare_tasks.py](prepare_tasks.py) 从多个批次中挑出一轮 1,000 段，复制音频并生成任务文件；
+命令和设置见[数据导入说明](data_import.md#1-生成一轮任务)。
+
+**为什么不直接随机抽？** 客服录音大多是中性语气。随机抽 1,000 段，带情绪的可能只有几十段，恐惧、厌恶等更少，
+标完也学不到这些情绪。所以先看三个模型的预测，多抽"可能有情绪"的片段，同时保留一部分随机样本作对照。
+
+**三个预测列。** 每个批次的 `manifest_with_predictions.parquet` 是原 manifest 加三列：emotion2vec、GPT Realtime
+和 Gemini 的预测（默认列名 `pred_e2v`、`pred_gpt`、`pred_gemini`）。每格一个标签，不区分大小写：
+
+- 有效票：`angry`、`disgusted`、`fearful`、`happy`、`sad`、`surprised`、`neutral`；
+- 不算票：空值、`invalid`、`other`、`unknown`、`none`；
+- 其他任何值都会报错，用来发现合并错误。
+
+模型不预测 `other`，所以 `other` 只会来自人工标注。
+
+**分层。** 只数有效票，每段恰好属于下表的一层：
+
+| 分层 | 条件 | 例子（e2v / GPT / Gemini） |
+|---|---|---|
+| `agree3[情绪]` | 三票是同一种情绪 | angry / angry / angry |
+| `agree2[情绪]` | 两票是同一种情绪 | sad / sad / neutral；sad / sad / 空 |
+| `single[情绪]` | 只有一票是情绪，其余是 neutral | happy / neutral / neutral |
+| `conflict` | 两票或以上是情绪，且各不相同 | angry / sad / neutral |
+| `neutral` | 有效票全是 neutral | neutral / neutral / 空 |
+| `unassigned` | 有效票少于两张 | angry / 空 / invalid |
+
+`unassigned` 只参与随机层和最后的补齐。
+
+**每轮配额（共 1,000 段）。** 数字写在 [config/prepare_tasks.yaml](config/prepare_tasks.yaml) 的 `quotas`，两轮之间可以调整：
+
+| 层 | 数量 | 从哪里抽 |
+|---|---:|---|
+| `random` 随机 | 150 | 全部合格片段，均匀随机，反映真实分布 |
+| `emotion` 情绪 | 560 | 6 种情绪各约 93 段（94、94、93、93、93、93）；每种情绪再平分给 agree3、agree2、single 三层 |
+| `conflict` 分歧 | 140 | `conflict` 层 |
+| `neutral` 全中性 | 150 | `neutral` 层 |
+
+**不够时怎么补：**
+
+1. 某种情绪的某一层不够：用同一情绪的其他层补，顺序是 agree2 → single → agree3。
+2. 这种情绪三层加起来仍不够：差额转给 `conflict`。
+3. 总数仍不到 1,000：从剩下的合格片段中均匀随机补齐，标为 `fill`。
+4. 合格片段总数不够一轮时报错，不生成任何文件。
+
+**其他规则：**
+
+- 只用 10 秒以内的片段（`is_longer_than_10_seconds` 为 false）；10–15 秒的片段暂不使用。
+- 同一通电话在一轮里最多 3 段，避免少数通话占满名额；已满的电话会跳过。
+- 选好的 1,000 段最后整体打乱，各层混在一起，标注员看不出某段是怎么选中的。
+- 数据、设置和轮号相同时，结果完全相同，与 manifest 的行顺序无关。
+
+**标注员看不到预测。** 任务 JSON 只有 `audio`、`transcript`、`clip_id`。预测、分层和来源层只写在同一轮的
+`manifest.parquet` 和 `summary.json` 中，供以后使用：
+
+- 标完后按分层统计命中率，例如 agree3 和 single 中，人工也判为这种情绪的比例；
+- 以后从中划测试集时按分层加权，还原真实分布（情绪层是多抽的）。
+
+**一轮 = 一个 `tasks_NNN`。** 每次运行生成下一轮：`tasks_001`、`tasks_002` …，每轮 1,000 段，
+并自动排除前面各轮已选的片段，各轮互不重叠。输出目录：
+
+```text
+selected_data_for_human_labeling/     # output_root
+└── tasks_001/
+    ├── audio/
+    │   ├── part_01/                   # 复制的音频，每个文件夹 100 个，按任务顺序
+    │   └── … part_10/
+    ├── tasks_001.json                 # 任务：只有 audio、transcript、clip_id
+    ├── manifest.parquet               # 入选片段：原 manifest 全部列，加来源批次、层、分层（如 agree3:angry）、任务序号、part
+    └── summary.json                   # 本轮设置、各分层片段数、目标与实际数量、缺口去向
+```
+
+## 4. 导入任务
 
 **由项目负责人完成。** 本次演示的 6 条公开 clip 已通过 **Local Files → Tasks → Save & Sync** 导入，
-可以直接进入步骤 4。存储方式的具体配置见 [数据导入说明](data_import.md)。
+可以直接进入步骤 5。存储方式的具体配置见 [数据导入说明](data_import.md)。
+正式数据的任务由[第 3 节](#3-如何挑选待标注片段)的 `prepare_tasks.py` 生成：每轮一个 `tasks_NNN/` 文件夹，含 1,000 条任务和对应音频。
 
-**只能用公司服务器版 Label Studio（不能用 Local Files / GCS）时**，改为直接上传音频文件、再用脚本补上转写和 `clip_id`，
+**只能用公司服务器版 Label Studio（不能用 Local Files / GCS）时**，改为逐个上传 `tasks_NNN/audio/` 下的 part 文件夹、再用脚本补上转写和 `clip_id`，
 见[直接上传音频](data_import.md#4-服务器版-label-studio直接上传音频不用-local-files--gcs)；这时不导入任务 JSON。
 
-日常导入新批次时，也可以使用项目数据页的 **Import → Upload Files**：
+日常导入新一轮时，也可以使用项目数据页的 **Import → Upload Files**：
 
-1. 先只上传数据准备人员从 `manifest.parquet` 生成的 `tasks_001.json`，再点击 **Import**；生成方法见[数据导入说明](data_import.md)。
-2. 每个 JSON 文件默认最多 1,000 条任务，每条任务对应一个 clip，带音频地址、已有转写和稳定的 `clip_id`；各文件互不重叠。
-3. 上传前，负责人应确保这些音频地址已能被当前服务访问。JSON 不会替你上传其引用的音频。
-4. 完成后在同一个项目继续导入 `tasks_002.json` 等，原有结果保留；按需要停止，无需一次导入全部文件。
+1. 先只上传第一轮的 `tasks_001/tasks_001.json`，再点击 **Import**；生成方法见[数据导入说明](data_import.md#1-生成一轮任务)。
+2. 每轮 1,000 条任务，每条任务对应一个 clip，带音频地址、已有转写和稳定的 `clip_id`；各轮互不重叠。
+3. 上传前，负责人应确保这些音频地址已能被当前服务访问（本机版的 Local Files document root 即 `output_root`）。JSON 不会替你上传其引用的音频。
+4. 完成后在同一个项目继续导入 `tasks_002/tasks_002.json` 等，原有结果保留；按需要停止。
 5. **每份 JSON 只导入一次**：不要既通过 Local Files Sync 导入，又通过 Upload Files 再导入。
 
 ![Import 的 Upload Files 窗口，选择准备好的任务 JSON](screenshots/04-upload-json.jpg)
@@ -84,7 +158,7 @@
 真实公司音频、转写和任务 JSON 保留在公司授权目录，不提交到本仓库。无法播放或文字不匹配时，
 交给数据准备人员检查；不要把本机绝对路径或 `file://` 直接填进音频字段。
 
-## 4. 日常标注
+## 5. 日常标注
 
 **由标注员完成。** 用自己的账号登录负责人指定的项目，点击 **Label All Tasks** 进入标注队列，按以下顺序操作：
 
@@ -131,7 +205,7 @@
 
 </details>
 
-## 5. 导出结果
+## 6. 导出结果
 
 **由项目负责人完成。** 在项目数据页点击 **Export**，选择完整 **JSON** 格式。
 
@@ -150,22 +224,22 @@
 `was_cancelled`。同一 clip 的多人标注先分别保存，分析一致性和分歧后再决定训练标签，不要直接覆盖为一个标签。
 取消的标注单独处理；Community UI 导出不受当前 tab filter 限制，不能认为导出只包含当前筛选页面。
 
-## 6. 设置每段五位听众
+## 7. 设置每段三位听众
 
-**由项目负责人完成，每个新项目都要设置。** 五人要求是项目设置，不在音频界面 XML 中。
+**由项目负责人完成，每个新项目都要设置。** 三人要求是项目设置，不在音频界面 XML 中。
 本机固定版本 **Community 1.23.2** 的后端支持以下配置，已有任务也会更新；两份 XML 均可原样使用。
 配置文件为 [project_settings.json](project_settings.json)：
 
 ```json
 {
-  "maximum_annotations": 5,
+  "maximum_annotations": 3,
   "overlap_cohort_percentage": 100,
   "show_overlap_first": true,
   "enable_empty_annotation": false
 }
 ```
 
-`5` 表示每段需要五位不同标注员；`100` 表示全部任务都遵循这一要求；另两项启用重叠任务优先并关闭界面空提交。
+`3` 表示每段需要三位不同标注员；`100` 表示全部任务都遵循这一要求；另两项启用重叠任务优先并关闭界面空提交。
 Community 的设置页面可能没有相应控件，可用项目负责人账号的 API 凭据通过
 [Update project API](https://api.labelstud.io/api-reference/api-reference/projects/update) 设置。
 先按[官方令牌说明](https://labelstud.io/guide/access_tokens)将 Personal Access Token 换取短期 access token；
@@ -183,11 +257,11 @@ curl --fail-with-body --request PATCH \
   --data-binary @label_studio/project_settings.json
 ```
 
-负责人在 **Organization → Add Members** 获取注册链接，让至少五位实际听众各建一个账号，不共用账号。
+负责人在 **Organization → Add Members** 获取注册链接，让至少三位实际听众各建一个账号，不共用账号。
 使用 **Label All Tasks** 的正常队列时：
 
-- 某段已有 A、B、C 三位听众提交，仍未完成；没有标过它的 D、E 可以继续领取。
-- 已提交过该段的账号不会在正常队列中再次领取它；五位不同账号提交后，该段退出待标队列。
+- 某段已有 A、B 两位听众提交，仍未完成；没有标过它的 C 可以继续领取。
+- 已提交过该段的账号不会在正常队列中再次领取它；三位不同账号提交后，该段退出待标队列。
 - 默认跳过策略下，草稿、原生 Skip / 取消标注不计为完成；提交的 Unknown 或 Bad clip 都是一位听众的有效决策。
 - 每人每段只提交一份。不要在 Quick View 中点 `+` 重复新增；修改答案时编辑自己的原 annotation，不修改别人的结果。
 
@@ -207,7 +281,7 @@ Community 不能强制这一约定，也不能防止修改他人结果；`show_a
 上述 Community 行为已按本机 **1.23.2** 的代码和隔离数据库流程验证，依据包括
 [不同标注员计数](https://github.com/HumanSignal/label-studio/blob/1.23.2/label_studio/tasks/mixins.py)
 及[任务领取逻辑](https://github.com/HumanSignal/label-studio/blob/1.23.2/label_studio/projects/functions/next_task.py)。
-升级或更换部署版本后，先验证三人未完成、第五人完成、同一账号不重复领取，再开始正式批次。
+升级或更换部署版本后，先验证两人未完成、第三人完成、同一账号不重复领取，再开始正式批次。
 
 ## 多人使用前先确认部署方式
 
@@ -216,7 +290,7 @@ Community 不能强制这一约定，也不能防止修改他人结果；`show_a
 
 Community Edition 允许多人建账号，但所有用户可见所有项目、功能权限相同；不能真正分配特定任务，
 也不能阻止用户修改别人的 annotation。按 tab/filter 分工只是操作约定，不能作为盲标或权限隔离。
-五人补齐使用上节已验证的正常队列。严格的角色、人工任务分配、review 和强制盲标仍需要另行选择版本或隔离部署，
+三人补齐使用上节已验证的正常队列。严格的角色、人工任务分配、review 和强制盲标仍需要另行选择版本或隔离部署，
 不能直接照搬 Enterprise 教程。
 
 ## 官方参考
