@@ -17,6 +17,9 @@
 以下截图来自本机 Label Studio **1.23.2** 的实际操作。
 演示项目使用 **6 条公开音频**；截图中的选择值仅用于展示操作，不是人工听音结论。
 
+截图保留了旧版演示界面，其中 `unknown` 曾显示为 **Unknown / Other**。当前 XML 为新批次提供
+**8 种情绪（含 Other）＋ Unknown / Uncertain ＋ Bad clip**；本文没有修改在线项目或历史标注。
+
 ## 1. 建立项目
 
 **由项目负责人完成。** 登录后点击 **Create Project / Create new project**，填写项目名称，例如 `SER Emotion Labeler`。
@@ -34,12 +37,12 @@
 
 1. 选定下表的一种协议，复制对应 XML 的**全部内容**。
 2. 在 **Code** 编辑器中替换原有内容，不要追加在旧模板后面。
-3. 检查预览：上区有 8 个情绪选项（7 种情绪加 Unknown / Other），下区独立显示 Bad clip 弃用入口，再点击 **Save**。
+3. 检查预览：上区有 9 个选项（8 种情绪，含 Other，另加 Unknown / Uncertain），下区独立显示 Bad clip 弃用入口，再点击 **Save**。
 4. 已建项目的入口是 **Settings → Labeling Interface → Code**。
 
 | 配置文件 | 标注员可见内容 |
 |---|---|
-| [config_audio_only.xml](config_audio_only.xml) | 音频、上区 8 个情绪选项、下区独立 Bad clip 弃用入口 |
+| [config_audio_only.xml](config_audio_only.xml) | 音频、上区 8 种情绪与 1 个不确定选项、下区独立 Bad clip 弃用入口 |
 | [config_with_transcript.xml](config_with_transcript.xml) | 上述内容加只读的已有转写 |
 
 ![Code 编辑器与自定义情绪分类界面预览](screenshots/03-custom-interface.jpg)
@@ -49,8 +52,11 @@
 不是本机列表中可见的按钮。
 
 初次 SER 标注建议先采用 audio-only。若决定允许文字辅助，整批使用 with-transcript，并先听声音再参考文字。
-同一批独立 gold labels 不应混用两种协议，也不展示模型预测。现有 7 情绪加 `unknown` 是 pilot 起点，
-最终内部标签集仍待确认；正式标注后冻结配置，不能随意改字段名或标签值。
+同一批独立 gold labels 不应混用两种协议，也不展示模型预测。当前新批次采用 8 种情绪，包含独立的
+`other`；`unknown` 仅表示无法确定情绪，不是这 8 个训练类别之一。正式标注后冻结配置版本。
+
+**已有正式标注项目不要原地改变标签含义。** 保留旧项目配置快照和完整导出，为新协议建立独立、注明配置版本的
+新批次或新项目。历史 `unknown` 可能混合“不确定”和“其他”两种判断；标准化脚本会原样保留，不能自动改成 `other`。
 
 ## 3. 导入任务
 
@@ -83,12 +89,12 @@
 **由标注员完成。** 用自己的账号登录负责人指定的项目，点击 **Label All Tasks** 进入标注队列，按以下顺序操作：
 
 1. 听完整段音频，必要时重播。
-2. 音频可用时，在上方 **Emotion** 区选择一个情绪；情绪不确定或不属于既定类别时选 **Unknown / Other**。
+2. 音频可用时，在上方 **Emotion** 区选择一个情绪；能确定存在情绪但不属于七种具名情绪时选 **Other**，无法确定情绪时选 **Unknown / Uncertain**。
 3. 音频本身无法可靠判断时，使用下方 **Unusable audio** 区的 **Bad clip — skip**，不再赋予情绪。
 4. 两条路径互斥：选 Bad clip 会清除情绪，选情绪会取消 Bad clip。最后点击右下角 **Submit**。
 
 需要帮助时，把鼠标移到两区标题旁的 **ⓘ** 或选项卡片上，查看英文说明；也可用键盘 Tab 聚焦 **ⓘ**。
-情绪选项快捷键为 `1`–`8`，Bad clip 为 `0`；选中后仍需 Submit，无需输入任何文字。
+七种具名情绪快捷键为 `1`–`7`，Unknown / Uncertain 保留 `8`，Other 使用 `9`，Bad clip 保留 `0`；选中后仍需 Submit，无需输入任何文字。
 
 下图中的选择用于展示操作，**不是该音频的情绪答案**。界面文字使用英文，本手册用中文解释操作。
 
@@ -103,9 +109,10 @@
 | `neutral` | 中性：有足够声音线索支持中性判断 |
 | `sad` | 难过 |
 | `surprised` | 吃惊 |
-| `unknown` | 音频基本可用，但情绪不确定或不属于当前类别 |
+| `other` | 有明确情绪，但不符合上述七种具名情绪；不是不确定判断 |
+| `unknown` | 音频基本可用，但无法有把握地确定情绪；不是 `other` 或 `neutral` |
 
-**Bad clip 是独立的弃用决策，不是第 9 种情绪。** 例如严重噪声、静音或多人重叠导致音频无法可靠判断时，
+**Bad clip 是独立的弃用决策，不属于情绪类别。** 例如严重噪声、静音或多人重叠导致音频无法可靠判断时，
 在下方选择 Bad clip。`unknown` 用于可用音频中的情绪不确定，不能代替坏音频弃用；它也不等于 `neutral`。
 
 选择 **Bad clip — skip** 后仍需 **Submit**，才会保存弃用结果。Label Studio 原生的 **Skip** 是跳过当前任务，
@@ -114,7 +121,7 @@
 <details>
 <summary>查看 Bad clip 互斥状态与英文帮助提示</summary>
 
-下图选择 Bad clip 后，上区 8 个情绪都未选中；这也是操作演示，不是对样例音频质量的判断。
+旧版截图中选择 Bad clip 后，上区 8 个选项都未选中；新模板同样会清除全部 9 个上区选项。这也是操作演示，不是对样例音频质量的判断。
 
 ![选择 Bad clip 后，情绪选项全部清除](screenshots/09-bad-clip.jpg)
 
@@ -135,7 +142,7 @@
 ![滚动到底部后点击 Export 按钮](screenshots/08-export-button.jpg)
 
 默认导出已标注任务，未提交的任务不会默认包含在内。操作演示结果只用于验证流程，不作为训练或评测标签。
-原生 JSON 把选择保存为 `decision`：它可能是 8 个情绪值之一，也可能是 `bad_clip` 弃用决策。
+原生 JSON 把选择保存为 `decision`：它可能是 8 个情绪值之一（含 `other`）、`unknown` 不确定判断，或 `bad_clip` 弃用决策。
 负责人使用标准化脚本后，Bad clip 对应 `status="bad_clip"`、`emotion=null`，不会成为情绪标签。
 具体转换命令和字段见 [数据导入与导出接口](data_import.md#5-读取并标准化导出)。
 

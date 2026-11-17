@@ -9,19 +9,21 @@
 
 固定界面文字全部为英文。界面分为两区：
 
-- 上方 **Emotion**：8 个选项，包含 7 种情绪和 Unknown / Other。
+- 上方 **Emotion**：9 个选项，包含 8 种情绪（含 Other），另加 Unknown / Uncertain。
 - 下方 **Unusable audio**：独立的 Bad clip 弃用入口，表示不赋予情绪。
 
-这两条路径互斥，**Bad clip 不是第 9 种情绪**。内部共用一个 `decision` 单选组，确保每条 clip 只有一个决策。
+这两条路径互斥，**Bad clip 不属于情绪类别**。内部共用一个 `decision` 单选组，确保每条 clip 只有一个决策。
 
 ## 1. 创建并粘贴配置
 
 1. 建立项目，例如 `SER Emotion Labeler`，在 **Labeling Setup** 点击左下角 **Custom template**。
 2. 打开 **Code**，复制下方完整 XML，替换原有内容，不要追加在旧模板后面。
-3. 检查播放器、上区 8 个情绪卡片、下区独立 Bad clip 和两区的 ⓘ 帮助，再点击 **Save**。
+3. 检查播放器、上区 9 个卡片（8 种情绪与 1 个不确定判断）、下区独立 Bad clip 和两区的 ⓘ 帮助，再点击 **Save**。
 4. 已建项目的入口是 **Settings → Labeling Interface → Code**。
 
 如果旧项目已有标注，Label Studio 可能不允许删除正在被结果使用的字段。新协议应另建干净项目，保留旧项目历史。
+旧版曾将 `unknown` 显示为 **Unknown / Other**，不能推断历史记录究竟表示不确定还是其他情绪。
+保留旧配置快照、原始标注和导出；新批次单独记录新配置版本。此更新不会改动在线项目，也不会自动把 `unknown` 改成 `other`。
 下面的完整代码也可直接从 [config_audio_only.xml](config_audio_only.xml) 复制：
 
 ```xml
@@ -68,16 +70,17 @@
     <View className="ser-choices">
       <Choices name="decision" toName="audio" choice="single-radio" required="true" showInline="false">
         <View className="ser-emotions">
-          <HyperText name="emotion_help" inline="true" selectionEnabled="false" value='&lt;div class="ser-section-head"&gt;&lt;span class="ser-section-title"&gt;Emotion&lt;/span&gt;&lt;span class="ser-info" tabindex="0" title="Use this section when the audio can be judged. Choose one emotion or Unknown / Other. Unknown means the audio is usable but its emotion is uncertain." aria-label="Emotion help"&gt;ⓘ&lt;span class="ser-tooltip"&gt;Use this section when the audio can be judged. Choose one emotion or Unknown / Other. Unknown means the audio is usable but its emotion is uncertain.&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;p class="ser-section-note"&gt;Choose exactly one of the 8 options.&lt;/p&gt;'/>
+          <HyperText name="emotion_help" inline="true" selectionEnabled="false" value='&lt;div class="ser-section-head"&gt;&lt;span class="ser-section-title"&gt;Emotion&lt;/span&gt;&lt;span class="ser-info" tabindex="0" title="Choose an emotion when you can judge it. Use Other for a clear emotion outside the seven named categories, or Unknown / Uncertain when you cannot identify it confidently." aria-label="Emotion help"&gt;ⓘ&lt;span class="ser-tooltip"&gt;Choose an emotion when you can judge it. Use Other for a clear emotion outside the seven named categories, or Unknown / Uncertain when you cannot identify it confidently.&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;p class="ser-section-note"&gt;Choose one of 8 emotion labels, or Unknown / Uncertain.&lt;/p&gt;'/>
           <View className="ser-emotion-grid">
-            <Choice value="angry" hotkey="1" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #e5484d; --ser-tint: #fff1f2;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😠&lt;/span&gt;&lt;span class="ser-label"&gt;Angry&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="disgusted" hotkey="2" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #46a758; --ser-tint: #effaf1;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;🤢&lt;/span&gt;&lt;span class="ser-label"&gt;Disgusted&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="fearful" hotkey="3" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #8e4ec6; --ser-tint: #f7f0ff;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😨&lt;/span&gt;&lt;span class="ser-label"&gt;Fearful&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="happy" hotkey="4" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #f5a524; --ser-tint: #fff8e8;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😄&lt;/span&gt;&lt;span class="ser-label"&gt;Happy&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="neutral" hotkey="5" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #8b8d98; --ser-tint: #f4f5f7;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😐&lt;/span&gt;&lt;span class="ser-label"&gt;Neutral&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="sad" hotkey="6" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #3e63dd; --ser-tint: #eef2ff;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😢&lt;/span&gt;&lt;span class="ser-label"&gt;Sad&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="surprised" hotkey="7" hint="Choose this emotion. Select only one of the 8 emotion options." style="--ser-accent: #12a594; --ser-tint: #eafbf7;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😲&lt;/span&gt;&lt;span class="ser-label"&gt;Surprised&lt;/span&gt;&lt;/div&gt;'/>
-            <Choice value="unknown" hotkey="8" hint="The audio is usable, but the emotion is uncertain or outside the listed categories." style="--ser-accent: #6f6e77; --ser-tint: #f4f3f7;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;❓&lt;/span&gt;&lt;span class="ser-label"&gt;Unknown / Other&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="angry" hotkey="1" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #e5484d; --ser-tint: #fff1f2;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😠&lt;/span&gt;&lt;span class="ser-label"&gt;Angry&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="disgusted" hotkey="2" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #46a758; --ser-tint: #effaf1;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;🤢&lt;/span&gt;&lt;span class="ser-label"&gt;Disgusted&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="fearful" hotkey="3" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #8e4ec6; --ser-tint: #f7f0ff;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😨&lt;/span&gt;&lt;span class="ser-label"&gt;Fearful&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="happy" hotkey="4" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #f5a524; --ser-tint: #fff8e8;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😄&lt;/span&gt;&lt;span class="ser-label"&gt;Happy&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="neutral" hotkey="5" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #8b8d98; --ser-tint: #f4f5f7;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😐&lt;/span&gt;&lt;span class="ser-label"&gt;Neutral&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="sad" hotkey="6" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #3e63dd; --ser-tint: #eef2ff;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😢&lt;/span&gt;&lt;span class="ser-label"&gt;Sad&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="surprised" hotkey="7" hint="Choose this emotion. Select one option for this clip." style="--ser-accent: #12a594; --ser-tint: #eafbf7;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;😲&lt;/span&gt;&lt;span class="ser-label"&gt;Surprised&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="unknown" hotkey="8" hint="The audio is usable, but you cannot confidently determine the emotion. Do not use as Other or Neutral." style="--ser-accent: #6f6e77; --ser-tint: #f4f3f7;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;❓&lt;/span&gt;&lt;span class="ser-label" style="font-size: 16px;"&gt;Unknown / Uncertain&lt;/span&gt;&lt;/div&gt;'/>
+            <Choice value="other" hotkey="9" hint="A clear emotion is audible, but it does not fit the seven named emotions. Do not use for uncertainty." style="--ser-accent: #64748b; --ser-tint: #f1f5f9;" html='&lt;div class="ser-card"&gt;&lt;span class="ser-emoji"&gt;🗂️&lt;/span&gt;&lt;span class="ser-label"&gt;Other&lt;/span&gt;&lt;/div&gt;'/>
           </View>
         </View>
         <View className="ser-reject">
@@ -103,7 +106,7 @@
 | `choice="single-radio"` | 所有决策共用一个单选组，情绪与 Bad clip 原生互斥 |
 | `required="true"` | 没有选择时不能提交 |
 | `showInline="false"` | 不使用默认的同行排列；具体布局由嵌套 View 与 CSS 决定 |
-| `<View className="ser-emotions">`、`ser-emotion-grid` | 显示上方 Emotion 区和 8 个情绪选项；只有视觉分组作用 |
+| `<View className="ser-emotions">`、`ser-emotion-grid` | 显示上方 Emotion 区的 8 种情绪与 1 个不确定选项；只有视觉分组作用 |
 | `<View className="ser-reject">` | 显示下方独立弃用区；仍位于同一个 Choices 内，不构成第二个标注字段 |
 | `<Choice value="angry" …/>` 等 | `value` 是原生决策值；情绪采用稳定 ID，`bad_clip` 代表弃用路由 |
 | `html="…"` | 决定卡片的 emoji 和英文名称；显示内容与导出的 `value` 分开 |
@@ -119,7 +122,7 @@
 
 `html` 属性中的 `&lt;`、`&gt;` 是 XML 转义，复制时保持原样。
 修改外观可调整 CSS 或 `html`；正式标注后不要随意修改 `name`、`toName` 或 `Choice value`。
-最终情绪标签集仍需在 pilot 后确认，再冻结配置版本。
+当前新批次采用包含 `other` 的 8 种情绪，并保留独立的 `unknown` 不确定判断；正式标注时冻结配置版本。
 
 ## 3. 情绪与弃用怎么区分
 
@@ -134,13 +137,15 @@
 | 😐 Neutral | `neutral` | `5` | 有足够线索支持中性判断 |
 | 😢 Sad | `sad` | `6` | 难过 |
 | 😲 Surprised | `surprised` | `7` | 吃惊 |
-| ❓ Unknown / Other | `unknown` | `8` | 音频可用，但情绪不确定或不属于当前类别 |
+| 🗂️ Other | `other` | `9` | 有明确情绪，但不属于上述七种具名情绪；不是不确定判断 |
+| ❓ Unknown / Uncertain | `unknown` | `8` | 音频可用，但无法有把握地确定情绪；不是 `other` 或 `neutral` |
 
 下方 Unusable audio 区只有 **🚫 Bad clip — skip**，快捷键为 `0`。
 当严重噪声、静音或多人重叠等使音频本身无法可靠判断时选它；这会取消已有情绪。
 反过来选择任一情绪，会取消 Bad clip。选择后点击 **Submit**。
 
-Unknown 不等于 Neutral，也不代表音频不可用。Bad clip 是独立弃用决策，标准化结果中不赋予情绪。
+Other 是第 8 个可训练情绪类别；Unknown 表示不确定，不等于 Other 或 Neutral，也不代表音频不可用。
+Bad clip 是独立弃用决策，标准化结果中不赋予情绪。
 按钮名称中的 skip 指弃用这条音频；仍通过 Submit 保存这个决策，而不是静默丢弃任务。
 
 ## 4. 如需显示已有转写
@@ -202,20 +207,22 @@ Label Studio 下载的原生 JSON 中，决策结果是：
 
 | 原生 `decision` | 业务 `status` | 业务 `emotion` |
 |---|---|---|
-| 8 个情绪值之一，包括 `unknown` | `accepted` | 对应情绪值 |
+| 8 个情绪值之一，包括 `other` | `accepted` | 对应情绪值 |
+| `unknown` 不确定判断 | `accepted` | `unknown`，原样保留，不能自动作为 `other` |
 | `bad_clip` | `bad_clip` | JSON `null` |
 
 原生 JSON 和标准化 JSON 分别保存，不能把原生文件误当成已经转换的业务数据。
+`accepted` 仅表示有效提交，不代表已裁决为 gold；训练准备仍排除 `unknown`。
 命令与输出示例见 [标准化导出说明](data_import.md#5-读取并标准化导出)。
 
 ## 7. 保存前自查
 
-- 固定文字全部英文；上方 Emotion 为 8 个 emoji 情绪卡片，下方独立 Unusable audio 弃用区。
+- 固定文字全部英文；上方 Emotion 有 8 种情绪与 1 个不确定卡片，下方独立 Unusable audio 弃用区。
 - 两区的 ⓘ 可 hover 或键盘聚焦查看说明；Bad clip 卡片也有英文帮助。
 - 情绪和 Bad clip 切换后只保留一个当前选择，不需要填写其他字段。
 - audio-only 不显示转写；with-transcript 只增加只读 Transcript。
 - 试播、选择、Submit 后导出原生 JSON，确认 `from_name="decision"` 和 `value.choices` 中唯一的决策值。
-- 标准化 Bad clip 结果为 `emotion: null`，不会成为第 9 种情绪。
+- 标准化 Bad clip 结果为 `emotion: null`，不会成为情绪类别；`other` 与 `unknown` 分别保留。
 
 官方字段依据：[Choices](https://labelstud.io/tags/choices)、[Choice](https://labelstud.io/tags/choice)、
 [Text](https://labelstud.io/tags/text)、[View](https://labelstud.io/tags/view)。

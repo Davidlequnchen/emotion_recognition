@@ -211,7 +211,7 @@ python3 label_studio/attach_task_data.py
 
 先在 Label Studio **Export → JSON** 下载并保留完整原生文件。以 `data.clip_id` 关联 manifest。
 原生 `result` 中 `from_name="decision"`、`type="choices"` 的 `value.choices` 保存唯一决策，
-包括 8 个情绪值或 `bad_clip` 弃用决策；Bad clip 不是情绪类别。
+包括 8 个情绪值（含 `other`）、`unknown` 不确定判断，或 `bad_clip` 弃用决策；Bad clip 不是情绪类别。
 
 使用本项目标准化脚本生成业务数据，保留原生文件：
 
@@ -225,7 +225,7 @@ python3 label_studio/normalize_export.py \
 保留 `clip_id`、`task_id`、`annotation_id`、`annotator_id`、`lead_time`、`decision`、`status` 和 `emotion`。
 `completed_by` 是用户对象时只取其 ID，不输出邮箱。
 
-- 8 个情绪决策，包括 `unknown`：`status="accepted"`，`emotion` 为相应情绪值。
+- 8 个情绪决策（包括 `other`）或 `unknown` 不确定判断：`status="accepted"`，`emotion` 为相应原始值。
 - Bad clip 决策：`status="bad_clip"`，`emotion` 为 JSON `null`，例如：
 
 ```json
@@ -244,6 +244,8 @@ python3 label_studio/normalize_export.py \
 ```
 
 `accepted` 只表示选择了情绪分支，不代表该 vote 已经多人裁决为 gold；`unknown` 仍单独保留。
+`other` 表示明确的其他情绪，`unknown` 表示不确定。旧版界面曾将 `unknown` 显示为 Unknown / Other，
+因此历史 `unknown` 不能自动改成 `other`。新批次单独记录配置版本，保留原始导出。
 音频可用但情绪不确定时选 Unknown；音频本身无法可靠判断时选 Bad clip，后处理排除这类音频。
 
 取消的 annotation（`was_cancelled`）和无 annotation 的任务会跳过，并报告数量。

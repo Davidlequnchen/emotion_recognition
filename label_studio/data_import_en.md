@@ -231,7 +231,8 @@ Only between batches, while nobody is labeling:
 
 First download and retain the complete native file using Label Studio **Export → JSON**. Join it to the manifest
 using `data.clip_id`. In the native `result`, the entry with `from_name="decision"` and `type="choices"` stores the
-single decision in `value.choices`: one of the 8 emotion values or the `bad_clip` rejection decision.
+single decision in `value.choices`: one of the 8 emotion values, including `other`, the `unknown` uncertainty
+decision, or the `bad_clip` rejection decision.
 Bad clip is not an emotion category.
 
 Use this project's normalization script to generate business data, retaining the native file:
@@ -247,7 +248,7 @@ votes with a single final label**. It retains `clip_id`, `task_id`, `annotation_
 `decision`, `status`, and `emotion`. When `completed_by` is a user object, only its ID is used; email addresses are
 not included.
 
-- For any of the 8 emotion decisions, including `unknown`: `status="accepted"`, and `emotion` is the corresponding emotion value.
+- For any of the 8 emotion decisions, including `other`, or the `unknown` uncertainty decision: `status="accepted"`, and `emotion` preserves the original value.
 - For a Bad clip decision: `status="bad_clip"`, and `emotion` is JSON `null`, for example:
 
 ```json
@@ -267,6 +268,9 @@ not included.
 
 `accepted` only means that the emotion branch was selected. It does not mean the vote has been adjudicated into a
 gold label; `unknown` remains distinct. Select Unknown when the audio is usable but the emotion is uncertain.
+`other` means a clear other emotion. Historical `unknown` votes came from a combined Unknown / Other display,
+so never automatically convert them to `other`. Record a separate configuration version for new batches and
+retain the original exports.
 Select Bad clip when the audio itself cannot be judged reliably; exclude these clips during downstream processing.
 
 Cancelled annotations (`was_cancelled`) and tasks with no annotations are skipped, and their counts are reported.

@@ -7,7 +7,9 @@ from pathlib import Path
 import sys
 
 
-EMOTIONS = {"angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised", "unknown"}
+# ``unknown`` remains its historical decision value. Never infer ``other`` from
+# the old combined display label "Unknown / Other" or rewrite existing exports.
+EMOTIONS = {"angry", "disgusted", "fearful", "happy", "neutral", "sad", "surprised", "other", "unknown"}
 DECISIONS = EMOTIONS | {"bad_clip"}
 
 

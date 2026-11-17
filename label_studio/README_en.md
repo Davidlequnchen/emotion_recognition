@@ -17,6 +17,10 @@ The local demo project is [SER Emotion Labeler](http://localhost:8082/projects/3
 The screenshots below show actual use of the local Label Studio **1.23.2** instance.
 The demo uses **6 public audio clips**. Selections in the screenshots demonstrate the workflow and are not human judgments of the clips' emotions.
 
+The screenshots retain the older demo interface, where `unknown` was displayed as **Unknown / Other**.
+The current XML provides **8 emotions, including Other, plus Unknown / Uncertain and Bad clip** for new batches.
+This repository update does not change the running project or historical annotations.
+
 ## 1. Create a project
 
 **Completed by the project lead.** After logging in, click **Create Project / Create new project** and enter a name, such as `SER Emotion Labeler`.
@@ -34,12 +38,12 @@ Do not choose **Speech Transcription** or **Speaker Segmentation**; those templa
 
 1. Choose one of the protocols below and copy the **entire XML configuration** from its file.
 2. Replace the existing content in the **Code** editor. Do not append it to another template.
-3. Check the preview: the upper section should contain 8 emotion options—7 emotions plus Unknown / Other—and the lower section should have a separate Bad clip rejection option. Then click **Save**.
+3. Check the preview: the upper section should contain 9 options: 8 emotions, including Other, plus Unknown / Uncertain. The lower section should have a separate Bad clip rejection option. Then click **Save**.
 4. For an existing project, use **Settings → Labeling Interface → Code**.
 
 | Configuration file | What annotators see |
 |---|---|
-| [config_audio_only.xml](config_audio_only.xml) | Audio, 8 emotion options in the upper section, and a separate Bad clip rejection option below |
+| [config_audio_only.xml](config_audio_only.xml) | Audio, 8 emotions plus 1 uncertainty option above, and a separate Bad clip rejection option below |
 | [config_with_transcript.xml](config_with_transcript.xml) | The same interface, with the existing transcript displayed as read-only text |
 
 ![The Code editor and preview of the custom emotion classification interface](screenshots/03-custom-interface.jpg)
@@ -50,8 +54,13 @@ it is not a visible button in the local template gallery.
 
 For an initial SER labeling round, start with audio-only. If text assistance is allowed, use with-transcript throughout the batch and ask annotators to listen before referring to the text.
 Do not mix the two protocols within the same batch of independent gold labels, or show model predictions.
-The current 7 emotions plus `unknown` are a starting point for the pilot; the final internal label set still needs to be confirmed.
-Freeze the configuration when production labeling begins, and do not casually change field names or label values.
+New batches use 8 emotions, including a distinct `other`. The `unknown` decision means uncertainty and is not one
+of these 8 training classes. Freeze the configuration version when production labeling begins.
+
+**Do not change label meanings in an existing production project.** Preserve its configuration snapshot and full
+exports, and use a separate new batch or project with an explicitly recorded configuration version.
+Historical `unknown` votes may mix uncertainty with other emotions; normalization preserves them as `unknown`
+and never automatically relabels them as `other`.
 
 ## 3. Import tasks
 
@@ -86,12 +95,12 @@ Do not put a bare local filesystem path or `file://` URL in the audio field.
 **Completed by annotators.** Log in with your own account, open the project specified by the project lead, and click **Label All Tasks** to enter the labeling queue, then:
 
 1. Listen to the entire clip. Replay it if needed.
-2. If the audio is usable, choose one option in the upper **Emotion** section. Choose **Unknown / Other** if the emotion is uncertain or outside the defined categories.
+2. If the audio is usable, choose one option in the upper **Emotion** section. Choose **Other** for a clear emotion outside the seven named emotions, or **Unknown / Uncertain** when you cannot confidently identify the emotion.
 3. If the audio itself cannot be judged reliably, choose **Bad clip — skip** in the lower **Unusable audio** section. No emotion will be assigned.
 4. The two paths are mutually exclusive: selecting Bad clip clears the emotion selection, and selecting an emotion clears Bad clip. Finally, click **Submit** in the lower-right corner.
 
 For help, hover over **ⓘ** beside either section title or over an option card to read the English explanation.
-You can also use Tab to focus **ⓘ**. Emotion shortcuts are `1`–`8`; Bad clip is `0`.
+You can also use Tab to focus **ⓘ**. The seven named emotions retain shortcuts `1`–`7`, Unknown / Uncertain retains `8`, Other uses `9`, and Bad clip retains `0`.
 You still need to click Submit after selecting an option. No text entry is required.
 
 The selection below demonstrates the workflow; **it is not a ground-truth emotion label for this clip**. The interface uses English text.
@@ -107,9 +116,10 @@ The selection below demonstrates the workflow; **it is not a ground-truth emotio
 | `neutral` | Neutral: there are sufficient vocal cues to support a neutral judgment |
 | `sad` | Sad |
 | `surprised` | Surprised |
-| `unknown` | The audio is usable, but the emotion is uncertain or outside the current categories |
+| `other` | A clear emotion is audible but does not fit the seven named emotions; not an uncertain judgment |
+| `unknown` | Usable audio, but the emotion cannot be confidently identified; distinct from `other` and `neutral` |
 
-**Bad clip is a separate rejection decision, not a ninth emotion.** Use the lower Bad clip option when severe noise, silence, overlapping speakers,
+**Bad clip is a separate rejection decision, not an emotion category.** Use the lower Bad clip option when severe noise, silence, overlapping speakers,
 or a similar issue means the audio cannot be judged reliably. `unknown` means an uncertain emotion in usable audio;
 it does not replace rejection of unusable audio, and it is not the same as `neutral`.
 
@@ -119,7 +129,7 @@ Label Studio's native **Skip** action skips the current task and is not a substi
 <details>
 <summary>View the Bad clip selection state and English help tooltip</summary>
 
-After Bad clip is selected below, none of the 8 emotion options is selected.
+In the older screenshot below, selecting Bad clip clears all 8 upper options. The new template similarly clears all 9 upper options.
 This also demonstrates the workflow; it is not a judgment of the sample's audio quality.
 
 ![Selecting Bad clip clears every emotion option](screenshots/09-bad-clip.jpg)
@@ -142,7 +152,8 @@ Then scroll to the bottom of the dialog and click **Export** to download the fil
 
 The default export includes annotated tasks; unsubmitted tasks are not included by default.
 Workflow demonstration results are only for checking the process and must not be used as training or evaluation labels.
-The native JSON stores the selection as `decision`: either one of the 8 emotion values or the `bad_clip` rejection decision.
+The native JSON stores the selection as `decision`: one of the 8 emotion values, including `other`, the `unknown`
+uncertainty decision, or the `bad_clip` rejection decision.
 After the project lead runs the normalization script, Bad clip becomes `status="bad_clip"` and `emotion=null`, rather than an emotion label.
 For the conversion command and fields, see [Data import and export](data_import_en.md#5-read-and-normalize-exports).
 
