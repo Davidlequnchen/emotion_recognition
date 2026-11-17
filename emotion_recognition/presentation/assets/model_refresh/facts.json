@@ -940,6 +940,7 @@
     "Model",
     "Release",
     "Parameters",
+    "Architecture",
     "Emotion training data",
     "Output & classes"
   ],
@@ -955,8 +956,11 @@
       "sources": [
         "https://github.com/ddlBoJack/emotion2vec",
         "https://huggingface.co/emotion2vec/emotion2vec_plus_large",
-        "models/emotion2vec_plus_large/README.md"
-      ]
+        "models/emotion2vec_plus_large/README.md",
+        "presentation/facts.md"
+      ],
+      "architecture": "data2vec 2.0-style encoder\n+ mean pool + linear head",
+      "output_display": "9 class scores\n7 canonical retained"
     },
     {
       "key": "meralion_ser_v1",
@@ -968,8 +972,10 @@
       "training_detail": "The report lists CREMA-D, ESD, MELD, M3ED and Singaporean SG-ECMT/SGTV training speech. VAD means valence, arousal and dominance; this benchmark scores categorical outputs only. October release is supported by October 2025 public repository history; the technical report appeared in November.",
       "sources": [
         "https://arxiv.org/html/2511.04914v1#S4.SS1",
-        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/commits/main"
-      ]
+        "https://huggingface.co/MERaLiON/MERaLiON-SER-v1/commits/main",
+        "presentation/facts.md"
+      ],
+      "architecture": "Whisper-medium encoder\n+ ECAPA-TDNN + dual heads"
     },
     {
       "key": "melati_emotion",
@@ -982,8 +988,11 @@
       "sources": [
         "https://huggingface.co/Scicom-intl/Melati-Emotion-Whisper-Large-V3",
         "models/melati_emotion/README.md",
-        "docs/models_survey_en.md"
-      ]
+        "docs/models_survey_en.md",
+        "presentation/facts.md"
+      ],
+      "architecture": "Whisper large-v3 encoder\n+ layer mix + MLP",
+      "training_display": "EMNS, Emozionalmente, JL-Corpus,\nMESD, Oreau, RESD, SUBESCO,\nEmoV-DB, Expresso"
     },
     {
       "key": "vox_profile_whisper",
@@ -996,8 +1005,11 @@
       "sources": [
         "https://arxiv.org/abs/2505.14648",
         "https://huggingface.co/tiantiaf/whisper-large-v3-msp-podcast-emotion",
-        "docs/models_survey_en.md"
-      ]
+        "docs/models_survey_en.md",
+        "presentation/facts.md"
+      ],
+      "architecture": "Whisper large-v3 encoder\n+ pooling + MLP",
+      "output_display": "9 class scores\nincl. contempt / other"
     },
     {
       "key": "vox_profile_wavlm",
@@ -1010,8 +1022,11 @@
       "sources": [
         "https://arxiv.org/abs/2505.14648",
         "https://huggingface.co/tiantiaf/wavlm-large-categorical-emotion",
-        "docs/models_survey_en.md"
-      ]
+        "docs/models_survey_en.md",
+        "presentation/facts.md"
+      ],
+      "architecture": "WavLM-large encoder\n+ layer mix + pooling / MLP",
+      "output_display": "9 class scores\nincl. contempt / other"
     },
     {
       "key": "qwen2_5_omni_7b",
@@ -1024,7 +1039,9 @@
       "sources": [
         "https://qwenlm.github.io/blog/qwen2.5-omni/",
         "https://arxiv.org/html/2503.20215v1"
-      ]
+      ],
+      "architecture": "Audio encoder + projection\n+ Qwen2.5 Thinker decoder",
+      "output_display": "Text label (no SER head)\n4–7 dataset candidates"
     },
     {
       "key": "qwen2_audio_7b",
@@ -1037,7 +1054,9 @@
       "sources": [
         "https://qwenlm.github.io/blog/qwen2-audio/",
         "https://arxiv.org/html/2407.10759v1"
-      ]
+      ],
+      "architecture": "Whisper-style audio encoder\n+ Qwen decoder",
+      "output_display": "Text label (no SER head)\n4–7 dataset candidates"
     },
     {
       "key": "gemma4_e4b",
@@ -1050,7 +1069,9 @@
       "sources": [
         "https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/",
         "https://ai.google.dev/gemma/docs/core/model_card_4"
-      ]
+      ],
+      "architecture": "Audio encoder + projection\n+ dense decoder with PLE",
+      "output_display": "Text label (no SER head)\n4–7 dataset candidates"
     },
     {
       "key": "gpt_realtime",
@@ -1063,7 +1084,9 @@
       "sources": [
         "https://openai.com/index/introducing-gpt-realtime/",
         "config/models.yaml"
-      ]
+      ],
+      "architecture": "Audio LLM\nInternal design undisclosed",
+      "output_display": "Text label (no SER head)\n4–7 dataset candidates"
     },
     {
       "key": "gemini_flash",
@@ -1076,8 +1099,11 @@
       "sources": [
         "config/models.yaml",
         "reports/summary.json"
-      ]
+      ],
+      "architecture": "Audio LLM\nInternal design undisclosed",
+      "output_display": "Text label (no SER head)\n4–7 dataset candidates"
     }
   ],
-  "survey_protocol_notes": "Five dedicated SER systems, three open audio LLMs and two API systems. All ten completed sixteen dataset cohorts. Dedicated SER scores are restricted to dataset candidates when selecting a prediction. Generative systems have no fixed SER classification head and generate text from 4–7 dataset-specific candidates. JL-Corpus excited accepts happy or surprised; it is not an extra native output class. Full speech-backbone pretraining sources are not identical to the SER-task training datasets shown in this column. A missing complete corpus inventory does not prove a dataset was unseen."
+  "survey_protocol_notes": "Five dedicated SER systems, three open audio LLMs and two API systems. All ten completed sixteen dataset cohorts. Dedicated SER scores are restricted to dataset candidates when selecting a prediction. Generative systems have no fixed SER classification head and generate text from 4–7 dataset-specific candidates. JL-Corpus excited accepts happy or surprised; it is not an extra native output class. Full speech-backbone pretraining sources are not identical to the SER-task training datasets shown in this column. A missing complete corpus inventory does not prove a dataset was unseen.",
+  "survey_architecture_notes": "Architecture summaries follow the measured checkpoint structures in presentation/facts.md and the following native schematic slides. emotion2vec+ large uses a data2vec 2.0-style CNN/Transformer encoder with temporal mean pooling and a linear emotion head. MERaLiON combines Whisper-medium with ECAPA-TDNN, hybrid pooling and categorical/VAD heads. Melati combines Whisper large-v3 with learned layer weighting and an MLP. Vox-Profile uses pooled convolution/MLP downstream heads; the WavLM checkpoint is fully fine-tuned, not a LoRA checkpoint. Qwen and Gemma are audio-encoder/projector/language-decoder systems; PLE means per-layer embeddings. API internal structures remain undisclosed. Compact output wording preserves the native SER class counts and the dataset-specific 4–7 generated-label candidate protocol."
 }

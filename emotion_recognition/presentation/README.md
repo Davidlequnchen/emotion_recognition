@@ -11,7 +11,7 @@ There is no separate extended version. Intermediate packages, previews and valid
 
 The single dataset overview preserves language, clip and speaker counts, shared-text design, annotation sources and dialogue versus standalone status. The label mapping covers all sixteen benchmark datasets. Each dataset introduction shows four recordings and predictions from all ten models. The actor-versus-listener stacked chart also includes all ten models on the same 3,699 disputed CREMA-D clips, retaining its original colours and axes. Published corpus totals and the actual benchmark cohorts are distinguished in slide notes.
 
-The model survey retains release, parameter count and emotion training data, and reports output classes. Three native editable schematics explain the executed audio-to-text routes for Qwen2.5-Omni, Qwen2-Audio Instruct and Gemma 4 E4B. Model-card references and retained checkpoint evidence are recorded in `assets/model_refresh/facts.json` and speaker notes.
+The six-column model survey includes a brief architecture summary, release, parameter count, emotion training data and output classes for all ten models. Three native editable schematics explain the executed audio-to-text routes for Qwen2.5-Omni, Qwen2-Audio Instruct and Gemma 4 E4B. Model-card references and retained checkpoint evidence are recorded in `assets/model_refresh/facts.json` and speaker notes.
 
 Accuracy, UAR and Macro-F1 each have one complete **16-dataset × 10-model** table. Coloured headers distinguish dedicated SER, open audio LLMs and API audio LLMs. Green and red mark the highest and lowest score within each dataset, including ties. These highlights compare models within a row rather than claim statistical significance.
 
@@ -61,5 +61,7 @@ python scripts/consolidate_presentations.py --publish
 ```
 
 Checks verify source hashes, every saved prediction and metric cell, unique shape/relationship IDs, audio timing targets, the 10% bottom margin, retained chart data and embedded workbooks, and native editable tables. The complete deck exceeds the Artifact Tool construction budget, so all slides are imported in bounded exact-content batches. The two-slide excerpt passes a complete import. Mandarin and Thai text use Arial Unicode MS script fallbacks while preserving the original Latin fonts.
+
+For a survey-only revision, run `node scripts/build_model_refresh.mjs`, then `python scripts/refresh_main_deck.py --survey-only --source SER_evaluation.pptx` before validation. This replaces the survey page while preserving every other slide XML part.
 
 The older `build.js`, `lib.js`, `clips.js`, `content.js` and `s_*.js` retain the historical base-deck source. Historical inspection/semantic builders remain available for source reconstruction; the refresh workflow above updates the canonical deck in place without publishing additional versions.

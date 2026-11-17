@@ -44,18 +44,19 @@ function pipeline(s,labels){
 {
  const s=base('Model Survey: All Ten Evaluated Systems');
  text(s,'subtitle','Five dedicated SER models, three open audio LLMs and two API models. All completed 16 datasets.',57.6,124,1164,28,18.67,C.ink);
- const rows=facts.survey_rows.map(r=>[r.model,r.release,r.parameters,r.emotion_training_data,r.output]);
- const t=s.tables.add({rows:11,columns:5,left:57.6,top:161,width:1164,height:467,columnWidths:[237,99,122,426,280],values:[facts.survey_columns,...rows]});
+ const rows=facts.survey_rows.map(r=>[r.model,r.release,r.parameters,r.architecture,r.training_display||r.emotion_training_data,r.output_display||r.output]);
+ const heights=[44,46,46,66,46,46,46,46,46,44,44];
+ const t=s.tables.add({rows:11,columns:6,left:57.6,top:155,width:1164,height:heights.reduce((a,b)=>a+b,0),columnWidths:[196,90,108,250,310,210],values:[facts.survey_columns,...rows]});
  t.borders.assign({style:'solid',fill:C.line,width:.8});
- t.cells.block({row:0,column:0,rowCount:11,columnCount:5}).assign({textStyle:{fontSize:17.33,typeface:'Calibri',color:C.ink},margins:{left:9,right:7,top:0,bottom:0},anchor:'center'});
+ t.cells.block({row:0,column:0,rowCount:11,columnCount:6}).assign({textStyle:{fontSize:16.6,typeface:'Calibri',color:C.ink},margins:{left:7,right:5,top:0,bottom:0},anchor:'center'});
  for(let r=0;r<11;r++){
-  t.rows[r].height=r===0?37:43;
-  for(let c=0;c<5;c++){
+  t.rows[r].height=heights[r];
+  for(let c=0;c<6;c++){
    const cell=t.getCell(r,c);cell.fill=r===0?C.ink:r%2===0?C.panel:'#FFFFFF';
-   cell.text.style={fontSize:r===0?18.67:17.33,typeface:'Calibri',bold:r===0||c===0,color:r===0?'#FFFFFF':C.ink,verticalAlignment:'middle'};
+   cell.text.style={fontSize:r===0?17.3:16.6,typeface:'Calibri',bold:r===0||c===0,color:r===0?'#FFFFFF':C.ink,verticalAlignment:'middle'};
   }
  }
- s.speakerNotes.text=facts.survey_protocol_notes+'\n\n'+facts.survey_rows.map(r=>r.model+' — '+r.training_detail+'\nSources: '+r.sources.join('; ')).join('\n\n')+'\n\nAll ten systems completed the same 67,062 clips per model on sixteen dataset cohorts under the current saved benchmark protocol. Parameter counts for the five SER models follow the existing measured-model documentation in presentation/content.js and facts.md. Open audio LLM counts are measured from the released local checkpoint tensors, not inferred from the 7B/E4B names. Qwen2.5-Omni 8.93B is the loaded Thinker, including an unused vision tower. Qwen2-Audio is 8.397B in the retained Instruct checkpoint; its paper rounds a related model count to 8.2B. Gemma 4 E4B is 8.00B stored with per-layer embedding tables, 4.5B effective according to the official model card, and dense. API internals and parameter counts are not published. Architecture details are expanded in the following three native schematic slides. No new inference or training was performed.';
+ s.speakerNotes.text=facts.survey_protocol_notes+'\n\n'+facts.survey_architecture_notes+'\n\n'+facts.survey_rows.map(r=>r.model+' — '+r.training_detail+'\nArchitecture: '+r.architecture.replace(/\n/g,' ')+'\nSources: '+r.sources.join('; ')).join('\n\n')+'\n\nAll ten systems completed the same 67,062 clips per model on sixteen dataset cohorts under the current saved benchmark protocol. Parameter counts for the five SER models follow the existing measured-model documentation in presentation/content.js and facts.md. Open audio LLM counts are measured from the released local checkpoint tensors, not inferred from the 7B/E4B names. Qwen2.5-Omni 8.93B is the loaded Thinker, including an unused vision tower. Qwen2-Audio is 8.397B in the retained Instruct checkpoint; its paper rounds a related model count to 8.2B. Gemma 4 E4B is 8.00B stored with per-layer embedding tables, 4.5B effective according to the official model card, and dense. API internals and parameter counts are not published. Architecture details are expanded in the following three native schematic slides. No new inference or training was performed.';
 }
 
 // 2: Qwen2.5-Omni: only the Thinker audio-to-text route runs in this benchmark.

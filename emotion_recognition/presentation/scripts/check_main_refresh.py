@@ -1,4 +1,5 @@
 """Check source fidelity, requested coverage, audio targets and bottom whitespace."""
+import argparse
 import copy
 import io
 import hashlib
@@ -20,8 +21,9 @@ def labels(cell):return ''.join(t.text or '' for t in cell.findall('.//a:t',NS))
 
 
 def main():
+    parser=argparse.ArgumentParser();parser.add_argument('--source',type=Path);args=parser.parse_args()
     candidate=REFRESH/'main-candidate.pptx';package=parts(candidate)
-    source_path=REFRESH/'source.pptx'
+    source_path=args.source or REFRESH/'source.pptx'
     if not source_path.exists():source_path=DECK/'SER_evaluation.pptx'
     source=parts(source_path)
     root=E.fromstring(package['ppt/presentation.xml'])
@@ -151,6 +153,13 @@ def main():
     assert any('Release' in h for h in survey_headers),survey_headers
     assert any('Emotion training' in h for h in survey_headers),survey_headers
     assert any('classes' in h.lower() for h in survey_headers),survey_headers
+    assert 'Architecture' in survey_headers,survey_headers
+    model_facts=json.loads((DECK/'assets/model_refresh/facts.json').read_text())
+    survey_rows=slides[survey_index].find('.//a:tbl',NS).findall('a:tr',NS)
+    assert len(survey_headers)==6,survey_headers
+    for row,record in zip(survey_rows[1:],model_facts['survey_rows']):
+        wanted=[record['model'],record['release'],record['parameters'],record['architecture'],record.get('training_display',record['emotion_training_data']),record.get('output_display',record['output'])]
+        assert [labels(c) for c in row.findall('a:tc',NS)]==[v.replace('\n','') for v in wanted],record['model']
     assert not any('Label Mapping: Six Listening-Example Corpora' in t for t in headings)
     result_tables=[];verified_metrics=0
     authoritative=json.loads((DECK.parent.parent/'research_paper/output/cross_dataset_analysis.json').read_text())

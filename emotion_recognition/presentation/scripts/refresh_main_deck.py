@@ -212,11 +212,28 @@ def read_order(path):
     return x['slides'] if isinstance(x,dict) and 'slides' in x else x
 
 
+def save_refresh(editor):
+    destination=REFRESH/'main-candidate.pptx';editor.save(destination)
+    order=[{'slide':i+1,'part':editor.part(e),'title':editor.heading(e)} for i,e in enumerate(editor.entries)]
+    (REFRESH/'slide-order.json').write_text(json.dumps(order,ensure_ascii=False,indent=2)+'\n')
+    print(json.dumps({'slides':len(order),'candidate':str(destination),'source_sha256':hashlib.sha256(editor.source.read_bytes()).hexdigest()},indent=2))
+
+
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--source',type=Path);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--source',type=Path)
+    parser.add_argument('--survey-only',action='store_true',help='Replace only the ten-model survey, preserving all other slide XML')
+    args=parser.parse_args()
     if args.source is None:
-        args.source=(REFRESH/'source.pptx') if (REFRESH/'source.pptx').exists() else DECK/'SER_evaluation.pptx'
+        args.source=DECK/'SER_evaluation.pptx' if args.survey_only else ((REFRESH/'source.pptx') if (REFRESH/'source.pptx').exists() else DECK/'SER_evaluation.pptx')
     editor=Editor(args.source)
+    if args.survey_only:
+        models=editor.import_deck(BUILD/'model-refresh.pptx','modelSurvey_',read_order(BUILD/'model-refresh-order.json'))
+        survey=next(e for e,m in models if m['kind']=='model-survey')
+        index=next(i for i,e in enumerate(editor.entries) if editor.slide(e).find('p:cSld',NS).get('name','').startswith('ser-refresh:model-survey'))
+        editor.entries[index]=survey
+        editor.whitespace(survey)
+        save_refresh(editor)
+        return
     dataset=editor.import_deck(BUILD/'dataset-refresh-audio.pptx','datasetRefresh_',read_order(BUILD/'dataset-refresh-order.json'))
     model=editor.import_deck(BUILD/'model-refresh.pptx','modelRefresh_',read_order(BUILD/'model-refresh-order.json'))
     errors=editor.import_deck(BUILD/'error-refresh-audio.pptx','errorRefresh_',read_order(BUILD/'error-refresh-order.json'))
@@ -276,10 +293,7 @@ def main():
             for rpr in chart.xpath('//*[local-name()="rPr" or local-name()="defRPr" or local-name()="endParaRPr"]'):
                 if rpr.get('sz'):rpr.set('sz',str(round(int(rpr.get('sz'))*SCALE)))
             editor.parts[name]=xml_bytes(chart)
-    destination=REFRESH/'main-candidate.pptx';editor.save(destination)
-    order=[{'slide':i+1,'part':editor.part(e),'title':editor.heading(e)} for i,e in enumerate(editor.entries)]
-    (REFRESH/'slide-order.json').write_text(json.dumps(order,ensure_ascii=False,indent=2)+'\n')
-    print(json.dumps({'slides':len(order),'candidate':str(destination),'source_sha256':hashlib.sha256(args.source.read_bytes()).hexdigest()},indent=2))
+    save_refresh(editor)
 
 
 if __name__=='__main__':main()
