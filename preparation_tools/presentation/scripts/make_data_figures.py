@@ -3,7 +3,7 @@
 Reads (all local, nothing is downloaded):
   preparation_tools/local/integration/input/turns/   the synthetic turns (git-ignored, from tests/integration_dailytalk.py)
   preparation_tools/local/integration/output/        review/*.json, the group manifests and call_timeline.csv
-  emotion_recognition/data/dailytalk/                 to rebuild the utterance joins with the integration seed
+  emotion_recognition_benchmark/data/dailytalk/                 to rebuild the utterance joins with the integration seed
 Writes: fig/vad_silero.png, fig/compare_methods.png, fig/gap_zoom.png, fig/listen_<turn>.png and
 assets/data_stats.json (Silero pieces, method comparison, examples, the call used on the context slide).
 

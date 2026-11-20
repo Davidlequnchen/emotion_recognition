@@ -25,8 +25,8 @@ RUN_TORCH_INSTALLER = False   # Linux: if torch/torchaudio are missing, run the 
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent
-TORCH_INSTALLER = REPO / "emotion_recognition" / "dependencies" / "torch-cu118-cp311-linux_x86_64" / "install.py"
-MAC_REQUIREMENTS = REPO / "emotion_recognition" / "requirements-llm-mac.txt"
+TORCH_INSTALLER = REPO / "emotion_recognition_benchmark" / "dependencies" / "torch-cu118-cp311-linux_x86_64" / "install.py"
+MAC_REQUIREMENTS = REPO / "emotion_recognition_benchmark" / "requirements-llm-mac.txt"
 
 
 def platform_key():

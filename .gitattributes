@@ -1,15 +1,15 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-# Parts of large files (emotion_recognition/scripts/common/split_parts.py): always binary, stored byte for byte
+# Parts of large files (emotion_recognition_benchmark/scripts/common/split_parts.py): always binary, stored byte for byte
 *.part[0-9][0-9][0-9] binary
 
 # Original API evaluation artifacts: preserve ZIP-member bytes and their audited SHA256 across checkouts.
-emotion_recognition/outputs/gemini-3.8-flash/* -text
-emotion_recognition/outputs/gpt_realtime/* -text
+emotion_recognition_benchmark/outputs/gemini-3.8-flash/* -text
+emotion_recognition_benchmark/outputs/gpt_realtime/* -text
 
 # Prediction source hashes must survive Git checkouts for every model, including SER.
-emotion_recognition/outputs/**/*_predictions.csv -text whitespace=cr-at-eol
-emotion_recognition/outputs/**/*_predictions.json -text
+emotion_recognition_benchmark/outputs/**/*_predictions.csv -text whitespace=cr-at-eol
+emotion_recognition_benchmark/outputs/**/*_predictions.json -text
 
 # Matplotlib-generated SVG path data contains intentional trailing spaces.
 *.svg -whitespace

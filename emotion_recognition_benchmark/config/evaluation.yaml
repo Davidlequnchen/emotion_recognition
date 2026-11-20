@@ -1,0 +1,47 @@
+# =====================================================================
+# Settings of scripts/evaluation/evaluate.py: every chosen model on every chosen dataset.
+# Run it from the emotion_recognition_benchmark/ folder: python scripts/evaluation/evaluate.py
+# Paths are relative to that folder. The models are registered in config/models.yaml.
+# =====================================================================
+
+# Hardware mode: which entry of `devices` (below) the models run on
+#   auto : cuda when PyTorch sees an NVIDIA GPU (torch.cuda.is_available()), otherwise mac
+#   mac  : Apple Silicon MacBook (e.g. M4 Max) -> Apple GPU via Metal (MPS), or CPU
+#   cuda : Linux server with NVIDIA GPU(s)     -> CUDA 12.1 build of PyTorch
+mode: mac         # local Apple Silicon benchmark; use auto/cuda on the company server
+
+models: [qwen2_audio_7b]
+                  # next run: Qwen2-Audio-7B-Instruct; matching completed results (including MELD) are reused
+                  # all = every registered model, or any list of keys from config/models.yaml
+api_models: false # true: also run the models with `api: true` in config/models.yaml (GPT Realtime, Gemini; paid
+                  # requests, key in the .env file at the repository root); false: skip them, also when listed
+                  # in `models`
+datasets: all     # ordinary single-utterance evaluation; H0–H3 uses scripts/evaluation/context_pilot.py
+                  # all = all 16 downloaded adopted datasets (after exclude), including the three dialogue additions
+                  # (crema_d | mcae_spps | thai_ser | nemo | mess | esd | ravdess | tess | jl_corpus | mead | meld
+                  # | emovo | emozionalmente | savee | emotiontalk | dailytalk | multidialog)
+subsets:          # fixed subsets of two large datasets, to save compute (decided 2026-11-06). Every model and every
+                  # script (evaluate.py, the LLM data loader, the viewer) uses the same clips, because the subset is
+                  # part of the dataset's loader (scripts/common/eval_datasets.py); null or absent = every clip
+  thai_ser: high_agreement  # the dataset authors' recommended subset: clips with agreement >= 0.71 (the share of
+                            # the crowd raters who chose the majority label): 11,848 of 22,584 clips
+  mead: stratified_8000     # 8,000 of 27,514 clips at even intervals over the clips sorted by actor, emotion,
+                            # intensity level and sentence: each actor/emotion/level cell keeps its share
+exclude: [esd]        # never evaluated, even with `all`, and left out of the summaries (old results: reports/archive/);
+                  # their data stays in data/. ESD: its licence forbids sharing any part of the data
+limit: null       # only N clips of each dataset, taken at even intervals within each emotion (quick test or
+                  # sample); null = every clip. A model's own `limit` in config/models.yaml wins (none set now)
+overwrite: false  # false: skip matching finished results (same limit; LLM inference_protocol must also match);
+                  # true: evaluate it again and replace them. The summaries show every result there,
+                  # except those of excluded datasets
+plots: false      # generate global comparison plots separately; per-model reports are still written
+                  # true: at the end, draw the bar plots of every model on every dataset (scripts/viewer/plot_results.py,
+                  # settings in config/plots.yaml); false: run that script by hand when you want the plots
+devices:          # device per mode; a model's mac_device (in config/models.yaml) overrides devices.mac
+  mac: mps
+  cuda: cuda:0
+summary_figure:   # every dataset's confusion matrix in one figure, in each model's summary report
+  # panels row by row, three per row; datasets not listed come last
+  order: [crema_d, mcae_spps, mess, ravdess, tess, jl_corpus, thai_ser, nemo, mead, meld, emovo, emozionalmente, savee]
+  acted_or_listener: [crema_d]  # these show the matrix where the listeners' vote also counts as correct;
+                                # the others show the acted emotion

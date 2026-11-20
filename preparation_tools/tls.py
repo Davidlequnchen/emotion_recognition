@@ -1,6 +1,6 @@
 """Verified HTTPS using optional native trust stores or an explicit CA bundle.
 
-Copied from emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64/tls.py (the model and dataset
+Copied from emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64/tls.py (the model and dataset
 Release downloaders use the same code); only the hints differ, because this folder's scripts take no
 command-line options. It deliberately does not patch ssl globally or offer an insecure mode.
 """

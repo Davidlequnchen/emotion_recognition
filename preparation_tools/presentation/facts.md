@@ -1,7 +1,7 @@
 # Facts for the turn-segmentation deck
 
 Every number on a slide, with its source. Collected 2026-11-13. Paths are relative to the repository root.
-`DOC` = `emotion_recognition/docs/data_preparation_call_centre_audio.md`, `PT` = `preparation_tools/`,
+`DOC` = `emotion_recognition_benchmark/docs/data_preparation_call_centre_audio.md`, `PT` = `preparation_tools/`,
 `CFG` = `PT/config/segment_turns.yaml`. Numbers marked *computed* were produced by this folder's scripts from repository
 code and data (no new model runs except Silero VAD); `assets/` holds their outputs.
 
@@ -15,8 +15,8 @@ Slide numbers below are the shown slides 1–36; the hidden appendix slides are 
 
 | Fact | Value | Source |
 |---|---|---|
-| emotion2vec+ large input | real length, no window | `emotion_recognition/docs/models_survey_en.md` (input-length note, line 25); `research_paper/docs/experimental_design.md` §4.2 |
-| emotion2vec+ on the Mac GPU | fails above 20.48 s (327,685 samples; 20.4 s runs, 20.5 s fails, measured); scripts fall back to the CPU | `emotion_recognition/docs/emotion2vec_plus_large_en.md` "Length and devices"; `emotion_recognition/scripts/models/emotion2vec.py` docstring of `Predictor` |
+| emotion2vec+ large input | real length, no window | `emotion_recognition_benchmark/docs/models_survey_en.md` (input-length note, line 25); `research_paper/docs/experimental_design.md` §4.2 |
+| emotion2vec+ on the Mac GPU | fails above 20.48 s (327,685 samples; 20.4 s runs, 20.5 s fails, measured); scripts fall back to the CPU | `emotion_recognition_benchmark/docs/emotion2vec_plus_large_en.md` "Length and devices"; `emotion_recognition_benchmark/scripts/models/emotion2vec.py` docstring of `Predictor` |
 | emotion2vec+ memory | grows roughly with length²; about 2.3 GB extra at 60 s on the CPU (0.3 GB at 16 s, 9.3 GB at 120 s) | `emotion2vec_plus_large_en.md` line 26 and "Length and devices" (notes only) |
 | MERaLiON-SER-v1, Melati | fixed 30 s Whisper window: shorter padded, longer cut | `models_survey_en.md` table 1b #2, #3; `scripts/models/meralion_ser.py`, `melati.py` docstrings; `experimental_design.md` §4.2 |
 | Vox-Profile Whisper | fixed 15 s window; trained on 3–15 s clips; < 3 s unreliable (card) | `models_survey_en.md` table 1b #4; `scripts/models/vox_profile.py` (`MAX_SECONDS = 15`, notes) |

@@ -1,5 +1,5 @@
 // Shared style and helpers for the turn-segmentation deck (pptxgenjs, 16:9 = 13.333 x 7.5 in).
-// Adapted from emotion_recognition/presentation/lib.js (same colours, fonts, title layout and notes), with the
+// Adapted from emotion_recognition_benchmark/presentation/lib.js (same colours, fonts, title layout and notes), with the
 // readability rules of this deck: body text >= 20 pt, tables and diagram labels >= 16 pt, no grey text
 // (all text is dark navy INK, dark blue for links, or white on dark fills), no auto-shrinking of text.
 const fs = require("fs");

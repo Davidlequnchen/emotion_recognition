@@ -29,7 +29,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-DAILYTALK = ROOT.parent / "emotion_recognition" / "data" / "dailytalk"
+DAILYTALK = ROOT.parent / "emotion_recognition_benchmark" / "data" / "dailytalk"
 OUT = ROOT / "local" / "integration"
 N_CALLS = 5                  # DailyTalk dialogues with the most audio from one speaker
 LENGTH_RANGE = (25.0, 35.0)  # seconds per long English turn

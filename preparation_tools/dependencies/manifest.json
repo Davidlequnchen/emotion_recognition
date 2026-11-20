@@ -11,7 +11,7 @@
     "torchaudio": "2.7.1",
     "numpy": "any",
     "typing-extensions": "any",
-    "note": "Not duplicated here. Linux: emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64/install.py (ships numpy 2.4.6 and typing_extensions 4.16.0). Mac: emotion_recognition/requirements-llm-mac.txt."
+    "note": "Not duplicated here. Linux: emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64/install.py (ships numpy 2.4.6 and typing_extensions 4.16.0). Mac: emotion_recognition_benchmark/requirements-llm-mac.txt."
   },
   "not_included": "onnxruntime and torchcodec (optional silero-vad extras): the segmenter uses Silero's JIT model and soundfile.",
   "files": [

@@ -6,7 +6,7 @@ Deepfake detection: telling real (bona fide) speech from deepfakes (synthetic or
 XLS-R 1B speech model post-trained on 56k hours of real and 18k hours of fake speech, with a 2-class output layer.
 
 This is a side project of the repository, independent of the speech emotion recognition project next to it
-([`../emotion_recognition/`](../emotion_recognition/README.md)). The only link between them: by default it scores
+([`../emotion_recognition_benchmark/`](../emotion_recognition_benchmark/README.md)). The only link between them: by default it scores
 the six CREMA-D test clips of that project.
 
 It also makes its own test set of synthetic speech: three voice-cloning models read 200 call-centre lines in the voice
@@ -129,7 +129,7 @@ python scripts/antideepfake/inference.py
 
 Settings in `config/antideepfake.yaml`: `mode` (`mac` or `cuda`) and `devices` choose the hardware (set `devices.mac: cpu` to force
 the CPU); in the `inference` section, `audio` (a file, a folder with its sub-folders, or a list of files and folders;
-wav, flac, mp3, ogg; default `../emotion_recognition/data/samples`), `threshold` (default 0.5) and `max_seconds`
+wav, flac, mp3, ogg; default `../emotion_recognition_benchmark/data/samples`), `threshold` (default 0.5) and `max_seconds`
 (default `null`).
 
 The script runs six steps and prints each one: (1) read the configuration, (2) check Python, PyTorch, CUDA and MPS,
@@ -138,7 +138,7 @@ audio files, (6) score every file. For every file it prints P(real), P(fake) and
 device is not available, it stops with an error instead of silently falling back to the CPU. It needs no network at
 run time: the network is defined in the script and every weight comes from `xlsr_1b.ckpt`.
 
-Output on the M4 Max (`mode: mac`, MPS) for the six CREMA-D test clips in `../emotion_recognition/data/samples/`,
+Output on the M4 Max (`mode: mac`, MPS) for the six CREMA-D test clips in `../emotion_recognition_benchmark/data/samples/`,
 which are real speech (each line is followed by P(fake) and the logits):
 
 ```

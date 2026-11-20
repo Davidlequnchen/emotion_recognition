@@ -1,6 +1,6 @@
 [submodule "emotion-models"]
-	path = emotion_recognition/models
+	path = emotion_recognition_benchmark/models
 	url = https://github.com/Davidlequnchen/emotion_recognition_models.git
 [submodule "emotion-datasets"]
-	path = emotion_recognition/data
+	path = emotion_recognition_benchmark/data
 	url = https://github.com/Davidlequnchen/emotion_recognition_datasets.git

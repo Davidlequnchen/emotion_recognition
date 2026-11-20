@@ -9,7 +9,7 @@ https://github.com/CheyneyComputerScience/CREMA-D), licensed under the Open Data
 (CREMA-D's DFA sentence); four clips have it as a transcript, two have none.
 
 `predictions/` holds the real predictions of emotion2vec+ large and MERaLiON-SER-v1 for these clips, taken from
-the evaluation in `emotion_recognition/outputs/` (both models call clip_0006, a sad clip, disgusted: predictions are
+the evaluation in `emotion_recognition_benchmark/outputs/` (both models call clip_0006, a sad clip, disgusted: predictions are
 only guidance).
 
 The labels written here (`annotations/`) are not tracked by git.

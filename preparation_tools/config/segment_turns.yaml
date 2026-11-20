@@ -1,5 +1,5 @@
 # Settings for segment_turns.py. Paths are relative to preparation_tools/.
-# Method and reasons: emotion_recognition/docs/data_preparation_call_centre_audio.md (§2-§4, §6).
+# Method and reasons: emotion_recognition_benchmark/docs/data_preparation_call_centre_audio.md (§2-§4, §6).
 # All numbers are starting values for the pilot. Changing any setting below "settings_version" changes the
 # version hash written to every manifest row.
 

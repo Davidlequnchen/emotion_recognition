@@ -17,11 +17,11 @@ jobs:
     timeout-minutes: 60
     defaults:
       run:
-        working-directory: emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64
+        working-directory: emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64
     steps:
       - uses: actions/checkout@v7
         with:
-          sparse-checkout: emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64
+          sparse-checkout: emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64
           persist-credentials: false
       - uses: actions/setup-python@v7
         with:

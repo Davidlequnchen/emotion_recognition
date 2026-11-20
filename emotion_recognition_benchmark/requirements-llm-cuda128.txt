@@ -1,0 +1,11 @@
+# PyTorch for the emotion_recognition_llm environment on NVIDIA Blackwell servers (B200, compute capability 10.0).
+# Blackwell kernels exist only in CUDA 12.8+ builds (added in PyTorch 2.7); the CUDA 11.8 and 12.1 builds cannot run
+# on a B200. Same versions as requirements-llm-mac.txt and requirements-llm-cuda118.txt, so results stay comparable
+# across machines. The wheels bundle the CUDA runtime and cuDNN: the server only needs a driver that supports CUDA 12.8
+# (Linux driver >= 570; `nvidia-smi` shows "CUDA Version: 12.8" or higher), on x86_64 Linux.
+# Install this instead of requirements-llm-cuda118.txt, then requirements.txt. emotion2vec_adaptation uses the same
+# environment.
+--index-url https://download.pytorch.org/whl/cu128
+torch==2.7.1+cu128
+torchaudio==2.7.1+cu128
+torchvision==0.22.1+cu128

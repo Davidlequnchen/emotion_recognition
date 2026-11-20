@@ -8,7 +8,7 @@ worked example, routing to four output folders, per-call grouping for conversati
 synthetic DailyTalk calls (two slides with playable audio, a comparison with four other ways of cutting, and a check of
 how much the score weights matter).
 
-Style follows `emotion_recognition/presentation/` (pptxgenjs, same colours, title layout, notes and play buttons), with
+Style follows `emotion_recognition_benchmark/presentation/` (pptxgenjs, same colours, title layout, notes and play buttons), with
 stricter readability rules: body text at least 20 pt, tables 18–20 pt, diagram labels and figure text at least 16 pt
 (citations and page numbers 14 pt), no grey text, figures drawn at their size on the slide. `build.js` stops if a
 font is below these limits.
@@ -40,7 +40,7 @@ python fix_audio.py turn_segmentation.pptx   # audio plays on click; unique shap
 ```
 
 The data scripts read the git-ignored outputs of `python tests/integration_dailytalk.py` in `../local/integration/`
-and the local DailyTalk copy in `emotion_recognition/data/dailytalk/`: they run the integration script's own
+and the local DailyTalk copy in `emotion_recognition_benchmark/data/dailytalk/`: they run the integration script's own
 `make_inputs()` into a temporary folder to recover the utterance joins and check that every rebuilt transcript equals
 the saved input. `make_data_figures.py` needs the segmenter's environment (torch, torchaudio, silero-vad, soundfile,
 PyYAML); only Silero VAD runs, the alignment model is not loaded. `sensitivity.py` and the method comparison run the
@@ -56,14 +56,14 @@ LibreOffice shows the play buttons but not the audio; test playback in PowerPoin
 | File | Content |
 |---|---|
 | `build.js` | builds the deck, checks font sizes, marks appendix slides hidden, keeps one paragraph-properties element per paragraph (pptxgenjs repeats it for multi-run text) |
-| `lib.js` | style and layout helpers (adapted from `emotion_recognition/presentation/lib.js`): slide frame, stage strip, appendix numbering (A1…), bullets, boxes, arrows, tables, citations, notes, images, audio buttons |
+| `lib.js` | style and layout helpers (adapted from `emotion_recognition_benchmark/presentation/lib.js`): slide frame, stage strip, appendix numbering (A1…), bullets, boxes, arrows, tables, citations, notes, images, audio buttons |
 | `refs.js` | the references (short label, full entry, link); all checked on 2026-11-13 |
 | `s_intro.js` | title, problem statement, full procedure, rules, building blocks, pipeline |
 | `s_align.js` | prepare, language check, forced alignment (concept, tool choice, CTC), text normalisation, quality checks |
 | `s_vad.js` | Silero VAD: model, its own segmentation, its fragments, how the segmenter uses it |
 | `s_dp.js` | boundary score, why three cues, relative pause, cost, DP algorithm, worked example, routing |
 | `s_results.js` | outputs, call context, validation, listening slides, method comparison, weight sensitivity, limitations, hidden appendix |
-| `fix_audio.py` | copied from `emotion_recognition/presentation/`: audio plays on click |
+| `fix_audio.py` | copied from `emotion_recognition_benchmark/presentation/`: audio plays on click |
 | `img/` | play-button covers (from the SER deck) |
 | `scripts/style.py` | figure style (deck colours, Calibri when available, 300 dpi) |
 | `scripts/make_figures.py` | `ctc_trellis` (illustrative scores, true best path), `pause_score`, `length_cost`, `worked_example`, `confidence` |

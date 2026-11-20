@@ -1,7 +1,7 @@
 # Packages for deepfake detection with AntiDeepfake XLS-R-1B: inference.py (the network, on MPS, CUDA or the CPU)
 # and download_model.py (the checkpoint from Zenodo). Python 3.11.
 # Standalone: everything a machine that runs only this project needs. The emotion_recognition environment
-# (../emotion_recognition/requirements*.txt) already has all of them at the same versions, so there this file
+# (../emotion_recognition_benchmark/requirements*.txt) already has all of them at the same versions, so there this file
 # installs nothing (checked with `pip install --dry-run`: nothing is installed, upgraded or downgraded).
 #
 # Install from this folder (antideepfake/):

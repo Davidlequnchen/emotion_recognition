@@ -11,8 +11,8 @@ name: speaker1        # name of this run: everything goes to outputs/antideepfak
 # Real (bona fide) speech: group name -> a list of files or folders (with sub-folders)
 real:
   my_recordings: [data/voice_clone/reference]                          # the reference recordings of the speaker
-  crema_d: [../emotion_recognition/data/crema_d/AudioWAV]              # 91 actors, varied microphones
-  ravdess: [../emotion_recognition/data/ravdess/audio]                 # 24 actors, studio
+  crema_d: [../emotion_recognition_benchmark/data/crema_d/AudioWAV]              # 91 actors, varied microphones
+  ravdess: [../emotion_recognition_benchmark/data/ravdess/audio]                 # 24 actors, studio
 # Synthetic speech: group name -> a list of files or folders
 fake:
   cosyvoice2: [outputs/voice_clone/speaker1/cosyvoice2]

@@ -6,6 +6,12 @@ __pycache__/
 # Downloaded research papers and local reading-library metadata
 /research_paper/papers/
 
+# Local operational pseudo-label analysis; excluded from the research paper/repository.
+/research_paper/analysis_report/practical_consensus_*.md
+/research_paper/analysis_report/figures/practical_consensus/
+/research_paper/analysis_report/practical_consensus/
+/emotion_recognition_benchmark/internal_analysis/
+
 # Environments and secrets
 .venv/
 .env
@@ -18,7 +24,7 @@ __pycache__/
 
 # Emotion models: models/ is a Git submodule with small files and a GitHub Release downloader.
 # setup_models.py retains previous local model folders here when upgrading an older checkout.
-emotion_recognition/models.before-submodule-*/
+emotion_recognition_benchmark/models.before-submodule-*/
 # Anti-deepfake model weights are downloaded by that project's own scripts and stay local.
 antideepfake/models/*/*
 !antideepfake/models/*/.gitkeep
@@ -36,9 +42,9 @@ antideepfake/third_party/
 
 # Data is a pinned submodule: small metadata in Git, nine dataset mirrors in GitHub Releases.
 # setup_datasets.py preserves old local folders here before initializing it.
-emotion_recognition/data.before-submodule-*/
+emotion_recognition_benchmark/data.before-submodule-*/
 # Hidden states of the local audio LLMs (features/<model>/<dataset>/, a few GB; scripts/models/audio_llm.py)
-emotion_recognition/features/
+emotion_recognition_benchmark/features/
 # antideepfake: only the synthetic call-centre texts are committed; voice recordings (references) stay local.
 antideepfake/data/*
 !antideepfake/data/voice_clone/
@@ -47,22 +53,22 @@ antideepfake/data/voice_clone/*
 !antideepfake/data/voice_clone/reference/
 antideepfake/data/voice_clone/reference/*
 !antideepfake/data/voice_clone/reference/.gitkeep
-# Old locations, from before the split into emotion_recognition/ and antideepfake/: datasets and model files that
+# Old locations, from before the split into emotion_recognition_benchmark/ and antideepfake/: datasets and model files that
 # another machine still has there after `git pull` stay ignored until they are moved into the new folders.
 /data/
 /models/
 
-# Outputs. emotion_recognition/outputs/ (per-clip predictions of every model) is committed, except: the local results page
+# Outputs. emotion_recognition_benchmark/outputs/ (per-clip predictions of every model) is committed, except: the local results page
 # (site/index.html is the public one), run logs (they hold local paths), and anything of ESD (its licence forbids
 # sharing any part of the data). Other outputs/ folders stay local.
 outputs/
-!emotion_recognition/outputs/
-emotion_recognition/outputs/*.html
-emotion_recognition/outputs/*.log
+!emotion_recognition_benchmark/outputs/
+emotion_recognition_benchmark/outputs/*.html
+emotion_recognition_benchmark/outputs/*.log
 # Temporary transport attachments; recovered CSV/JSON/JSONL remain eligible for Git.
-emotion_recognition/outputs/**/*.txt
-emotion_recognition/outputs/**/*.zip
-emotion_recognition/outputs/**/esd_*
+emotion_recognition_benchmark/outputs/**/*.txt
+emotion_recognition_benchmark/outputs/**/*.zip
+emotion_recognition_benchmark/outputs/**/esd_*
 
 # labeling_tool: labels written by the tool (company data folders live outside this repository)
 labeling_tool/**/annotations/*
@@ -71,13 +77,13 @@ labeling_tool/**/annotations/*
 labeling_tool/label_studio/
 label_studio/.local/
 # Presentation deck: the Node packages and rendered previews are rebuilt locally
-emotion_recognition/presentation/node_modules/
-emotion_recognition/presentation/render/
+emotion_recognition_benchmark/presentation/node_modules/
+emotion_recognition_benchmark/presentation/render/
 # Office lock files
 ~$*
 # Presentation: candidate clips that the deck does not use (regenerate with scripts/make_candidates.py)
-emotion_recognition/presentation/assets/audio_candidates/
-emotion_recognition/presentation/scripts/__pycache__/
+emotion_recognition_benchmark/presentation/assets/audio_candidates/
+emotion_recognition_benchmark/presentation/scripts/__pycache__/
 
 # preparation_tools: offline wheels, the alignment checkpoint and the local working folder (internal audio,
 # transcripts and outputs) stay local; manifests, scripts and docs are tracked.
@@ -86,3 +92,7 @@ preparation_tools/dependencies/**/*.download
 preparation_tools/model_weights/checkpoints/
 preparation_tools/model_weights/**/*.download
 preparation_tools/local/
+
+# Downloaded research checkpoints; keep them outside the pinned models submodule.
+emotion_recognition_benchmark/local_models/
+research_paper/local_data/

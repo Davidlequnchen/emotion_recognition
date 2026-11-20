@@ -1,0 +1,25 @@
+# Common dependencies, identical on the MacBook and the NVIDIA servers (Python 3.11).
+# Install after one hardware file: requirements-llm-mac.txt (Mac), requirements-llm-cuda128.txt (Blackwell, e.g.
+# B200) or requirements-llm-cuda118.txt (older NVIDIA servers), for all eight local models.
+# requirements-cuda121.txt is a legacy server option for the five SER models and both Qwen models, without Gemma 4.
+# emotion2vec_adaptation (repository root) uses this same environment and needs nothing else.
+funasr==1.4.16            # emotion2vec+ runtime: builds the network from config.yaml, loads model.pt
+transformers==5.18.0      # runs MERaLiON-SER-v1, Melati and Vox-Profile; also a FunASR dependency. Newest release
+                          # that works with torch 2.5: 5.19.0 cannot import its models there (it calls
+                          # torch.accelerator, new in torch 2.6), and 5.20+ needs torch >= 2.6
+peft==0.21.2              # imported by MERaLiON-SER-v1's model code (its LoRA is already merged into the weights)
+accelerate==1.15.0        # peft dependency; pinned so that pip never upgrades torch for it
+omegaconf==2.3.1          # imported by MERaLiON-SER-v1's model code (also installed with FunASR)
+huggingface_hub==2.2.0    # model download from HuggingFace
+modelscope==1.40.2        # model download from ModelScope (alternative hub)
+numpy==2.4.6              # newest numpy for Python 3.11 (2.5+ needs Python >= 3.12)
+scikit-learn==1.9.1       # CPU-only linear probes, train-only scaling and classification metrics
+matplotlib==3.11.2        # confusion-matrix figure in the evaluation report
+pyarrow==26.0.0           # reads the Parquet files of THAI-SER and nEMO
+openpyxl==3.1.5           # reads the MCAE-SPPS label spreadsheet
+pyyaml==6.0.3             # reads the settings in config/*.yaml
+soundfile==0.14.0         # reads audio files
+tqdm==4.70.1              # progress bars in emotion2vec_adaptation (already installed with FunASR)
+
+# Automatically use OS certificate trust (including company root CAs) for HTTPS downloads.
+truststore>=0.10; python_version >= "3.10"

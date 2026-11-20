@@ -7,7 +7,7 @@ picks the cut points for the whole turn at once with dynamic programming: pieces
 cut at the best pauses. Audio and text are cut at the same place, so every word ends up in exactly one piece. Every
 turn lands in one of four output groups, and every exported item knows its neighbours in the call. It runs fully
 offline. The method and the reasons behind every number are in
-[Data Preparation for Internal Call-Centre Audio](../emotion_recognition/docs/data_preparation_call_centre_audio.md)
+[Data Preparation for Internal Call-Centre Audio](../emotion_recognition_benchmark/docs/data_preparation_call_centre_audio.md)
 (§2–§4, §6).
 
 Steps for each turn, call by call:
@@ -33,8 +33,8 @@ manifests and to `call_timeline.csv`.
 ## Install
 
 Prerequisite: the target Python 3.11 environment already has torch 2.7.1 and torchaudio 2.7.1. On the Linux server
-these come from [`emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64/`](../emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64/README.md)
-(`python install.py` there); on the Mac from [`requirements-llm-mac.txt`](../emotion_recognition/requirements-llm-mac.txt).
+these come from [`emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64/`](../emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64/README.md)
+(`python install.py` there); on the Mac from [`requirements-llm-mac.txt`](../emotion_recognition_benchmark/requirements-llm-mac.txt).
 
 Two steps, in the target environment (the first needs access to GitHub, the second no internet):
 

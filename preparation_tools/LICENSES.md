@@ -26,7 +26,7 @@ model and soundfile).
 
 | Package | Version | Licence | Where it comes from |
 |---|---|---|---|
-| torch | 2.7.1 | BSD-3-Clause | Linux: `emotion_recognition/dependencies/torch-cu118-cp311-linux_x86_64/`; Mac: `emotion_recognition/requirements-llm-mac.txt` |
+| torch | 2.7.1 | BSD-3-Clause | Linux: `emotion_recognition_benchmark/dependencies/torch-cu118-cp311-linux_x86_64/`; Mac: `emotion_recognition_benchmark/requirements-llm-mac.txt` |
 | torchaudio | 2.7.1 | BSD-2-Clause | as above; provides `forced_align` and the model definition |
 | numpy | 2.4.6 in both environments | BSD-3-Clause | comes with the torch installation |
 | typing-extensions | 4.16.0 on Linux | PSF-2.0 | comes with the torch installation |

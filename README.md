@@ -9,34 +9,34 @@ The SER work has two separate workstreams:
 
 - **Academic research** in [`research_paper/`](research_paper/README.md) uses public datasets only; internal company calls are outside the paper's scope.
 - **Model consensus / pseudo-label analysis**: [中文报告](research_paper/analysis_report/consensus_zh.md) · [English report](research_paper/analysis_report/consensus_en.md), with coverage, accepted-label accuracy and vote thresholds across the 16 benchmark datasets.
-- **Internal customer-call adaptation** focuses on practical target-domain accuracy, customer-only data curation and labelling; see the [data preparation discussion draft](emotion_recognition/docs/data_preparation_call_centre_audio.md) and the independent [`label_studio/` subproject](label_studio/README.md). Internal audio, transcripts and derived data stay outside this repository.
+- **Internal customer-call adaptation** focuses on practical target-domain accuracy, customer-only data curation and labelling; see the [data preparation discussion draft](emotion_recognition_benchmark/docs/data_preparation_call_centre_audio.md) and the independent [`label_studio/` subproject](label_studio/README.md). Internal audio, transcripts and derived data stay outside this repository.
 - **Emotion2Vec+ large adaptation**: [`emotion2vec_adaptation/`](emotion2vec_adaptation/README.md) provides YAML-controlled frozen-head training and independent unlabeled masked-EMA encoder adaptation, reusing the existing local model. Curated data and training outputs stay local and ignored by Git.
 
 Benchmark status, 2026-11-15: all ten models have current-protocol results on all 16 datasets (67,062 clips per
 model), including the final Gemma 4 E4B results. The saved results contain 160 compatible model–dataset runs; see
-the [benchmark summary](emotion_recognition/reports/summary.md) and [research analyses](research_paper/README.md).
+the [benchmark summary](emotion_recognition_benchmark/reports/summary.md) and [research analyses](research_paper/README.md).
 
 For the emotion recognition models, clone the metadata submodule and run its Release setup once:
 
 ```bash
 git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/Davidlequnchen/emotion_recognition.git
 cd emotion_recognition
-python3 emotion_recognition/scripts/common/setup_models.py
+python3 emotion_recognition_benchmark/scripts/common/setup_models.py
 ```
 
 The main repository pins [emotion_recognition_models](https://github.com/Davidlequnchen/emotion_recognition_models)
-at `emotion_recognition/models/`. Git clones the small model files; the setup command downloads and verifies the
+at `emotion_recognition_benchmark/models/`. Git clones the small model files; the setup command downloads and verifies the
 model weights from GitHub Releases. By default it gets all eight models (about 64 GB); add model keys to get fewer.
 The shallow-clone flags are optional: on 2026-11-09, historical data/model directory contents were removed from
 the main repository's reachable history. Existing clones made before that rewrite should follow the
-[history migration notes](emotion_recognition/docs/git_history_cleanup.md), preserving local results and work
+[history migration notes](emotion_recognition_benchmark/docs/git_history_cleanup.md), preserving local results and work
 before synchronising. Existing valid model files can be reused. Full environment instructions are below.
 
-Datasets follow the same pattern at `emotion_recognition/data/`, through the pinned
+Datasets follow the same pattern at `emotion_recognition_benchmark/data/`, through the pinned
 [emotion_recognition_datasets](https://github.com/Davidlequnchen/emotion_recognition_datasets) submodule:
 
 ```bash
-python3 emotion_recognition/scripts/common/setup_datasets.py
+python3 emotion_recognition_benchmark/scripts/common/setup_datasets.py
 ```
 
 This restores the twelve mirrored datasets from Releases, including the three dialogue datasets (EmotionTalk,
@@ -50,9 +50,9 @@ Neither model nor dataset setup uses Git LFS.
 
 | Folder | Project |
 |---|---|
-| [`emotion_recognition/`](emotion_recognition/README.md) | **Speech emotion recognition** (the main project): five SER models (emotion2vec+ large, MERaLiON-SER-v1, Melati and two Vox-Profile models) and three local audio LLMs (Qwen2-Audio, Qwen2.5-Omni and Gemma 4), run in the `emotion_recognition_llm` PyTorch environment on an Apple Silicon Mac (MPS) or an NVIDIA server (CUDA 11.8), plus two API audio LLMs (GPT Realtime and Gemini 3.8 Flash), with one evaluation script, a cross-model table in [`reports/summary.md`](emotion_recognition/reports/summary.md) and a results page in the browser. |
+| [`emotion_recognition_benchmark/`](emotion_recognition_benchmark/README.md) | **Speech emotion recognition** (the main project): five SER models (emotion2vec+ large, MERaLiON-SER-v1, Melati and two Vox-Profile models) and three local audio LLMs (Qwen2-Audio, Qwen2.5-Omni and Gemma 4), run in the `emotion_recognition_llm` PyTorch environment on an Apple Silicon Mac (MPS) or an NVIDIA server (CUDA 11.8), plus two API audio LLMs (GPT Realtime and Gemini 3.8 Flash), with one evaluation script, a cross-model table in [`reports/summary.md`](emotion_recognition_benchmark/reports/summary.md) and a results page in the browser. |
 | [`antideepfake/`](antideepfake/README.md) | **Deepfake detection** (a side project): XLS-R-1B-AntiDeepfake from NII Yamagishi Lab tells real speech from synthetic or converted speech; the model is defined in plain PyTorch and its checkpoint comes from Zenodo. |
 | [`preparation_tools/`](preparation_tools/README.md) | **Turn segmenter** for internal call-centre audio: splits long customer turns into pieces of about 7 s (2–15 s) using forced alignment of the existing transcripts (torchaudio wav2vec 2.0), Silero VAD and whole-turn dynamic programming; installs offline from pinned wheels. |
 
 The public results page of the emotion recognition project, https://davidlequnchen.github.io/emotion_recognition/,
-is built into `emotion_recognition/site/` and published by `.github/workflows/pages.yml`.
+is built into `emotion_recognition_benchmark/site/` and published by `.github/workflows/pages.yml`.

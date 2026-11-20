@@ -1,0 +1,50 @@
+# =====================================================================
+# Settings of scripts/viewer/plot_results.py: dataset bar panels and compact model-by-dataset score matrices.
+# Run from the emotion_recognition_benchmark/ folder:  python scripts/viewer/plot_results.py
+# It also runs at the end of scripts/evaluation/evaluate.py when `plots: true` is set in config/evaluation.yaml.
+# Paths are relative to the emotion_recognition_benchmark/ folder.
+# Panel labels round percentages to integers for print; overview matrices keep one decimal.
+# The underlying scores and bar heights retain full precision.
+# The model legend stays below the grid: six columns, exactly two text lines, with unbroken model names.
+# Titles use one line, Dataset (Language); the complete subset/cohort scope remains in result metadata and reports.
+# =====================================================================
+
+metrics: [accuracy, unweighted_accuracy, macro_f1, weighted_f1]  # one figure per metric (keys of `metrics` in the predictions JSON);
+                                                     # also possible: accuracy_all_classes, accuracy_acted_or_listener
+models: all       # all = every folder in outputs/ with results (local models and API models alike), or a list of keys
+placeholders:     # reserve these model positions until compatible results arrive; never plotted as zero scores
+  gpt_realtime: GPT Realtime
+  gemini-3.8-flash: Gemini 3.8 Flash
+datasets: all     # all datasets with results, or a list such as [crema_d, mess]
+dataset_order:    # dialogue first; English non-dialogue next; then the other languages
+  - meld
+  - emotiontalk
+  - dailytalk
+  - multidialog
+  - crema_d
+  - ravdess
+  - savee
+  - jl_corpus
+  - tess
+  - mead
+  - mess
+  - mcae_spps
+  - thai_ser
+  - nemo
+  - emovo
+  - emozionalmente
+exclude: [esd]        # datasets never plotted (the same as `exclude` in config/evaluation.yaml)
+out: reports/figures  # where the figures go: <metric>_by_dataset.png (300 dpi) and .svg, plus overview_<metric>.*
+columns: 4        # panels per row; 16 completed datasets form a 4x4 grid (missing datasets are not fabricated)
+layout:
+  panel_width: 4.4     # inches per column; font sizes stay large when the overall height is reduced
+  panel_height: 2.15   # inches per row
+  bar_width: 0.56
+  bar_spacing: 0.70
+  x_margin: 0.42
+  wspace: 0.14
+  hspace: 0.28
+  title_pad: 8.0
+  ymax: 118.0          # leave room for 100% annotations without touching the one-line title
+  y_tick_labels: left # all panels retain identical ticks/grid; only left panels repeat the numbers
+  show_title: false   # paper captions supply the metric title; keep only dataset/language panel titles
