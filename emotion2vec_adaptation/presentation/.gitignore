@@ -1,0 +1,5 @@
+node_modules/
+render/
+__pycache__/
+# superseded Codex-built deck and its builder (local machine paths); kept locally for reference only
+archive/

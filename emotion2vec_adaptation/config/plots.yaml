@@ -1,0 +1,68 @@
+# Shared paper / presentation style for every training figure.
+# Physical figure sizes are in inches; font sizes are in points.
+plots:
+  typography:
+    families: [Arial, DejaVu Sans]
+    base_size: 16
+    tick_size: 16
+    label_size: 19
+    title_size: 21
+    legend_size: 16
+    overview_title_size: 22
+    title_weight: bold
+  colors:
+    training: '#0072B2'
+    validation: '#D55E00'
+    ema: '#009E73'
+    raw: '#9DA5AE'
+    target: '#0072B2'
+    prediction: '#009E73'
+    ink: '#111111'
+    grid: '#D9D9D9'
+    background: '#FFFFFF'
+  canvas:
+    standalone_size: [8.8, 5.8]
+    overview_size: [11.0, 7.5]
+    padding: 0.08
+    panel_wspace: 0.16
+    panel_hspace: 0.18
+  axes:
+    line_width: 1.0
+    label_padding: 9
+    title_padding: 10
+    tick_length: 5
+    tick_width: 1.0
+    max_x_ticks: 6
+    max_y_ticks: 5
+    score_unit: percent         # percent | fraction, applied consistently to accuracy and F1
+    score_tick_count: 5
+    score_padding: 0.03         # fraction of the full range; leaves markers visible at 0% and 100%
+    value_top_padding: 0.08
+    zero_baseline: true
+    grid_axis: y
+    grid_alpha: 0.65
+    grid_width: 0.7
+    top_spine: false
+    right_spine: false
+    scientific_format: '%.1e'
+  lines:
+    width: 2.7
+    raw_width: 1.4
+    raw_alpha: 0.65
+    marker_size: 6
+    marker: o
+    validation_marker: s
+    max_markers: 12
+    training_style: '-'
+    validation_style: '--'
+    ema_style: '-'
+  legend:
+    location: best
+    frame: false
+    columns: 1
+    handle_length: 2.0
+  exports:
+    dpi: 300
+    png: true
+    svg: true                  # editable text; no rasterized lettering
+    pdf: false

@@ -1,0 +1,4 @@
+labels_import:
+  votes: curated_dataset/labels/normalized.json   # output of label_studio/normalize_export.py
+  clips_manifest: curated_dataset/labels/clips.csv # clip_id,path,group
+  output_manifest: curated_dataset/labeled/manifest.csv

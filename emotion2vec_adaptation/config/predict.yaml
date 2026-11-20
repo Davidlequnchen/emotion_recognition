@@ -1,0 +1,4 @@
+predict:
+  bundle: emotion2vec_adaptation/outputs/head_baseline/model_bundle.json
+  source: curated_dataset/predict  # recursive directory or unlabeled CSV
+  output_csv: emotion2vec_adaptation/outputs/predictions.csv

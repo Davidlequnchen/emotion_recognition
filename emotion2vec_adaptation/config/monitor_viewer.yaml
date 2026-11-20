@@ -1,0 +1,6 @@
+# Run on the training machine; forward this loopback port over SSH to your local browser.
+# All paths are relative to the repository root. The folder must already exist.
+viewer:
+  output_root: emotion2vec_adaptation/outputs
+  bind_host: 127.0.0.1  # IPv4 loopback only; never expose this unauthenticated viewer publicly.
+  port: 8766

@@ -1,0 +1,10 @@
+# Runs the REAL existing local large encoder. No network connections are allowed.
+# Synthetic audio verifies plumbing and gradient flow, not emotion accuracy.
+# This portable smoke uses CPU/FP32; public_validation.yaml can select CUDA/BF16.
+smoke:
+  output_root: emotion2vec_adaptation/outputs/smoke
+  cpu_threads: 2
+  head_epochs: 2
+  ssl_max_steps: 1
+  run_release_parity: true  # compare existing benchmark Predictor probabilities
+  parity_atol: 0.00001

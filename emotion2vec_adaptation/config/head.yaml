@@ -1,0 +1,16 @@
+head:
+  output_dir: emotion2vec_adaptation/outputs/head_baseline  # new directory per experiment
+  # Plan option A: last  = last block, mean over valid frames -> head (with hidden_dim: 0)
+  # Plan option B: weighted = learned weighted sum of all 12 block outputs -> small MLP (with hidden_dim: 256)
+  layer_fusion: last
+  layer_weights_learning_rate: 0.01  # option B only: the 12 block weights; at learning_rate they stay near equal
+  selection_metric: uar         # uar | macro_f1 | loss: picks the saved epoch and drives early stopping
+  batch_size: 64
+  epochs: 100
+  learning_rate: 0.001
+  weight_decay: 0.01
+  hidden_dim: 0                 # 0 = Linear(1024,K); e.g. 256 = small MLP
+  dropout: 0.0
+  class_weights: balanced       # balanced | none; computed on selected training clips only
+  patience: 15                 # stop if the selection metric does not improve for this many epochs
+# The encoder always embeds one clip at a time (padding changes FunASR's output); batch_size is for the head.

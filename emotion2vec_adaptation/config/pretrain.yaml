@@ -1,0 +1,41 @@
+pretrain:
+  output_dir: emotion2vec_adaptation/outputs/continued_encoder
+  batch_size: 2                 # teacher + gradients + Adam use more memory than inference
+  epochs: 10
+  learning_rate: 0.00001        # encoder, reached after the probe and the warm-up
+  predictor_learning_rate: 0.001  # the new, randomly initialised predictor
+  warmup_steps: 1000            # encoder rate ramps linearly from 0 after the probe
+  weight_decay: 0.01
+  gradient_clip: 1.0
+  # What the masked frames regress onto (docs/guide.md, "SSL target"):
+  #   final    = teacher's last block, layer-normalised per frame
+  #   ffn_mean = mean of the top-K FFN outputs, normalised over time (data2vec 2.0); not learnable from this model
+  target: final
+  target_top_layers: 8          # ffn_mean only
+  frame_weight: 1.0             # masked-frame loss
+  utterance_weight: 0.0         # emotion2vec utterance loss: pooled extra tokens vs pooled teacher
+  mask_probability: 0.5         # valid-frame coverage fraction, NOT span-start probability
+  mask_length: 5
+  ema_decay: 0.999              # fixed decay, not the original paper's linear schedule
+  predictor_hidden: 1024
+  freeze_frontend: true
+  anchor_weight: 0.0            # L2-SP pull towards the original encoder weights; 0 = off
+  # Gates (ContinualPretrainer): the run stops instead of damaging the encoder
+  probe_steps: 500              # predictor-only steps with the encoder frozen, then the learnability check
+  probe_min_gain: 0.1           # validation loss must beat the constant-prediction baseline by this fraction
+  downstream_every_steps: 500   # refit a linear head on labelled clips; 0 = off (needs data.labeled_manifest)
+  downstream_max_drop: 0.02     # stop when validation UAR falls this far below the original encoder's
+  # true = batches of near-equal duration, each clip cropped to the batch's shortest (seeded offset, then
+  # re-normalised): no padding reaches the encoder, whose conv positional encoding reads padded frames.
+  # false = random batches, right-padded. The dropped audio share is logged (cropped_fraction).
+  bucket_by_duration: true
+  # Checkpoints: every save rewrites last_training.pt and encoder.pt; encoder_best.pt follows the downstream check
+  save_every_steps: 5000        # also save mid-epoch every N steps (0 = epoch ends only); best a multiple of
+                                # downstream_every_steps, so every kept encoder has a downstream UAR
+  keep_checkpoints: 5           # encoder-only copies kept in checkpoints/ (newest N) to compare heads; 0 = none
+  save_training_state: true    # last_training.pt includes teacher, predictor, optimizer, RNG and the batch position
+  resume_checkpoint: null      # exact resume, also mid-epoch, from a last_training.pt; choose a NEW output_dir
+  max_steps: null              # optional bounded pilot; normal training uses epochs
+  validation_fraction: 0.05    # reserve unlabeled CUSTOMER/CALL groups; 0 disables automatic splitting
+  validation_manifest: null   # optional fixed unlabeled validation CSV, recommended across scale experiments
+  max_unlabeled_clips: 13000  # pilot budget AFTER holdouts/validation, nested across budgets; 65000 or null next

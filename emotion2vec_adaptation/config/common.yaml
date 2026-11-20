@@ -1,0 +1,43 @@
+# All paths in YAML are relative to the REPOSITORY ROOT, regardless of cwd.
+model:
+  directory: emotion_recognition_benchmark/models/emotion2vec_plus_large
+  # null = existing original encoder. After SSL, set to its encoder.pt, then retrain head.
+  encoder_checkpoint: null
+
+runtime:
+  device: cuda                  # B200 training: require NVIDIA; cpu/mps/auto remain available for local work
+  precision: auto               # CUDA BF16 when supported; CPU/MPS float32
+  cpu_threads: 4                # 0 = keep PyTorch default
+  seed: 42
+  num_workers: 4                # DataLoader processes that decode/resample/crop; 0 = main process. Measure on the
+                                # B200: raise it while SSL data_wait_seconds stays above a few % of the step time
+
+monitoring:
+  enabled: true
+  progress_bar: true
+  console_log: true
+  log_every_steps: 1
+  plot_every_steps: 20          # 1 = redraw each update; 20 reduces plotting overhead on large GPU jobs
+  max_plot_points: 2000         # chart-only downsampling; JSONL retains every recorded batch
+  refresh_seconds: 5
+  loss_smoothing: 0.95          # display-only EMA, never changes the optimization loss
+
+audio:
+  sample_rate: 16000
+  min_seconds: 2.0             # the preparation_tools window is 2-15 s; current internal clips are 2-10 s
+  max_seconds: 15.0            # no silent cropping; every clip is checked before training starts
+  normalize: true              # per-clip layer norm, before zero padding
+
+# Match the published model's eight named emotion classes; keep <unk>/unknown separate.
+# Historical Label Studio "Unknown / Other" decisions must not be silently relabeled.
+labels: [angry, disgusted, fearful, happy, neutral, other, sad, surprised]
+
+data:
+  labeled_manifest: curated_dataset/labeled/manifest.csv
+  unlabeled_source: curated_dataset/unlabeled  # recursive audio directory OR CSV manifest
+  validation_fraction: 0.2
+  test_fraction: 0.1
+  max_train_clips: 1000         # train ONLY, excludes validation/test; 5000 or null also supported
+  # SHA256 + header of every audio file, read once and reused while size and mtime are unchanged;
+  # leakage checks, resume digests and duration checks read it. null = memory only (re-read each run)
+  audit_cache: emotion2vec_adaptation/outputs/audio_audit.jsonl

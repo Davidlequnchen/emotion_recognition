@@ -1,0 +1,2 @@
+environment_check:
+  output_root: emotion2vec_adaptation/outputs/environment_checks

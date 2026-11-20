@@ -1,0 +1,26 @@
+# End-to-end checks on real, locally cached public speech. No downloads.
+public_validation:
+  output_root: emotion2vec_adaptation/outputs/public_validation
+  device: auto               # use cuda explicitly on B200 to require a GPU
+  precision: auto            # CUDA BF16 where supported; CPU/MPS float32
+  cpu_threads: 2
+  head_epochs: 2
+  ssl_initial_epochs: 1
+  ssl_batch_size: 2
+  predictor_hidden: 1024
+  run_release_parity: true
+  parity_atol: 0.00001
+  optional_utterance_weight: 0.1
+
+fixture:
+  dataset: ravdess
+  source_directory: emotion_recognition_benchmark/data/ravdess/audio
+  labels: [neutral, happy]
+  speakers_per_split: 2
+  clips_per_class_per_speaker: 2
+  unlabeled_speakers: 2
+  unlabeled_clips_per_speaker: 2
+  min_seconds: 3.0
+  max_seconds: 12.0
+  include_holdout_probe: true
+  include_8khz_stereo_probe: true
