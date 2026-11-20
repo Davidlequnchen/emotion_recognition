@@ -126,13 +126,13 @@ def verify_all(root, files):
                          + "\n  ".join(invalid))
 
 
-def main(argv=None):
+def main(argv=None, *, root=None):
+    root = (ROOT if root is None else root).resolve()
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--dry-run", action="store_true",
                         help="print numbered offline install commands without checking platform or local wheel files")
     args = parser.parse_args(argv)
     try:
-        root = ROOT.resolve()
         print("Manifest: " + str(root / "manifest.json"), flush=True)
         manifest = load_manifest(root)
         files = manifest["files"]

@@ -117,12 +117,14 @@ def audit(root, manifest, check_order=True):
 
 
 def write_lock(root, manifest, ordered):
+    cuda = manifest.get("cuda", "11.8")
+    bundle_path = f"dependencies/torch-cu{cuda.replace('.', '')}-cp311-linux_x86_64"
     manifest["files"] = ordered
     (root / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (root / "SHA256SUMS").write_text("".join(
         "{}  {}\n".format(item["sha256"], item["filename"]) for item in ordered), encoding="utf-8")
     (root / "requirements-offline.txt").write_text(
-        "# Complete pinned CUDA 11.8 runtime closure for CPython 3.11 / Linux x86_64.\n"
+        f"# Complete pinned CUDA {cuda} runtime closure for CPython 3.11 / Linux x86_64.\n"
         "# Includes truststore for the downloader. Install with --no-index --find-links and --require-hashes.\n"
         + "".join("{}=={} --hash=sha256:{}\n".format(item["package"], item["version"], item["sha256"])
                   for item in ordered), encoding="utf-8")
@@ -130,8 +132,8 @@ def write_lock(root, manifest, ordered):
              "以下顺序由 wheel METADATA 的实际依赖关系生成；每个包的依赖均先安装。",
              "所有 wheels 必须先下载到本目录并通过 SHA-256 校验。", "",
              "在 `emotion_recognition_benchmark/` 项目目录、激活目标 Conda 环境后执行：", "", "```bash",
-             "python dependencies/torch-cu118-cp311-linux_x86_64/download.py --verify-only",
-             "python dependencies/torch-cu118-cp311-linux_x86_64/install.py", "```", "",
+             f"python {bundle_path}/download.py --verify-only",
+             f"python {bundle_path}/install.py", "```", "",
              "`install.py` 会先检查平台并验证整套文件，再逐个执行下列命令，最后运行 `pip check`。",
              "也可以按下面顺序手工逐行执行；`--no-index --no-deps` 保证每条安装命令只使用指定的本地 wheel。", "",
              "| 顺序 | 包 | 版本 | 先安装的直接依赖 |", "|---|---|---|---|"]
@@ -141,22 +143,23 @@ def write_lock(root, manifest, ordered):
     lines += ["", "## 可逐行复制的命令", "", "```bash"]
     for index, item in enumerate(ordered, 1):
         lines += ["# {}. {}=={}".format(index, item["package"], item["version"]),
-                  "python -m pip install --no-index --no-deps ./dependencies/torch-cu118-cp311-linux_x86_64/{}".format(item["filename"])]
+                  "python -m pip install --no-index --no-deps ./{}/{}".format(bundle_path, item["filename"])]
     lines += ["python -m pip check", "```", "",
               "本集合覆盖 PyTorch/torchaudio/torchvision 的完整默认运行时依赖，并额外包含 truststore。",
               "项目 `requirements.txt` 中的 FunASR、transformers 等其他包及可选 extras 不在本集合内。", ""]
     (root / "INSTALL_ORDER.md").write_text("\n".join(lines), encoding="utf-8")
 
 
-def main(argv=None):
+def main(argv=None, *, root=None):
+    root = ROOT if root is None else root
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write-lock", action="store_true", help="regenerate locks and manual install order")
     args = parser.parse_args(argv)
     try:
-        manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
-        ordered = audit(ROOT, manifest, check_order=not args.write_lock)
+        manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+        ordered = audit(root, manifest, check_order=not args.write_lock)
         if args.write_lock:
-            write_lock(ROOT, manifest, ordered)
+            write_lock(root, manifest, ordered)
         print("Verified {} wheels: hashes, Python/ABI compatibility, full Linux dependency closure and install order.".format(len(ordered)))
         return 0
     except (OSError, ValueError, KeyError, BadZipFile) as exc:

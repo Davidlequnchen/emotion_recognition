@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Restore the pinned CUDA 11.8 wheels beside this script (Python 3.9+).
+"""Restore the pinned wheels to their wheel directory (Python 3.9+).
 
 Existing verified wheels are reused. Interrupted downloads resume on rerun;
 files are renamed to .whl only after their size and SHA-256 match the manifest.
@@ -84,18 +84,21 @@ def download(item, url, root=ROOT, context=None):
     print("Verified: " + target.name, flush=True)
 
 
-def main(argv=None):
+def main(argv=None, *, root=None, default_source="release"):
+    root = ROOT if root is None else root
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--source", choices=("release", "upstream"), default="release",
-                        help="download from GitHub Release (default) or the official PyTorch source")
+    parser.add_argument("--source", choices=("release", "upstream"), default=default_source,
+                        help="download from GitHub Release or the official sources (default: %(default)s)")
     parser.add_argument("--verify-only", action="store_true", help="verify local wheels without network access")
     parser.add_argument("--ca-bundle", type=Path,
                         help="company/custom CA PEM bundle; otherwise SSL_CERT_FILE or system/default roots")
     args = parser.parse_args(argv)
     try:
-        manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
+        manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
         if manifest.get("schema_version") != 1:
             raise ValueError("Unsupported manifest schema")
+        if not args.verify_only and args.source == "release" and not manifest.get("release_url"):
+            raise ValueError("No Release is configured for this wheel set; use --source upstream")
         context = None if args.verify_only else create_ssl_context(args.ca_bundle)
         valid = True
         for item in manifest["files"]:
@@ -103,18 +106,22 @@ def main(argv=None):
             if Path(filename).name != filename or not filename.endswith(".whl"):
                 raise ValueError("Invalid wheel filename in manifest")
             if args.verify_only:
-                found = matches(ROOT / filename, item)
+                found = matches(root / filename, item)
                 print(("OK: " if found else "MISSING OR INVALID: ") + filename)
                 valid = found and valid
             else:
                 url = item["url"] if args.source == "upstream" else "{}/{}".format(
                     manifest["release_url"].replace("/tag/", "/download/"),
                     urllib.parse.quote(filename, safe=""))
-                download(item, url, context=context)
+                download(item, url, root=root, context=context)
         return 0 if valid else 1
     except (OSError, ValueError, KeyError, urllib.error.URLError, http.client.HTTPException) as exc:
-        message = (certificate_error_message(exc) if certificate_error(exc)
-                   else "{}. Rerun to resume, or try --source upstream.".format(exc))
+        if certificate_error(exc):
+            message = certificate_error_message(exc)
+        else:
+            message = "{}. Rerun to resume.".format(exc)
+            if args.source == "release":
+                message += " For the official URLs, use --source upstream."
         print("ERROR: " + message, file=sys.stderr)
         return 1
     except KeyboardInterrupt:
