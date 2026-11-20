@@ -116,6 +116,63 @@ class TLSContextTests(unittest.TestCase):
             self.assertEqual(result, 0)
             self.assertIn("OK: " + FILENAME, output.getvalue())
 
+    def test_release_download_rejects_html_before_writing_the_wheel(self):
+        primary = "https://upstream.example.invalid/wheel"
+        release_url = "https://example.invalid/releases/download/fixture/" + FILENAME.replace("+", "%2B")
+        blocked = mock.MagicMock()
+        blocked.__enter__.return_value = blocked
+        blocked.getcode.return_value = 200
+        blocked.headers = {"Content-Type": "text/html; charset=utf-8"}
+        wheel = mock.MagicMock()
+        wheel.__enter__.return_value = wheel
+        wheel.getcode.return_value = 200
+        wheel.headers = {"Content-Length": str(len(BODY))}
+        wheel.read.side_effect = [BODY, b""]
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "manifest.json").write_text(json.dumps(manifest(primary)))
+            partial = root / (FILENAME + ".download")
+            with mock.patch.object(downloader, "create_ssl_context"), \
+                    mock.patch.object(downloader.urllib.request, "urlopen", side_effect=[blocked, wheel]) as request, \
+                    mock.patch("sys.stdout", new_callable=io.StringIO), \
+                    mock.patch("sys.stderr", new_callable=io.StringIO) as errors:
+                self.assertEqual(downloader.main([], root=root), 1)
+                self.assertIn("HTTP 200 text/html", errors.getvalue())
+                self.assertFalse(partial.exists())
+                self.assertEqual(downloader.main([], root=root), 0)
+            self.assertEqual([call.args[0].full_url for call in request.call_args_list], [release_url, release_url])
+            blocked.read.assert_not_called()
+            self.assertEqual((root / FILENAME).read_bytes(), BODY)
+            self.assertFalse(partial.exists())
+
+    def test_corrupt_resumed_download_restarts_from_byte_zero(self):
+        url = "https://example.invalid/wheel"
+        item = manifest(url)["files"][0]
+        resumed = mock.MagicMock()
+        resumed.__enter__.return_value = resumed
+        resumed.getcode.return_value = 206
+        resumed.headers = {"Content-Range": f"bytes 4-{len(BODY) - 1}/{len(BODY)}"}
+        resumed.read.side_effect = [BODY[4:], b""]
+        fresh = mock.MagicMock()
+        fresh.__enter__.return_value = fresh
+        fresh.getcode.return_value = 200
+        fresh.headers = {"Content-Length": str(len(BODY))}
+        fresh.read.side_effect = [BODY, b""]
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            partial = root / (FILENAME + ".download")
+            partial.write_bytes(b"html")
+            with mock.patch.object(downloader.urllib.request, "urlopen", side_effect=[resumed, fresh]) as request, \
+                    mock.patch("sys.stdout", new_callable=io.StringIO):
+                downloader.download(item, url, root=root, context=object())
+            first, second = [call.args[0] for call in request.call_args_list]
+            self.assertEqual(first.get_header("Range"), "bytes=4-")
+            self.assertIsNone(second.get_header("Range"))
+            self.assertEqual((root / FILENAME).read_bytes(), BODY)
+            self.assertFalse(partial.exists())
+
 
 @unittest.skipUnless(shutil.which("openssl"), "openssl is required for local test certificates")
 class WheelDownloadCertificateTests(unittest.TestCase):

@@ -28,11 +28,11 @@ def file_digest(path):
     return digest.hexdigest()
 
 
-def expected_assets(root, manifest):
+def expected_assets(root, manifest, release_tag=RELEASE_TAG):
     """Validate every local payload before any remote mutation."""
     if manifest.get("schema_version") != 1:
         raise ValueError("Unsupported manifest schema")
-    if manifest.get("repository") != REPOSITORY or manifest.get("release_tag") != RELEASE_TAG:
+    if manifest.get("repository") != REPOSITORY or manifest.get("release_tag") != release_tag:
         raise ValueError("This publisher is restricted to the pinned repository and Release tag")
     files = manifest.get("files")
     if not isinstance(files, list) or not files:
@@ -56,13 +56,13 @@ def expected_assets(root, manifest):
     return wheels, expected
 
 
-def release_assets():
+def release_assets(release_tag=RELEASE_TAG, *, allow_draft=False):
     output = subprocess.check_output(
-        ["gh", "release", "view", RELEASE_TAG, "--repo", REPOSITORY,
+        ["gh", "release", "view", release_tag, "--repo", REPOSITORY,
          "--json", "tagName,isDraft,assets"], text=True)
     release = json.loads(output)
-    if release.get("tagName") != RELEASE_TAG or release.get("isDraft"):
-        raise ValueError("Expected the existing published dependency Release")
+    if release.get("tagName") != release_tag or (release.get("isDraft") and not allow_draft):
+        raise ValueError("Expected the pinned dependency Release: " + release_tag)
     assets = {}
     for asset in release["assets"]:
         if asset["name"] in assets:
@@ -83,13 +83,13 @@ def verify_remote(names, expected, assets):
             raise ValueError("Remote asset is missing or has different bytes: " + name)
 
 
-def publish(root=ROOT):
+def publish(root=ROOT, *, release_tag=RELEASE_TAG, allow_draft=False):
     configured_repo = os.environ.get("GH_REPO", REPOSITORY)
     if configured_repo != REPOSITORY:
         raise ValueError("GH_REPO does not match the pinned repository")
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
-    wheels, expected = expected_assets(root, manifest)
-    assets = release_assets()
+    wheels, expected = expected_assets(root, manifest, release_tag)
+    assets = release_assets(release_tag, allow_draft=allow_draft)
     # Reject immutable-name conflicts before uploading anything.
     verify_remote([name for name in wheels if name in assets], expected, assets)
     uploaded = 0
@@ -98,35 +98,35 @@ def publish(root=ROOT):
             print("Reusing verified Release wheel: " + name, flush=True)
             continue
         print("Uploading new Release wheel: " + name, flush=True)
-        subprocess.run(["gh", "release", "upload", RELEASE_TAG, str(root / name),
+        subprocess.run(["gh", "release", "upload", release_tag, str(root / name),
                         "--repo", REPOSITORY], check=True)
         uploaded += 1
-    verify_remote(wheels, expected, release_assets())
+    verify_remote(wheels, expected, release_assets(release_tag, allow_draft=allow_draft))
     # The wheel set is now complete; replace only explicitly whitelisted metadata.
-    assets = release_assets()
+    assets = release_assets(release_tag, allow_draft=allow_draft)
     for name in METADATA:
         if name in assets and asset_matches(assets[name], expected[name]):
             print("Reusing verified Release metadata: " + name, flush=True)
             continue
         print("Updating Release metadata: " + name, flush=True)
-        subprocess.run(["gh", "release", "upload", RELEASE_TAG, str(root / name),
+        subprocess.run(["gh", "release", "upload", release_tag, str(root / name),
                         "--repo", REPOSITORY, "--clobber"], check=True)
-    verify_remote(expected, expected, release_assets())
+    verify_remote(expected, expected, release_assets(release_tag, allow_draft=allow_draft))
     print("Verified {} wheels and {} metadata assets on GitHub; {} new wheels uploaded.".format(
         len(wheels), len(METADATA), uploaded), flush=True)
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with Path(summary).open("a", encoding="utf-8") as stream:
-            stream.write("## Verified CUDA 11.8 wheel mirror\n\n")
-            stream.write("- Release: https://github.com/{}/releases/tag/{}\n".format(REPOSITORY, RELEASE_TAG))
+            stream.write(f"## Verified CUDA {manifest['cuda']} wheel mirror\n\n")
+            stream.write("- Release: https://github.com/{}/releases/tag/{}\n".format(REPOSITORY, release_tag))
             stream.write("- {} wheels, {:,} bytes; {} new wheel assets uploaded.\n".format(
                 len(wheels), sum(expected[name][0] for name in wheels), uploaded))
             stream.write("- All wheel and metadata sizes and SHA-256 values match GitHub's asset digests.\n")
 
 
-def main():
+def main(root=ROOT, *, release_tag=RELEASE_TAG, allow_draft=False):
     try:
-        publish()
+        publish(root, release_tag=release_tag, allow_draft=allow_draft)
         return 0
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
         print("ERROR: " + str(exc), file=sys.stderr)

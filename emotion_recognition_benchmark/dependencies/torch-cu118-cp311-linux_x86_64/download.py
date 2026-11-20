@@ -22,6 +22,10 @@ from tls import create_ssl_context, certificate_error, certificate_error_message
 ROOT = Path(__file__).resolve().parent
 
 
+class DownloadResponseError(ValueError):
+    """The remote server did not return the expected wheel bytes."""
+
+
 def matches(path, item):
     if not path.is_file() or path.stat().st_size != item["size_bytes"]:
         return False
@@ -32,7 +36,7 @@ def matches(path, item):
     return digest.hexdigest() == item["sha256"]
 
 
-def download(item, url, root=ROOT, context=None):
+def download(item, url, root=ROOT, context=None, *, resume=True):
     target = root / item["filename"]
     if matches(target, item):
         print("Already verified: " + target.name, flush=True)
@@ -40,7 +44,7 @@ def download(item, url, root=ROOT, context=None):
     partial = target.with_name(target.name + ".download")
     expected = item["size_bytes"]
     offset = partial.stat().st_size if partial.exists() else 0
-    if offset >= expected:
+    if offset >= expected or (offset and not resume):
         if matches(partial, item):
             partial.replace(target)
             print("Verified: " + target.name, flush=True)
@@ -50,38 +54,56 @@ def download(item, url, root=ROOT, context=None):
     headers = {"User-Agent": "emotion-recognition-wheel-downloader/1", "Accept-Encoding": "identity"}
     if offset:
         headers["Range"] = "bytes={}-".format(offset)
-    print("Downloading {} ({:,}/{:,} bytes)".format(target.name, offset, expected), flush=True)
+    host = urllib.parse.urlsplit(url).hostname
+    print(f"Downloading {target.name} from {host} ({offset:,}/{expected:,} bytes)", flush=True)
     request = urllib.request.Request(url, headers=headers)
     if context is None:
         context = create_ssl_context()
     with urllib.request.urlopen(request, timeout=60, context=context) as response:
         status = response.getcode()
+        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        if content_type in {"text/html", "application/xhtml+xml", "application/json", "application/problem+json"}:
+            raise DownloadResponseError(f"{host} returned HTTP {status} {content_type} for {target.name}")
+        end = expected
         if status == 206:
             content_range = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+)", response.headers.get("Content-Range", ""))
             if (not content_range or int(content_range[1]) != offset or int(content_range[3]) != expected
                     or not offset <= int(content_range[2]) < expected):
-                raise ValueError("Invalid Content-Range for " + target.name)
+                raise DownloadResponseError("Invalid Content-Range for " + target.name)
+            end = int(content_range[2]) + 1
         elif status == 200:
             # Some servers ignore Range; safely restart instead of appending a second full copy.
             offset = 0
         else:
-            raise ValueError("Unexpected HTTP status: " + str(status))
-        last_report = offset
+            raise DownloadResponseError("Unexpected HTTP status: " + str(status))
+        length = response.headers.get("Content-Length")
+        if length and length.isdecimal() and int(length) != end - offset:
+            raise DownloadResponseError(
+                f"{host} advertised {int(length):,} bytes for {target.name}; expected {end - offset:,}")
+        start = last_report = offset
         with partial.open("ab" if offset else "wb") as stream:
             for chunk in iter(lambda: response.read(1024 * 1024), b""):
                 offset += len(chunk)
-                if offset > expected:
-                    raise ValueError("Download exceeds expected size: " + target.name)
+                if offset > end:
+                    raise DownloadResponseError(f"{host} returned more bytes than expected for {target.name}")
                 stream.write(chunk)
                 if offset - last_report >= 32 * 1024 * 1024:
                     print("  {:.0%} ({:,}/{:,} bytes)".format(offset / expected, offset, expected), flush=True)
                     last_report = offset
+    if offset != expected:
+        raise DownloadResponseError(f"Incomplete download for {target.name} from {host}: {offset:,}/{expected:,} bytes")
     if not matches(partial, item):
-        if partial.stat().st_size == expected:
-            partial.unlink()  # A complete corrupt download must not be resumed.
-        raise ValueError("Size or SHA-256 mismatch: " + target.name)
+        partial.unlink()  # A complete corrupt download must not be resumed.
+        if start:
+            print(f"Checksum mismatch after resuming {target.name}. Retrying from byte 0.", flush=True)
+            return download(item, url, root=root, context=context, resume=False)
+        raise DownloadResponseError(f"SHA-256 mismatch for {target.name} from {host} ({expected:,} bytes)")
     partial.replace(target)
     print("Verified: " + target.name, flush=True)
+
+
+def release_asset(release_url, filename):
+    return "{}/{}".format(release_url.replace("/tag/", "/download/"), urllib.parse.quote(filename, safe=""))
 
 
 def main(argv=None, *, root=None, default_source="release"):
@@ -110,9 +132,7 @@ def main(argv=None, *, root=None, default_source="release"):
                 print(("OK: " if found else "MISSING OR INVALID: ") + filename)
                 valid = found and valid
             else:
-                url = item["url"] if args.source == "upstream" else "{}/{}".format(
-                    manifest["release_url"].replace("/tag/", "/download/"),
-                    urllib.parse.quote(filename, safe=""))
+                url = release_asset(manifest["release_url"], filename) if args.source == "release" else item["url"]
                 download(item, url, root=root, context=context)
         return 0 if valid else 1
     except (OSError, ValueError, KeyError, urllib.error.URLError, http.client.HTTPException) as exc:

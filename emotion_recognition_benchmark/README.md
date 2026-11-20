@@ -195,10 +195,10 @@ python -m pip install -r requirements.txt              # same common packages as
 A B200 (compute capability 10.0) needs a CUDA 12.8+ build: the CUDA 11.8 and 12.1 wheels contain no Blackwell
 kernels and cannot run on it. Versions are the same as on the Mac and the older server; only the CUDA build differs.
 
-For offline installation, use the [CUDA 12.8 wheelhouse](dependencies/torch-cu128-cp311-linux_x86_64/README.md).
-Its download script fetches the Torch wheels and their pinned runtime dependencies, including Triton. Once all wheels
-are on the server, `install.py` verifies and installs them offline. The wheelhouse guide also shows how to move
-pip's temporary files to the home filesystem.
+For offline installation, `download.py` fetches and verifies all 30 wheels from the CUDA 12.8 GitHub Release,
+including Torch, Triton, and the pinned runtime dependencies. Once the wheels are on the server, `install.py`
+verifies and installs them offline. The wheelhouse guide also shows how to move pip's temporary files to the home
+filesystem. [CUDA 12.8 wheelhouse](dependencies/torch-cu128-cp311-linux_x86_64/README.md) · [CUDA 12.8 Release](https://github.com/Davidlequnchen/emotion_recognition/releases/tag/deps-torch-cu128-cp311-linux-x86_64-v1)
 
 **Older NVIDIA GPU server (CUDA 11.8 build)**
 

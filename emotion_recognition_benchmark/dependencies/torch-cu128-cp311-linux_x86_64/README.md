@@ -36,14 +36,20 @@ where pip places temporary files while downloading and installing packages.
 
 ## Download the wheels
 
-From `emotion_recognition_benchmark/`, download and verify the wheels from the official PyTorch and PyPI sources.
-Run the same command again to resume interrupted downloads or reuse verified files.
+Git tracks the scripts, manifests, and documentation. The downloader fetches all 30 wheels from the CUDA 12.8
+GitHub Release and checks each file's size and SHA-256. Rerun the downloader to resume interrupted downloads and
+reuse verified files. [CUDA 12.8 Release](https://github.com/Davidlequnchen/emotion_recognition/releases/tag/deps-torch-cu128-cp311-linux-x86_64-v1)
+
+From the repository root, update your `main` checkout and run the downloader.
 
 ```bash
+git pull --ff-only
+cd emotion_recognition_benchmark
 python dependencies/torch-cu128-cp311-linux_x86_64/download.py
 ```
 
-If the server cannot reach the package sources, run the download on a connected machine and copy the `.whl` files
+Use `--source upstream` to download directly from PyTorch and PyPI. If the server cannot reach the download sources,
+run the downloader on a connected machine and copy the `.whl` files
 into this directory in the server's repository checkout. The scripts use helpers from the neighboring CUDA 11.8
 directory in that checkout. To use a company CA bundle, add `--ca-bundle /path/to/company-ca.pem` to the download
 command. Verify transferred files offline with `--verify-only`.
