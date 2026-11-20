@@ -60,7 +60,7 @@ emotion_recognition_benchmark/
 │   ├── download.py             # safe archive restore, resumable downloads and per-file verification
 │   ├── samples/                # six CREMA-D test clips (0.4 MB, included in the submodule)
 │   └── <dataset>/              # data restored here; local external/archived datasets stay local
-├── dependencies/               # official CUDA 11.8 wheels restored from Releases (Python 3.11 / Linux x86_64)
+├── dependencies/               # Linux Miniconda installer parts and CUDA 11.8 wheel setup
 ├── docs/
 │   ├── crema_d.md              # CREMA-D explained in Chinese: file names, labels, every column of the label files
 │   ├── datasets_survey.md      # emotion recognition public dataset survey (in Chinese)
@@ -93,7 +93,7 @@ emotion_recognition_benchmark/
 │   │   ├── download_model.py   # downloads the models into models/<key>/, ready to load without the network
 │   │   ├── setup_models.py     # initializes models submodule, preserves/reuses old weights, restores Release files
 │   │   ├── split_parts.py      # optional legacy dataset transfer utility; new data comes from Releases
-│   │   ├── join_parts.py       # joins legacy parts (nEMO and older model checkouts), checks their SHA-256
+│   │   ├── join_parts.py       # joins the Miniconda installer or legacy parts and checks SHA-256
 │   │   └── eval_datasets.py    # one loader per evaluation dataset (labels -> the project's classes)
 │   ├── models/                 # one loader per model: emotion2vec.py, meralion_ser.py, melati.py, vox_profile.py
 │   │                           # (+ vox_profile_LICENSE.txt); audio_io.py reads audio as 16 kHz mono;
@@ -149,10 +149,15 @@ Skip this if `conda --version` already works.
 
 - **Mac**: install Miniconda for **Apple Silicon (arm64)**, for example `brew install --cask miniconda`.
   An x86_64 conda running under Rosetta cannot use the Apple GPU.
-- **Linux server**:
+- **Linux x86_64 server** (glibc 2.28 or newer). After `git pull` from the repository root, run these commands
+  from `emotion_recognition_benchmark/`. The script uses the server's Python 3.9 or newer to assemble
+  the three parts offline and verify the [official Miniconda SHA-256](https://repo.anaconda.com/miniconda/).
+  The installer includes Python 3.11. See the [Miniconda license](dependencies/LICENSE-Miniconda.txt).
   ```bash
-  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  bash Miniconda3-latest-Linux-x86_64.sh    # then open a new shell
+  installer=dependencies/Miniconda3-py311_26.9.4-1-Linux-x86_64.sh
+  python3 scripts/common/join_parts.py --file "$installer" &&
+    bash "$installer" -b -p "$HOME/miniconda3"
+  source "$HOME/miniconda3/etc/profile.d/conda.sh"
   ```
 
 ### 1.2 Create and activate the environment

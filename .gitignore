@@ -96,3 +96,6 @@ preparation_tools/local/
 # Downloaded research checkpoints; keep them outside the pinned models submodule.
 emotion_recognition_benchmark/local_models/
 research_paper/local_data/
+
+# Reassembled Miniconda installer; Git tracks its three parts and SHA-256.
+/emotion_recognition_benchmark/dependencies/Miniconda3-py311_26.9.4-1-Linux-x86_64.sh
