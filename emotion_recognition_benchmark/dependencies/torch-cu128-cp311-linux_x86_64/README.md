@@ -48,11 +48,12 @@ cd emotion_recognition_benchmark
 python dependencies/torch-cu128-cp311-linux_x86_64/download.py
 ```
 
-Use `--source upstream` to download directly from PyTorch and PyPI. If the server cannot reach the download sources,
-run the downloader on a connected machine and copy the `.whl` files
-into this directory in the server's repository checkout. The scripts use helpers from the neighboring CUDA 11.8
-directory in that checkout. To use a company CA bundle, add `--ca-bundle /path/to/company-ca.pem` to the download
-command. Verify transferred files offline with `--verify-only`.
+Use `--source upstream` to download directly from PyTorch and PyPI. To use a company CA bundle, add
+`--ca-bundle /path/to/company-ca.pem` to the download command.
+
+If the server cannot reach the download sources, run the downloader on a connected machine and copy the whole
+CUDA 12.8 wheelhouse folder to the server. Keep all its Python scripts, `manifest.json`, and the `.whl` files together.
+The folder is self-contained and can be moved or renamed. Verify the wheels offline with `--verify-only`.
 
 ```bash
 python dependencies/torch-cu128-cp311-linux_x86_64/download.py --verify-only
@@ -67,10 +68,15 @@ conda activate emotion_recognition_llm
 python dependencies/torch-cu128-cp311-linux_x86_64/install.py
 ```
 
+If you copied the CUDA 12.8 wheelhouse to a different location, activate the same Conda environment and run
+`python install.py` from the copied folder. To download the wheels directly into that folder, run `python download.py`
+there.
+
 The installer checks every wheel and the dependency order before installing one local wheel at a time. It uses
 no package index and finishes with `pip check`. Add `--dry-run` to print the commands.
 
-Check that PyTorch reports CUDA 12.8 and can see the GPU, then install the benchmark dependencies, including Accelerate.
+Check that PyTorch reports CUDA 12.8 and can see the GPU. Then run `pip install` from `emotion_recognition_benchmark/`
+to install the benchmark dependencies, including Accelerate.
 
 ```bash
 python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"
